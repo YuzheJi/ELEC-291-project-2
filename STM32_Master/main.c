@@ -27,28 +27,60 @@
 //        VSS -|16      17|- VDD
 //              ----------
 
+// mode: 0 - 00 no pull, 1 - 01 pull up, 2 - 10 pull down
+void Set_Pin_Input(int pin, int pmode){
+	uint32_t upper_bits, bottom_bits; 
+	upper_bits = 1UL << pin * 2 + 1; 
+	bottom_bits = 1UL << pin * 2; 
+
+	GPIOA->MODER &= ~(bottom_bits | upper_bits);
+	
+	if (pmode == 0){
+		GPIOA->PUPDR &= ~(bottom_bits);
+		GPIOA->PUPDR &= ~(upper_bits);
+	}
+	else if (pmode == 1){
+		GPIOA->PUPDR |= (bottom_bits);
+		GPIOA->PUPDR &= ~(upper_bits);
+	}
+	else if (pmode == 2){
+		GPIOA->PUPDR |= (bottom_bits);
+		GPIOA->PUPDR |= (upper_bits);
+	}
+}
+// 0 - Bank A, 1 - Bank B
+void Set_Pin_Output(int bank, int pin, int pmode){
+	uint32_t upper_bits, bottom_bits; 
+	uint16_t type_bits; 
+	type_bits = 1UL << pin; 
+	upper_bits = 1UL << (pin * 2 + 1); 
+	bottom_bits = 1UL << (pin * 2); 
+	
+	if (bank == 0){
+		GPIOA->MODER = (GPIOA->MODER & ~(upper_bits|bottom_bits)) | bottom_bits;
+		if (pmode == 0){
+			GPIOA->OTYPER &= ~(type_bits);
+		}	
+	}
+	else if (bank == 1){
+		GPIOB->MODER = (GPIOB->MODER & ~(upper_bits|bottom_bits)) | bottom_bits;
+		if (pmode == 0){
+			GPIOB->OTYPER &= ~(type_bits);
+		}
+	}
+}
+
 void Configure_Pins (void)
 {
 	RCC->IOPENR |= BIT0; // peripheral clock enable for port A
 	
 	// Make pins PA0 to PA5 outputs (page 200 of RM0451, two bits used to configure: bit0=1, bit1=0)
-    GPIOA->MODER = (GPIOA->MODER & ~(BIT0|BIT1)) | BIT0; // PA0
-	GPIOA->OTYPER &= ~BIT0; // Push-pull
-    
-    GPIOA->MODER = (GPIOA->MODER & ~(BIT2|BIT3)) | BIT2; // PA1
-	GPIOA->OTYPER &= ~BIT1; // Push-pull
-    
-    GPIOA->MODER = (GPIOA->MODER & ~(BIT4|BIT5)) | BIT4; // PA2
-	GPIOA->OTYPER &= ~BIT2; // Push-pull
-    
-    GPIOA->MODER = (GPIOA->MODER & ~(BIT6|BIT7)) | BIT6; // PA3
-	GPIOA->OTYPER &= ~BIT3; // Push-pull
-    
-    GPIOA->MODER = (GPIOA->MODER & ~(BIT8|BIT9)) | BIT8; // PA4
-	GPIOA->OTYPER &= ~BIT4; // Push-pull
-    
-    GPIOA->MODER = (GPIOA->MODER & ~(BIT10|BIT11)) | BIT10; // PA5
-	GPIOA->OTYPER &= ~BIT5; // Push-pull
+    Set_Pin_Output(0,0,0);
+	Set_Pin_Output(0,1,0);
+	Set_Pin_Output(0,2,0);
+	Set_Pin_Output(0,3,0);
+	Set_Pin_Output(0,4,0);
+	Set_Pin_Output(0,5,0);
 
 	GPIOA->OSPEEDR=0xffff0000; // All pins of port A configured for very high speed! Page 201 of RM0451
 
@@ -85,6 +117,7 @@ void ReceptionOff (void)
 	GPIOA->ODR |= BIT13; // 'set' pin to 1 is normal operation mode.
 	while (ReceivedBytes2()>0) egetc2(); // Clear FIFO
 }
+
 
 void main(void)
 {  
