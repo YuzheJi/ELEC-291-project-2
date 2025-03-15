@@ -6,6 +6,7 @@
 #include <string.h>
 #include "UART2.h"
 #include "lcd.h"
+#include "adc.h"
 
 // LQFP32 pinout
 //              ----------
@@ -73,6 +74,7 @@ void Set_Pin_Output(int bank, int pin, int pmode){
 void Configure_Pins (void)
 {
 	RCC->IOPENR |= BIT0; // peripheral clock enable for port A
+	RCC->IOPENR |= BIT1; // peripheral clock enable for port B
 	
 	// Make pins PA0 to PA5 outputs (page 200 of RM0451, two bits used to configure: bit0=1, bit1=0)
     Set_Pin_Output(0,0,0);
@@ -84,8 +86,6 @@ void Configure_Pins (void)
 
 	GPIOA->OSPEEDR=0xffff0000; // All pins of port A configured for very high speed! Page 201 of RM0451
 
-	RCC->IOPENR |= BIT0; // peripheral clock enable for port A
-
     GPIOA->MODER = (GPIOA->MODER & ~(BIT27|BIT26)) | BIT26; // Make pin PA13 output (page 200 of RM0451, two bits used to configure: bit0=1, bit1=0))
 	GPIOA->ODR |= BIT13; // 'set' pin to 1 is normal operation mode.
 
@@ -93,6 +93,9 @@ void Configure_Pins (void)
 	// Activate pull up for pin PA8:
 	GPIOA->PUPDR |= BIT16; 
 	GPIOA->PUPDR &= ~(BIT17);
+
+	GPIOB->MODER |= (BIT2|BIT3);  // Select analog mode for PB1 (pin 15 of LQFP32 package)
+	GPIOB->MODER |= (BIT0|BIT1);  // Select analog mode for PB0 (pin 14 of LQFP32 package)
 }
 
 void SendATCommand (char * s)
@@ -122,12 +125,17 @@ void ReceptionOff (void)
 void main(void)
 {  
 	char buff[80];
+	char lb[17];
     int timeout_cnt=0;
     int cont1=0, cont2=100;
+	int nadc;
+	float vx;
+	float vy;
 
 
 	Configure_Pins();
 	LCD_4BIT();
+	initADC();
 
 	initUART2(9600);
 	
@@ -155,6 +163,16 @@ void main(void)
 
 	while(1)
 	{
+		nadc=readADC(ADC_CHSELR_CHSEL9);
+		vx = (nadc*3.3)/0x1000;
+		sprintf(lb,"Vx=%.3f", vx);
+		LCDprint(lb,1,1);
+
+		nadc=readADC(ADC_CHSELR_CHSEL8);
+		vy = (nadc*3.3)/0x1000;
+		sprintf(lb,"Vy=%.3f", vy);
+		LCDprint(lb,2,1);
+
 		sprintf(buff, "%03d,%03d\n", cont1, cont2); // Construct a test message
 		eputc2('!'); // Send a message to the slave. First send the 'attention' character which is '!'
 		// Wait a bit so the slave has a chance to get ready

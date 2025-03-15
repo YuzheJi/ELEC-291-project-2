@@ -10,14 +10,14 @@ LIBPATH1=$(subst \libgcc.a,,$(shell dir /s /b "$(GCCPATH)*libgcc.a" | find "v6-m
 LIBPATH2=$(subst \libc_nano.a,,$(shell dir /s /b "$(GCCPATH)*libc_nano.a" | find "v6-m"))
 LIBSPEC=-L"$(LIBPATH1)" -L"$(LIBPATH2)"
 
-OBJS=main.o lcd.o serial.o UART2.o startup.o newlib_stubs.o
+OBJS=main.o lcd.o adc.o serial.o UART2.o startup.o newlib_stubs.o
 
 PORTN=$(shell type COMPORT.inc)
 
 # For smaller hex file remove '-u _printf_float' below
 main.elf : $(OBJS)
 #	$(LD) $(OBJS) $(LIBSPEC) -Os -u _printf_float -nostdlib -lnosys -lgcc -T ../Common/LDscripts/stm32l051xx.ld --cref -Map main.map -o main.elf
-	$(LD) $(OBJS) $(LIBSPEC) -Os -nostdlib -lnosys -lgcc -T ../Common/LDscripts/stm32l051xx.ld --cref -Map main.map -o main.elf
+	$(LD) $(OBJS) $(LIBSPEC) -Os -u _printf_float -nostdlib -lnosys -lgcc -T ../Common/LDscripts/stm32l051xx.ld --cref -Map main.map -o main.elf
 	arm-none-eabi-objcopy -O ihex main.elf main.hex
 	@echo Success!
 
@@ -26,6 +26,9 @@ main.o: main.c
 
 lcd.o: lcd.c
 	$(CC) -c $(CCFLAGS) lcd.c -o lcd.o
+
+adc.o: adc.c adc.h
+	$(CC) -c $(CCFLAGS) adc.c -o adc.o
 
 UART2.o: UART2.c
 	$(CC) -c $(CCFLAGS) UART2.c -o UART2.o
