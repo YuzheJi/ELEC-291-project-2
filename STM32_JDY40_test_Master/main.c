@@ -1,56 +1,56 @@
+#include <stdio.h>
 #include "../Common/Include/stm32l051xx.h"
+#include "../Common/Include/serial.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../Common/Include/serial.h"
 #include "UART2.h"
-
-#define SYSCLK 32000000L
-#define DEF_F 15000L
+#include "lcd.h"
 
 // LQFP32 pinout
-//             ----------
-//       VDD -|1       32|- VSS
-//      PC14 -|2       31|- BOOT0
-//      PC15 -|3       30|- PB7
-//      NRST -|4       29|- PB6
-//      VDDA -|5       28|- PB5
-//       PA0 -|6       27|- PB4
-//       PA1 -|7       26|- PB3
-//       PA2 -|8       25|- PA15 (Used for RXD of UART2, connects to TXD of JDY40)
-//       PA3 -|9       24|- PA14 (Used for TXD of UART2, connects to RXD of JDY40)
-//       PA4 -|10      23|- PA13 (Used for SET of JDY40)
-//       PA5 -|11      22|- PA12
-//       PA6 -|12      21|- PA11
-//       PA7 -|13      20|- PA10 (Reserved for RXD of UART1)
-//       PB0 -|14      19|- PA9  (Reserved for TXD of UART1)
-//       PB1 -|15      18|- PA8  (pushbutton)
-//       VSS -|16      17|- VDD
-//             ----------
+//              ----------
+//        VDD -|1       32|- VSS
+//       PC14 -|2       31|- BOOT0
+//       PC15 -|3       30|- PB7
+//       NRST -|4       29|- PB6
+//       VDDA -|5       28|- PB5
+// LCD_RS PA0 -|6       27|- PB4
+// LCD_E  PA1 -|7       26|- PB3
+// LCD_D4 PA2 -|8       25|- PA15
+// LCD_D5 PA3 -|9       24|- PA14
+// LCD_D6 PA4 -|10      23|- PA13
+// LCD_D7 PA5 -|11      22|- PA12
+//        PA6 -|12      21|- PA11
+//        PA7 -|13      20|- PA10 (Reserved for RXD)
+//        PB0 -|14      19|- PA9  (Reserved for TXD)
+//        PB1 -|15      18|- PA8
+//        VSS -|16      17|- VDD
+//              ----------
 
-#define F_CPU 32000000L
-// Uses SysTick to delay <us> micro-seconds. 
-void Delay_us(unsigned char us)
+void Configure_Pins (void)
 {
-	// For SysTick info check the STM32L0xxx Cortex-M0 programming manual page 85.
-	SysTick->LOAD = (F_CPU/(1000000L/us)) - 1;  // set reload register, counter rolls over from zero, hence -1
-	SysTick->VAL = 0; // load the SysTick counter
-	SysTick->CTRL  = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk; // Enable SysTick IRQ and SysTick Timer */
-	while((SysTick->CTRL & BIT16)==0); // Bit 16 is the COUNTFLAG.  True when counter rolls over from zero.
-	SysTick->CTRL = 0x00; // Disable Systick counter
-}
+	RCC->IOPENR |= BIT0; // peripheral clock enable for port A
+	
+	// Make pins PA0 to PA5 outputs (page 200 of RM0451, two bits used to configure: bit0=1, bit1=0)
+    GPIOA->MODER = (GPIOA->MODER & ~(BIT0|BIT1)) | BIT0; // PA0
+	GPIOA->OTYPER &= ~BIT0; // Push-pull
+    
+    GPIOA->MODER = (GPIOA->MODER & ~(BIT2|BIT3)) | BIT2; // PA1
+	GPIOA->OTYPER &= ~BIT1; // Push-pull
+    
+    GPIOA->MODER = (GPIOA->MODER & ~(BIT4|BIT5)) | BIT4; // PA2
+	GPIOA->OTYPER &= ~BIT2; // Push-pull
+    
+    GPIOA->MODER = (GPIOA->MODER & ~(BIT6|BIT7)) | BIT6; // PA3
+	GPIOA->OTYPER &= ~BIT3; // Push-pull
+    
+    GPIOA->MODER = (GPIOA->MODER & ~(BIT8|BIT9)) | BIT8; // PA4
+	GPIOA->OTYPER &= ~BIT4; // Push-pull
+    
+    GPIOA->MODER = (GPIOA->MODER & ~(BIT10|BIT11)) | BIT10; // PA5
+	GPIOA->OTYPER &= ~BIT5; // Push-pull
 
-void waitms (unsigned int ms)
-{
-	unsigned int j;
-	unsigned char k;
-	for(j=0; j<ms; j++)
-		for (k=0; k<4; k++) Delay_us(250);
-}
-
-void Hardware_Init(void)
-{
-	GPIOA->OSPEEDR=0xffffffff; // All pins of port A configured for very high speed! Page 201 of RM0451
+	GPIOA->OSPEEDR=0xffff0000; // All pins of port A configured for very high speed! Page 201 of RM0451
 
 	RCC->IOPENR |= BIT0; // peripheral clock enable for port A
 
@@ -86,21 +86,24 @@ void ReceptionOff (void)
 	while (ReceivedBytes2()>0) egetc2(); // Clear FIFO
 }
 
-int main(void)
-{
+void main(void)
+{  
 	char buff[80];
     int timeout_cnt=0;
     int cont1=0, cont2=100;
 
-	Hardware_Init();
+
+	Configure_Pins();
+	LCD_4BIT();
+
 	initUART2(9600);
 	
 	waitms(1000); // Give putty some time to start.
-	printf("\r\nJDY-40 Master test\r\n");
 
 	ReceptionOff();
 	
-	// To check configuration
+	//WARNING: notice that printf() of floating point numbers is not enabled in the makefile!
+
 	SendATCommand("AT+VER\r\n");
 	SendATCommand("AT+BAUD\r\n");
 	SendATCommand("AT+RFID\r\n");
@@ -112,7 +115,11 @@ int main(void)
 	// We should select an unique device ID.  The device ID can be a hex
 	// number from 0x0000 to 0xFFFF.  In this case is set to 0xABBA
 	SendATCommand("AT+DVIDABBA\r\n");
-	 
+
+   	// Display something in the LCD
+	LCDprint("LCD 4-bit test:", 1, 1);
+	LCDprint("Hello, World!", 2, 1);
+
 	while(1)
 	{
 		sprintf(buff, "%03d,%03d\n", cont1, cont2); // Construct a test message
@@ -155,6 +162,5 @@ int main(void)
 		
 		waitms(50);  // Set the information interchange pace: communicate about every 50ms
 	}
-
-
+	
 }
