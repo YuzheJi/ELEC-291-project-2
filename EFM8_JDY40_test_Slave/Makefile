@@ -3,6 +3,8 @@ CC=c51
 COMPORT = $(shell type COMPORT.inc)
 OBJS=EFM8_JDY40_test.obj
 
+compile: clean EFM8_JDY40_test.hex LoadFlash
+
 EFM8_JDY40_test.hex: $(OBJS)
 	$(CC) $(OBJS)
 	@echo Done!
