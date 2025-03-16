@@ -10,22 +10,22 @@
 
 // LQFP32 pinout
 //              ----------
-//        VDD -|1       32|- VSS
+// 3.3v   VDD -|1       32|- VSS
 //       PC14 -|2       31|- BOOT0
 //       PC15 -|3       30|- PB7
-//       NRST -|4       29|- PB6
-//       VDDA -|5       28|- PB5
+// RST   NRST -|4       29|- PB6
+// 3.3v  VDDA -|5       28|- PB5
 // LCD_RS PA0 -|6       27|- PB4
 // LCD_E  PA1 -|7       26|- PB3
-// LCD_D4 PA2 -|8       25|- PA15
-// LCD_D5 PA3 -|9       24|- PA14
-// LCD_D6 PA4 -|10      23|- PA13
+// LCD_D4 PA2 -|8       25|- PA15 TXD-radio
+// LCD_D5 PA3 -|9       24|- PA14 RXD-radio
+// LCD_D6 PA4 -|10      23|- PA13 SET-radio
 // LCD_D7 PA5 -|11      22|- PA12
-//        PA6 -|12      21|- PA11
+//        PA6 -|12      21|- PA11 
 //        PA7 -|13      20|- PA10 (Reserved for RXD)
-//        PB0 -|14      19|- PA9  (Reserved for TXD)
-//        PB1 -|15      18|- PA8
-//        VSS -|16      17|- VDD
+// vy     PB0 -|14      19|- PA9  (Reserved for TXD)
+// vx     PB1 -|15      18|- PA8  joystick button
+// GND    VSS -|16      17|- VDD  3.3v
 //              ----------
 
 // mode: 0 - 00 no pull, 1 - 01 pull up, 2 - 10 pull down
@@ -96,6 +96,7 @@ void Configure_Pins (void)
 
 	GPIOB->MODER |= (BIT2|BIT3);  // Select analog mode for PB1 (pin 15 of LQFP32 package)
 	GPIOB->MODER |= (BIT0|BIT1);  // Select analog mode for PB0 (pin 14 of LQFP32 package)
+	GPIOA->MODER |= (BIT12|BIT13);  // Select analog mode for PB0 (pin 12 of LQFP32 package)
 }
 
 void SendATCommand (char * s)
@@ -127,10 +128,12 @@ void main(void)
 	char buff[80];
 	char lb[17];
     int timeout_cnt=0;
-    int cont1=0, cont2=100;
 	int nadc;
-	float vx;
-	float vy;
+
+	// note: x,y here are not the same as the x,y printed on joystick
+	int vx100;
+	int vy100;
+	int vctrl100;
 
 
 	Configure_Pins();
@@ -138,8 +141,15 @@ void main(void)
 	initADC();
 
 	initUART2(9600);
-	
-	waitms(1000); // Give putty some time to start.
+	LCDprint("ELEC-291:       ", 1, 1);
+	LCDprint("       Project2 ", 2, 1);
+
+	waitms(2000);
+
+	LCDprint("Coin-Picking    ", 1, 1);
+	LCDprint("          Robot ", 2, 1);
+
+	waitms(2000);
 
 	ReceptionOff();
 	
@@ -158,31 +168,37 @@ void main(void)
 	SendATCommand("AT+DVIDABBA\r\n");
 
    	// Display something in the LCD
-	LCDprint("LCD 4-bit test:", 1, 1);
-	LCDprint("Hello, World!", 2, 1);
+	        //1234567890123456
+	
 
 	while(1)
 	{
-		nadc=readADC(ADC_CHSELR_CHSEL9);
-		vx = (nadc*3.3)/0x1000;
-		sprintf(lb,"Vx=%.3f", vx);
-		LCDprint(lb,1,1);
 
 		nadc=readADC(ADC_CHSELR_CHSEL8);
-		vy = (nadc*3.3)/0x1000;
-		sprintf(lb,"Vy=%.3f", vy);
+		vx100 = (int)100.0*(nadc*3.3)/0x1000;
+
+		nadc=readADC(ADC_CHSELR_CHSEL9);
+		vy100 = (int)100.0*(nadc*3.3)/0x1000;
+
+		nadc=readADC(ADC_CHSELR_CHSEL6);
+		vctrl100 = (int)100.0*(nadc*3.3)/0x1000;
+
+		if(vctrl100/3<50)	sprintf(lb,"Vx=%.2f  B:100%%", vx100/100.0);
+		else			sprintf(lb,"Vx=%.2f  B:%d%%", vx100/100.0, vctrl100/3);
+		LCDprint(lb,1,1);
+
+		
+		sprintf(lb,"Vy=%.2f", vy100/100.0);
 		LCDprint(lb,2,1);
 
-		sprintf(buff, "%03d,%03d\n", cont1, cont2); // Construct a test message
+		sprintf(buff, "%03d,%03d\n", vx100, vy100); // Construct a test message
 		eputc2('!'); // Send a message to the slave. First send the 'attention' character which is '!'
 		// Wait a bit so the slave has a chance to get ready
-		waitms(20); // This may need adjustment depending on how busy is the slave
+		waitms(10); // This may need adjustment depending on how busy is the slave
 		eputs2(buff); // Send the test message
 		
-		if(++cont1>200) cont1=0; // Increment test counters for next message
-		if(++cont2>200) cont2=0;
 		
-		waitms(20); // This may need adjustment depending on how busy is the slave
+		waitms(10); // This may need adjustment depending on how busy is the slave
 
 		eputc2('@'); // Request a message from the slave
 		

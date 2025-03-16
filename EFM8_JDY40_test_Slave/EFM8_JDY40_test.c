@@ -281,6 +281,8 @@ void main (void)
 	cnt=0;
 	while(1)
 	{	
+
+		// The message format: 000,000 --- (vx,vy)
 		if(RXU1()) // Something has arrived
 		{
 			c=getchar1();
@@ -294,7 +296,7 @@ void main (void)
 				}
 				else
 				{
-					printf("*** BAD MESSAGE ***: %s\r\n", buff);
+					printf("*** BAD MESSAGE ***(%d): %s\r\n", buff,strlen(buff));
 				}				
 			}
 			else if(c=='@') // Master wants slave data

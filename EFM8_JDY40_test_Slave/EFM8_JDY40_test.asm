@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-; This file was generated Fri Mar 14 17:48:04 2025
+; This file was generated Sat Mar 15 05:44:51 2025
 ;--------------------------------------------------------
 $name EFM8_JDY40_test
 $optc51 --model-small
@@ -1253,7 +1253,7 @@ _main:
 	mov	r2,#0x00
 	mov	r3,#0x00
 L015012?:
-;	EFM8_JDY40_test.c:284: if(RXU1()) // Something has arrived
+;	EFM8_JDY40_test.c:286: if(RXU1()) // Something has arrived
 	push	ar2
 	push	ar3
 	lcall	_RXU1
@@ -1262,27 +1262,27 @@ L015012?:
 	pop	ar3
 	pop	ar2
 	jz	L015012?
-;	EFM8_JDY40_test.c:286: c=getchar1();
+;	EFM8_JDY40_test.c:288: c=getchar1();
 	push	ar2
 	push	ar3
 	lcall	_getchar1
 	mov	r4,dpl
 	pop	ar3
 	pop	ar2
-;	EFM8_JDY40_test.c:288: if(c=='!') // Master is sending message
+;	EFM8_JDY40_test.c:290: if(c=='!') // Master is sending message
 	cjne	r4,#0x21,L015022?
 	sjmp	L015023?
 L015022?:
 	ljmp	L015007?
 L015023?:
-;	EFM8_JDY40_test.c:290: getstr1(buff, sizeof(buff)-1);
+;	EFM8_JDY40_test.c:292: getstr1(buff, sizeof(buff)-1);
 	mov	_getstr1_PARM_2,#0x13
 	mov	dptr,#_buff
 	mov	b,#0x40
 	push	ar2
 	push	ar3
 	lcall	_getstr1
-;	EFM8_JDY40_test.c:291: if(strlen(buff)==7)
+;	EFM8_JDY40_test.c:293: if(strlen(buff)==7)
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_strlen
@@ -1292,7 +1292,7 @@ L015023?:
 	pop	ar2
 	cjne	r5,#0x07,L015002?
 	cjne	r6,#0x00,L015002?
-;	EFM8_JDY40_test.c:293: printf("Master says: %s\r\n", buff);
+;	EFM8_JDY40_test.c:295: printf("Master says: %s\r\n", buff);
 	push	ar2
 	push	ar3
 	mov	a,#_buff
@@ -1315,9 +1315,16 @@ L015023?:
 	pop	ar2
 	sjmp	L015012?
 L015002?:
-;	EFM8_JDY40_test.c:297: printf("*** BAD MESSAGE ***: %s\r\n", buff);
+;	EFM8_JDY40_test.c:299: printf("*** BAD MESSAGE ***(%d): %s\r\n", buff,strlen(buff));
+	mov	dptr,#_buff
+	mov	b,#0x40
 	push	ar2
 	push	ar3
+	lcall	_strlen
+	mov	r5,dpl
+	mov	r6,dph
+	push	ar5
+	push	ar6
 	mov	a,#_buff
 	push	acc
 	mov	a,#(_buff >> 8)
@@ -1332,19 +1339,19 @@ L015002?:
 	push	acc
 	lcall	_printf
 	mov	a,sp
-	add	a,#0xfa
+	add	a,#0xf8
 	mov	sp,a
 	pop	ar3
 	pop	ar2
 	ljmp	L015012?
 L015007?:
-;	EFM8_JDY40_test.c:300: else if(c=='@') // Master wants slave data
+;	EFM8_JDY40_test.c:302: else if(c=='@') // Master wants slave data
 	cjne	r4,#0x40,L015026?
 	sjmp	L015027?
 L015026?:
 	ljmp	L015012?
 L015027?:
-;	EFM8_JDY40_test.c:302: sprintf(buff, "%05u\n", cnt);
+;	EFM8_JDY40_test.c:304: sprintf(buff, "%05u\n", cnt);
 	push	ar2
 	push	ar3
 	push	ar2
@@ -1367,17 +1374,17 @@ L015027?:
 	mov	sp,a
 	pop	ar3
 	pop	ar2
-;	EFM8_JDY40_test.c:303: cnt++;
+;	EFM8_JDY40_test.c:305: cnt++;
 	inc	r2
 	cjne	r2,#0x00,L015028?
 	inc	r3
 L015028?:
-;	EFM8_JDY40_test.c:304: waitms(5); // The radio seems to need this delay...
+;	EFM8_JDY40_test.c:306: waitms(5); // The radio seems to need this delay...
 	mov	dptr,#0x0005
 	push	ar2
 	push	ar3
 	lcall	_waitms
-;	EFM8_JDY40_test.c:305: sendstr1(buff);
+;	EFM8_JDY40_test.c:307: sendstr1(buff);
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_sendstr1
@@ -1455,7 +1462,7 @@ __str_12:
 	db 0x0A
 	db 0x00
 __str_13:
-	db '*** BAD MESSAGE ***: %s'
+	db '*** BAD MESSAGE ***(%d): %s'
 	db 0x0D
 	db 0x0A
 	db 0x00

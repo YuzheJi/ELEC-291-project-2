@@ -62,8 +62,13 @@ putty:
 	@..\stm32flash\BO230\BO230 -r >>sputty.bat
 	@sputty
 	
-Picture:
-	@cmd /c start Pictures\STM32L051_LCD.jpg
+slave:
+	@taskkill /f /im putty.exe /t /fi "status eq running" > NUL
+	cmd /c start putty -serial COM10 -sercfg 115200,8,n,1,N
+
+master:
+	@taskkill /f /im putty.exe /t /fi "status eq running" > NUL
+	cmd /c start putty -serial COM19 -sercfg 115200,8,n,1,N
 	
 explorer:
 	@explorer .

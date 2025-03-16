@@ -2,6 +2,26 @@
 #include "../Common/Include/stm32l051xx.h"
 #include "lcd.h"
 
+// LQFP32 pinout with the pins that can be analog inputs.  This code uses ADC_IN9.
+//                 ----------
+//           VDD -|1       32|- VSS
+//          PC14 -|2       31|- BOOT0
+//          PC15 -|3       30|- PB7
+//          NRST -|4       29|- PB6
+//          VDDA -|5       28|- PB5
+// (ADC_IN0) PA0 -|6       27|- PB4
+// (ADC_IN1) PA1 -|7       26|- PB3
+// (ADC_IN2) PA2 -|8       25|- PA15
+// (ADC_IN3) PA3 -|9       24|- PA14
+// (ADC_IN4) PA4 -|10      23|- PA13
+// (ADC_IN5) PA5 -|11      22|- PA12
+// (ADC_IN6) PA6 -|12      21|- PA11
+// (ADC_IN7) PA7 -|13      20|- PA10 (Reserved for RXD)
+// (ADC_IN8) PB0 -|14      19|- PA9  (Reserved for TXD)
+// (ADC_IN9) PB1 -|15      18|- PA8  (LED+1k)
+//           VSS -|16      17|- VDD
+//                 ----------
+
 // Uses SysTick to delay <us> micro-seconds. 
 void Delay_us(unsigned char us)
 {
