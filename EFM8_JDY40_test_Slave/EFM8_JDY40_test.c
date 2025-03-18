@@ -268,7 +268,7 @@ void main (void)
 	SendATCommand("AT+BAUD\r\n");
 	SendATCommand("AT+RFID\r\n");
 	SendATCommand("AT+DVID\r\n");
-	SendATCommand("AT+RFC\r\n");
+	SendATCommand("AT+RFC001\r\n");
 	SendATCommand("AT+POWE\r\n");
 	SendATCommand("AT+CLSS\r\n");
 
@@ -276,7 +276,7 @@ void main (void)
 	// number from 0x0000 to 0xFFFF.  In this case is set to 0xABBA
 
 	//ID is 0xEEEE
-	SendATCommand("AT+DVIDABBA\r\n");  
+	SendATCommand("AT+DVIDEFEF\r\n");  
 	
 	cnt=0;
 	while(1)

@@ -232,13 +232,13 @@ void main(void)
 	SendATCommand("AT+BAUD\r\n");
 	SendATCommand("AT+RFID\r\n");
 	SendATCommand("AT+DVID\r\n");
-	SendATCommand("AT+RFC\r\n");
+	SendATCommand("AT+RFC001\r\n");
 	SendATCommand("AT+POWE\r\n");
 	SendATCommand("AT+CLSS\r\n");
 	
 	// We should select an unique device ID.  The device ID can be a hex
 	// number from 0x0000 to 0xFFFF.  In this case is set to 0xABBA
-	SendATCommand("AT+DVIDEFEF\r\n");
+	SendATCommand("AT+DVIDABBA\r\n");
 
    	// Display something in the LCD
 	        //1234567890123456
@@ -257,7 +257,6 @@ void main(void)
 		vctrl100 = (int)100.0*(nadc*3.3)/0x1000;
 
 		vctrl100 = 100*(vctrl100 - 167)/133;
-
 		if(vctrl100 < 1){
 			sprintf(lb,"Vx=%.2f   B:", vx100/100.0);
 			LCDprint(lb,1,1);
@@ -282,23 +281,23 @@ void main(void)
 		sprintf(buff, "%03d,%03d\n", vx100, vy100); // Construct a test message
 		eputc2('!'); // Send a message to the slave. First send the 'attention' character which is '!'
 		// Wait a bit so the slave has a chance to get ready
-		waitms(20); // This may need adjustment depending on how busy is the slave
+		waitms(10); // This may need adjustment depending on how busy is the slave
 		eputs2(buff); // Send the test message
 		
 		
-		waitms(20); // This may need adjustment depending on how busy is the slave
+		waitms(10); // This may need adjustment depending on how busy is the slave
 
 		eputc2('@'); // Request a message from the slave
 		
 		timeout_cnt=0;
 		while(1)
 		{
-			if(ReceivedBytes2()>0) break; // Something has arrived
+			if(ReceivedBytes2()>5) break; // Something has arrived
 			if(++timeout_cnt>500) break; // Wait up to 25ms for the repply
 			Delay_us(100); // 100us*250=25ms
 		}
 		
-		if(ReceivedBytes2()>0) // Something has arrived from the slave
+		if(ReceivedBytes2()>5) // Something has arrived from the slave
 		{
 			egets2(buff, sizeof(buff)-1);
 			if(strlen(buff)==6) // Check for valid message size (5 characters + new line '\n')
