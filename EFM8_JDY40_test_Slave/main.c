@@ -109,15 +109,16 @@ char _c51_external_startup (void)
   	
   	P2_0=1; // 'set' pin to 1 is normal operation mode.
 
-    // Initialize timer 5 for periodic interrupts
+    // Initialize Timer 5 for periodic interrupts
 	SFRPAGE=0x10;
 	TMR5CN0=0x00;
 	TMR5=0xffff;   // Set to reload immediately
 	EIE2|=0b_0000_1000; // Enable Timer5 interrupts
 	TR5=1;         // Start Timer5 (TMR5CN0 is bit addressable)
 	
+	// Initialize Timer 
+
 	EA=1;
-	
 	SFRPAGE=0x00;
 	
 	return 0;
@@ -392,11 +393,11 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 	TMR5RL = RELOAD_10us; // Reload Timer5 for 10us intervals 
 
     pwm_counter++; 
-    if (pwm_counter >= 1000){
+    if (pwm_counter == 100){
         pwm_counter = 0; 
     }
 
-    if (pwm_counter < pwm_left){
+    if (pwm_left > pwm_counter){
         if(L_motor_dir){
             L_bridge_1 = 1; 
             L_bridge_2 = 0; 
@@ -408,9 +409,9 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
     }
     else {
         L_bridge_1 = 0; 
-        L_bridge_1 = 0; 
+        L_bridge_2 = 0; 
     }
-    if (pwm_counter < pwm_right){
+    if (pwm_right > pwm_counter){
         if (R_motor_dir){
             R_bridge_1 = 1; 
             R_bridge_2 = 0;
@@ -428,44 +429,44 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 
 void MoveForward (int speed)
 {
-    pwm_left = speed * 10; 
-    pwm_right = speed * 10; 
-    L_motor_dir = 1; 
-    R_motor_dir = 1; 
+    pwm_left = speed; 
+    pwm_right = speed; 
+    L_motor_dir = 0; 
+    R_motor_dir = 0; 
 }
 
 void MoveBackward (int speed)
 {
-    pwm_left = speed * 10; 
-    pwm_right = speed * 10; 
-    L_motor_dir = 0; 
-    R_motor_dir = 0;  
+    pwm_left = speed; 
+    pwm_right = speed; 
+    L_motor_dir = 1; 
+    R_motor_dir = 1;  
 }
 
 void TurnRight (int speed)
 {
-    pwm_left = speed * 10; 
-    pwm_right = speed * 10; 
-    L_motor_dir = 0; 
-    R_motor_dir = 1; 
+    pwm_left = speed; 
+    pwm_right = speed; 
+    L_motor_dir = 1; 
+    R_motor_dir = 0; 
 }
 
 void TurnLeft (int speed)
 {
-    pwm_left = speed * 10; 
-    pwm_right = speed * 10; 
-    L_motor_dir = 1; 
-    R_motor_dir = 0; 
+    pwm_left = speed; 
+    pwm_right = speed; 
+    L_motor_dir = 0; 
+    R_motor_dir = 1; 
 }
 
 void main (void)
 {
     unsigned int cnt=0;
     char c;
-    int vx_int = 0, vy_int = 0; 
-    float vx = 0.0; 
-    float vy = 0.0; 
-    float threshold = 0.1; 
+    int vx = 0, vy = 0; 
+    float threshold = 161;
+	int motor_pwm = 0; 
+
 	
 	waitms(500);
 	printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
@@ -481,7 +482,7 @@ void main (void)
 	SendATCommand("AT+RFC\r\n");
 	SendATCommand("AT+POWE\r\n");
 	SendATCommand("AT+CLSS\r\n");
-	SendATCommand("AT+DVIDABBA\r\n");  
+	SendATCommand("AT+DVIDEFEF\r\n");  
 
     //initialize variables 
     L_bridge_1 = 0; 
@@ -496,12 +497,6 @@ void main (void)
         Set_Pin_Output(0x23);
         Set_Pin_Output(0x22);
         Set_Pin_Output(0x21);
-
-        MoveForward(100);
-        waitms(2000);
-        MoveForward(50);
-        waitms(2000);
-
 
 		// The message format: 000,000 --- (vx,vy)
 		if(RXU1()) // Something has arrived
@@ -520,24 +515,28 @@ void main (void)
 				// 	printf("*** BAD MESSAGE ***(%d): %s\r\n", buff,strlen(buff));
 				// }	
                 	
-                sscanf(buff, "%03d,%03d", vx_int, vy_int);
-                vx = (float)vx_int / 5.0; 
-                vy = (float)vy_int / 5.0; 
+                sscanf(buff, "%03d,%03d", &vx, &vy);
                 
-                printf("Joystick Received: Vx = %.3f, Vy = %.3f", vx, vy);
+                printf("Joystick Received: Vx = %03d, Vy = %03d\r\n", vx, vy);
 
-                // if (vy > threshold){
-                //     MoveForward();
-                // }
-                // else if (vy < -threshold){
-                //     MoveBackward();
-                // }
-                // else if (vx > threshold){
-                //     TurnRight();
-                // }
-                // else if (vx < -threshold){
-                //     TurnRight();
-                // }
+                if (vy > threshold){
+					motor_pwm = abs(vy - threshold) * 100 / threshold; 
+                    MoveForward(motor_pwm);
+                }
+                else if (vy < threshold){
+					motor_pwm = abs(threshold - vy) * 100 / threshold; 
+                    MoveBackward(motor_pwm);
+                }
+                if(vx > threshold){
+					motor_pwm = abs(vx - threshold) * 100 / threshold; 
+                    TurnRight(motor_pwm);
+                }
+                else if (vx < threshold){
+					motor_pwm = abs(threshold - vx) * 100 / threshold; 
+                    TurnLeft(motor_pwm);
+                }
+
+
 
 			}
 			else if(c=='@') // Master wants slave data

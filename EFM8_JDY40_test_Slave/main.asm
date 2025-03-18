@@ -1,11 +1,10 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-; This file was generated Sun Mar 16 10:19:10 2025
+; This file was generated Tue Mar 18 13:06:25 2025
 ;--------------------------------------------------------
 $name main
 $optc51 --model-small
-$printf_float
 	R_DSEG    segment data
 	R_CSEG    segment code
 	R_BSEG    segment bit
@@ -515,6 +514,14 @@ _R_motor_dir:
 	ds 1
 _getstr1_PARM_2:
 	ds 1
+_main_vx_1_127:
+	ds 2
+_main_vy_1_127:
+	ds 2
+_main_motor_pwm_1_127:
+	ds 2
+_main_sloc0_1_0:
+	ds 4
 ;--------------------------------------------------------
 ; overlayable items in internal ram 
 ;--------------------------------------------------------
@@ -1462,19 +1469,21 @@ _Timer5_ISR:
 	cjne	a,_pwm_counter,L019022?
 	inc	(_pwm_counter + 1)
 L019022?:
-;	main.c:395: if (pwm_counter >= 1000){
-	clr	c
-	mov	a,_pwm_counter
-	subb	a,#0xE8
-	mov	a,(_pwm_counter + 1)
-	subb	a,#0x03
-	jc	L019002?
+;	main.c:395: if (pwm_counter == 100){
+	mov	a,#0x64
+	cjne	a,_pwm_counter,L019023?
+	clr	a
+	cjne	a,(_pwm_counter + 1),L019023?
+	sjmp	L019024?
+L019023?:
+	sjmp	L019002?
+L019024?:
 ;	main.c:396: pwm_counter = 0; 
 	clr	a
 	mov	_pwm_counter,a
 	mov	(_pwm_counter + 1),a
 L019002?:
-;	main.c:399: if (pwm_counter < pwm_left){
+;	main.c:399: if (pwm_left > pwm_counter){
 	mov	r2,_pwm_left
 	mov	r3,#0x00
 	clr	c
@@ -1500,10 +1509,10 @@ L019004?:
 L019007?:
 ;	main.c:410: L_bridge_1 = 0; 
 	clr	_P2_1
-;	main.c:411: L_bridge_1 = 0; 
-	clr	_P2_1
+;	main.c:411: L_bridge_2 = 0; 
+	clr	_P2_2
 L019008?:
-;	main.c:413: if (pwm_counter < pwm_right){
+;	main.c:413: if (pwm_right > pwm_counter){
 	mov	r2,_pwm_right
 	mov	r3,#0x00
 	clr	c
@@ -1551,13 +1560,9 @@ L019015?:
 ;	-----------------------------------------
 _MoveForward:
 	mov	r2,dpl
-;	main.c:431: pwm_left = speed * 10; 
-	mov	a,r2
-	mov	b,#0x0A
-	mul	ab
-	mov	r2,a
+;	main.c:431: pwm_left = speed; 
 	mov	_pwm_left,r2
-;	main.c:432: pwm_right = speed * 10; 
+;	main.c:432: pwm_right = speed; 
 	mov	_pwm_right,r2
 ;	main.c:433: L_motor_dir = 1; 
 	mov	_L_motor_dir,#0x01
@@ -1575,13 +1580,9 @@ _MoveForward:
 ;	-----------------------------------------
 _MoveBackward:
 	mov	r2,dpl
-;	main.c:439: pwm_left = speed * 10; 
-	mov	a,r2
-	mov	b,#0x0A
-	mul	ab
-	mov	r2,a
+;	main.c:439: pwm_left = speed; 
 	mov	_pwm_left,r2
-;	main.c:440: pwm_right = speed * 10; 
+;	main.c:440: pwm_right = speed; 
 	mov	_pwm_right,r2
 ;	main.c:441: L_motor_dir = 0; 
 	mov	_L_motor_dir,#0x00
@@ -1599,18 +1600,14 @@ _MoveBackward:
 ;	-----------------------------------------
 _TurnRight:
 	mov	r2,dpl
-;	main.c:447: pwm_left = speed * 10; 
-	mov	a,r2
-	mov	b,#0x0A
-	mul	ab
-	mov	r2,a
+;	main.c:447: pwm_left = speed; 
 	mov	_pwm_left,r2
-;	main.c:448: pwm_right = speed * 10; 
+;	main.c:448: pwm_right = speed; 
 	mov	_pwm_right,r2
-;	main.c:449: L_motor_dir = 0; 
-	mov	_L_motor_dir,#0x00
-;	main.c:450: R_motor_dir = 1; 
-	mov	_R_motor_dir,#0x01
+;	main.c:449: L_motor_dir = 1; 
+	mov	_L_motor_dir,#0x01
+;	main.c:450: R_motor_dir = 0; 
+	mov	_R_motor_dir,#0x00
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'TurnLeft'
@@ -1623,35 +1620,37 @@ _TurnRight:
 ;	-----------------------------------------
 _TurnLeft:
 	mov	r2,dpl
-;	main.c:455: pwm_left = speed * 10; 
-	mov	a,r2
-	mov	b,#0x0A
-	mul	ab
-	mov	r2,a
+;	main.c:455: pwm_left = speed; 
 	mov	_pwm_left,r2
-;	main.c:456: pwm_right = speed * 10; 
+;	main.c:456: pwm_right = speed; 
 	mov	_pwm_right,r2
-;	main.c:457: L_motor_dir = 1; 
-	mov	_L_motor_dir,#0x01
-;	main.c:458: R_motor_dir = 0; 
-	mov	_R_motor_dir,#0x00
+;	main.c:457: L_motor_dir = 0; 
+	mov	_L_motor_dir,#0x00
+;	main.c:458: R_motor_dir = 1; 
+	mov	_R_motor_dir,#0x01
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
 ;cnt                       Allocated to registers 
 ;c                         Allocated to registers r4 
-;vx_int                    Allocated to registers 
-;vy_int                    Allocated to registers 
-;vx                        Allocated to registers 
-;vy                        Allocated to registers 
+;vx                        Allocated with name '_main_vx_1_127'
+;vy                        Allocated with name '_main_vy_1_127'
 ;threshold                 Allocated to registers 
+;motor_pwm                 Allocated with name '_main_motor_pwm_1_127'
+;sloc0                     Allocated with name '_main_sloc0_1_0'
 ;------------------------------------------------------------
 ;	main.c:461: void main (void)
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
+;	main.c:465: int vx = 0, vy = 0; 
+	clr	a
+	mov	_main_vx_1_127,a
+	mov	(_main_vx_1_127 + 1),a
+	mov	_main_vy_1_127,a
+	mov	(_main_vy_1_127 + 1),a
 ;	main.c:470: waitms(500);
 	mov	dptr,#0x01F4
 	lcall	_waitms
@@ -1701,7 +1700,7 @@ _main:
 	mov	dptr,#__str_10
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:484: SendATCommand("AT+DVIDABBA\r\n");  
+;	main.c:484: SendATCommand("AT+DVIDEFEF\r\n");  
 	mov	dptr,#__str_11
 	mov	b,#0x80
 	lcall	_SendATCommand
@@ -1716,7 +1715,7 @@ _main:
 ;	main.c:493: while(1)
 	mov	r2,#0x00
 	mov	r3,#0x00
-L024009?:
+L024019?:
 ;	main.c:495: Set_Pin_Output(0x24);
 	mov	dpl,#0x24
 	push	ar2
@@ -1731,45 +1730,45 @@ L024009?:
 ;	main.c:498: Set_Pin_Output(0x21);
 	mov	dpl,#0x21
 	lcall	_Set_Pin_Output
-;	main.c:500: MoveForward(100);
-	mov	dptr,#0x0064
-	lcall	_MoveForward
-;	main.c:501: waitms(2000);
-	mov	dptr,#0x07D0
-	lcall	_waitms
-;	main.c:502: MoveForward(50);
-	mov	dptr,#0x0032
-	lcall	_MoveForward
-;	main.c:503: waitms(2000);
-	mov	dptr,#0x07D0
-	lcall	_waitms
-;	main.c:507: if(RXU1()) // Something has arrived
+;	main.c:501: if(RXU1()) // Something has arrived
 	lcall	_RXU1
+	clr	a
+	rlc	a
 	pop	ar3
 	pop	ar2
-	jnc	L024009?
-;	main.c:509: c=getchar1();
+	jz	L024019?
+;	main.c:503: c=getchar1();
 	push	ar2
 	push	ar3
 	lcall	_getchar1
 	mov	r4,dpl
 	pop	ar3
 	pop	ar2
-;	main.c:511: if(c=='!') // Master is sending message
-	cjne	r4,#0x21,L024004?
-;	main.c:513: getstr1(buff, sizeof(buff)-1);
+;	main.c:505: if(c=='!') // Master is sending message
+	cjne	r4,#0x21,L024032?
+	sjmp	L024033?
+L024032?:
+	ljmp	L024014?
+L024033?:
+;	main.c:507: getstr1(buff, sizeof(buff)-1);
 	mov	_getstr1_PARM_2,#0x13
 	mov	dptr,#_buff
 	mov	b,#0x40
 	push	ar2
 	push	ar3
 	lcall	_getstr1
-;	main.c:523: sscanf(buff, "%03d,%03d", vx_int, vy_int);
-	clr	a
+;	main.c:517: sscanf(buff, "%03d,%03d", &vx, &vy);
+	mov	a,#_main_vy_1_127
 	push	acc
+	mov	a,#(_main_vy_1_127 >> 8)
 	push	acc
-	clr	a
+	mov	a,#0x40
 	push	acc
+	mov	a,#_main_vx_1_127
+	push	acc
+	mov	a,#(_main_vx_1_127 >> 8)
+	push	acc
+	mov	a,#0x40
 	push	acc
 	mov	a,#__str_12
 	push	acc
@@ -1785,19 +1784,13 @@ L024009?:
 	push	acc
 	lcall	_sscanf
 	mov	a,sp
-	add	a,#0xf6
+	add	a,#0xf4
 	mov	sp,a
-;	main.c:527: printf("Joystick Received: Vx = %.3f, Vy = %.3f", vx, vy);
-	clr	a
-	push	acc
-	push	acc
-	push	acc
-	push	acc
-	clr	a
-	push	acc
-	push	acc
-	push	acc
-	push	acc
+;	main.c:519: printf("Joystick Received: Vx = %03d, Vy = %03d\r\n", vx, vy);
+	push	_main_vy_1_127
+	push	(_main_vy_1_127 + 1)
+	push	_main_vx_1_127
+	push	(_main_vx_1_127 + 1)
 	mov	a,#__str_13
 	push	acc
 	mov	a,#(__str_13 >> 8)
@@ -1806,19 +1799,436 @@ L024009?:
 	push	acc
 	lcall	_printf
 	mov	a,sp
-	add	a,#0xf5
+	add	a,#0xf9
+	mov	sp,a
+;	main.c:521: if (vy > threshold){
+	mov	dpl,_main_vy_1_127
+	mov	dph,(_main_vy_1_127 + 1)
+	lcall	___sint2fs
+	mov	_main_sloc0_1_0,dpl
+	mov	(_main_sloc0_1_0 + 1),dph
+	mov	(_main_sloc0_1_0 + 2),b
+	mov	(_main_sloc0_1_0 + 3),a
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,_main_sloc0_1_0
+	mov	dph,(_main_sloc0_1_0 + 1)
+	mov	b,(_main_sloc0_1_0 + 2)
+	mov	a,(_main_sloc0_1_0 + 3)
+	lcall	___fsgt
+	mov	r5,dpl
+	mov	a,sp
+	add	a,#0xfc
 	mov	sp,a
 	pop	ar3
 	pop	ar2
-	ljmp	L024009?
+	mov	a,r5
+	jnz	L024034?
+	ljmp	L024004?
+L024034?:
+;	main.c:522: motor_pwm = abs(vy - threshold) * 100 / threshold; 
+	push	ar2
+	push	ar3
+	push	ar3
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,_main_sloc0_1_0
+	mov	dph,(_main_sloc0_1_0 + 1)
+	mov	b,(_main_sloc0_1_0 + 2)
+	mov	a,(_main_sloc0_1_0 + 3)
+	lcall	___fssub
+	mov	r5,dpl
+	mov	r6,dph
+	mov	r7,b
+	mov	r2,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	mov	dpl,r5
+	mov	dph,r6
+	mov	b,r7
+	mov	a,r2
+	push	ar2
+	push	ar3
+	lcall	___fs2sint
+	lcall	_abs
+	mov	__mulint_PARM_2,dpl
+	mov	(__mulint_PARM_2 + 1),dph
+	pop	ar3
+	pop	ar2
+	mov	dptr,#0x0064
+	lcall	__mulint
+	lcall	___sint2fs
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r5,b
+	mov	r6,a
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r5
+	mov	a,r6
+	lcall	___fsdiv
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r5,b
+	mov	r6,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r5
+	mov	a,r6
+	push	ar2
+	push	ar3
+	lcall	___fs2sint
+;	main.c:523: MoveForward(motor_pwm);
+	mov	_main_motor_pwm_1_127,dpl
+	mov  (_main_motor_pwm_1_127 + 1),dph
+	lcall	_MoveForward
+	pop	ar3
+	pop	ar2
+	pop	ar3
+	pop	ar2
+	ljmp	L024005?
 L024004?:
-;	main.c:543: else if(c=='@') // Master wants slave data
-	cjne	r4,#0x40,L024020?
-	sjmp	L024021?
-L024020?:
+;	main.c:525: else if (vy < threshold){
+	push	ar2
+	push	ar3
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,_main_sloc0_1_0
+	mov	dph,(_main_sloc0_1_0 + 1)
+	mov	b,(_main_sloc0_1_0 + 2)
+	mov	a,(_main_sloc0_1_0 + 3)
+	lcall	___fslt
+	mov	r5,dpl
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	pop	ar2
+	mov	a,r5
+	jnz	L024035?
+	ljmp	L024005?
+L024035?:
+;	main.c:526: motor_pwm = abs(threshold - vy) * 100 / threshold; 
+	push	ar2
+	push	ar3
+	push	ar3
+	push	_main_sloc0_1_0
+	push	(_main_sloc0_1_0 + 1)
+	push	(_main_sloc0_1_0 + 2)
+	push	(_main_sloc0_1_0 + 3)
+	mov	dptr,#0x0000
+	mov	b,#0x21
+	mov	a,#0x43
+	lcall	___fssub
+	mov	r5,dpl
+	mov	r6,dph
+	mov	r7,b
+	mov	r2,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	mov	dpl,r5
+	mov	dph,r6
+	mov	b,r7
+	mov	a,r2
+	push	ar2
+	push	ar3
+	lcall	___fs2sint
+	lcall	_abs
+	mov	__mulint_PARM_2,dpl
+	mov	(__mulint_PARM_2 + 1),dph
+	pop	ar3
+	pop	ar2
+	mov	dptr,#0x0064
+	lcall	__mulint
+	lcall	___sint2fs
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r5,b
+	mov	r6,a
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r5
+	mov	a,r6
+	lcall	___fsdiv
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r5,b
+	mov	r6,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r5
+	mov	a,r6
+	push	ar2
+	push	ar3
+	lcall	___fs2sint
+;	main.c:527: MoveBackward(motor_pwm);
+	mov	_main_motor_pwm_1_127,dpl
+	mov  (_main_motor_pwm_1_127 + 1),dph
+	lcall	_MoveBackward
+	pop	ar3
+	pop	ar2
+;	main.c:546: sendstr1(buff);
+	pop	ar3
+	pop	ar2
+;	main.c:527: MoveBackward(motor_pwm);
+L024005?:
+;	main.c:529: if(vx > threshold){
+	mov	dpl,_main_vx_1_127
+	mov	dph,(_main_vx_1_127 + 1)
+	push	ar2
+	push	ar3
+	lcall	___sint2fs
+	mov	_main_sloc0_1_0,dpl
+	mov	(_main_sloc0_1_0 + 1),dph
+	mov	(_main_sloc0_1_0 + 2),b
+	mov	(_main_sloc0_1_0 + 3),a
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,_main_sloc0_1_0
+	mov	dph,(_main_sloc0_1_0 + 1)
+	mov	b,(_main_sloc0_1_0 + 2)
+	mov	a,(_main_sloc0_1_0 + 3)
+	lcall	___fsgt
+	mov	r5,dpl
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	pop	ar2
+	mov	a,r5
+	jnz	L024036?
 	ljmp	L024009?
-L024021?:
-;	main.c:545: sprintf(buff, "%05u\n", cnt);
+L024036?:
+;	main.c:530: motor_pwm = abs(vx - threshold) * 100 / threshold; 
+	push	ar2
+	push	ar3
+	push	ar3
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,_main_sloc0_1_0
+	mov	dph,(_main_sloc0_1_0 + 1)
+	mov	b,(_main_sloc0_1_0 + 2)
+	mov	a,(_main_sloc0_1_0 + 3)
+	lcall	___fssub
+	mov	r5,dpl
+	mov	r6,dph
+	mov	r7,b
+	mov	r2,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	mov	dpl,r5
+	mov	dph,r6
+	mov	b,r7
+	mov	a,r2
+	push	ar2
+	push	ar3
+	lcall	___fs2sint
+	lcall	_abs
+	mov	__mulint_PARM_2,dpl
+	mov	(__mulint_PARM_2 + 1),dph
+	pop	ar3
+	pop	ar2
+	mov	dptr,#0x0064
+	lcall	__mulint
+	lcall	___sint2fs
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r5,b
+	mov	r6,a
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r5
+	mov	a,r6
+	lcall	___fsdiv
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r5,b
+	mov	r6,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r5
+	mov	a,r6
+	push	ar2
+	push	ar3
+	lcall	___fs2sint
+;	main.c:531: TurnRight(motor_pwm);
+	mov	_main_motor_pwm_1_127,dpl
+	mov  (_main_motor_pwm_1_127 + 1),dph
+	lcall	_TurnRight
+	pop	ar3
+	pop	ar2
+	pop	ar3
+	pop	ar2
+	ljmp	L024019?
+L024009?:
+;	main.c:533: else if (vx < threshold){
+	push	ar2
+	push	ar3
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,_main_sloc0_1_0
+	mov	dph,(_main_sloc0_1_0 + 1)
+	mov	b,(_main_sloc0_1_0 + 2)
+	mov	a,(_main_sloc0_1_0 + 3)
+	lcall	___fslt
+	mov	r5,dpl
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	pop	ar2
+	mov	a,r5
+	jnz	L024037?
+	ljmp	L024019?
+L024037?:
+;	main.c:534: motor_pwm = abs(threshold - vx) * 100 / threshold; 
+	push	ar2
+	push	ar3
+	push	ar3
+	push	_main_sloc0_1_0
+	push	(_main_sloc0_1_0 + 1)
+	push	(_main_sloc0_1_0 + 2)
+	push	(_main_sloc0_1_0 + 3)
+	mov	dptr,#0x0000
+	mov	b,#0x21
+	mov	a,#0x43
+	lcall	___fssub
+	mov	r5,dpl
+	mov	r6,dph
+	mov	r7,b
+	mov	r2,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	mov	dpl,r5
+	mov	dph,r6
+	mov	b,r7
+	mov	a,r2
+	push	ar2
+	push	ar3
+	lcall	___fs2sint
+	lcall	_abs
+	mov	__mulint_PARM_2,dpl
+	mov	(__mulint_PARM_2 + 1),dph
+	pop	ar3
+	pop	ar2
+	mov	dptr,#0x0064
+	lcall	__mulint
+	lcall	___sint2fs
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r5,b
+	mov	r6,a
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r5
+	mov	a,r6
+	lcall	___fsdiv
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r5,b
+	mov	r6,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r5
+	mov	a,r6
+	push	ar2
+	push	ar3
+	lcall	___fs2sint
+;	main.c:535: TurnLeft(motor_pwm);
+	mov	_main_motor_pwm_1_127,dpl
+	mov  (_main_motor_pwm_1_127 + 1),dph
+	lcall	_TurnLeft
+	pop	ar3
+	pop	ar2
+	pop	ar3
+	pop	ar2
+	ljmp	L024019?
+L024014?:
+;	main.c:541: else if(c=='@') // Master wants slave data
+	cjne	r4,#0x40,L024038?
+	sjmp	L024039?
+L024038?:
+	ljmp	L024019?
+L024039?:
+;	main.c:543: sprintf(buff, "%05u\n", cnt);
 	push	ar2
 	push	ar3
 	push	ar2
@@ -1841,23 +2251,23 @@ L024021?:
 	mov	sp,a
 	pop	ar3
 	pop	ar2
-;	main.c:546: cnt++;
+;	main.c:544: cnt++;
 	inc	r2
-	cjne	r2,#0x00,L024022?
+	cjne	r2,#0x00,L024040?
 	inc	r3
-L024022?:
-;	main.c:547: waitms(5); // The radio seems to need this delay...
+L024040?:
+;	main.c:545: waitms(5); // The radio seems to need this delay...
 	mov	dptr,#0x0005
 	push	ar2
 	push	ar3
 	lcall	_waitms
-;	main.c:548: sendstr1(buff);
+;	main.c:546: sendstr1(buff);
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_sendstr1
 	pop	ar3
 	pop	ar2
-	ljmp	L024009?
+	ljmp	L024019?
 	rseg R_CSEG
 
 	rseg R_XINIT
@@ -1919,7 +2329,7 @@ __str_10:
 	db 0x0A
 	db 0x00
 __str_11:
-	db 'AT+DVIDABBA'
+	db 'AT+DVIDEFEF'
 	db 0x0D
 	db 0x0A
 	db 0x00
@@ -1927,7 +2337,9 @@ __str_12:
 	db '%03d,%03d'
 	db 0x00
 __str_13:
-	db 'Joystick Received: Vx = %.3f, Vy = %.3f'
+	db 'Joystick Received: Vx = %03d, Vy = %03d'
+	db 0x0D
+	db 0x0A
 	db 0x00
 __str_14:
 	db '%05u'
