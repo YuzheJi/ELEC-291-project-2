@@ -256,7 +256,7 @@ void main(void)
 		nadc=readADC(ADC_CHSELR_CHSEL6);
 		vctrl100 = (int)100.0*(nadc*3.3)/0x1000;
 
-		vctrl100 = (vctrl100 - 167)/133;
+		vctrl100 = 100*(vctrl100 - 167)/133;
 
 		if(vctrl100 < 1){
 			sprintf(lb,"Vx=%.2f   B:", vx100/100.0);
@@ -265,10 +265,15 @@ void main(void)
 			WriteData(0);
 			WriteData(0);
 		}	
-		else{
+		else if(vctrl100 > 100){
+			sprintf(lb,"Vx=%.2f   B:100%%", vx100/100.0, vctrl100);
+			LCDprint(lb,1,1);
+		}		
+		
+		else {
 			sprintf(lb,"Vx=%.2f   B:%d%%", vx100/100.0, vctrl100);
 			LCDprint(lb,1,1);
-		}			
+		}	
 		
 		
 		sprintf(lb,"Vy=%.2f", vy100/100.0);
