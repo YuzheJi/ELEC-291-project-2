@@ -8,11 +8,21 @@
 #include "lcd.h"
 #include "adc.h"
 
+
+#define SYSCLK 32000000L
+
+
+// timer21 ISR
+void TIM21_Handler(void) 
+{
+	TIM21->SR &= ~BIT0; // clear update interrupt flag
+	GPIOB->ODR ^= BIT7; // toggle output pin
+}
 // LQFP32 pinout
 //              ----------
 // 3.3v   VDD -|1       32|- VSS
 //       PC14 -|2       31|- BOOT0
-//       PC15 -|3       30|- PB7
+//       PC15 -|3       30|- PB7 buzzer
 // RST   NRST -|4       29|- PB6
 // 3.3v  VDDA -|5       28|- PB5
 // LCD_RS PA0 -|6       27|- PB4
@@ -27,6 +37,7 @@
 // vx     PB1 -|15      18|- PA8  joystick button
 // GND    VSS -|16      17|- VDD  3.3v
 //              ----------
+#define JOYBUT (GPIOA->IDR&BIT8) // PA8
 
 // mode: 0 - 00 no pull, 1 - 01 pull up, 2 - 10 pull down
 void Set_Pin_Input(int pin, int pmode){
@@ -83,6 +94,9 @@ void Configure_Pins (void)
 	Set_Pin_Output(0,3,0);
 	Set_Pin_Output(0,4,0);
 	Set_Pin_Output(0,5,0);
+	Set_Pin_Output(1,7,0);
+
+	Set_Pin_Output(0,8,1);
 
 	GPIOA->OSPEEDR=0xffff0000; // All pins of port A configured for very high speed! Page 201 of RM0451
 
@@ -97,6 +111,35 @@ void Configure_Pins (void)
 	GPIOB->MODER |= (BIT2|BIT3);  // Select analog mode for PB1 (pin 15 of LQFP32 package)
 	GPIOB->MODER |= (BIT0|BIT1);  // Select analog mode for PB0 (pin 14 of LQFP32 package)
 	GPIOA->MODER |= (BIT12|BIT13);  // Select analog mode for PB0 (pin 12 of LQFP32 package)
+
+	// Set up timer21 for Buzzer
+	RCC->APB2ENR |= BIT2;  // turn on clock for timer21 (UM: page 188)
+	NVIC->ISER[0] |= BIT20; // enable timer 21 interrupts in the NVIC
+	TIM21->CR1 |= BIT4;      // Downcounting      
+	TIM21->DIER |= BIT0;     // enable update event (reload event) interrupt  
+	__enable_irq();
+}
+
+void Setbuzzer_freq(long TICK_FREQ){
+	TIM21->ARR = SYSCLK/TICK_FREQ;
+	return;
+}
+
+void Buzzer(char mode){
+	switch (mode){
+	case 2:
+		TIM21->CR1 ^= BIT0;
+		GPIOB->ODR &= ~BIT7;
+		break;
+	case 1:
+		TIM21->CR1 |= BIT0;
+		break;
+	case 0:
+		TIM21->CR1 &= ~BIT0;
+		GPIOB->ODR &= ~BIT7;
+		break;
+	}
+	return;
 }
 
 void SendATCommand (char * s)
@@ -127,6 +170,7 @@ void main(void)
 {  
 	char buff[80];
 	char lb[17];
+	long buzzer_freq = 300L;
     int timeout_cnt=0;
 	int nadc;
 
@@ -139,6 +183,8 @@ void main(void)
 	Configure_Pins();
 	LCD_4BIT();
 	initADC();
+
+	Setbuzzer_freq(buzzer_freq);
 
 	initUART2(9600);
 	LCDprint("ELEC-291:       ", 1, 1);
@@ -165,7 +211,7 @@ void main(void)
 	
 	// We should select an unique device ID.  The device ID can be a hex
 	// number from 0x0000 to 0xFFFF.  In this case is set to 0xABBA
-	SendATCommand("AT+DVIDABBA\r\n");
+	SendATCommand("AT+DVIDEFEF\r\n");
 
    	// Display something in the LCD
 	        //1234567890123456
@@ -179,6 +225,8 @@ void main(void)
 
 		nadc=readADC(ADC_CHSELR_CHSEL9);
 		vy100 = (int)100.0*(nadc*3.3)/0x1000;
+
+		Setbuzzer_freq(buzzer_freq+vy100*50);
 
 		nadc=readADC(ADC_CHSELR_CHSEL6);
 		vctrl100 = (int)100.0*(nadc*3.3)/0x1000;
@@ -194,11 +242,11 @@ void main(void)
 		sprintf(buff, "%03d,%03d\n", vx100, vy100); // Construct a test message
 		eputc2('!'); // Send a message to the slave. First send the 'attention' character which is '!'
 		// Wait a bit so the slave has a chance to get ready
-		waitms(10); // This may need adjustment depending on how busy is the slave
+		waitms(20); // This may need adjustment depending on how busy is the slave
 		eputs2(buff); // Send the test message
 		
 		
-		waitms(10); // This may need adjustment depending on how busy is the slave
+		waitms(20); // This may need adjustment depending on how busy is the slave
 
 		eputc2('@'); // Request a message from the slave
 		
@@ -206,7 +254,7 @@ void main(void)
 		while(1)
 		{
 			if(ReceivedBytes2()>0) break; // Something has arrived
-			if(++timeout_cnt>250) break; // Wait up to 25ms for the repply
+			if(++timeout_cnt>500) break; // Wait up to 25ms for the repply
 			Delay_us(100); // 100us*250=25ms
 		}
 		
@@ -226,6 +274,12 @@ void main(void)
 		{
 			printf("NO RESPONSE\r\n", buff);
 		}
+
+		if(!JOYBUT){
+			while(!JOYBUT);
+			Buzzer(2); // toggle buzzer 
+		}
+		
 		
 		waitms(50);  // Set the information interchange pace: communicate about every 50ms
 	}
