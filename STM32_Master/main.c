@@ -165,6 +165,20 @@ void ReceptionOff (void)
 	while (ReceivedBytes2()>0) egetc2(); // Clear FIFO
 }
 
+void LCD_Custom_Char(unsigned char loc, unsigned char *charmap)
+{
+    int i;
+    if (loc < 8)  
+    {
+        WriteCommand(0x40 + (loc * 8)); 
+        for (i = 0; i < 8; i++)
+        {
+            WriteData(charmap[i]);  
+        }
+    }
+}
+
+
 
 void main(void)
 {  
@@ -179,10 +193,23 @@ void main(void)
 	int vy100;
 	int vctrl100;
 
+	
+	uint8_t charge[8] = {
+		0b00000010, //       
+		0b00000100, //   
+		0b00001100, //       
+		0b00011111, //  
+		0b00000110, //  
+		0b00000100, //       
+		0b00001000, //       
+		0x00  //       
+	};
+
 
 	Configure_Pins();
 	LCD_4BIT();
 	initADC();
+	LCD_Custom_Char(0, charge);
 
 	Setbuzzer_freq(buzzer_freq);
 
@@ -190,12 +217,12 @@ void main(void)
 	LCDprint("ELEC-291:       ", 1, 1);
 	LCDprint("       Project2 ", 2, 1);
 
-	waitms(2000);
+	waitms(1000);
 
 	LCDprint("Coin-Picking    ", 1, 1);
 	LCDprint("          Robot ", 2, 1);
 
-	waitms(2000);
+	waitms(1000);
 
 	ReceptionOff();
 	
@@ -226,15 +253,23 @@ void main(void)
 		nadc=readADC(ADC_CHSELR_CHSEL9);
 		vy100 = (int)100.0*(nadc*3.3)/0x1000;
 
-		Setbuzzer_freq(buzzer_freq+vy100*50);
-
 		nadc=readADC(ADC_CHSELR_CHSEL6);
 		vctrl100 = (int)100.0*(nadc*3.3)/0x1000;
 
-		if(vctrl100/3<50)	sprintf(lb,"Vx=%.2f  B:100%%", vx100/100.0);
-		else			sprintf(lb,"Vx=%.2f  B:%d%%", vx100/100.0, vctrl100/3);
-		LCDprint(lb,1,1);
+		vctrl100 = (vctrl100 - 167)/133;
 
+		if(vctrl100 < 1){
+			sprintf(lb,"Vx=%.2f   B:", vx100/100.0);
+			LCDprint(lb,1,1);
+			WriteCommand(0x8c);
+			WriteData(0);
+			WriteData(0);
+		}	
+		else{
+			sprintf(lb,"Vx=%.2f   B:%d%%", vx100/100.0, vctrl100);
+			LCDprint(lb,1,1);
+		}			
+		
 		
 		sprintf(lb,"Vy=%.2f", vy100/100.0);
 		LCDprint(lb,2,1);
