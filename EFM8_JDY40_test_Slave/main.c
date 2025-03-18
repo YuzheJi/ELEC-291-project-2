@@ -7,11 +7,12 @@
 #define BAUDRATE 115200L
 #define SARCLK 18000000L
 #define RELOAD_10us (0x10000L-(SYSCLK/(12L*100000L))) // 10us rate
+#define TIMER_0_FREQ 2000L // For a 0.5ms tick
 
 //                                    ----------  
 // RF_RXD               P0.0      1  |          |  32      P0.1     RF_TXD
-//                      GND       2  |          |  31      P0.2  
-//                      5V        3  |          |  30      P0.3  
+//                      GND       2  |          |  31      P0.2  	Servo_base
+//                      5V        3  |          |  30      P0.3  	Servo_arm
 //                      5V        4  |          |  29      P0.4  
 //                      RST       5  |          |  28      P0.5  
 //                      P3.7      6  |          |  27      P0.6  
@@ -23,22 +24,32 @@
 //                      P2.5     12  |          |  21      P1.4  
 // R_bridge_2           P2.4     13  |          |  20      P1.5  
 // R_bridge_1           P2.3     14  |          |  19      P1.6  
-// L_bridge_2           P2.2     15  |          |  18      P1.7  
+// L_bridge_2           P2.2     15  |          |  18      P1.7  	Servo_EN
 // L_bridge_1           P2.1     16  |          |  17      P2.0     RF_SET
 //                                    ----------  
 
+
+// Timer Overview
+// Timer1 - Baud rate 9600 for RF
+// Timer5 - Motor PWM 
+// Timer
 
 // Definitions
 #define R_bridge_1 P2_4
 #define R_bridge_2 P2_3
 #define L_bridge_2 P2_2
 #define L_bridge_1 P2_1
+#define Servo_base P0_2
+#define Servo_arm P0_3
+#define Servo_EN P1_7
 
 
 idata char buff[20];
 unsigned int pwm_counter = 0; 
+unsigned int servo_counter = 0; 
 unsigned char pwm_left = 0, pwm_right = 0; 
 unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
+unsigned char servo_base_pwm = 0, servo_arm_pwm = 0; 
 
 
 char _c51_external_startup (void)
@@ -109,15 +120,28 @@ char _c51_external_startup (void)
   	
   	P2_0=1; // 'set' pin to 1 is normal operation mode.
 
-    // Initialize timer 5 for periodic interrupts
+    // Initialize Timer 5 for periodic interrupts
 	SFRPAGE=0x10;
 	TMR5CN0=0x00;
 	TMR5=0xffff;   // Set to reload immediately
 	EIE2|=0b_0000_1000; // Enable Timer5 interrupts
 	TR5=1;         // Start Timer5 (TMR5CN0 is bit addressable)
 	
-	EA=1;
+	// Initialize Timer0
+	TR0=0;
+	TF0=0;
+	CKCON0|=0b_0000_0100; // Timer 0 uses the system clock
+	TMOD&=0xf0;
+	TMOD|=0x01; // Timer 0 in mode 1: 16-bit timer
+	#if (SYSCLK/(TIMER_0_FREQ)>0xFFFFL)
+		#error Timer 0 reload value is incorrect because SYSCLK/(TIMER_0_FREQ) > 0xFFFFL
+	#endif
+	TMR0=0x10000L-(SYSCLK/(TIMER_0_FREQ)); // Initialize reload value
+	ET0=1; // Enable Timer0 interrupts
+	TR0=1; // Start Timer0
 	
+
+	EA=1;  // Enable global interrupts
 	SFRPAGE=0x00;
 	
 	return 0;
@@ -310,6 +334,21 @@ void Set_Pin_Output (unsigned char pin)
 	}	
 }
 
+void Set_Pin_Input (unsigned char pin)
+{
+	xdata unsigned char mask;
+	
+	mask=(1<<(pin&0x7));
+	mask=~mask;
+	switch(pin/0x10)
+	{
+		case 0: P0MDOUT &= mask; break;
+		case 1: P1MDOUT &= mask; break;
+		case 2: P2MDOUT &= mask; break; 
+		case 3: P3MDOUT &= mask; break; 
+	}	
+}
+
 void InitADC (void)
 {
 	SFRPAGE = 0x00;
@@ -392,11 +431,11 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 	TMR5RL = RELOAD_10us; // Reload Timer5 for 10us intervals 
 
     pwm_counter++; 
-    if (pwm_counter >= 1000){
+    if (pwm_counter == 100){
         pwm_counter = 0; 
     }
 
-    if (pwm_counter < pwm_left){
+    if (pwm_left > pwm_counter){
         if(L_motor_dir){
             L_bridge_1 = 1; 
             L_bridge_2 = 0; 
@@ -408,9 +447,9 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
     }
     else {
         L_bridge_1 = 0; 
-        L_bridge_1 = 0; 
+        L_bridge_2 = 0; 
     }
-    if (pwm_counter < pwm_right){
+    if (pwm_right > pwm_counter){
         if (R_motor_dir){
             R_bridge_1 = 1; 
             R_bridge_2 = 0;
@@ -426,46 +465,75 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
     }
 }
 
+void Timer0_ISR (void) interrupt INTERRUPT_TIMER0
+{
+	SFRPAGE=0x0;
+	// Timer 0 in 16-bit mode doesn't have auto reload, so reload here
+	TMR0 = 0x10000L-(SYSCLK/(TIMER_0_FREQ));
+	
+	servo_counter++;
+	if(servo_counter==1000)
+	{
+		servo_counter=0;
+	}
+	if (servo_base_pwm > servo_counter)
+	{
+		Servo_base = 1; 
+	}
+	else {
+		Servo_base = 0;
+	}
+	if (servo_arm_pwm > servo_counter)
+	{
+		Servo_arm = 1; 
+	}
+	else{
+		Servo_arm = 0; 
+	}
+
+}
+
 void MoveForward (int speed)
 {
-    pwm_left = speed * 10; 
-    pwm_right = speed * 10; 
-    L_motor_dir = 1; 
-    R_motor_dir = 1; 
+    pwm_left = speed; 
+    pwm_right = speed; 
+    L_motor_dir = 0; 
+    R_motor_dir = 0; 
 }
 
 void MoveBackward (int speed)
 {
-    pwm_left = speed * 10; 
-    pwm_right = speed * 10; 
-    L_motor_dir = 0; 
-    R_motor_dir = 0;  
+    pwm_left = speed; 
+    pwm_right = speed; 
+    L_motor_dir = 1; 
+    R_motor_dir = 1;  
 }
 
 void TurnRight (int speed)
 {
-    pwm_left = speed * 10; 
-    pwm_right = speed * 10; 
-    L_motor_dir = 0; 
-    R_motor_dir = 1; 
+    pwm_left = speed; 
+    pwm_right = speed; 
+    L_motor_dir = 1; 
+    R_motor_dir = 0; 
 }
 
 void TurnLeft (int speed)
 {
-    pwm_left = speed * 10; 
-    pwm_right = speed * 10; 
-    L_motor_dir = 1; 
-    R_motor_dir = 0; 
+    pwm_left = speed; 
+    pwm_right = speed; 
+    L_motor_dir = 0; 
+    R_motor_dir = 1; 
 }
 
 void main (void)
 {
     unsigned int cnt=0;
     char c;
-    int vx_int = 0, vy_int = 0; 
-    float vx = 0.0; 
-    float vy = 0.0; 
-    float threshold = 0.1; 
+    int vx = 0, vy = 0; 
+    float threshold = 161;
+	int motor_pwm = 0; 
+
+
 	
 	waitms(500);
 	printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
@@ -481,7 +549,7 @@ void main (void)
 	SendATCommand("AT+RFC\r\n");
 	SendATCommand("AT+POWE\r\n");
 	SendATCommand("AT+CLSS\r\n");
-	SendATCommand("AT+DVIDABBA\r\n");  
+	SendATCommand("AT+DVIDEFEF\r\n");  
 
     //initialize variables 
     L_bridge_1 = 0; 
@@ -496,12 +564,14 @@ void main (void)
         Set_Pin_Output(0x23);
         Set_Pin_Output(0x22);
         Set_Pin_Output(0x21);
-
-        MoveForward(100);
-        waitms(2000);
-        MoveForward(50);
-        waitms(2000);
-
+		Set_Pin_Input(0x17);
+		
+		while(Servo_EN == 0){
+			waitms(25);
+			if (Servo_EN == 1){
+				
+			}
+		}
 
 		// The message format: 000,000 --- (vx,vy)
 		if(RXU1()) // Something has arrived
@@ -511,33 +581,37 @@ void main (void)
 			if(c=='!') // Master is sending message
 			{
 				getstr1(buff, sizeof(buff)-1);
-				// if(strlen(buff)==7)
-				// {
-				// 	printf("Master says: %s\r\n", buff);
-				// }
-				// else
-				// {
-				// 	printf("*** BAD MESSAGE ***(%d): %s\r\n", buff,strlen(buff));
-				// }	
-                	
-                sscanf(buff, "%03d,%03d", vx_int, vy_int);
-                vx = (float)vx_int / 5.0; 
-                vy = (float)vy_int / 5.0; 
-                
-                printf("Joystick Received: Vx = %.3f, Vy = %.3f", vx, vy);
+				if(strlen(buff)==7)
+				{
+					//printf("Master says: %s\r\n", buff);
 
-                // if (vy > threshold){
-                //     MoveForward();
-                // }
-                // else if (vy < -threshold){
-                //     MoveBackward();
-                // }
-                // else if (vx > threshold){
-                //     TurnRight();
-                // }
-                // else if (vx < -threshold){
-                //     TurnRight();
-                // }
+					sscanf(buff, "%03d,%03d", &vx, &vy);
+                
+                	printf("Joystick Received: Vx = %03d, Vy = %03d\r\n", vx, vy);
+
+					if (vy > threshold){
+						motor_pwm = abs(vy - threshold) * 100 / threshold; 
+						MoveForward(motor_pwm);
+					}
+					else if (vy < threshold){
+						motor_pwm = abs(threshold - vy) * 100 / threshold; 
+						MoveBackward(motor_pwm);
+					}
+					if(vx > threshold){
+						motor_pwm = abs(vx - threshold) * 100 / threshold; 
+						TurnRight(motor_pwm);
+					}
+					else if (vx < threshold){
+						motor_pwm = abs(threshold - vx) * 100 / threshold; 
+						TurnLeft(motor_pwm);
+					}
+				}
+				else
+				{
+					printf("*** BAD MESSAGE ***(%d): %s\r\n", buff,strlen(buff));
+				}		
+
+                
 
 			}
 			else if(c=='@') // Master wants slave data
