@@ -24,7 +24,7 @@
 //                      P2.5     12  |          |  21      P1.4  
 // R_bridge_2           P2.4     13  |          |  20      P1.5  
 // R_bridge_1           P2.3     14  |          |  19      P1.6  
-// L_bridge_2           P2.2     15  |          |  18      P1.7  	Servo_EN
+// L_bridge_2           P2.2     15  |          |  18      P1.7  	Calibration_EN
 // L_bridge_1           P2.1     16  |          |  17      P2.0     RF_SET
 //                                    ----------  
 
@@ -32,7 +32,7 @@
 // Timer Overview
 // Timer1 - Baud rate 9600 for RF
 // Timer5 - Motor PWM 
-// Timer
+// Timer0 - Servo PWM
 
 // Definitions
 #define R_bridge_1 P2_4
@@ -41,7 +41,7 @@
 #define L_bridge_1 P2_1
 #define Servo_base P0_2
 #define Servo_arm P0_3
-#define Servo_EN P1_7
+#define Calibration_EN P1_7
 
 
 idata char buff[20];
@@ -50,6 +50,8 @@ unsigned int servo_counter = 0;
 unsigned char pwm_left = 0, pwm_right = 0; 
 unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
 unsigned char servo_base_pwm = 0, servo_arm_pwm = 0; 
+int vx = 0, vy = 0; 
+int vx_thres = 0, vy_thres = 0; 
 
 
 char _c51_external_startup (void)
@@ -490,50 +492,27 @@ void Timer0_ISR (void) interrupt INTERRUPT_TIMER0
 	else{
 		Servo_arm = 0; 
 	}
-
 }
 
-void MoveForward (int speed)
+void Calibrate_Joystick(void)
 {
-    pwm_left = speed; 
-    pwm_right = speed; 
-    L_motor_dir = 0; 
-    R_motor_dir = 0; 
-}
-
-void MoveBackward (int speed)
-{
-    pwm_left = speed; 
-    pwm_right = speed; 
-    L_motor_dir = 1; 
-    R_motor_dir = 1;  
-}
-
-void TurnRight (int speed)
-{
-    pwm_left = speed; 
-    pwm_right = speed; 
-    L_motor_dir = 1; 
-    R_motor_dir = 0; 
-}
-
-void TurnLeft (int speed)
-{
-    pwm_left = speed; 
-    pwm_right = speed; 
-    L_motor_dir = 0; 
-    R_motor_dir = 1; 
+	int i; 
+	printf("Calibration Starts\r");
+	for (i = 0; (i<10) && (((155<=vx)&&(vx<=170))||((155<=vy)&&(vy<=170))); i++){
+		vx_thres += vx; 
+		vy_thres += vy; 
+	}
+	vx_thres = vx_thres / 10; 
+	vy_thres = vy_thres / 10; 
+	waitms(10);
+	printf("Calibration Complete: Vx_ca = %d, Vy_ca = %d", vx_thres, vy_thres);
 }
 
 void main (void)
 {
     unsigned int cnt=0;
     char c;
-    int vx = 0, vy = 0; 
-    float threshold = 161;
-	int motor_pwm = 0; 
-
-
+	int vx_error, vy_error; 
 	
 	waitms(500);
 	printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
@@ -551,12 +530,13 @@ void main (void)
 	SendATCommand("AT+CLSS\r\n");
 	SendATCommand("AT+DVIDEFEF\r\n");  
 
-    //initialize variables 
+    //initialize variables and functions
     L_bridge_1 = 0; 
     L_bridge_2 = 0; 
     R_bridge_1 = 0; 
     R_bridge_2 = 0; 
-	
+	Calibrate_Joystick();
+
 	cnt=0;
 	while(1)
 	{	
@@ -565,13 +545,6 @@ void main (void)
         Set_Pin_Output(0x22);
         Set_Pin_Output(0x21);
 		Set_Pin_Input(0x17);
-		
-		while(Servo_EN == 0){
-			waitms(25);
-			if (Servo_EN == 1){
-				
-			}
-		}
 
 		// The message format: 000,000 --- (vx,vy)
 		if(RXU1()) // Something has arrived
@@ -588,22 +561,34 @@ void main (void)
 					sscanf(buff, "%03d,%03d", &vx, &vy);
                 
                 	printf("Joystick Received: Vx = %03d, Vy = %03d\r\n", vx, vy);
-
-					if (vy > threshold){
-						motor_pwm = abs(vy - threshold) * 100 / threshold; 
-						MoveForward(motor_pwm);
+					
+					// Determine of Vx and Vy are within 5% error
+					vx_error = abs(vx-vx_thres)*100/vx_thres; 
+					vy_error = abs(vy-vy_thres)*100/vy_thres; 
+					// if vx moved but vy didn't move => move forward 
+					if ((vy_error>5) && (vx_error<5)){
+						pwm_left = vy_error; 
+						pwm_right = vy_error; 
+						if ((vy-vy_thres) > 0){
+							L_motor_dir = 0; 
+							R_motor_dir = 0; 
+						}
+						else {
+							L_motor_dir = 1; 
+							R_motor_dir = 1; 
+						}
 					}
-					else if (vy < threshold){
-						motor_pwm = abs(threshold - vy) * 100 / threshold; 
-						MoveBackward(motor_pwm);
-					}
-					if(vx > threshold){
-						motor_pwm = abs(vx - threshold) * 100 / threshold; 
-						TurnRight(motor_pwm);
-					}
-					else if (vx < threshold){
-						motor_pwm = abs(threshold - vx) * 100 / threshold; 
-						TurnLeft(motor_pwm);
+					if ((vx_error>5)&&(vy_error<5)){
+						pwm_left = vx_error; 
+						pwm_right = vx_error; 
+						if ((vx-vx_thres) > 0){
+							L_motor_dir = 1; 
+							R_motor_dir = 0; 
+						}
+						else{
+							L_motor_dir = 0; 
+							R_motor_dir = 1; 
+						}
 					}
 				}
 				else

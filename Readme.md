@@ -29,6 +29,6 @@ Robot - metal detecor(colpitts), perimeter Detector(opamp + peak detector), moto
 
 - During autonomous mode, we divide our search perimeter into a grid, and record the relative "magnetic field intensity" by measuring the change in frequency (it'll have a differnet freq when a coin is near it). Record these data into a matrix, send it through radio to our computer, and we can use this matrix to generate a 2D intensity map
 
-- Have a python interactive map that allows users to draw their desired path. Convert those to waypoints and sent over to the robot, which it will follow. (I think this is too hard)
+- Have a python interactive map that allows users to draw their desired path. Convert those to waypoints and sent over to the robot, which it will follow. (I think this is too hard)`
 
 
