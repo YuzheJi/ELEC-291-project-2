@@ -1,11 +1,7 @@
 0000              1   ;--------------------------------------------------------
 0000              2   ; File Created by C51
 0000              3   ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-<<<<<<< HEAD
-0000              4   ; This file was generated Tue Mar 18 16:04:06 2025
-=======
-0000              4   ; This file was generated Tue Mar 18 14:40:19 2025
->>>>>>> 79f0ffb8a6697384105a9c397191a8cd7521d9e9
+0000              4   ; This file was generated Tue Mar 18 16:13:09 2025
 0000              5   ;--------------------------------------------------------
                   5   $name main
                   6   $optc51 --model-small
@@ -570,1307 +566,6 @@
 0000            566   ;--------------------------------------------------------
 0000            567   ; paged external ram data
 0000            568   ;--------------------------------------------------------
-<<<<<<< HEAD
-0000            569            CSEG at 0x0000
-0000 020000     570            ljmp    _crt0
-0093            571            CSEG at 0x0093
-0093 020000     572            ljmp    _Timer5_ISR
-0096            573   ;--------------------------------------------------------
-0096            574   ; global & static initialisations
-0096            575   ;--------------------------------------------------------
-0000            576            rseg R_HOME
-0000            577            rseg R_GSINIT
-0000            578            rseg R_GSINIT
-0000            579   ;--------------------------------------------------------
-0000            580   ; data variables initialization
-0000            581   ;--------------------------------------------------------
-0000            582            rseg R_DINIT
-0000            583   ;        main.c:39: unsigned int pwm_counter = 0; 
-0000 E4         584            clr     a
-0001 F510       585            mov     _pwm_counter,a
-0003 F511       586            mov     (_pwm_counter + 1),a
-0005            587   ;        main.c:40: unsigned char pwm_left = 0, pwm_right = 0; 
-0005 75D000     588            mov     _pwm_left,#0x00
-0008            589   ;        main.c:40: unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
-0008 759000     590            mov     _pwm_right,#0x00
-000B            591   ;        main.c:41: 
-000B 755001     592            mov     _L_motor_dir,#0x01
-000E            593   ;        main.c:41: unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
-000E 751001     594            mov     _R_motor_dir,#0x01
-0011            595            ; The linker places a 'ret' at the end of segment R_DINIT.
-0011            596   ;--------------------------------------------------------
-0011            597   ; code
-0011            598   ;--------------------------------------------------------
-0000            599            rseg R_CSEG
-0000            600   ;------------------------------------------------------------
-0000            601   ;Allocation info for local variables in function '_c51_external_startup'
-0000            602   ;------------------------------------------------------------
-0000            603   ;------------------------------------------------------------
-0000            604   ;        main.c:44: char _c51_external_startup (void)
-0000            605   ;        -----------------------------------------
-0000            606   ;         function _c51_external_startup
-0000            607   ;        -----------------------------------------
-0000            608   __c51_external_startup:
-0000            609            using   0
-0000            610   ;        main.c:47: SFRPAGE = 0x00;
-0000 75A700     611            mov     _SFRPAGE,#0x00
-0003            612   ;        main.c:48: WDTCN = 0xDE; //First key
-0003 7597DE     613            mov     _WDTCN,#0xDE
-0006            614   ;        main.c:49: WDTCN = 0xAD; //Second key
-0006 7597AD     615            mov     _WDTCN,#0xAD
-0009            616   ;        main.c:51: VDM0CN=0x80;       // enable VDD monitor
-0009 75FF80     617            mov     _VDM0CN,#0x80
-000C            618   ;        main.c:52: RSTSRC=0x02|0x04;  // Enable reset on missing clock detector and VDD
-000C 75EF06     619            mov     _RSTSRC,#0x06
-000F            620   ;        main.c:59: SFRPAGE = 0x10;
-000F 75A710     621            mov     _SFRPAGE,#0x10
-0012            622   ;        main.c:60: PFE0CN  = 0x20; // SYSCLK < 75 MHz.
-0012 75C120     623            mov     _PFE0CN,#0x20
-0015            624   ;        main.c:61: SFRPAGE = 0x00;
-0015 75A700     625            mov     _SFRPAGE,#0x00
-0018            626   ;        main.c:82: CLKSEL = 0x00;
-0018 75A900     627            mov     _CLKSEL,#0x00
-001B            628   ;        main.c:83: CLKSEL = 0x00;
-001B 75A900     629            mov     _CLKSEL,#0x00
-001E            630   ;        main.c:84: while ((CLKSEL & 0x80) == 0);
-001E            631   L002001?:
-001E E5A9       632            mov     a,_CLKSEL
-0020 30E750     633            jnb     acc.7,L002001?
-0023            634   ;        main.c:85: CLKSEL = 0x03;
-0023 75A903     635            mov     _CLKSEL,#0x03
-0026            636   ;        main.c:86: CLKSEL = 0x03;
-0026 75A903     637            mov     _CLKSEL,#0x03
-0029            638   ;        main.c:87: while ((CLKSEL & 0x80) == 0);
-0029            639   L002004?:
-0029 E5A9       640            mov     a,_CLKSEL
-002B 30E7D0     641            jnb     acc.7,L002004?
-002E            642   ;        main.c:92: P0MDOUT |= 0x11; // Enable UART0 TX (P0.4) and UART1 TX (P0.0) as push-pull outputs
-002E 43A411     643            orl     _P0MDOUT,#0x11
-0031            644   ;        main.c:93: P2MDOUT |= 0x01; // P2.0 in push-pull mode
-0031 43A601     645            orl     _P2MDOUT,#0x01
-0034            646   ;        main.c:94: XBR0     = 0x01; // Enable UART0 on P0.4(TX) and P0.5(RX)                     
-0034 75E101     647            mov     _XBR0,#0x01
-0037            648   ;        main.c:95: XBR1     = 0X00;
-0037 75E200     649            mov     _XBR1,#0x00
-003A            650   ;        main.c:96: XBR2     = 0x41; // Enable crossbar and uart 1
-003A 75E341     651            mov     _XBR2,#0x41
-003D            652   ;        main.c:102: SCON0 = 0x10;
-003D 759810     653            mov     _SCON0,#0x10
-0040            654   ;        main.c:103: TH1 = 0x100-((SYSCLK/BAUDRATE)/(2L*12L));
-0040 758DE6     655            mov     _TH1,#0xE6
-0043            656   ;        main.c:104: TL1 = TH1;      // Init Timer1
-0043 858D8B     657            mov     _TL1,_TH1
-0046            658   ;        main.c:105: TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit auto-reload
-0046 53890F     659            anl     _TMOD,#0x0F
-0049            660   ;        main.c:106: TMOD |=  0x20;                       
-0049 438920     661            orl     _TMOD,#0x20
-004C            662   ;        main.c:107: TR1 = 1; // START Timer1
-004C D28E       663            setb    _TR1
-004E            664   ;        main.c:108: TI = 1;  // Indicate TX0 ready
-004E D299       665            setb    _TI
-0050            666   ;        main.c:110: P2_0=1; // 'set' pin to 1 is normal operation mode.
-0050 D2A0       667            setb    _P2_0
-0052            668   ;        main.c:113: SFRPAGE=0x10;
-0052 75A710     669            mov     _SFRPAGE,#0x10
-0055            670   ;        main.c:114: TMR5CN0=0x00;
-0055 75C000     671            mov     _TMR5CN0,#0x00
-0058            672   ;        main.c:115: TMR5=0xffff;   // Set to reload immediately
-0058 75D4FF     673            mov     _TMR5,#0xFF
-005B 75D5FF     674            mov     (_TMR5 >> 8),#0xFF
-005E            675   ;        main.c:116: EIE2|=0b_0000_1000; // Enable Timer5 interrupts
-005E 43F308     676            orl     _EIE2,#0x08
-0061            677   ;        main.c:117: TR5=1;         // Start Timer5 (TMR5CN0 is bit addressable)
-0061 D2C2       678            setb    _TR5
-0063            679   ;        main.c:119: EA=1;
-0063 D2AF       680            setb    _EA
-0065            681   ;        main.c:121: SFRPAGE=0x00;
-0065 75A700     682            mov     _SFRPAGE,#0x00
-0068            683   ;        main.c:123: return 0;
-0068 758200     684            mov     dpl,#0x00
-006B 22         685            ret
-006C            686   ;------------------------------------------------------------
-006C            687   ;Allocation info for local variables in function 'Timer3us'
-006C            688   ;------------------------------------------------------------
-006C            689   ;us                        Allocated to registers r2 
-006C            690   ;i                         Allocated to registers r3 
-006C            691   ;------------------------------------------------------------
-006C            692   ;        main.c:127: void Timer3us(unsigned char us)
-006C            693   ;        -----------------------------------------
-006C            694   ;         function Timer3us
-006C            695   ;        -----------------------------------------
-006C            696   _Timer3us:
-006C AA82       697            mov     r2,dpl
-006E            698   ;        main.c:132: CKCON0|=0b_0100_0000;
-006E 438E40     699            orl     _CKCON0,#0x40
-0071            700   ;        main.c:134: TMR3RL = (-(SYSCLK)/1000000L); // Set Timer3 to overflow in 1us.
-0071 7592B8     701            mov     _TMR3RL,#0xB8
-0074 7593FF     702            mov     (_TMR3RL >> 8),#0xFF
-0077            703   ;        main.c:135: TMR3 = TMR3RL;                 // Initialize Timer3 for first overflow
-0077 859294     704            mov     _TMR3,_TMR3RL
-007A 859395     705            mov     (_TMR3 >> 8),(_TMR3RL >> 8)
-007D            706   ;        main.c:137: TMR3CN0 = 0x04;                 // Sart Timer3 and clear overflow flag
-007D 759104     707            mov     _TMR3CN0,#0x04
-0080            708   ;        main.c:138: for (i = 0; i < us; i++)       // Count <us> overflows
-0080 7B00       709            mov     r3,#0x00
-0082            710   L003004?:
-0082 C3         711            clr     c
-0083 EB         712            mov     a,r3
-0084 9A         713            subb    a,r2
-0085 5000       714            jnc     L003007?
-0087            715   ;        main.c:140: while (!(TMR3CN0 & 0x80));  // Wait for overflow
-0087            716   L003001?:
-0087 E591       717            mov     a,_TMR3CN0
-0089 30E7D0     718            jnb     acc.7,L003001?
-008C            719   ;        main.c:141: TMR3CN0 &= ~(0x80);         // Clear overflow indicator
-008C 53917F     720            anl     _TMR3CN0,#0x7F
-008F            721   ;        main.c:138: for (i = 0; i < us; i++)       // Count <us> overflows
-008F 0B         722            inc     r3
-0090 8000       723            sjmp    L003004?
-0092            724   L003007?:
-0092            725   ;        main.c:143: TMR3CN0 = 0 ;                   // Stop Timer3 and clear overflow flag
-0092 759100     726            mov     _TMR3CN0,#0x00
-0095 22         727            ret
-0096            728   ;------------------------------------------------------------
-0096            729   ;Allocation info for local variables in function 'waitms'
-0096            730   ;------------------------------------------------------------
-0096            731   ;ms                        Allocated to registers r2 r3 
-0096            732   ;j                         Allocated to registers r4 r5 
-0096            733   ;k                         Allocated to registers r6 
-0096            734   ;------------------------------------------------------------
-0096            735   ;        main.c:146: void waitms (unsigned int ms)
-0096            736   ;        -----------------------------------------
-0096            737   ;         function waitms
-0096            738   ;        -----------------------------------------
-0096            739   _waitms:
-0096 AA82       740            mov     r2,dpl
-0098 AB83       741            mov     r3,dph
-009A            742   ;        main.c:150: for(j=0; j<ms; j++)
-009A 7C00       743            mov     r4,#0x00
-009C 7D00       744            mov     r5,#0x00
-009E            745   L004005?:
-009E C3         746            clr     c
-009F EC         747            mov     a,r4
-00A0 9A         748            subb    a,r2
-00A1 ED         749            mov     a,r5
-00A2 9B         750            subb    a,r3
-00A3 5000       751            jnc     L004009?
-00A5            752   ;        main.c:151: for (k=0; k<4; k++) Timer3us(250);
-00A5 7E00       753            mov     r6,#0x00
-00A7            754   L004001?:
-00A7 BE0410     755            cjne    r6,#0x04,L004018?
-00AA            756   L004018?:
-00AA 5000       757            jnc     L004007?
-00AC 7582FA     758            mov     dpl,#0xFA
-00AF C002       759            push    ar2
-00B1 C003       760            push    ar3
-00B3 C004       761            push    ar4
-00B5 C005       762            push    ar5
-00B7 C006       763            push    ar6
-00B9 120000     764            lcall   _Timer3us
-00BC D006       765            pop     ar6
-00BE D005       766            pop     ar5
-00C0 D004       767            pop     ar4
-00C2 D003       768            pop     ar3
-00C4 D002       769            pop     ar2
-00C6 0E         770            inc     r6
-00C7 8000       771            sjmp    L004001?
-00C9            772   L004007?:
-00C9            773   ;        main.c:150: for(j=0; j<ms; j++)
-00C9 0C         774            inc     r4
-00CA BC0050     775            cjne    r4,#0x00,L004005?
-00CD 0D         776            inc     r5
-00CE 8000       777            sjmp    L004005?
-00D0            778   L004009?:
-00D0 22         779            ret
-00D1            780   ;------------------------------------------------------------
-00D1            781   ;Allocation info for local variables in function 'UART1_Init'
-00D1            782   ;------------------------------------------------------------
-00D1            783   ;baudrate                  Allocated to registers r2 r3 r4 r5 
-00D1            784   ;------------------------------------------------------------
-00D1            785   ;        main.c:154: void UART1_Init (unsigned long baudrate)
-00D1            786   ;        -----------------------------------------
-00D1            787   ;         function UART1_Init
-00D1            788   ;        -----------------------------------------
-00D1            789   _UART1_Init:
-00D1 AA82       790            mov     r2,dpl
-00D3 AB83       791            mov     r3,dph
-00D5 ACF0       792            mov     r4,b
-00D7 FD         793            mov     r5,a
-00D8            794   ;        main.c:156: SFRPAGE = 0x20;
-00D8 75A720     795            mov     _SFRPAGE,#0x20
-00DB            796   ;        main.c:157: SMOD1 = 0x0C; // no parity, 8 data bits, 1 stop bit
-00DB 75930C     797            mov     _SMOD1,#0x0C
-00DE            798   ;        main.c:158: SCON1 = 0x10;
-00DE 75C810     799            mov     _SCON1,#0x10
-00E1            800   ;        main.c:159: SBCON1 =0x00;   // disable baud rate generator
-00E1 759400     801            mov     _SBCON1,#0x00
-00E4            802   ;        main.c:160: SBRL1 = 0x10000L-((SYSCLK/baudrate)/(12L*2L));
-00E4 8A00       803            mov     __divulong_PARM_2,r2
-00E6 8B01       804            mov     (__divulong_PARM_2 + 1),r3
-00E8 8C02       805            mov     (__divulong_PARM_2 + 2),r4
-00EA 8D03       806            mov     (__divulong_PARM_2 + 3),r5
-00EC 90A200     807            mov     dptr,#0xA200
-00EF 75F04A     808            mov     b,#0x4A
-00F2 7404       809            mov     a,#0x04
-00F4 120000     810            lcall   __divulong
-00F7 AA82       811            mov     r2,dpl
-00F9 AB83       812            mov     r3,dph
-00FB ACF0       813            mov     r4,b
-00FD FD         814            mov     r5,a
-00FE 750018     815            mov     __divulong_PARM_2,#0x18
-0101 E4         816            clr     a
-0102 F501       817            mov     (__divulong_PARM_2 + 1),a
-0104 F502       818            mov     (__divulong_PARM_2 + 2),a
-0106 F503       819            mov     (__divulong_PARM_2 + 3),a
-0108 8A82       820            mov     dpl,r2
-010A 8B83       821            mov     dph,r3
-010C 8CF0       822            mov     b,r4
-010E ED         823            mov     a,r5
-010F 120000     824            lcall   __divulong
-0112 AA82       825            mov     r2,dpl
-0114 AB83       826            mov     r3,dph
-0116 ACF0       827            mov     r4,b
-0118 FD         828            mov     r5,a
-0119 E4         829            clr     a
-011A C3         830            clr     c
-011B 9A         831            subb    a,r2
-011C FA         832            mov     r2,a
-011D E4         833            clr     a
-011E 9B         834            subb    a,r3
-011F FB         835            mov     r3,a
-0120 7401       836            mov     a,#0x01
-0122 9C         837            subb    a,r4
-0123 E4         838            clr     a
-0124 9D         839            subb    a,r5
-0125 8A95       840            mov     _SBRL1,r2
-0127 8B96       841            mov     (_SBRL1 >> 8),r3
-0129            842   ;        main.c:161: TI1 = 1; // indicate ready for TX
-0129 D2C9       843            setb    _TI1
-012B            844   ;        main.c:162: SBCON1 |= 0x40;   // enable baud rate generator
-012B 439440     845            orl     _SBCON1,#0x40
-012E            846   ;        main.c:163: SFRPAGE = 0x00;
-012E 75A700     847            mov     _SFRPAGE,#0x00
-0131 22         848            ret
-0132            849   ;------------------------------------------------------------
-0132            850   ;Allocation info for local variables in function 'putchar1'
-0132            851   ;------------------------------------------------------------
-0132            852   ;c                         Allocated to registers r2 
-0132            853   ;------------------------------------------------------------
-0132            854   ;        main.c:166: void putchar1 (char c) 
-0132            855   ;        -----------------------------------------
-0132            856   ;         function putchar1
-0132            857   ;        -----------------------------------------
-0132            858   _putchar1:
-0132 AA82       859            mov     r2,dpl
-0134            860   ;        main.c:168: SFRPAGE = 0x20;
-0134 75A720     861            mov     _SFRPAGE,#0x20
-0137            862   ;        main.c:169: while (!TI1);
-0137            863   L006001?:
-0137            864   ;        main.c:170: TI1=0;
-0137 10C9A0     865            jbc     _TI1,L006008?
-013A 8000       866            sjmp    L006001?
-013C            867   L006008?:
-013C            868   ;        main.c:171: SBUF1 = c;
-013C 8A92       869            mov     _SBUF1,r2
-013E            870   ;        main.c:172: SFRPAGE = 0x00;
-013E 75A700     871            mov     _SFRPAGE,#0x00
-0141 22         872            ret
-0142            873   ;------------------------------------------------------------
-0142            874   ;Allocation info for local variables in function 'sendstr1'
-0142            875   ;------------------------------------------------------------
-0142            876   ;s                         Allocated to registers r2 r3 r4 
-0142            877   ;------------------------------------------------------------
-0142            878   ;        main.c:175: void sendstr1 (char * s)
-0142            879   ;        -----------------------------------------
-0142            880   ;         function sendstr1
-0142            881   ;        -----------------------------------------
-0142            882   _sendstr1:
-0142 AA82       883            mov     r2,dpl
-0144 AB83       884            mov     r3,dph
-0146 ACF0       885            mov     r4,b
-0148            886   ;        main.c:177: while(*s)
-0148            887   L007001?:
-0148 8A82       888            mov     dpl,r2
-014A 8B83       889            mov     dph,r3
-014C 8CF0       890            mov     b,r4
-014E 120000     891            lcall   __gptrget
-0151 FD         892            mov     r5,a
-0152 6000       893            jz      L007004?
-0154            894   ;        main.c:179: putchar1(*s);
-0154 8D82       895            mov     dpl,r5
-0156 C002       896            push    ar2
-0158 C003       897            push    ar3
-015A C004       898            push    ar4
-015C 120000     899            lcall   _putchar1
-015F D004       900            pop     ar4
-0161 D003       901            pop     ar3
-0163 D002       902            pop     ar2
-0165            903   ;        main.c:180: s++;        
-0165 0A         904            inc     r2
-0166 BA00E0     905            cjne    r2,#0x00,L007001?
-0169 0B         906            inc     r3
-016A 8000       907            sjmp    L007001?
-016C            908   L007004?:
-016C 22         909            ret
-016D            910   ;------------------------------------------------------------
-016D            911   ;Allocation info for local variables in function 'getchar1'
-016D            912   ;------------------------------------------------------------
-016D            913   ;c                         Allocated to registers 
-016D            914   ;------------------------------------------------------------
-016D            915   ;        main.c:184: char getchar1 (void)
-016D            916   ;        -----------------------------------------
-016D            917   ;         function getchar1
-016D            918   ;        -----------------------------------------
-016D            919   _getchar1:
-016D            920   ;        main.c:187: SFRPAGE = 0x20;
-016D 75A720     921            mov     _SFRPAGE,#0x20
-0170            922   ;        main.c:188: while (!RI1);
-0170            923   L008001?:
-0170            924   ;        main.c:189: RI1=0;
-0170 10C8E0     925            jbc     _RI1,L008008?
-0173 8000       926            sjmp    L008001?
-0175            927   L008008?:
-0175            928   ;        main.c:191: SCON1&=0b_0011_1111;
-0175 53C83F     929            anl     _SCON1,#0x3F
-0178            930   ;        main.c:192: c = SBUF1;
-0178 859282     931            mov     dpl,_SBUF1
-017B            932   ;        main.c:193: SFRPAGE = 0x00;
-017B 75A700     933            mov     _SFRPAGE,#0x00
-017E            934   ;        main.c:194: return (c);
-017E 22         935            ret
-017F            936   ;------------------------------------------------------------
-017F            937   ;Allocation info for local variables in function 'getchar1_with_timeout'
-017F            938   ;------------------------------------------------------------
-017F            939   ;c                         Allocated to registers 
-017F            940   ;timeout                   Allocated to registers r2 r3 
-017F            941   ;------------------------------------------------------------
-017F            942   ;        main.c:197: char getchar1_with_timeout (void)
-017F            943   ;        -----------------------------------------
-017F            944   ;         function getchar1_with_timeout
-017F            945   ;        -----------------------------------------
-017F            946   _getchar1_with_timeout:
-017F            947   ;        main.c:201: SFRPAGE = 0x20;
-017F 75A720     948            mov     _SFRPAGE,#0x20
-0182            949   ;        main.c:203: while (!RI1)
-0182 7A00       950            mov     r2,#0x00
-0184 7B00       951            mov     r3,#0x00
-0186            952   L009003?:
-0186 20C860     953            jb      _RI1,L009005?
-0189            954   ;        main.c:205: SFRPAGE = 0x00;
-0189 75A700     955            mov     _SFRPAGE,#0x00
-018C            956   ;        main.c:206: Timer3us(20);
-018C 758214     957            mov     dpl,#0x14
-018F C002       958            push    ar2
-0191 C003       959            push    ar3
-0193 120000     960            lcall   _Timer3us
-0196 D003       961            pop     ar3
-0198 D002       962            pop     ar2
-019A            963   ;        main.c:207: SFRPAGE = 0x20;
-019A 75A720     964            mov     _SFRPAGE,#0x20
-019D            965   ;        main.c:208: timeout++;
-019D 0A         966            inc     r2
-019E BA00A0     967            cjne    r2,#0x00,L009012?
-01A1 0B         968            inc     r3
-01A2            969   L009012?:
-01A2            970   ;        main.c:209: if(timeout==25000)
-01A2 BAA820     971            cjne    r2,#0xA8,L009003?
-01A5 BB6120     972            cjne    r3,#0x61,L009003?
-01A8            973   ;        main.c:211: SFRPAGE = 0x00;
-01A8 75A700     974            mov     _SFRPAGE,#0x00
-01AB            975   ;        main.c:212: return ('\n'); // Timeout after half second
-01AB 75820A     976            mov     dpl,#0x0A
-01AE 22         977            ret
-01AF            978   L009005?:
-01AF            979   ;        main.c:215: RI1=0;
-01AF C2C8       980            clr     _RI1
-01B1            981   ;        main.c:217: SCON1&=0b_0011_1111;
-01B1 53C83F     982            anl     _SCON1,#0x3F
-01B4            983   ;        main.c:218: c = SBUF1;
-01B4 859282     984            mov     dpl,_SBUF1
-01B7            985   ;        main.c:219: SFRPAGE = 0x00;
-01B7 75A700     986            mov     _SFRPAGE,#0x00
-01BA            987   ;        main.c:220: return (c);
-01BA 22         988            ret
-01BB            989   ;------------------------------------------------------------
-01BB            990   ;Allocation info for local variables in function 'getstr1'
-01BB            991   ;------------------------------------------------------------
-01BB            992   ;n                         Allocated with name '_getstr1_PARM_2'
-01BB            993   ;s                         Allocated to registers r2 r3 r4 
-01BB            994   ;c                         Allocated to registers r1 
-01BB            995   ;cnt                       Allocated to registers r5 
-01BB            996   ;------------------------------------------------------------
-01BB            997   ;        main.c:223: void getstr1 (char * s, unsigned char n)
-01BB            998   ;        -----------------------------------------
-01BB            999   ;         function getstr1
-01BB           1000   ;        -----------------------------------------
-01BB           1001   _getstr1:
-01BB AA82      1002            mov     r2,dpl
-01BD AB83      1003            mov     r3,dph
-01BF ACF0      1004            mov     r4,b
-01C1           1005   ;        main.c:229: while(1)
-01C1 7D00      1006            mov     r5,#0x00
-01C3 8A06      1007            mov     ar6,r2
-01C5 8B07      1008            mov     ar7,r3
-01C7 8C00      1009            mov     ar0,r4
-01C9           1010   L010007?:
-01C9           1011   ;        main.c:231: c=getchar1_with_timeout();
-01C9 C002      1012            push    ar2
-01CB C003      1013            push    ar3
-01CD C004      1014            push    ar4
-01CF C005      1015            push    ar5
-01D1 C006      1016            push    ar6
-01D3 C007      1017            push    ar7
-01D5 C000      1018            push    ar0
-01D7 120000    1019            lcall   _getchar1_with_timeout
-01DA A982      1020            mov     r1,dpl
-01DC D000      1021            pop     ar0
-01DE D007      1022            pop     ar7
-01E0 D006      1023            pop     ar6
-01E2 D005      1024            pop     ar5
-01E4 D004      1025            pop     ar4
-01E6 D003      1026            pop     ar3
-01E8 D002      1027            pop     ar2
-01EA           1028   ;        main.c:232: if(c=='\n')
-01EA B90A20    1029            cjne    r1,#0x0A,L010002?
-01ED           1030   ;        main.c:234: *s=0;
-01ED 8A82      1031            mov     dpl,r2
-01EF 8B83      1032            mov     dph,r3
-01F1 8CF0      1033            mov     b,r4
-01F3 E4        1034            clr     a
-01F4           1035   ;        main.c:235: return;
-01F4 020000    1036            ljmp    __gptrput
-01F7           1037   L010002?:
-01F7           1038   ;        main.c:238: if (cnt<n)
-01F7 C3        1039            clr     c
-01F8 ED        1040            mov     a,r5
-01F9 95D0      1041            subb    a,_getstr1_PARM_2
-01FB 5000      1042            jnc     L010004?
-01FD           1043   ;        main.c:240: cnt++;
-01FD 0D        1044            inc     r5
-01FE           1045   ;        main.c:241: *s=c;
-01FE 8E82      1046            mov     dpl,r6
-0200 8F83      1047            mov     dph,r7
-0202 88F0      1048            mov     b,r0
-0204 E9        1049            mov     a,r1
-0205 120000    1050            lcall   __gptrput
-0208 A3        1051            inc     dptr
-0209 AE82      1052            mov     r6,dpl
-020B AF83      1053            mov     r7,dph
-020D           1054   ;        main.c:242: s++;
-020D 8E02      1055            mov     ar2,r6
-020F 8F03      1056            mov     ar3,r7
-0211 8804      1057            mov     ar4,r0
-0213 8000      1058            sjmp    L010007?
-0215           1059   L010004?:
-0215           1060   ;        main.c:246: *s=0;
-0215 8A82      1061            mov     dpl,r2
-0217 8B83      1062            mov     dph,r3
-0219 8CF0      1063            mov     b,r4
-021B E4        1064            clr     a
-021C           1065   ;        main.c:247: return;
-021C 020000    1066            ljmp    __gptrput
-021F           1067   ;------------------------------------------------------------
-021F           1068   ;Allocation info for local variables in function 'RXU1'
-021F           1069   ;------------------------------------------------------------
-021F           1070   ;------------------------------------------------------------
-021F           1071   ;        main.c:253: bit RXU1 (void)
-021F           1072   ;        -----------------------------------------
-021F           1073   ;         function RXU1
-021F           1074   ;        -----------------------------------------
-021F           1075   _RXU1:
-021F           1076   ;        main.c:256: SFRPAGE = 0x20;
-021F 75A720    1077            mov     _SFRPAGE,#0x20
-0222           1078   ;        main.c:257: mybit=RI1;
-0222 A2C8      1079            mov     c,_RI1
-0224           1080   ;        main.c:258: SFRPAGE = 0x00;
-0224 75A700    1081            mov     _SFRPAGE,#0x00
-0227           1082   ;        main.c:259: return mybit;
-0227 22        1083            ret
-0228           1084   ;------------------------------------------------------------
-0228           1085   ;Allocation info for local variables in function 'waitms_or_RI1'
-0228           1086   ;------------------------------------------------------------
-0228           1087   ;ms                        Allocated to registers r2 r3 
-0228           1088   ;j                         Allocated to registers r4 r5 
-0228           1089   ;k                         Allocated to registers r6 
-0228           1090   ;------------------------------------------------------------
-0228           1091   ;        main.c:262: void waitms_or_RI1 (unsigned int ms)
-0228           1092   ;        -----------------------------------------
-0228           1093   ;         function waitms_or_RI1
-0228           1094   ;        -----------------------------------------
-0228           1095   _waitms_or_RI1:
-0228 AA82      1096            mov     r2,dpl
-022A AB83      1097            mov     r3,dph
-022C           1098   ;        main.c:266: for(j=0; j<ms; j++)
-022C 7C00      1099            mov     r4,#0x00
-022E 7D00      1100            mov     r5,#0x00
-0230           1101   L012007?:
-0230 C3        1102            clr     c
-0231 EC        1103            mov     a,r4
-0232 9A        1104            subb    a,r2
-0233 ED        1105            mov     a,r5
-0234 9B        1106            subb    a,r3
-0235 5000      1107            jnc     L012011?
-0237           1108   ;        main.c:268: for (k=0; k<4; k++)
-0237 7E00      1109            mov     r6,#0x00
-0239           1110   L012003?:
-0239 BE04A0    1111            cjne    r6,#0x04,L012019?
-023C           1112   L012019?:
-023C 5000      1113            jnc     L012009?
-023E           1114   ;        main.c:270: if(RXU1()) return;
-023E C002      1115            push    ar2
-0240 C003      1116            push    ar3
-0242 C004      1117            push    ar4
-0244 C005      1118            push    ar5
-0246 C006      1119            push    ar6
-0248 120000    1120            lcall   _RXU1
-024B E4        1121            clr     a
-024C 33        1122            rlc     a
-024D D006      1123            pop     ar6
-024F D005      1124            pop     ar5
-0251 D004      1125            pop     ar4
-0253 D003      1126            pop     ar3
-0255 D002      1127            pop     ar2
-0257 6000      1128            jz      L012002?
-0259 22        1129            ret
-025A           1130   L012002?:
-025A           1131   ;        main.c:271: Timer3us(250);
-025A 7582FA    1132            mov     dpl,#0xFA
-025D C002      1133            push    ar2
-025F C003      1134            push    ar3
-0261 C004      1135            push    ar4
-0263 C005      1136            push    ar5
-0265 C006      1137            push    ar6
-0267 120000    1138            lcall   _Timer3us
-026A D006      1139            pop     ar6
-026C D005      1140            pop     ar5
-026E D004      1141            pop     ar4
-0270 D003      1142            pop     ar3
-0272 D002      1143            pop     ar2
-0274           1144   ;        main.c:268: for (k=0; k<4; k++)
-0274 0E        1145            inc     r6
-0275 8000      1146            sjmp    L012003?
-0277           1147   L012009?:
-0277           1148   ;        main.c:266: for(j=0; j<ms; j++)
-0277 0C        1149            inc     r4
-0278 BC00E0    1150            cjne    r4,#0x00,L012007?
-027B 0D        1151            inc     r5
-027C 8000      1152            sjmp    L012007?
-027E           1153   L012011?:
-027E 22        1154            ret
-027F           1155   ;------------------------------------------------------------
-027F           1156   ;Allocation info for local variables in function 'SendATCommand'
-027F           1157   ;------------------------------------------------------------
-027F           1158   ;s                         Allocated to registers r2 r3 r4 
-027F           1159   ;------------------------------------------------------------
-027F           1160   ;        main.c:276: void SendATCommand (char * s)
-027F           1161   ;        -----------------------------------------
-027F           1162   ;         function SendATCommand
-027F           1163   ;        -----------------------------------------
-027F           1164   _SendATCommand:
-027F AA82      1165            mov     r2,dpl
-0281 AB83      1166            mov     r3,dph
-0283 ACF0      1167            mov     r4,b
-0285           1168   ;        main.c:278: printf("Command: %s", s);
-0285 C002      1169            push    ar2
-0287 C003      1170            push    ar3
-0289 C004      1171            push    ar4
-028B C002      1172            push    ar2
-028D C003      1173            push    ar3
-028F C004      1174            push    ar4
-0291 7460      1175            mov     a,#__str_0
-0293 C0E0      1176            push    acc
-0295 74BC      1177            mov     a,#(__str_0 >> 8)
-0297 C0E0      1178            push    acc
-0299 7480      1179            mov     a,#0x80
-029B C0E0      1180            push    acc
-029D 120000    1181            lcall   _printf
-02A0 E581      1182            mov     a,sp
-02A2 24FA      1183            add     a,#0xfa
-02A4 F581      1184            mov     sp,a
-02A6           1185   ;        main.c:279: P2_0=0; // 'set' pin to 0 is 'AT' mode.
-02A6 C2A0      1186            clr     _P2_0
-02A8           1187   ;        main.c:280: waitms(5);
-02A8 900005    1188            mov     dptr,#0x0005
-02AB 120000    1189            lcall   _waitms
-02AE D004      1190            pop     ar4
-02B0 D003      1191            pop     ar3
-02B2 D002      1192            pop     ar2
-02B4           1193   ;        main.c:281: sendstr1(s);
-02B4 8A82      1194            mov     dpl,r2
-02B6 8B83      1195            mov     dph,r3
-02B8 8CF0      1196            mov     b,r4
-02BA 120000    1197            lcall   _sendstr1
-02BD           1198   ;        main.c:282: getstr1(buff, sizeof(buff)-1);
-02BD 75D013    1199            mov     _getstr1_PARM_2,#0x13
-02C0 904490    1200            mov     dptr,#_buff
-02C3 75F040    1201            mov     b,#0x40
-02C6 120000    1202            lcall   _getstr1
-02C9           1203   ;        main.c:283: waitms(10);
-02C9 90000A    1204            mov     dptr,#0x000A
-02CC 120000    1205            lcall   _waitms
-02CF           1206   ;        main.c:284: P2_0=1; // 'set' pin to 1 is normal operation mode.
-02CF D2A0      1207            setb    _P2_0
-02D1           1208   ;        main.c:285: printf("Response: %s\r\n", buff);
-02D1 7490      1209            mov     a,#_buff
-02D3 C0E0      1210            push    acc
-02D5 7444      1211            mov     a,#(_buff >> 8)
-02D7 C0E0      1212            push    acc
-02D9 7440      1213            mov     a,#0x40
-02DB C0E0      1214            push    acc
-02DD 7420      1215            mov     a,#__str_1
-02DF C0E0      1216            push    acc
-02E1 74BD      1217            mov     a,#(__str_1 >> 8)
-02E3 C0E0      1218            push    acc
-02E5 7480      1219            mov     a,#0x80
-02E7 C0E0      1220            push    acc
-02E9 120000    1221            lcall   _printf
-02EC E581      1222            mov     a,sp
-02EE 24FA      1223            add     a,#0xfa
-02F0 F581      1224            mov     sp,a
-02F2 22        1225            ret
-02F3           1226   ;------------------------------------------------------------
-02F3           1227   ;Allocation info for local variables in function 'ReceptionOff'
-02F3           1228   ;------------------------------------------------------------
-02F3           1229   ;------------------------------------------------------------
-02F3           1230   ;        main.c:288: void ReceptionOff (void)
-02F3           1231   ;        -----------------------------------------
-02F3           1232   ;         function ReceptionOff
-02F3           1233   ;        -----------------------------------------
-02F3           1234   _ReceptionOff:
-02F3           1235   ;        main.c:290: P2_0=0; // 'set' pin to 0 is 'AT' mode.
-02F3 C2A0      1236            clr     _P2_0
-02F5           1237   ;        main.c:291: waitms(10);
-02F5 90000A    1238            mov     dptr,#0x000A
-02F8 120000    1239            lcall   _waitms
-02FB           1240   ;        main.c:292: sendstr1("AT+DVID0000\r\n"); // Some unused id, so that we get nothing in RXD1.
-02FB 90BD60    1241            mov     dptr,#__str_2
-02FE 75F080    1242            mov     b,#0x80
-0301 120000    1243            lcall   _sendstr1
-0304           1244   ;        main.c:293: waitms(10);
-0304 90000A    1245            mov     dptr,#0x000A
-0307 120000    1246            lcall   _waitms
-030A           1247   ;        main.c:295: SCON1&=0b_0011_1111;
-030A 53C83F    1248            anl     _SCON1,#0x3F
-030D           1249   ;        main.c:296: P2_0=1; // 'set' pin to 1 is normal operation mode.
-030D D2A0      1250            setb    _P2_0
-030F 22        1251            ret
-0310           1252   ;------------------------------------------------------------
-0310           1253   ;Allocation info for local variables in function 'Set_Pin_Output'
-0310           1254   ;------------------------------------------------------------
-0310           1255   ;pin                       Allocated to registers r2 
-0310           1256   ;mask                      Allocated to registers r3 
-0310           1257   ;------------------------------------------------------------
-0310           1258   ;        main.c:299: void Set_Pin_Output (unsigned char pin)
-0310           1259   ;        -----------------------------------------
-0310           1260   ;         function Set_Pin_Output
-0310           1261   ;        -----------------------------------------
-0310           1262   _Set_Pin_Output:
-0310 AA82      1263            mov     r2,dpl
-0312           1264   ;        main.c:303: mask=(1<<(pin&0x7));
-0312 7407      1265            mov     a,#0x07
-0314 5A        1266            anl     a,r2
-0315 F5F0      1267            mov     b,a
-0317 05F0      1268            inc     b
-0319 7401      1269            mov     a,#0x01
-031B 8000      1270            sjmp    L015011?
-031D           1271   L015009?:
-031D 25E0      1272            add     a,acc
-031F           1273   L015011?:
-031F D5F0E0    1274            djnz    b,L015009?
-0322 FB        1275            mov     r3,a
-0323           1276   ;        main.c:304: switch(pin/0x10)
-0323 EA        1277            mov     a,r2
-0324 C4        1278            swap    a
-0325 540F      1279            anl     a,#0x0f
-0327 FA        1280            mov  r2,a
-0328 24FC      1281            add     a,#0xff - 0x03
-032A 4000      1282            jc      L015006?
-032C EA        1283            mov     a,r2
-032D 2A        1284            add     a,r2
-032E 2A        1285            add     a,r2
-032F 90BE60    1286            mov     dptr,#L015013?
-0332 73        1287            jmp     @a+dptr
-0333           1288   L015013?:
-0333 020000    1289            ljmp    L015001?
-0336 020000    1290            ljmp    L015002?
-0339 020000    1291            ljmp    L015003?
-033C 020000    1292            ljmp    L015004?
-033F           1293   ;        main.c:306: case 0: P0MDOUT |= mask; break;
-033F           1294   L015001?:
-033F EB        1295            mov     a,r3
-0340 42A4      1296            orl     _P0MDOUT,a
-0342           1297   ;        main.c:307: case 1: P1MDOUT |= mask; break;
-0342 22        1298            ret
-0343           1299   L015002?:
-0343 EB        1300            mov     a,r3
-0344 42A5      1301            orl     _P1MDOUT,a
-0346           1302   ;        main.c:308: case 2: P2MDOUT |= mask; break; 
-0346 22        1303            ret
-0347           1304   L015003?:
-0347 EB        1305            mov     a,r3
-0348 42A6      1306            orl     _P2MDOUT,a
-034A           1307   ;        main.c:309: case 3: P3MDOUT |= mask; break; 
-034A 22        1308            ret
-034B           1309   L015004?:
-034B EB        1310            mov     a,r3
-034C 429C      1311            orl     _P3MDOUT,a
-034E           1312   ;        main.c:310: }   
-034E           1313   L015006?:
-034E 22        1314            ret
-034F           1315   ;------------------------------------------------------------
-034F           1316   ;Allocation info for local variables in function 'InitADC'
-034F           1317   ;------------------------------------------------------------
-034F           1318   ;------------------------------------------------------------
-034F           1319   ;        main.c:313: void InitADC (void)
-034F           1320   ;        -----------------------------------------
-034F           1321   ;         function InitADC
-034F           1322   ;        -----------------------------------------
-034F           1323   _InitADC:
-034F           1324   ;        main.c:315: SFRPAGE = 0x00;
-034F 75A700    1325            mov     _SFRPAGE,#0x00
-0352           1326   ;        main.c:316: ADEN=0; // Disable ADC
-0352 C2EF      1327            clr     _ADEN
-0354           1328   ;        main.c:321: (0x0 << 0) ; // Accumulate n conversions: 0x0: 1, 0x1:4, 0x2:8, 0x3:16, 0x4:32
-0354 75B280    1329            mov     _ADC0CN1,#0x80
-0357           1330   ;        main.c:325: (0x0 << 2); // 0:SYSCLK ADCCLK = SYSCLK. 1:HFOSC0 ADCCLK = HFOSC0.
-0357 75BC20    1331            mov     _ADC0CF0,#0x20
-035A           1332   ;        main.c:329: (0x1E << 0); // Conversion Tracking Time. Tadtk = ADTK / (Fsarclk)
-035A 75B91E    1333            mov     _ADC0CF1,#0x1E
-035D           1334   ;        main.c:338: (0x0 << 0) ; // TEMPE. 0: Disable the Temperature Sensor. 1: Enable the Temperature Sensor.
-035D 75E800    1335            mov     _ADC0CN0,#0x00
-0360           1336   ;        main.c:343: (0x1F << 0); // ADPWR. Power Up Delay Time. Tpwrtime = ((4 * (ADPWR + 1)) + 2) / (Fadcclk)
-0360 75DF3F    1337            mov     _ADC0CF2,#0x3F
-0363           1338   ;        main.c:347: (0x0 << 0) ; // ADCM. 0x0: ADBUSY, 0x1: TIMER0, 0x2: TIMER2, 0x3: TIMER3, 0x4: CNVSTR, 0x5: CEX5, 0x6: TIMER4, 0x7: TIMER5, 0x8: CLU0, 0x9: CLU1, 0xA: CLU2, 0xB: CLU3
-0363 75B300    1339            mov     _ADC0CN2,#0x00
-0366           1340   ;        main.c:349: ADEN=1; // Enable ADC
-0366 D2EF      1341            setb    _ADEN
-0368 22        1342            ret
-0369           1343   ;------------------------------------------------------------
-0369           1344   ;Allocation info for local variables in function 'InitPinADC'
-0369           1345   ;------------------------------------------------------------
-0369           1346   ;pin_num                   Allocated with name '_InitPinADC_PARM_2'
-0369           1347   ;portno                    Allocated to registers r2 
-0369           1348   ;mask                      Allocated to registers r3 
-0369           1349   ;------------------------------------------------------------
-0369           1350   ;        main.c:352: void InitPinADC (unsigned char portno, unsigned char pin_num)
-0369           1351   ;        -----------------------------------------
-0369           1352   ;         function InitPinADC
-0369           1353   ;        -----------------------------------------
-0369           1354   _InitPinADC:
-0369 AA82      1355            mov     r2,dpl
-036B           1356   ;        main.c:356: mask=1<<pin_num;
-036B 8588F0    1357            mov     b,_InitPinADC_PARM_2
-036E 05F0      1358            inc     b
-0370 7401      1359            mov     a,#0x01
-0372 8000      1360            sjmp    L017013?
-0374           1361   L017011?:
-0374 25E0      1362            add     a,acc
-0376           1363   L017013?:
-0376 D5F0E8    1364            djnz    b,L017011?
-0379 FB        1365            mov     r3,a
-037A           1366   ;        main.c:358: SFRPAGE = 0x20;
-037A 75A720    1367            mov     _SFRPAGE,#0x20
-037D           1368   ;        main.c:359: switch (portno)
-037D BA0028    1369            cjne    r2,#0x00,L017014?
-0380 8000      1370            sjmp    L017001?
-0382           1371   L017014?:
-0382 BA01A8    1372            cjne    r2,#0x01,L017015?
-0385 8000      1373            sjmp    L017002?
-0387           1374   L017015?:
-0387           1375   ;        main.c:361: case 0:
-0387 BA0228    1376            cjne    r2,#0x02,L017005?
-038A 8000      1377            sjmp    L017003?
-038C           1378   L017001?:
-038C           1379   ;        main.c:362: P0MDIN &= (~mask); // Set pin as analog input
-038C EB        1380            mov     a,r3
-038D F4        1381            cpl     a
-038E FA        1382            mov     r2,a
-038F 52F1      1383            anl     _P0MDIN,a
-0391           1384   ;        main.c:363: P0SKIP |= mask; // Skip Crossbar decoding for this pin
-0391 EB        1385            mov     a,r3
-0392 42D4      1386            orl     _P0SKIP,a
-0394           1387   ;        main.c:364: break;
-0394           1388   ;        main.c:365: case 1:
-0394 8000      1389            sjmp    L017005?
-0396           1390   L017002?:
-0396           1391   ;        main.c:366: P1MDIN &= (~mask); // Set pin as analog input
-0396 EB        1392            mov     a,r3
-0397 F4        1393            cpl     a
-0398 FA        1394            mov     r2,a
-0399 52F2      1395            anl     _P1MDIN,a
-039B           1396   ;        main.c:367: P1SKIP |= mask; // Skip Crossbar decoding for this pin
-039B EB        1397            mov     a,r3
-039C 42D5      1398            orl     _P1SKIP,a
-039E           1399   ;        main.c:368: break;
-039E           1400   ;        main.c:369: case 2:
-039E 8000      1401            sjmp    L017005?
-03A0           1402   L017003?:
-03A0           1403   ;        main.c:370: P2MDIN &= (~mask); // Set pin as analog input
-03A0 EB        1404            mov     a,r3
-03A1 F4        1405            cpl     a
-03A2 FA        1406            mov     r2,a
-03A3 52F3      1407            anl     _P2MDIN,a
-03A5           1408   ;        main.c:371: P2SKIP |= mask; // Skip Crossbar decoding for this pin
-03A5 EB        1409            mov     a,r3
-03A6 42CC      1410            orl     _P2SKIP,a
-03A8           1411   ;        main.c:375: }
-03A8           1412   L017005?:
-03A8           1413   ;        main.c:376: SFRPAGE = 0x00;
-03A8 75A700    1414            mov     _SFRPAGE,#0x00
-03AB 22        1415            ret
-03AC           1416   ;------------------------------------------------------------
-03AC           1417   ;Allocation info for local variables in function 'ADC_at_Pin'
-03AC           1418   ;------------------------------------------------------------
-03AC           1419   ;pin                       Allocated to registers 
-03AC           1420   ;------------------------------------------------------------
-03AC           1421   ;        main.c:379: unsigned int ADC_at_Pin(unsigned char pin)
-03AC           1422   ;        -----------------------------------------
-03AC           1423   ;         function ADC_at_Pin
-03AC           1424   ;        -----------------------------------------
-03AC           1425   _ADC_at_Pin:
-03AC 8582BB    1426            mov     _ADC0MX,dpl
-03AF           1427   ;        main.c:382: ADINT = 0;
-03AF C2ED      1428            clr     _ADINT
-03B1           1429   ;        main.c:383: ADBUSY = 1;     // Convert voltage at the pin
-03B1 D2EC      1430            setb    _ADBUSY
-03B3           1431   ;        main.c:384: while (!ADINT); // Wait for conversion to complete
-03B3           1432   L018001?:
-03B3 30EDA8    1433            jnb     _ADINT,L018001?
-03B6           1434   ;        main.c:385: return (ADC0);
-03B6 85BD82    1435            mov     dpl,_ADC0
-03B9 85BE83    1436            mov     dph,(_ADC0 >> 8)
-03BC 22        1437            ret
-03BD           1438   ;------------------------------------------------------------
-03BD           1439   ;Allocation info for local variables in function 'Timer5_ISR'
-03BD           1440   ;------------------------------------------------------------
-03BD           1441   ;------------------------------------------------------------
-03BD           1442   ;        main.c:388: void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
-03BD           1443   ;        -----------------------------------------
-03BD           1444   ;         function Timer5_ISR
-03BD           1445   ;        -----------------------------------------
-03BD           1446   _Timer5_ISR:
-03BD C0E0      1447            push    acc
-03BF C002      1448            push    ar2
-03C1 C003      1449            push    ar3
-03C3 C0D0      1450            push    psw
-03C5 75D000    1451            mov     psw,#0x00
-03C8           1452   ;        main.c:390: SFRPAGE=0x10;
-03C8 75A710    1453            mov     _SFRPAGE,#0x10
-03CB           1454   ;        main.c:391: TF5H = 0; // Clear Timer5 interrupt flag
-03CB C2C7      1455            clr     _TF5H
-03CD           1456   ;        main.c:392: TMR5RL = RELOAD_10us; // Reload Timer5 for 10us intervals 
-03CD 75D2C4    1457            mov     _TMR5RL,#0xC4
-03D0 75D3FF    1458            mov     (_TMR5RL >> 8),#0xFF
-03D3           1459   ;        main.c:394: pwm_counter++; 
-03D3 0510      1460            inc     _pwm_counter
-03D5 E4        1461            clr     a
-03D6 B51028    1462            cjne    a,_pwm_counter,L019022?
-03D9 0511      1463            inc     (_pwm_counter + 1)
-03DB           1464   L019022?:
-03DB           1465   ;        main.c:395: if (pwm_counter >= 1000){
-03DB C3        1466            clr     c
-03DC E510      1467            mov     a,_pwm_counter
-03DE 94E8      1468            subb    a,#0xE8
-03E0 E511      1469            mov     a,(_pwm_counter + 1)
-03E2 9403      1470            subb    a,#0x03
-03E4 4000      1471            jc      L019002?
-03E6           1472   ;        main.c:396: pwm_counter = 0; 
-03E6 E4        1473            clr     a
-03E7 F510      1474            mov     _pwm_counter,a
-03E9 F511      1475            mov     (_pwm_counter + 1),a
-03EB           1476   L019002?:
-03EB           1477   ;        main.c:399: if (pwm_counter < pwm_left){
-03EB AAD0      1478            mov     r2,_pwm_left
-03ED 7B00      1479            mov     r3,#0x00
-03EF C3        1480            clr     c
-03F0 E510      1481            mov     a,_pwm_counter
-03F2 9A        1482            subb    a,r2
-03F3 E511      1483            mov     a,(_pwm_counter + 1)
-03F5 9B        1484            subb    a,r3
-03F6 5000      1485            jnc     L019007?
-03F8           1486   ;        main.c:400: if(L_motor_dir){
-03F8 E550      1487            mov     a,_L_motor_dir
-03FA 6000      1488            jz      L019004?
-03FC           1489   ;        main.c:401: L_bridge_1 = 1; 
-03FC D2A1      1490            setb    _P2_1
-03FE           1491   ;        main.c:402: L_bridge_2 = 0; 
-03FE C2A2      1492            clr     _P2_2
-0400 8000      1493            sjmp    L019008?
-0402           1494   L019004?:
-0402           1495   ;        main.c:405: L_bridge_1 = 0; 
-0402 C2A1      1496            clr     _P2_1
-0404           1497   ;        main.c:406: L_bridge_2 = 1; 
-0404 D2A2      1498            setb    _P2_2
-0406 8000      1499            sjmp    L019008?
-0408           1500   L019007?:
-0408           1501   ;        main.c:410: L_bridge_1 = 0; 
-0408 C2A1      1502            clr     _P2_1
-040A           1503   ;        main.c:411: L_bridge_1 = 0; 
-040A C2A1      1504            clr     _P2_1
-040C           1505   L019008?:
-040C           1506   ;        main.c:413: if (pwm_counter < pwm_right){
-040C AA90      1507            mov     r2,_pwm_right
-040E 7B00      1508            mov     r3,#0x00
-0410 C3        1509            clr     c
-0411 E510      1510            mov     a,_pwm_counter
-0413 9A        1511            subb    a,r2
-0414 E511      1512            mov     a,(_pwm_counter + 1)
-0416 9B        1513            subb    a,r3
-0417 5000      1514            jnc     L019013?
-0419           1515   ;        main.c:414: if (R_motor_dir){
-0419 E510      1516            mov     a,_R_motor_dir
-041B 6000      1517            jz      L019010?
-041D           1518   ;        main.c:415: R_bridge_1 = 1; 
-041D D2A4      1519            setb    _P2_4
-041F           1520   ;        main.c:416: R_bridge_2 = 0;
-041F C2A3      1521            clr     _P2_3
-0421 8000      1522            sjmp    L019015?
-0423           1523   L019010?:
-0423           1524   ;        main.c:419: R_bridge_1 = 0; 
-0423 C2A4      1525            clr     _P2_4
-0425           1526   ;        main.c:420: R_bridge_2 = 1;
-0425 D2A3      1527            setb    _P2_3
-0427 8000      1528            sjmp    L019015?
-0429           1529   L019013?:
-0429           1530   ;        main.c:424: R_bridge_1 = 0; 
-0429 C2A4      1531            clr     _P2_4
-042B           1532   ;        main.c:425: R_bridge_2 = 0; 
-042B C2A3      1533            clr     _P2_3
-042D           1534   L019015?:
-042D D0D0      1535            pop     psw
-042F D003      1536            pop     ar3
-0431 D002      1537            pop     ar2
-0433 D0E0      1538            pop     acc
-0435 32        1539            reti
-0436           1540   ;        eliminated unneeded push/pop dpl
-0436           1541   ;        eliminated unneeded push/pop dph
-0436           1542   ;        eliminated unneeded push/pop b
-0436           1543   ;------------------------------------------------------------
-0436           1544   ;Allocation info for local variables in function 'MoveForward'
-0436           1545   ;------------------------------------------------------------
-0436           1546   ;speed                     Allocated to registers r2 r3 
-0436           1547   ;------------------------------------------------------------
-0436           1548   ;        main.c:429: void MoveForward (int speed)
-0436           1549   ;        -----------------------------------------
-0436           1550   ;         function MoveForward
-0436           1551   ;        -----------------------------------------
-0436           1552   _MoveForward:
-0436 AA82      1553            mov     r2,dpl
-0438           1554   ;        main.c:431: pwm_left = speed * 10; 
-0438 EA        1555            mov     a,r2
-0439 75F00A    1556            mov     b,#0x0A
-043C A4        1557            mul     ab
-043D FA        1558            mov     r2,a
-043E 8AD0      1559            mov     _pwm_left,r2
-0440           1560   ;        main.c:432: pwm_right = speed * 10; 
-0440 8A90      1561            mov     _pwm_right,r2
-0442           1562   ;        main.c:433: L_motor_dir = 1; 
-0442 755001    1563            mov     _L_motor_dir,#0x01
-0445           1564   ;        main.c:434: R_motor_dir = 1; 
-0445 751001    1565            mov     _R_motor_dir,#0x01
-0448 22        1566            ret
-0449           1567   ;------------------------------------------------------------
-0449           1568   ;Allocation info for local variables in function 'MoveBackward'
-0449           1569   ;------------------------------------------------------------
-0449           1570   ;speed                     Allocated to registers r2 r3 
-0449           1571   ;------------------------------------------------------------
-0449           1572   ;        main.c:437: void MoveBackward (int speed)
-0449           1573   ;        -----------------------------------------
-0449           1574   ;         function MoveBackward
-0449           1575   ;        -----------------------------------------
-0449           1576   _MoveBackward:
-0449 AA82      1577            mov     r2,dpl
-044B           1578   ;        main.c:439: pwm_left = speed * 10; 
-044B EA        1579            mov     a,r2
-044C 75F00A    1580            mov     b,#0x0A
-044F A4        1581            mul     ab
-0450 FA        1582            mov     r2,a
-0451 8AD0      1583            mov     _pwm_left,r2
-0453           1584   ;        main.c:440: pwm_right = speed * 10; 
-0453 8A90      1585            mov     _pwm_right,r2
-0455           1586   ;        main.c:441: L_motor_dir = 0; 
-0455 755000    1587            mov     _L_motor_dir,#0x00
-0458           1588   ;        main.c:442: R_motor_dir = 0;  
-0458 751000    1589            mov     _R_motor_dir,#0x00
-045B 22        1590            ret
-045C           1591   ;------------------------------------------------------------
-045C           1592   ;Allocation info for local variables in function 'TurnRight'
-045C           1593   ;------------------------------------------------------------
-045C           1594   ;speed                     Allocated to registers r2 r3 
-045C           1595   ;------------------------------------------------------------
-045C           1596   ;        main.c:445: void TurnRight (int speed)
-045C           1597   ;        -----------------------------------------
-045C           1598   ;         function TurnRight
-045C           1599   ;        -----------------------------------------
-045C           1600   _TurnRight:
-045C AA82      1601            mov     r2,dpl
-045E           1602   ;        main.c:447: pwm_left = speed * 10; 
-045E EA        1603            mov     a,r2
-045F 75F00A    1604            mov     b,#0x0A
-0462 A4        1605            mul     ab
-0463 FA        1606            mov     r2,a
-0464 8AD0      1607            mov     _pwm_left,r2
-0466           1608   ;        main.c:448: pwm_right = speed * 10; 
-0466 8A90      1609            mov     _pwm_right,r2
-0468           1610   ;        main.c:449: L_motor_dir = 0; 
-0468 755000    1611            mov     _L_motor_dir,#0x00
-046B           1612   ;        main.c:450: R_motor_dir = 1; 
-046B 751001    1613            mov     _R_motor_dir,#0x01
-046E 22        1614            ret
-046F           1615   ;------------------------------------------------------------
-046F           1616   ;Allocation info for local variables in function 'TurnLeft'
-046F           1617   ;------------------------------------------------------------
-046F           1618   ;speed                     Allocated to registers r2 r3 
-046F           1619   ;------------------------------------------------------------
-046F           1620   ;        main.c:453: void TurnLeft (int speed)
-046F           1621   ;        -----------------------------------------
-046F           1622   ;         function TurnLeft
-046F           1623   ;        -----------------------------------------
-046F           1624   _TurnLeft:
-046F AA82      1625            mov     r2,dpl
-0471           1626   ;        main.c:455: pwm_left = speed * 10; 
-0471 EA        1627            mov     a,r2
-0472 75F00A    1628            mov     b,#0x0A
-0475 A4        1629            mul     ab
-0476 FA        1630            mov     r2,a
-0477 8AD0      1631            mov     _pwm_left,r2
-0479           1632   ;        main.c:456: pwm_right = speed * 10; 
-0479 8A90      1633            mov     _pwm_right,r2
-047B           1634   ;        main.c:457: L_motor_dir = 1; 
-047B 755001    1635            mov     _L_motor_dir,#0x01
-047E           1636   ;        main.c:458: R_motor_dir = 0; 
-047E 751000    1637            mov     _R_motor_dir,#0x00
-0481 22        1638            ret
-0482           1639   ;------------------------------------------------------------
-0482           1640   ;Allocation info for local variables in function 'main'
-0482           1641   ;------------------------------------------------------------
-0482           1642   ;cnt                       Allocated to registers 
-0482           1643   ;c                         Allocated to registers r4 
-0482           1644   ;vx_int                    Allocated to registers 
-0482           1645   ;vy_int                    Allocated to registers 
-0482           1646   ;vx                        Allocated to registers 
-0482           1647   ;vy                        Allocated to registers 
-0482           1648   ;threshold                 Allocated to registers 
-0482           1649   ;------------------------------------------------------------
-0482           1650   ;        main.c:461: void main (void)
-0482           1651   ;        -----------------------------------------
-0482           1652   ;         function main
-0482           1653   ;        -----------------------------------------
-0482           1654   _main:
-0482           1655   ;        main.c:470: waitms(500);
-0482 9001F4    1656            mov     dptr,#0x01F4
-0485 120000    1657            lcall   _waitms
-0488           1658   ;        main.c:471: printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
-0488 7428      1659            mov     a,#__str_3
-048A C0E0      1660            push    acc
-048C 74C4      1661            mov     a,#(__str_3 >> 8)
-048E C0E0      1662            push    acc
-0490 7480      1663            mov     a,#0x80
-0492 C0E0      1664            push    acc
-0494 120000    1665            lcall   _printf
-0497 1581      1666            dec     sp
-0499 1581      1667            dec     sp
-049B 1581      1668            dec     sp
-049D           1669   ;        main.c:472: UART1_Init(9600);
-049D 902580    1670            mov     dptr,#0x2580
-04A0 E4        1671            clr     a
-04A1 F5F0      1672            mov     b,a
-04A3 120000    1673            lcall   _UART1_Init
-04A6           1674   ;        main.c:474: ReceptionOff();
-04A6 120000    1675            lcall   _ReceptionOff
-04A9           1676   ;        main.c:477: SendATCommand("AT+VER\r\n");
-04A9 90C468    1677            mov     dptr,#__str_4
-04AC 75F080    1678            mov     b,#0x80
-04AF 120000    1679            lcall   _SendATCommand
-04B2           1680   ;        main.c:478: SendATCommand("AT+BAUD\r\n");
-04B2 90C4A8    1681            mov     dptr,#__str_5
-04B5 75F080    1682            mov     b,#0x80
-04B8 120000    1683            lcall   _SendATCommand
-04BB           1684   ;        main.c:479: SendATCommand("AT+RFID\r\n");
-04BB 90C4E8    1685            mov     dptr,#__str_6
-04BE 75F080    1686            mov     b,#0x80
-04C1 120000    1687            lcall   _SendATCommand
-04C4           1688   ;        main.c:480: SendATCommand("AT+DVID\r\n");
-04C4 90C528    1689            mov     dptr,#__str_7
-04C7 75F080    1690            mov     b,#0x80
-04CA 120000    1691            lcall   _SendATCommand
-04CD           1692   ;        main.c:481: SendATCommand("AT+RFC\r\n");
-04CD 90C568    1693            mov     dptr,#__str_8
-04D0 75F080    1694            mov     b,#0x80
-04D3 120000    1695            lcall   _SendATCommand
-04D6           1696   ;        main.c:482: SendATCommand("AT+POWE\r\n");
-04D6 90C5A8    1697            mov     dptr,#__str_9
-04D9 75F080    1698            mov     b,#0x80
-04DC 120000    1699            lcall   _SendATCommand
-04DF           1700   ;        main.c:483: SendATCommand("AT+CLSS\r\n");
-04DF 90C5E8    1701            mov     dptr,#__str_10
-04E2 75F080    1702            mov     b,#0x80
-04E5 120000    1703            lcall   _SendATCommand
-04E8           1704   ;        main.c:484: SendATCommand("AT+DVIDABBA\r\n");  
-04E8 90C628    1705            mov     dptr,#__str_11
-04EB 75F080    1706            mov     b,#0x80
-04EE 120000    1707            lcall   _SendATCommand
-04F1           1708   ;        main.c:487: L_bridge_1 = 0; 
-04F1 C2A1      1709            clr     _P2_1
-04F3           1710   ;        main.c:488: L_bridge_2 = 0; 
-04F3 C2A2      1711            clr     _P2_2
-04F5           1712   ;        main.c:489: R_bridge_1 = 0; 
-04F5 C2A4      1713            clr     _P2_4
-04F7           1714   ;        main.c:490: R_bridge_2 = 0; 
-04F7 C2A3      1715            clr     _P2_3
-04F9           1716   ;        main.c:493: while(1)
-04F9 7A00      1717            mov     r2,#0x00
-04FB 7B00      1718            mov     r3,#0x00
-04FD           1719   L024009?:
-04FD           1720   ;        main.c:495: Set_Pin_Output(0x24);
-04FD 758224    1721            mov     dpl,#0x24
-0500 C002      1722            push    ar2
-0502 C003      1723            push    ar3
-0504 120000    1724            lcall   _Set_Pin_Output
-0507           1725   ;        main.c:496: Set_Pin_Output(0x23);
-0507 758223    1726            mov     dpl,#0x23
-050A 120000    1727            lcall   _Set_Pin_Output
-050D           1728   ;        main.c:497: Set_Pin_Output(0x22);
-050D 758222    1729            mov     dpl,#0x22
-0510 120000    1730            lcall   _Set_Pin_Output
-0513           1731   ;        main.c:498: Set_Pin_Output(0x21);
-0513 758221    1732            mov     dpl,#0x21
-0516 120000    1733            lcall   _Set_Pin_Output
-0519           1734   ;        main.c:500: MoveForward(100);
-0519 900064    1735            mov     dptr,#0x0064
-051C 120000    1736            lcall   _MoveForward
-051F           1737   ;        main.c:501: waitms(2000);
-051F 9007D0    1738            mov     dptr,#0x07D0
-0522 120000    1739            lcall   _waitms
-0525           1740   ;        main.c:502: MoveForward(50);
-0525 900032    1741            mov     dptr,#0x0032
-0528 120000    1742            lcall   _MoveForward
-052B           1743   ;        main.c:503: waitms(2000);
-052B 9007D0    1744            mov     dptr,#0x07D0
-052E 120000    1745            lcall   _waitms
-0531           1746   ;        main.c:507: if(RXU1()) // Something has arrived
-0531 120000    1747            lcall   _RXU1
-0534 D003      1748            pop     ar3
-0536 D002      1749            pop     ar2
-0538 5000      1750            jnc     L024009?
-053A           1751   ;        main.c:509: c=getchar1();
-053A C002      1752            push    ar2
-053C C003      1753            push    ar3
-053E 120000    1754            lcall   _getchar1
-0541 AC82      1755            mov     r4,dpl
-0543 D003      1756            pop     ar3
-0545 D002      1757            pop     ar2
-0547           1758   ;        main.c:511: if(c=='!') // Master is sending message
-0547 BC21A8    1759            cjne    r4,#0x21,L024004?
-054A           1760   ;        main.c:513: getstr1(buff, sizeof(buff)-1);
-054A 75D013    1761            mov     _getstr1_PARM_2,#0x13
-054D 904490    1762            mov     dptr,#_buff
-0550 75F040    1763            mov     b,#0x40
-0553 C002      1764            push    ar2
-0555 C003      1765            push    ar3
-0557 120000    1766            lcall   _getstr1
-055A           1767   ;        main.c:523: sscanf(buff, "%03d,%03d", vx_int, vy_int);
-055A E4        1768            clr     a
-055B C0E0      1769            push    acc
-055D C0E0      1770            push    acc
-055F E4        1771            clr     a
-0560 C0E0      1772            push    acc
-0562 C0E0      1773            push    acc
-0564 74E8      1774            mov     a,#__str_12
-0566 C0E0      1775            push    acc
-0568 74C6      1776            mov     a,#(__str_12 >> 8)
-056A C0E0      1777            push    acc
-056C 7480      1778            mov     a,#0x80
-056E C0E0      1779            push    acc
-0570 7490      1780            mov     a,#_buff
-0572 C0E0      1781            push    acc
-0574 7444      1782            mov     a,#(_buff >> 8)
-0576 C0E0      1783            push    acc
-0578 7440      1784            mov     a,#0x40
-057A C0E0      1785            push    acc
-057C 120000    1786            lcall   _sscanf
-057F E581      1787            mov     a,sp
-0581 24F6      1788            add     a,#0xf6
-0583 F581      1789            mov     sp,a
-0585           1790   ;        main.c:527: printf("Joystick Received: Vx = %.3f, Vy = %.3f", vx, vy);
-0585 E4        1791            clr     a
-0586 C0E0      1792            push    acc
-0588 C0E0      1793            push    acc
-058A C0E0      1794            push    acc
-058C C0E0      1795            push    acc
-058E E4        1796            clr     a
-058F C0E0      1797            push    acc
-0591 C0E0      1798            push    acc
-0593 C0E0      1799            push    acc
-0595 C0E0      1800            push    acc
-0597 7468      1801            mov     a,#__str_13
-0599 C0E0      1802            push    acc
-059B 74C7      1803            mov     a,#(__str_13 >> 8)
-059D C0E0      1804            push    acc
-059F 7480      1805            mov     a,#0x80
-05A1 C0E0      1806            push    acc
-05A3 120000    1807            lcall   _printf
-05A6 E581      1808            mov     a,sp
-05A8 24F5      1809            add     a,#0xf5
-05AA F581      1810            mov     sp,a
-05AC D003      1811            pop     ar3
-05AE D002      1812            pop     ar2
-05B0 020000    1813            ljmp    L024009?
-05B3           1814   L024004?:
-05B3           1815   ;        main.c:543: else if(c=='@') // Master wants slave data
-05B3 BC40A8    1816            cjne    r4,#0x40,L024020?
-05B6 8000      1817            sjmp    L024021?
-05B8           1818   L024020?:
-05B8 020000    1819            ljmp    L024009?
-05BB           1820   L024021?:
-05BB           1821   ;        main.c:545: sprintf(buff, "%05u\n", cnt);
-05BB C002      1822            push    ar2
-05BD C003      1823            push    ar3
-05BF C002      1824            push    ar2
-05C1 C003      1825            push    ar3
-05C3 7428      1826            mov     a,#__str_14
-05C5 C0E0      1827            push    acc
-05C7 74C8      1828            mov     a,#(__str_14 >> 8)
-05C9 C0E0      1829            push    acc
-05CB 7480      1830            mov     a,#0x80
-05CD C0E0      1831            push    acc
-05CF 7490      1832            mov     a,#_buff
-05D1 C0E0      1833            push    acc
-05D3 7444      1834            mov     a,#(_buff >> 8)
-05D5 C0E0      1835            push    acc
-05D7 7440      1836            mov     a,#0x40
-05D9 C0E0      1837            push    acc
-05DB 120000    1838            lcall   _sprintf
-05DE E581      1839            mov     a,sp
-05E0 24F8      1840            add     a,#0xf8
-05E2 F581      1841            mov     sp,a
-05E4 D003      1842            pop     ar3
-05E6 D002      1843            pop     ar2
-05E8           1844   ;        main.c:546: cnt++;
-05E8 0A        1845            inc     r2
-05E9 BA00A8    1846            cjne    r2,#0x00,L024022?
-05EC 0B        1847            inc     r3
-05ED           1848   L024022?:
-05ED           1849   ;        main.c:547: waitms(5); // The radio seems to need this delay...
-05ED 900005    1850            mov     dptr,#0x0005
-05F0 C002      1851            push    ar2
-05F2 C003      1852            push    ar3
-05F4 120000    1853            lcall   _waitms
-05F7           1854   ;        main.c:548: sendstr1(buff);
-05F7 904490    1855            mov     dptr,#_buff
-05FA 75F040    1856            mov     b,#0x40
-05FD 120000    1857            lcall   _sendstr1
-0600 D003      1858            pop     ar3
-0602 D002      1859            pop     ar2
-0604 020000    1860            ljmp    L024009?
-0607           1861            rseg R_CSEG
-0607           1862   
-0000           1863            rseg R_XINIT
-0000           1864   
-0000           1865            rseg R_CONST
-0000           1866   __str_0:
-0000 436F6D6D  1867            db 'Command: %s'
-=======
 0000            569            rseg R_PSEG
 0000            570   ;--------------------------------------------------------
 0000            571   ; external ram data
@@ -1908,24 +603,24 @@
 0000            603            rseg R_DINIT
 0000            604   ;        main.c:48: unsigned int pwm_counter = 0; 
 0000 E4         605            clr     a
-0001 F548       606            mov     _pwm_counter,a
-0003 F549       607            mov     (_pwm_counter + 1),a
+0001 F5B8       606            mov     _pwm_counter,a
+0003 F5B9       607            mov     (_pwm_counter + 1),a
 0005            608   ;        main.c:49: unsigned int servo_counter = 0; 
 0005 E4         609            clr     a
-0006 F508       610            mov     _servo_counter,a
-0008 F509       611            mov     (_servo_counter + 1),a
+0006 F578       610            mov     _servo_counter,a
+0008 F579       611            mov     (_servo_counter + 1),a
 000A            612   ;        main.c:50: unsigned char pwm_left = 0, pwm_right = 0; 
-000A 75C800     613            mov     _pwm_left,#0x00
+000A 753800     613            mov     _pwm_left,#0x00
 000D            614   ;        main.c:50: unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
-000D 758800     615            mov     _pwm_right,#0x00
+000D 75F800     615            mov     _pwm_right,#0x00
 0010            616   ;        main.c:51: unsigned char servo_base_pwm = 0, servo_arm_pwm = 0; 
-0010 754801     617            mov     _L_motor_dir,#0x01
+0010 75B801     617            mov     _L_motor_dir,#0x01
 0013            618   ;        main.c:51: unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
-0013 750801     619            mov     _R_motor_dir,#0x01
+0013 757801     619            mov     _R_motor_dir,#0x01
 0016            620   ;        main.c:52: unsigned char servo_base_pwm = 0, servo_arm_pwm = 0; 
-0016 75C800     621            mov     _servo_base_pwm,#0x00
+0016 753800     621            mov     _servo_base_pwm,#0x00
 0019            622   ;        main.c:52: 
-0019 758800     623            mov     _servo_arm_pwm,#0x00
+0019 75F800     623            mov     _servo_arm_pwm,#0x00
 001C            624            ; The linker places a 'ret' at the end of segment R_DINIT.
 001C            625   ;--------------------------------------------------------
 001C            626   ; code
@@ -1964,7 +659,7 @@
 001E            659   ;        main.c:95: while ((CLKSEL & 0x80) == 0);
 001E            660   L002001?:
 001E E5A9       661            mov     a,_CLKSEL
-0020 30E798     662            jnb     acc.7,L002001?
+0020 30E710     662            jnb     acc.7,L002001?
 0023            663   ;        main.c:96: CLKSEL = 0x03;
 0023 75A903     664            mov     _CLKSEL,#0x03
 0026            665   ;        main.c:97: CLKSEL = 0x03;
@@ -1972,7 +667,7 @@
 0029            667   ;        main.c:98: while ((CLKSEL & 0x80) == 0);
 0029            668   L002004?:
 0029 E5A9       669            mov     a,_CLKSEL
-002B 30E718     670            jnb     acc.7,L002004?
+002B 30E790     670            jnb     acc.7,L002004?
 002E            671   ;        main.c:103: P0MDOUT |= 0x11; // Enable UART0 TX (P0.4) and UART1 TX (P0.0) as push-pull outputs
 002E 43A411     672            orl     _P0MDOUT,#0x11
 0031            673   ;        main.c:104: P2MDOUT |= 0x01; // P2.0 in push-pull mode
@@ -2066,7 +761,7 @@
 009E            761   ;        main.c:164: while (!(TMR3CN0 & 0x80));  // Wait for overflow
 009E            762   L003001?:
 009E E591       763            mov     a,_TMR3CN0
-00A0 30E718     764            jnb     acc.7,L003001?
+00A0 30E790     764            jnb     acc.7,L003001?
 00A3            765   ;        main.c:165: TMR3CN0 &= ~(0x80);         // Clear overflow indicator
 00A3 53917F     766            anl     _TMR3CN0,#0x7F
 00A6            767   ;        main.c:162: for (i = 0; i < us; i++)       // Count <us> overflows
@@ -2103,7 +798,7 @@
 00BC            798   ;        main.c:175: for (k=0; k<4; k++) Timer3us(250);
 00BC 7E00       799            mov     r6,#0x00
 00BE            800   L004001?:
-00BE BE0458     801            cjne    r6,#0x04,L004018?
+00BE BE04D0     801            cjne    r6,#0x04,L004018?
 00C1            802   L004018?:
 00C1 5000       803            jnc     L004007?
 00C3 7582FA     804            mov     dpl,#0xFA
@@ -2123,7 +818,7 @@
 00E0            818   L004007?:
 00E0            819   ;        main.c:174: for(j=0; j<ms; j++)
 00E0 0C         820            inc     r4
-00E1 BC0098     821            cjne    r4,#0x00,L004005?
+00E1 BC0010     821            cjne    r4,#0x00,L004005?
 00E4 0D         822            inc     r5
 00E5 8000       823            sjmp    L004005?
 00E7            824   L004009?:
@@ -2213,7 +908,7 @@
 014E            908   ;        main.c:193: while (!TI1);
 014E            909   L006001?:
 014E            910   ;        main.c:194: TI1=0;
-014E 10C9E8     911            jbc     _TI1,L006008?
+014E 10C960     911            jbc     _TI1,L006008?
 0151 8000       912            sjmp    L006001?
 0153            913   L006008?:
 0153            914   ;        main.c:195: SBUF1 = c;
@@ -2253,7 +948,7 @@
 017A D002       948            pop     ar2
 017C            949   ;        main.c:204: s++;        
 017C 0A         950            inc     r2
-017D BA0028     951            cjne    r2,#0x00,L007001?
+017D BA00A0     951            cjne    r2,#0x00,L007001?
 0180 0B         952            inc     r3
 0181 8000       953            sjmp    L007001?
 0183            954   L007004?:
@@ -2273,7 +968,7 @@
 0187            968   ;        main.c:212: while (!RI1);
 0187            969   L008001?:
 0187            970   ;        main.c:213: RI1=0;
-0187 10C828     971            jbc     _RI1,L008008?
+0187 10C8A0     971            jbc     _RI1,L008008?
 018A 8000       972            sjmp    L008001?
 018C            973   L008008?:
 018C            974   ;        main.c:215: SCON1&=0b_0011_1111;
@@ -2301,7 +996,7 @@
 0199 7A00       996            mov     r2,#0x00
 019B 7B00       997            mov     r3,#0x00
 019D            998   L009003?:
-019D 20C8A8     999            jb      _RI1,L009005?
+019D 20C820     999            jb      _RI1,L009005?
 01A0           1000   ;        main.c:229: SFRPAGE = 0x00;
 01A0 75A700    1001            mov     _SFRPAGE,#0x00
 01A3           1002   ;        main.c:230: Timer3us(20);
@@ -2315,12 +1010,12 @@
 01B1 75A720    1010            mov     _SFRPAGE,#0x20
 01B4           1011   ;        main.c:232: timeout++;
 01B4 0A        1012            inc     r2
-01B5 BA00E8    1013            cjne    r2,#0x00,L009012?
+01B5 BA0060    1013            cjne    r2,#0x00,L009012?
 01B8 0B        1014            inc     r3
 01B9           1015   L009012?:
 01B9           1016   ;        main.c:233: if(timeout==25000)
-01B9 BAA868    1017            cjne    r2,#0xA8,L009003?
-01BC BB6168    1018            cjne    r3,#0x61,L009003?
+01B9 BAA8E0    1017            cjne    r2,#0xA8,L009003?
+01BC BB61E0    1018            cjne    r3,#0x61,L009003?
 01BF           1019   ;        main.c:235: SFRPAGE = 0x00;
 01BF 75A700    1020            mov     _SFRPAGE,#0x00
 01C2           1021   ;        main.c:236: return ('\n'); // Timeout after half second
@@ -2377,7 +1072,7 @@
 01FD D003      1072            pop     ar3
 01FF D002      1073            pop     ar2
 0201           1074   ;        main.c:256: if(c=='\n')
-0201 B90A68    1075            cjne    r1,#0x0A,L010002?
+0201 B90AE0    1075            cjne    r1,#0x0A,L010002?
 0204           1076   ;        main.c:258: *s=0;
 0204 8A82      1077            mov     dpl,r2
 0206 8B83      1078            mov     dph,r3
@@ -2389,7 +1084,7 @@
 020E           1084   ;        main.c:262: if (cnt<n)
 020E C3        1085            clr     c
 020F ED        1086            mov     a,r5
-0210 9548      1087            subb    a,_getstr1_PARM_2
+0210 95B8      1087            subb    a,_getstr1_PARM_2
 0212 5000      1088            jnc     L010004?
 0214           1089   ;        main.c:264: cnt++;
 0214 0D        1090            inc     r5
@@ -2459,7 +1154,7 @@
 024E           1154   ;        main.c:292: for (k=0; k<4; k++)
 024E 7E00      1155            mov     r6,#0x00
 0250           1156   L012003?:
-0250 BE04E8    1157            cjne    r6,#0x04,L012019?
+0250 BE0460    1157            cjne    r6,#0x04,L012019?
 0253           1158   L012019?:
 0253 5000      1159            jnc     L012009?
 0255           1160   ;        main.c:294: if(RXU1()) return;
@@ -2498,7 +1193,7 @@
 028E           1193   L012009?:
 028E           1194   ;        main.c:290: for(j=0; j<ms; j++)
 028E 0C        1195            inc     r4
-028F BC0028    1196            cjne    r4,#0x00,L012007?
+028F BC00A0    1196            cjne    r4,#0x00,L012007?
 0292 0D        1197            inc     r5
 0293 8000      1198            sjmp    L012007?
 0295           1199   L012011?:
@@ -2523,9 +1218,9 @@
 02A2 C002      1218            push    ar2
 02A4 C003      1219            push    ar3
 02A6 C004      1220            push    ar4
-02A8 74A8      1221            mov     a,#__str_0
+02A8 7420      1221            mov     a,#__str_0
 02AA C0E0      1222            push    acc
-02AC 74C1      1223            mov     a,#(__str_0 >> 8)
+02AC 74BE      1223            mov     a,#(__str_0 >> 8)
 02AE C0E0      1224            push    acc
 02B0 7480      1225            mov     a,#0x80
 02B2 C0E0      1226            push    acc
@@ -2547,8 +1242,8 @@
 02CF 8CF0      1242            mov     b,r4
 02D1 120000    1243            lcall   _sendstr1
 02D4           1244   ;        main.c:306: getstr1(buff, sizeof(buff)-1);
-02D4 754813    1245            mov     _getstr1_PARM_2,#0x13
-02D7 904808    1246            mov     dptr,#_buff
+02D4 75B813    1245            mov     _getstr1_PARM_2,#0x13
+02D7 904478    1246            mov     dptr,#_buff
 02DA 75F040    1247            mov     b,#0x40
 02DD 120000    1248            lcall   _getstr1
 02E0           1249   ;        main.c:307: waitms(10);
@@ -2557,15 +1252,15 @@
 02E6           1252   ;        main.c:308: P2_0=1; // 'set' pin to 1 is normal operation mode.
 02E6 D2A0      1253            setb    _P2_0
 02E8           1254   ;        main.c:309: printf("Response: %s\r\n", buff);
-02E8 7408      1255            mov     a,#_buff
+02E8 7478      1255            mov     a,#_buff
 02EA C0E0      1256            push    acc
-02EC 7448      1257            mov     a,#(_buff >> 8)
+02EC 7444      1257            mov     a,#(_buff >> 8)
 02EE C0E0      1258            push    acc
 02F0 7440      1259            mov     a,#0x40
 02F2 C0E0      1260            push    acc
-02F4 7468      1261            mov     a,#__str_1
+02F4 74E0      1261            mov     a,#__str_1
 02F6 C0E0      1262            push    acc
-02F8 74C2      1263            mov     a,#(__str_1 >> 8)
+02F8 74BE      1263            mov     a,#(__str_1 >> 8)
 02FA C0E0      1264            push    acc
 02FC 7480      1265            mov     a,#0x80
 02FE C0E0      1266            push    acc
@@ -2589,7 +1284,7 @@
 030C 90000A    1284            mov     dptr,#0x000A
 030F 120000    1285            lcall   _waitms
 0312           1286   ;        main.c:316: sendstr1("AT+DVID0000\r\n"); // Some unused id, so that we get nothing in RXD1.
-0312 90C2A8    1287            mov     dptr,#__str_2
+0312 90BF20    1287            mov     dptr,#__str_2
 0315 75F080    1288            mov     b,#0x80
 0318 120000    1289            lcall   _sendstr1
 031B           1290   ;        main.c:317: waitms(10);
@@ -2622,7 +1317,7 @@
 0334           1317   L015009?:
 0334 25E0      1318            add     a,acc
 0336           1319   L015011?:
-0336 D5F028    1320            djnz    b,L015009?
+0336 D5F0A0    1320            djnz    b,L015009?
 0339 FB        1321            mov     r3,a
 033A           1322   ;        main.c:328: switch(pin/0x10)
 033A EA        1323            mov     a,r2
@@ -2634,7 +1329,7 @@
 0343 EA        1329            mov     a,r2
 0344 2A        1330            add     a,r2
 0345 2A        1331            add     a,r2
-0346 90C3A8    1332            mov     dptr,#L015013?
+0346 90C028    1332            mov     dptr,#L015013?
 0349 73        1333            jmp     @a+dptr
 034A           1334   L015013?:
 034A 020000    1335            ljmp    L015001?
@@ -2685,7 +1380,7 @@
 0373           1380   L016009?:
 0373 25E0      1381            add     a,acc
 0375           1382   L016011?:
-0375 D5F028    1383            djnz    b,L016009?
+0375 D5F0A8    1383            djnz    b,L016009?
 0378           1384   ;        main.c:342: mask=~mask;
 0378 F4        1385            cpl     a
 0379 FB        1386            mov     r3,a
@@ -2699,7 +1394,7 @@
 0383 EA        1394            mov     a,r2
 0384 2A        1395            add     a,r2
 0385 2A        1396            add     a,r2
-0386 90C5A8    1397            mov     dptr,#L016013?
+0386 90C228    1397            mov     dptr,#L016013?
 0389 73        1398            jmp     @a+dptr
 038A           1399   L016013?:
 038A 020000    1400            ljmp    L016001?
@@ -2770,26 +1465,26 @@
 03C0           1465   _InitPinADC:
 03C0 AA82      1466            mov     r2,dpl
 03C2           1467   ;        main.c:395: mask=1<<pin_num;
-03C2 8568F0    1468            mov     b,_InitPinADC_PARM_2
+03C2 85B0F0    1468            mov     b,_InitPinADC_PARM_2
 03C5 05F0      1469            inc     b
 03C7 7401      1470            mov     a,#0x01
 03C9 8000      1471            sjmp    L018013?
 03CB           1472   L018011?:
 03CB 25E0      1473            add     a,acc
 03CD           1474   L018013?:
-03CD D5F028    1475            djnz    b,L018011?
+03CD D5F0A8    1475            djnz    b,L018011?
 03D0 FB        1476            mov     r3,a
 03D1           1477   ;        main.c:397: SFRPAGE = 0x20;
 03D1 75A720    1478            mov     _SFRPAGE,#0x20
 03D4           1479   ;        main.c:398: switch (portno)
-03D4 BA0068    1480            cjne    r2,#0x00,L018014?
+03D4 BA00E8    1480            cjne    r2,#0x00,L018014?
 03D7 8000      1481            sjmp    L018001?
 03D9           1482   L018014?:
-03D9 BA01E8    1483            cjne    r2,#0x01,L018015?
+03D9 BA0168    1483            cjne    r2,#0x01,L018015?
 03DC 8000      1484            sjmp    L018002?
 03DE           1485   L018015?:
 03DE           1486   ;        main.c:400: case 0:
-03DE BA0268    1487            cjne    r2,#0x02,L018005?
+03DE BA02E8    1487            cjne    r2,#0x02,L018005?
 03E1 8000      1488            sjmp    L018003?
 03E3           1489   L018001?:
 03E3           1490   ;        main.c:401: P0MDIN &= (~mask); // Set pin as analog input
@@ -2846,7 +1541,7 @@
 0408 D2EC      1541            setb    _ADBUSY
 040A           1542   ;        main.c:423: while (!ADINT); // Wait for conversion to complete
 040A           1543   L019001?:
-040A 30EDE8    1544            jnb     _ADINT,L019001?
+040A 30ED68    1544            jnb     _ADINT,L019001?
 040D           1545   ;        main.c:424: return (ADC0);
 040D 85BD82    1546            mov     dpl,_ADC0
 0410 85BE83    1547            mov     dph,(_ADC0 >> 8)
@@ -2873,36 +1568,36 @@
 0424 75D2C4    1568            mov     _TMR5RL,#0xC4
 0427 75D3FF    1569            mov     (_TMR5RL >> 8),#0xFF
 042A           1570   ;        main.c:433: pwm_counter++; 
-042A 0548      1571            inc     _pwm_counter
+042A 05B8      1571            inc     _pwm_counter
 042C E4        1572            clr     a
-042D B54868    1573            cjne    a,_pwm_counter,L020022?
-0430 0549      1574            inc     (_pwm_counter + 1)
+042D B5B8E8    1573            cjne    a,_pwm_counter,L020022?
+0430 05B9      1574            inc     (_pwm_counter + 1)
 0432           1575   L020022?:
 0432           1576   ;        main.c:434: if (pwm_counter == 100){
 0432 7464      1577            mov     a,#0x64
-0434 B548A8    1578            cjne    a,_pwm_counter,L020023?
+0434 B5B828    1578            cjne    a,_pwm_counter,L020023?
 0437 E4        1579            clr     a
-0438 B549A8    1580            cjne    a,(_pwm_counter + 1),L020023?
+0438 B5B928    1580            cjne    a,(_pwm_counter + 1),L020023?
 043B 8000      1581            sjmp    L020024?
 043D           1582   L020023?:
 043D 8000      1583            sjmp    L020002?
 043F           1584   L020024?:
 043F           1585   ;        main.c:435: pwm_counter = 0; 
 043F E4        1586            clr     a
-0440 F548      1587            mov     _pwm_counter,a
-0442 F549      1588            mov     (_pwm_counter + 1),a
+0440 F5B8      1587            mov     _pwm_counter,a
+0442 F5B9      1588            mov     (_pwm_counter + 1),a
 0444           1589   L020002?:
 0444           1590   ;        main.c:438: if (pwm_left > pwm_counter){
-0444 AAC8      1591            mov     r2,_pwm_left
+0444 AA38      1591            mov     r2,_pwm_left
 0446 7B00      1592            mov     r3,#0x00
 0448 C3        1593            clr     c
-0449 E548      1594            mov     a,_pwm_counter
+0449 E5B8      1594            mov     a,_pwm_counter
 044B 9A        1595            subb    a,r2
-044C E549      1596            mov     a,(_pwm_counter + 1)
+044C E5B9      1596            mov     a,(_pwm_counter + 1)
 044E 9B        1597            subb    a,r3
 044F 5000      1598            jnc     L020007?
 0451           1599   ;        main.c:439: if(L_motor_dir){
-0451 E548      1600            mov     a,_L_motor_dir
+0451 E5B8      1600            mov     a,_L_motor_dir
 0453 6000      1601            jz      L020004?
 0455           1602   ;        main.c:440: L_bridge_1 = 1; 
 0455 D2A1      1603            setb    _P2_1
@@ -2922,16 +1617,16 @@
 0463 C2A2      1617            clr     _P2_2
 0465           1618   L020008?:
 0465           1619   ;        main.c:452: if (pwm_right > pwm_counter){
-0465 AA88      1620            mov     r2,_pwm_right
+0465 AAF8      1620            mov     r2,_pwm_right
 0467 7B00      1621            mov     r3,#0x00
 0469 C3        1622            clr     c
-046A E548      1623            mov     a,_pwm_counter
+046A E5B8      1623            mov     a,_pwm_counter
 046C 9A        1624            subb    a,r2
-046D E549      1625            mov     a,(_pwm_counter + 1)
+046D E5B9      1625            mov     a,(_pwm_counter + 1)
 046F 9B        1626            subb    a,r3
 0470 5000      1627            jnc     L020013?
 0472           1628   ;        main.c:453: if (R_motor_dir){
-0472 E508      1629            mov     a,_R_motor_dir
+0472 E578      1629            mov     a,_R_motor_dir
 0474 6000      1630            jz      L020010?
 0476           1631   ;        main.c:454: R_bridge_1 = 1; 
 0476 D2A4      1632            setb    _P2_4
@@ -2978,28 +1673,28 @@
 049D 758A60    1673            mov     _TMR0,#0x60
 04A0 758C73    1674            mov     (_TMR0 >> 8),#0x73
 04A3           1675   ;        main.c:474: servo_counter++;
-04A3 0508      1676            inc     _servo_counter
+04A3 0578      1676            inc     _servo_counter
 04A5 E4        1677            clr     a
-04A6 B508E8    1678            cjne    a,_servo_counter,L021014?
-04A9 0509      1679            inc     (_servo_counter + 1)
+04A6 B57868    1678            cjne    a,_servo_counter,L021014?
+04A9 0579      1679            inc     (_servo_counter + 1)
 04AB           1680   L021014?:
 04AB           1681   ;        main.c:475: if(servo_counter==1000)
 04AB 74E8      1682            mov     a,#0xE8
-04AD B50828    1683            cjne    a,_servo_counter,L021002?
+04AD B578A8    1683            cjne    a,_servo_counter,L021002?
 04B0 7403      1684            mov     a,#0x03
-04B2 B50928    1685            cjne    a,(_servo_counter + 1),L021002?
+04B2 B579A8    1685            cjne    a,(_servo_counter + 1),L021002?
 04B5           1686   ;        main.c:477: servo_counter=0;
 04B5 E4        1687            clr     a
-04B6 F508      1688            mov     _servo_counter,a
-04B8 F509      1689            mov     (_servo_counter + 1),a
+04B6 F578      1688            mov     _servo_counter,a
+04B8 F579      1689            mov     (_servo_counter + 1),a
 04BA           1690   L021002?:
 04BA           1691   ;        main.c:479: if (servo_base_pwm > servo_counter)
-04BA AAC8      1692            mov     r2,_servo_base_pwm
+04BA AA38      1692            mov     r2,_servo_base_pwm
 04BC 7B00      1693            mov     r3,#0x00
 04BE C3        1694            clr     c
-04BF E508      1695            mov     a,_servo_counter
+04BF E578      1695            mov     a,_servo_counter
 04C1 9A        1696            subb    a,r2
-04C2 E509      1697            mov     a,(_servo_counter + 1)
+04C2 E579      1697            mov     a,(_servo_counter + 1)
 04C4 9B        1698            subb    a,r3
 04C5 5000      1699            jnc     L021004?
 04C7           1700   ;        main.c:481: Servo_base = 1; 
@@ -3010,12 +1705,12 @@
 04CB C282      1705            clr     _P0_2
 04CD           1706   L021005?:
 04CD           1707   ;        main.c:486: if (servo_arm_pwm > servo_counter)
-04CD AA88      1708            mov     r2,_servo_arm_pwm
+04CD AAF8      1708            mov     r2,_servo_arm_pwm
 04CF 7B00      1709            mov     r3,#0x00
 04D1 C3        1710            clr     c
-04D2 E508      1711            mov     a,_servo_counter
+04D2 E578      1711            mov     a,_servo_counter
 04D4 9A        1712            subb    a,r2
-04D5 E509      1713            mov     a,(_servo_counter + 1)
+04D5 E579      1713            mov     a,(_servo_counter + 1)
 04D7 9B        1714            subb    a,r3
 04D8 5000      1715            jnc     L021007?
 04DA           1716   ;        main.c:488: Servo_arm = 1; 
@@ -3045,13 +1740,13 @@
 04E9           1740   _MoveForward:
 04E9 AA82      1741            mov     r2,dpl
 04EB           1742   ;        main.c:498: pwm_left = speed; 
-04EB 8AC8      1743            mov     _pwm_left,r2
+04EB 8A38      1743            mov     _pwm_left,r2
 04ED           1744   ;        main.c:499: pwm_right = speed; 
-04ED 8A88      1745            mov     _pwm_right,r2
+04ED 8AF8      1745            mov     _pwm_right,r2
 04EF           1746   ;        main.c:500: L_motor_dir = 0; 
-04EF 754800    1747            mov     _L_motor_dir,#0x00
+04EF 75B800    1747            mov     _L_motor_dir,#0x00
 04F2           1748   ;        main.c:501: R_motor_dir = 0; 
-04F2 750800    1749            mov     _R_motor_dir,#0x00
+04F2 757800    1749            mov     _R_motor_dir,#0x00
 04F5 22        1750            ret
 04F6           1751   ;------------------------------------------------------------
 04F6           1752   ;Allocation info for local variables in function 'MoveBackward'
@@ -3065,13 +1760,13 @@
 04F6           1760   _MoveBackward:
 04F6 AA82      1761            mov     r2,dpl
 04F8           1762   ;        main.c:506: pwm_left = speed; 
-04F8 8AC8      1763            mov     _pwm_left,r2
+04F8 8A38      1763            mov     _pwm_left,r2
 04FA           1764   ;        main.c:507: pwm_right = speed; 
-04FA 8A88      1765            mov     _pwm_right,r2
+04FA 8AF8      1765            mov     _pwm_right,r2
 04FC           1766   ;        main.c:508: L_motor_dir = 1; 
-04FC 754801    1767            mov     _L_motor_dir,#0x01
+04FC 75B801    1767            mov     _L_motor_dir,#0x01
 04FF           1768   ;        main.c:509: R_motor_dir = 1;  
-04FF 750801    1769            mov     _R_motor_dir,#0x01
+04FF 757801    1769            mov     _R_motor_dir,#0x01
 0502 22        1770            ret
 0503           1771   ;------------------------------------------------------------
 0503           1772   ;Allocation info for local variables in function 'TurnRight'
@@ -3085,13 +1780,13 @@
 0503           1780   _TurnRight:
 0503 AA82      1781            mov     r2,dpl
 0505           1782   ;        main.c:514: pwm_left = speed; 
-0505 8AC8      1783            mov     _pwm_left,r2
+0505 8A38      1783            mov     _pwm_left,r2
 0507           1784   ;        main.c:515: pwm_right = speed; 
-0507 8A88      1785            mov     _pwm_right,r2
+0507 8AF8      1785            mov     _pwm_right,r2
 0509           1786   ;        main.c:516: L_motor_dir = 1; 
-0509 754801    1787            mov     _L_motor_dir,#0x01
+0509 75B801    1787            mov     _L_motor_dir,#0x01
 050C           1788   ;        main.c:517: R_motor_dir = 0; 
-050C 750800    1789            mov     _R_motor_dir,#0x00
+050C 757800    1789            mov     _R_motor_dir,#0x00
 050F 22        1790            ret
 0510           1791   ;------------------------------------------------------------
 0510           1792   ;Allocation info for local variables in function 'TurnLeft'
@@ -3105,13 +1800,13 @@
 0510           1800   _TurnLeft:
 0510 AA82      1801            mov     r2,dpl
 0512           1802   ;        main.c:522: pwm_left = speed; 
-0512 8AC8      1803            mov     _pwm_left,r2
+0512 8A38      1803            mov     _pwm_left,r2
 0514           1804   ;        main.c:523: pwm_right = speed; 
-0514 8A88      1805            mov     _pwm_right,r2
+0514 8AF8      1805            mov     _pwm_right,r2
 0516           1806   ;        main.c:524: L_motor_dir = 0; 
-0516 754800    1807            mov     _L_motor_dir,#0x00
+0516 75B800    1807            mov     _L_motor_dir,#0x00
 0519           1808   ;        main.c:525: R_motor_dir = 1; 
-0519 750801    1809            mov     _R_motor_dir,#0x01
+0519 757801    1809            mov     _R_motor_dir,#0x01
 051C 22        1810            ret
 051D           1811   ;------------------------------------------------------------
 051D           1812   ;Allocation info for local variables in function 'main'
@@ -3131,17 +1826,17 @@
 051D           1826   _main:
 051D           1827   ;        main.c:532: int vx = 0, vy = 0; 
 051D E4        1828            clr     a
-051E F548      1829            mov     _main_vx_1_137,a
-0520 F549      1830            mov     (_main_vx_1_137 + 1),a
-0522 F588      1831            mov     _main_vy_1_137,a
-0524 F589      1832            mov     (_main_vy_1_137 + 1),a
+051E F5C0      1829            mov     _main_vx_1_137,a
+0520 F5C1      1830            mov     (_main_vx_1_137 + 1),a
+0522 F500      1831            mov     _main_vy_1_137,a
+0524 F501      1832            mov     (_main_vy_1_137 + 1),a
 0526           1833   ;        main.c:538: waitms(500);
 0526 9001F4    1834            mov     dptr,#0x01F4
 0529 120000    1835            lcall   _waitms
 052C           1836   ;        main.c:539: printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
-052C 7468      1837            mov     a,#__str_3
+052C 74E8      1837            mov     a,#__str_3
 052E C0E0      1838            push    acc
-0530 74CD      1839            mov     a,#(__str_3 >> 8)
+0530 74C9      1839            mov     a,#(__str_3 >> 8)
 0532 C0E0      1840            push    acc
 0534 7480      1841            mov     a,#0x80
 0536 C0E0      1842            push    acc
@@ -3157,35 +1852,35 @@
 054A           1852   ;        main.c:542: ReceptionOff();
 054A 120000    1853            lcall   _ReceptionOff
 054D           1854   ;        main.c:545: SendATCommand("AT+VER\r\n");
-054D 90CDA8    1855            mov     dptr,#__str_4
+054D 90CA28    1855            mov     dptr,#__str_4
 0550 75F080    1856            mov     b,#0x80
 0553 120000    1857            lcall   _SendATCommand
 0556           1858   ;        main.c:546: SendATCommand("AT+BAUD\r\n");
-0556 90CDE8    1859            mov     dptr,#__str_5
+0556 90CA68    1859            mov     dptr,#__str_5
 0559 75F080    1860            mov     b,#0x80
 055C 120000    1861            lcall   _SendATCommand
 055F           1862   ;        main.c:547: SendATCommand("AT+RFID\r\n");
-055F 90CE28    1863            mov     dptr,#__str_6
+055F 90CAA8    1863            mov     dptr,#__str_6
 0562 75F080    1864            mov     b,#0x80
 0565 120000    1865            lcall   _SendATCommand
 0568           1866   ;        main.c:548: SendATCommand("AT+DVID\r\n");
-0568 90CE68    1867            mov     dptr,#__str_7
+0568 90CAE8    1867            mov     dptr,#__str_7
 056B 75F080    1868            mov     b,#0x80
 056E 120000    1869            lcall   _SendATCommand
 0571           1870   ;        main.c:549: SendATCommand("AT+RFC\r\n");
-0571 90CEA8    1871            mov     dptr,#__str_8
+0571 90CB28    1871            mov     dptr,#__str_8
 0574 75F080    1872            mov     b,#0x80
 0577 120000    1873            lcall   _SendATCommand
 057A           1874   ;        main.c:550: SendATCommand("AT+POWE\r\n");
-057A 90CEE8    1875            mov     dptr,#__str_9
+057A 90CB68    1875            mov     dptr,#__str_9
 057D 75F080    1876            mov     b,#0x80
 0580 120000    1877            lcall   _SendATCommand
 0583           1878   ;        main.c:551: SendATCommand("AT+CLSS\r\n");
-0583 90CF28    1879            mov     dptr,#__str_10
+0583 90CBA8    1879            mov     dptr,#__str_10
 0586 75F080    1880            mov     b,#0x80
 0589 120000    1881            lcall   _SendATCommand
 058C           1882   ;        main.c:552: SendATCommand("AT+DVIDEFEF\r\n");  
-058C 90CF68    1883            mov     dptr,#__str_11
+058C 90CBE8    1883            mov     dptr,#__str_11
 058F 75F080    1884            mov     b,#0x80
 0592 120000    1885            lcall   _SendATCommand
 0595           1886   ;        main.c:555: L_bridge_1 = 0; 
@@ -3221,7 +1916,7 @@
 05C5 D002      1916            pop     ar2
 05C7           1917   ;        main.c:569: while(Servo_EN == 0){
 05C7           1918   L026001?:
-05C7 209728    1919            jb      _P1_7,L026003?
+05C7 2097A8    1919            jb      _P1_7,L026003?
 05CA           1920   ;        main.c:570: waitms(25);
 05CA 900019    1921            mov     dptr,#0x0019
 05CD C002      1922            push    ar2
@@ -3249,28 +1944,28 @@
 05F4 D003      1944            pop     ar3
 05F6 D002      1945            pop     ar2
 05F8           1946   ;        main.c:581: if(c=='!') // Master is sending message
-05F8 BC2168    1947            cjne    r4,#0x21,L026042?
+05F8 BC21E8    1947            cjne    r4,#0x21,L026042?
 05FB 8000      1948            sjmp    L026043?
 05FD           1949   L026042?:
 05FD 020000    1950            ljmp    L026020?
 0600           1951   L026043?:
 0600           1952   ;        main.c:583: getstr1(buff, sizeof(buff)-1);
-0600 754813    1953            mov     _getstr1_PARM_2,#0x13
-0603 904808    1954            mov     dptr,#_buff
+0600 75B813    1953            mov     _getstr1_PARM_2,#0x13
+0603 904478    1954            mov     dptr,#_buff
 0606 75F040    1955            mov     b,#0x40
 0609 C002      1956            push    ar2
 060B C003      1957            push    ar3
 060D 120000    1958            lcall   _getstr1
 0610           1959   ;        main.c:584: if(strlen(buff)==7)
-0610 904808    1960            mov     dptr,#_buff
+0610 904478    1960            mov     dptr,#_buff
 0613 75F040    1961            mov     b,#0x40
 0616 120000    1962            lcall   _strlen
 0619 AD82      1963            mov     r5,dpl
 061B AE83      1964            mov     r6,dph
 061D D003      1965            pop     ar3
 061F D002      1966            pop     ar2
-0621 BD0768    1967            cjne    r5,#0x07,L026044?
-0624 BE0068    1968            cjne    r6,#0x00,L026044?
+0621 BD07E8    1967            cjne    r5,#0x07,L026044?
+0624 BE00E8    1968            cjne    r6,#0x00,L026044?
 0627 8000      1969            sjmp    L026045?
 0629           1970   L026044?:
 0629 020000    1971            ljmp    L026015?
@@ -3278,27 +1973,27 @@
 062C           1973   ;        main.c:588: sscanf(buff, "%03d,%03d", &vx, &vy);
 062C C002      1974            push    ar2
 062E C003      1975            push    ar3
-0630 7488      1976            mov     a,#_main_vy_1_137
+0630 7400      1976            mov     a,#_main_vy_1_137
 0632 C0E0      1977            push    acc
-0634 74B7      1978            mov     a,#(_main_vy_1_137 >> 8)
+0634 74B4      1978            mov     a,#(_main_vy_1_137 >> 8)
 0636 C0E0      1979            push    acc
 0638 7440      1980            mov     a,#0x40
 063A C0E0      1981            push    acc
-063C 7448      1982            mov     a,#_main_vx_1_137
+063C 74C0      1982            mov     a,#_main_vx_1_137
 063E C0E0      1983            push    acc
-0640 74B7      1984            mov     a,#(_main_vx_1_137 >> 8)
+0640 74B3      1984            mov     a,#(_main_vx_1_137 >> 8)
 0642 C0E0      1985            push    acc
 0644 7440      1986            mov     a,#0x40
 0646 C0E0      1987            push    acc
-0648 7428      1988            mov     a,#__str_12
+0648 74A8      1988            mov     a,#__str_12
 064A C0E0      1989            push    acc
-064C 74D2      1990            mov     a,#(__str_12 >> 8)
+064C 74CE      1990            mov     a,#(__str_12 >> 8)
 064E C0E0      1991            push    acc
 0650 7480      1992            mov     a,#0x80
 0652 C0E0      1993            push    acc
-0654 7408      1994            mov     a,#_buff
+0654 7478      1994            mov     a,#_buff
 0656 C0E0      1995            push    acc
-0658 7448      1996            mov     a,#(_buff >> 8)
+0658 7444      1996            mov     a,#(_buff >> 8)
 065A C0E0      1997            push    acc
 065C 7440      1998            mov     a,#0x40
 065E C0E0      1999            push    acc
@@ -3307,13 +2002,13 @@
 0665 24F4      2002            add     a,#0xf4
 0667 F581      2003            mov     sp,a
 0669           2004   ;        main.c:590: printf("Joystick Received: Vx = %03d, Vy = %03d\r\n", vx, vy);
-0669 C088      2005            push    _main_vy_1_137
-066B C089      2006            push    (_main_vy_1_137 + 1)
-066D C048      2007            push    _main_vx_1_137
-066F C049      2008            push    (_main_vx_1_137 + 1)
-0671 74A8      2009            mov     a,#__str_13
+0669 C000      2005            push    _main_vy_1_137
+066B C001      2006            push    (_main_vy_1_137 + 1)
+066D C0C0      2007            push    _main_vx_1_137
+066F C0C1      2008            push    (_main_vx_1_137 + 1)
+0671 7428      2009            mov     a,#__str_13
 0673 C0E0      2010            push    acc
-0675 74D2      2011            mov     a,#(__str_13 >> 8)
+0675 74CF      2011            mov     a,#(__str_13 >> 8)
 0677 C0E0      2012            push    acc
 0679 7480      2013            mov     a,#0x80
 067B C0E0      2014            push    acc
@@ -3322,13 +2017,13 @@
 0682 24F9      2017            add     a,#0xf9
 0684 F581      2018            mov     sp,a
 0686           2019   ;        main.c:592: if (vy > threshold){
-0686 858882    2020            mov     dpl,_main_vy_1_137
-0689 858983    2021            mov     dph,(_main_vy_1_137 + 1)
+0686 850082    2020            mov     dpl,_main_vy_1_137
+0689 850183    2021            mov     dph,(_main_vy_1_137 + 1)
 068C 120000    2022            lcall   ___sint2fs
-068F 858218    2023            mov     _main_sloc0_1_0,dpl
-0692 858319    2024            mov     (_main_sloc0_1_0 + 1),dph
-0695 85F01A    2025            mov     (_main_sloc0_1_0 + 2),b
-0698 F51B      2026            mov     (_main_sloc0_1_0 + 3),a
+068F 858290    2023            mov     _main_sloc0_1_0,dpl
+0692 858391    2024            mov     (_main_sloc0_1_0 + 1),dph
+0695 85F092    2025            mov     (_main_sloc0_1_0 + 2),b
+0698 F593      2026            mov     (_main_sloc0_1_0 + 3),a
 069A E4        2027            clr     a
 069B C0E0      2028            push    acc
 069D C0E0      2029            push    acc
@@ -3336,10 +2031,10 @@
 06A1 C0E0      2031            push    acc
 06A3 7443      2032            mov     a,#0x43
 06A5 C0E0      2033            push    acc
-06A7 851882    2034            mov     dpl,_main_sloc0_1_0
-06AA 851983    2035            mov     dph,(_main_sloc0_1_0 + 1)
-06AD 851AF0    2036            mov     b,(_main_sloc0_1_0 + 2)
-06B0 E51B      2037            mov     a,(_main_sloc0_1_0 + 3)
+06A7 859082    2034            mov     dpl,_main_sloc0_1_0
+06AA 859183    2035            mov     dph,(_main_sloc0_1_0 + 1)
+06AD 8592F0    2036            mov     b,(_main_sloc0_1_0 + 2)
+06B0 E593      2037            mov     a,(_main_sloc0_1_0 + 3)
 06B2 120000    2038            lcall   ___fsgt
 06B5 AD82      2039            mov     r5,dpl
 06B7 E581      2040            mov     a,sp
@@ -3362,10 +2057,10 @@
 06D4 C0E0      2057            push    acc
 06D6 7443      2058            mov     a,#0x43
 06D8 C0E0      2059            push    acc
-06DA 851882    2060            mov     dpl,_main_sloc0_1_0
-06DD 851983    2061            mov     dph,(_main_sloc0_1_0 + 1)
-06E0 851AF0    2062            mov     b,(_main_sloc0_1_0 + 2)
-06E3 E51B      2063            mov     a,(_main_sloc0_1_0 + 3)
+06DA 859082    2060            mov     dpl,_main_sloc0_1_0
+06DD 859183    2061            mov     dph,(_main_sloc0_1_0 + 1)
+06E0 8592F0    2062            mov     b,(_main_sloc0_1_0 + 2)
+06E3 E593      2063            mov     a,(_main_sloc0_1_0 + 3)
 06E5 120000    2064            lcall   ___fssub
 06E8 AD82      2065            mov     r5,dpl
 06EA AE83      2066            mov     r6,dph
@@ -3421,8 +2116,8 @@
 074F C003      2116            push    ar3
 0751 120000    2117            lcall   ___fs2sint
 0754           2118   ;        main.c:594: MoveForward(motor_pwm);
-0754 8582D8    2119            mov     _main_motor_pwm_1_137,dpl
-0757 8583D9    2120            mov  (_main_motor_pwm_1_137 + 1),dph
+0754 858250    2119            mov     _main_motor_pwm_1_137,dpl
+0757 858351    2120            mov  (_main_motor_pwm_1_137 + 1),dph
 075A 120000    2121            lcall   _MoveForward
 075D D003      2122            pop     ar3
 075F D002      2123            pop     ar2
@@ -3440,10 +2135,10 @@
 0773 C0E0      2135            push    acc
 0775 7443      2136            mov     a,#0x43
 0777 C0E0      2137            push    acc
-0779 851882    2138            mov     dpl,_main_sloc0_1_0
-077C 851983    2139            mov     dph,(_main_sloc0_1_0 + 1)
-077F 851AF0    2140            mov     b,(_main_sloc0_1_0 + 2)
-0782 E51B      2141            mov     a,(_main_sloc0_1_0 + 3)
+0779 859082    2138            mov     dpl,_main_sloc0_1_0
+077C 859183    2139            mov     dph,(_main_sloc0_1_0 + 1)
+077F 8592F0    2140            mov     b,(_main_sloc0_1_0 + 2)
+0782 E593      2141            mov     a,(_main_sloc0_1_0 + 3)
 0784 120000    2142            lcall   ___fslt
 0787 AD82      2143            mov     r5,dpl
 0789 E581      2144            mov     a,sp
@@ -3459,10 +2154,10 @@
 0799 C002      2154            push    ar2
 079B C003      2155            push    ar3
 079D C003      2156            push    ar3
-079F C018      2157            push    _main_sloc0_1_0
-07A1 C019      2158            push    (_main_sloc0_1_0 + 1)
-07A3 C01A      2159            push    (_main_sloc0_1_0 + 2)
-07A5 C01B      2160            push    (_main_sloc0_1_0 + 3)
+079F C090      2157            push    _main_sloc0_1_0
+07A1 C091      2158            push    (_main_sloc0_1_0 + 1)
+07A3 C092      2159            push    (_main_sloc0_1_0 + 2)
+07A5 C093      2160            push    (_main_sloc0_1_0 + 3)
 07A7 900000    2161            mov     dptr,#0x0000
 07AA 75F021    2162            mov     b,#0x21
 07AD 7443      2163            mov     a,#0x43
@@ -3521,8 +2216,8 @@
 0819 C003      2216            push    ar3
 081B 120000    2217            lcall   ___fs2sint
 081E           2218   ;        main.c:598: MoveBackward(motor_pwm);
-081E 8582D8    2219            mov     _main_motor_pwm_1_137,dpl
-0821 8583D9    2220            mov  (_main_motor_pwm_1_137 + 1),dph
+081E 858250    2219            mov     _main_motor_pwm_1_137,dpl
+0821 858351    2220            mov  (_main_motor_pwm_1_137 + 1),dph
 0824 120000    2221            lcall   _MoveBackward
 0827 D003      2222            pop     ar3
 0829 D002      2223            pop     ar2
@@ -3532,15 +2227,15 @@
 082F           2227   ;        main.c:598: MoveBackward(motor_pwm);
 082F           2228   L026008?:
 082F           2229   ;        main.c:600: if(vx > threshold){
-082F 854882    2230            mov     dpl,_main_vx_1_137
-0832 854983    2231            mov     dph,(_main_vx_1_137 + 1)
+082F 85C082    2230            mov     dpl,_main_vx_1_137
+0832 85C183    2231            mov     dph,(_main_vx_1_137 + 1)
 0835 C002      2232            push    ar2
 0837 C003      2233            push    ar3
 0839 120000    2234            lcall   ___sint2fs
-083C 858218    2235            mov     _main_sloc0_1_0,dpl
-083F 858319    2236            mov     (_main_sloc0_1_0 + 1),dph
-0842 85F01A    2237            mov     (_main_sloc0_1_0 + 2),b
-0845 F51B      2238            mov     (_main_sloc0_1_0 + 3),a
+083C 858290    2235            mov     _main_sloc0_1_0,dpl
+083F 858391    2236            mov     (_main_sloc0_1_0 + 1),dph
+0842 85F092    2237            mov     (_main_sloc0_1_0 + 2),b
+0845 F593      2238            mov     (_main_sloc0_1_0 + 3),a
 0847 E4        2239            clr     a
 0848 C0E0      2240            push    acc
 084A C0E0      2241            push    acc
@@ -3548,10 +2243,10 @@
 084E C0E0      2243            push    acc
 0850 7443      2244            mov     a,#0x43
 0852 C0E0      2245            push    acc
-0854 851882    2246            mov     dpl,_main_sloc0_1_0
-0857 851983    2247            mov     dph,(_main_sloc0_1_0 + 1)
-085A 851AF0    2248            mov     b,(_main_sloc0_1_0 + 2)
-085D E51B      2249            mov     a,(_main_sloc0_1_0 + 3)
+0854 859082    2246            mov     dpl,_main_sloc0_1_0
+0857 859183    2247            mov     dph,(_main_sloc0_1_0 + 1)
+085A 8592F0    2248            mov     b,(_main_sloc0_1_0 + 2)
+085D E593      2249            mov     a,(_main_sloc0_1_0 + 3)
 085F 120000    2250            lcall   ___fsgt
 0862 AD82      2251            mov     r5,dpl
 0864 E581      2252            mov     a,sp
@@ -3574,10 +2269,10 @@
 0881 C0E0      2269            push    acc
 0883 7443      2270            mov     a,#0x43
 0885 C0E0      2271            push    acc
-0887 851882    2272            mov     dpl,_main_sloc0_1_0
-088A 851983    2273            mov     dph,(_main_sloc0_1_0 + 1)
-088D 851AF0    2274            mov     b,(_main_sloc0_1_0 + 2)
-0890 E51B      2275            mov     a,(_main_sloc0_1_0 + 3)
+0887 859082    2272            mov     dpl,_main_sloc0_1_0
+088A 859183    2273            mov     dph,(_main_sloc0_1_0 + 1)
+088D 8592F0    2274            mov     b,(_main_sloc0_1_0 + 2)
+0890 E593      2275            mov     a,(_main_sloc0_1_0 + 3)
 0892 120000    2276            lcall   ___fssub
 0895 AD82      2277            mov     r5,dpl
 0897 AE83      2278            mov     r6,dph
@@ -3633,8 +2328,8 @@
 08FC C003      2328            push    ar3
 08FE 120000    2329            lcall   ___fs2sint
 0901           2330   ;        main.c:602: TurnRight(motor_pwm);
-0901 8582D8    2331            mov     _main_motor_pwm_1_137,dpl
-0904 8583D9    2332            mov  (_main_motor_pwm_1_137 + 1),dph
+0901 858250    2331            mov     _main_motor_pwm_1_137,dpl
+0904 858351    2332            mov  (_main_motor_pwm_1_137 + 1),dph
 0907 120000    2333            lcall   _TurnRight
 090A D003      2334            pop     ar3
 090C D002      2335            pop     ar2
@@ -3652,10 +2347,10 @@
 0920 C0E0      2347            push    acc
 0922 7443      2348            mov     a,#0x43
 0924 C0E0      2349            push    acc
-0926 851882    2350            mov     dpl,_main_sloc0_1_0
-0929 851983    2351            mov     dph,(_main_sloc0_1_0 + 1)
-092C 851AF0    2352            mov     b,(_main_sloc0_1_0 + 2)
-092F E51B      2353            mov     a,(_main_sloc0_1_0 + 3)
+0926 859082    2350            mov     dpl,_main_sloc0_1_0
+0929 859183    2351            mov     dph,(_main_sloc0_1_0 + 1)
+092C 8592F0    2352            mov     b,(_main_sloc0_1_0 + 2)
+092F E593      2353            mov     a,(_main_sloc0_1_0 + 3)
 0931 120000    2354            lcall   ___fslt
 0934 AD82      2355            mov     r5,dpl
 0936 E581      2356            mov     a,sp
@@ -3671,10 +2366,10 @@
 0946 C002      2366            push    ar2
 0948 C003      2367            push    ar3
 094A C003      2368            push    ar3
-094C C018      2369            push    _main_sloc0_1_0
-094E C019      2370            push    (_main_sloc0_1_0 + 1)
-0950 C01A      2371            push    (_main_sloc0_1_0 + 2)
-0952 C01B      2372            push    (_main_sloc0_1_0 + 3)
+094C C090      2369            push    _main_sloc0_1_0
+094E C091      2370            push    (_main_sloc0_1_0 + 1)
+0950 C092      2371            push    (_main_sloc0_1_0 + 2)
+0952 C093      2372            push    (_main_sloc0_1_0 + 3)
 0954 900000    2373            mov     dptr,#0x0000
 0957 75F021    2374            mov     b,#0x21
 095A 7443      2375            mov     a,#0x43
@@ -3733,8 +2428,8 @@
 09C6 C003      2428            push    ar3
 09C8 120000    2429            lcall   ___fs2sint
 09CB           2430   ;        main.c:606: TurnLeft(motor_pwm);
-09CB 8582D8    2431            mov     _main_motor_pwm_1_137,dpl
-09CE 8583D9    2432            mov  (_main_motor_pwm_1_137 + 1),dph
+09CB 858250    2431            mov     _main_motor_pwm_1_137,dpl
+09CE 858351    2432            mov  (_main_motor_pwm_1_137 + 1),dph
 09D1 120000    2433            lcall   _TurnLeft
 09D4 D003      2434            pop     ar3
 09D6 D002      2435            pop     ar2
@@ -3743,7 +2438,7 @@
 09DC 020000    2438            ljmp    L026025?
 09DF           2439   L026015?:
 09DF           2440   ;        main.c:611: printf("*** BAD MESSAGE ***(%d): %s\r\n", buff,strlen(buff));
-09DF 904808    2441            mov     dptr,#_buff
+09DF 904478    2441            mov     dptr,#_buff
 09E2 75F040    2442            mov     b,#0x40
 09E5 C002      2443            push    ar2
 09E7 C003      2444            push    ar3
@@ -3752,15 +2447,15 @@
 09EE AE83      2447            mov     r6,dph
 09F0 C005      2448            push    ar5
 09F2 C006      2449            push    ar6
-09F4 7408      2450            mov     a,#_buff
+09F4 7478      2450            mov     a,#_buff
 09F6 C0E0      2451            push    acc
-09F8 7448      2452            mov     a,#(_buff >> 8)
+09F8 7444      2452            mov     a,#(_buff >> 8)
 09FA C0E0      2453            push    acc
 09FC 7440      2454            mov     a,#0x40
 09FE C0E0      2455            push    acc
-0A00 74E8      2456            mov     a,#__str_14
+0A00 7468      2456            mov     a,#__str_14
 0A02 C0E0      2457            push    acc
-0A04 74D6      2458            mov     a,#(__str_14 >> 8)
+0A04 74D3      2458            mov     a,#(__str_14 >> 8)
 0A06 C0E0      2459            push    acc
 0A08 7480      2460            mov     a,#0x80
 0A0A C0E0      2461            push    acc
@@ -3773,7 +2468,7 @@
 0A19 020000    2468            ljmp    L026025?
 0A1C           2469   L026020?:
 0A1C           2470   ;        main.c:617: else if(c=='@') // Master wants slave data
-0A1C BC4028    2471            cjne    r4,#0x40,L026050?
+0A1C BC40A8    2471            cjne    r4,#0x40,L026050?
 0A1F 8000      2472            sjmp    L026051?
 0A21           2473   L026050?:
 0A21 020000    2474            ljmp    L026025?
@@ -3783,15 +2478,15 @@
 0A26 C003      2478            push    ar3
 0A28 C002      2479            push    ar2
 0A2A C003      2480            push    ar3
-0A2C 74A8      2481            mov     a,#__str_15
+0A2C 7428      2481            mov     a,#__str_15
 0A2E C0E0      2482            push    acc
-0A30 74D7      2483            mov     a,#(__str_15 >> 8)
+0A30 74D4      2483            mov     a,#(__str_15 >> 8)
 0A32 C0E0      2484            push    acc
 0A34 7480      2485            mov     a,#0x80
 0A36 C0E0      2486            push    acc
-0A38 7408      2487            mov     a,#_buff
+0A38 7478      2487            mov     a,#_buff
 0A3A C0E0      2488            push    acc
-0A3C 7448      2489            mov     a,#(_buff >> 8)
+0A3C 7444      2489            mov     a,#(_buff >> 8)
 0A3E C0E0      2490            push    acc
 0A40 7440      2491            mov     a,#0x40
 0A42 C0E0      2492            push    acc
@@ -3803,7 +2498,7 @@
 0A4F D002      2498            pop     ar2
 0A51           2499   ;        main.c:620: cnt++;
 0A51 0A        2500            inc     r2
-0A52 BA0028    2501            cjne    r2,#0x00,L026052?
+0A52 BA00A8    2501            cjne    r2,#0x00,L026052?
 0A55 0B        2502            inc     r3
 0A56           2503   L026052?:
 0A56           2504   ;        main.c:621: waitms(5); // The radio seems to need this delay...
@@ -3812,7 +2507,7 @@
 0A5B C003      2507            push    ar3
 0A5D 120000    2508            lcall   _waitms
 0A60           2509   ;        main.c:622: sendstr1(buff);
-0A60 904808    2510            mov     dptr,#_buff
+0A60 904478    2510            mov     dptr,#_buff
 0A63 75F040    2511            mov     b,#0x40
 0A66 120000    2512            lcall   _sendstr1
 0A69 D003      2513            pop     ar3
@@ -3825,7 +2520,6 @@
 0000           2520            rseg R_CONST
 0000           2521   __str_0:
 0000 436F6D6D  2522            db 'Command: %s'
->>>>>>> 79f0ffb8a6697384105a9c397191a8cd7521d9e9
      616E643A
      202573
 000B 00        2523            db 0x00

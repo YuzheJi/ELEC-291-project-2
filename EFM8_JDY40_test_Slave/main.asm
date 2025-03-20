@@ -1,11 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-<<<<<<< HEAD
-; This file was generated Tue Mar 18 16:04:06 2025
-=======
-; This file was generated Tue Mar 18 14:40:19 2025
->>>>>>> 79f0ffb8a6697384105a9c397191a8cd7521d9e9
+; This file was generated Tue Mar 18 16:13:09 2025
 ;--------------------------------------------------------
 $name main
 $optc51 --model-small
