@@ -1,7 +1,11 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
+<<<<<<< HEAD
 ; This file was generated Thu Mar 20 13:01:28 2025
+=======
+; This file was generated Thu Mar 20 13:08:00 2025
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;--------------------------------------------------------
 $name main
 $optc51 --model-small
@@ -25,8 +29,15 @@ $optc51 --model-small
 ;--------------------------------------------------------
 	public _InitPinADC_PARM_2
 	public _main
+<<<<<<< HEAD
 	public _Calibrate_Joystick
 	public _Timer0_ISR
+=======
+	public _TurnLeft
+	public _TurnRight
+	public _MoveBackward
+	public _MoveForward
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	public _Timer5_ISR
 	public _ADC_at_Pin
 	public _InitPinADC
@@ -48,12 +59,17 @@ $optc51 --model-small
 	public __c51_external_startup
 	public _buff
 	public _getstr1_PARM_2
+<<<<<<< HEAD
 	public _vy_thres
 	public _vx_thres
 	public _vy
 	public _vx
 	public _servo_arm_pwm
 	public _servo_base_pwm
+=======
+	public _servo_arm
+	public _servo_base
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	public _R_motor_dir
 	public _L_motor_dir
 	public _pwm_right
@@ -520,9 +536,9 @@ _L_motor_dir:
 	ds 1
 _R_motor_dir:
 	ds 1
-_servo_base_pwm:
+_servo_base:
 	ds 1
-_servo_arm_pwm:
+_servo_arm:
 	ds 1
 _vx:
 	ds 2
@@ -534,10 +550,21 @@ _vy_thres:
 	ds 2
 _getstr1_PARM_2:
 	ds 1
+<<<<<<< HEAD
 _main_vx_error_1_132:
 	ds 2
 _main_vy_error_1_132:
 	ds 2
+=======
+_main_vx_1_133:
+	ds 2
+_main_vy_1_133:
+	ds 2
+_main_motor_pwm_1_133:
+	ds 2
+_main_sloc0_1_0:
+	ds 4
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;--------------------------------------------------------
 ; overlayable items in internal ram 
 ;--------------------------------------------------------
@@ -588,8 +615,6 @@ _buff:
 ;--------------------------------------------------------
 	CSEG at 0x0000
 	ljmp	_crt0
-	CSEG at 0x000b
-	ljmp	_Timer0_ISR
 	CSEG at 0x0093
 	ljmp	_Timer5_ISR
 ;--------------------------------------------------------
@@ -614,10 +639,11 @@ _buff:
 	mov	_pwm_left,#0x00
 ;	main.c:50: unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
 	mov	_pwm_right,#0x00
-;	main.c:51: unsigned char servo_base_pwm = 0, servo_arm_pwm = 0; 
+;	main.c:51: unsigned char servo_base = 100, servo_arm = 100; 
 	mov	_L_motor_dir,#0x01
 ;	main.c:51: unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
 	mov	_R_motor_dir,#0x01
+<<<<<<< HEAD
 ;	main.c:52: unsigned char servo_base_pwm = 0, servo_arm_pwm = 0; 
 	mov	_servo_base_pwm,#0x00
 ;	main.c:52: int vx = 0, vy = 0; 
@@ -638,6 +664,12 @@ _buff:
 	clr	a
 	mov	_vy_thres,a
 	mov	(_vy_thres + 1),a
+=======
+;	main.c:52: unsigned char servo_base = 100, servo_arm = 100; 
+	mov	_servo_base,#0x64
+;	main.c:52: 
+	mov	_servo_arm,#0x64
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	; The linker places a 'ret' at the end of segment R_DINIT.
 ;--------------------------------------------------------
 ; code
@@ -722,6 +754,7 @@ L002004?:
 	orl	_EIE2,#0x08
 ;	main.c:130: TR5=1;         // Start Timer5 (TMR5CN0 is bit addressable)
 	setb	_TR5
+<<<<<<< HEAD
 ;	main.c:133: TR0=0;
 	clr	_TR0
 ;	main.c:134: TF0=0;
@@ -744,6 +777,13 @@ L002004?:
 ;	main.c:147: SFRPAGE=0x00;
 	mov	_SFRPAGE,#0x00
 ;	main.c:149: return 0;
+=======
+;	main.c:131: EA=1;  // Enable global interrupts
+	setb	_EA
+;	main.c:132: SFRPAGE=0x00;
+	mov	_SFRPAGE,#0x00
+;	main.c:134: return 0;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	dpl,#0x00
 	ret
 ;------------------------------------------------------------
@@ -752,12 +792,17 @@ L002004?:
 ;us                        Allocated to registers r2 
 ;i                         Allocated to registers r3 
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:153: void Timer3us(unsigned char us)
+=======
+;	main.c:138: void Timer3us(unsigned char us)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function Timer3us
 ;	-----------------------------------------
 _Timer3us:
 	mov	r2,dpl
+<<<<<<< HEAD
 ;	main.c:158: CKCON0|=0b_0100_0000;
 	orl	_CKCON0,#0x40
 ;	main.c:160: TMR3RL = (-(SYSCLK)/1000000L); // Set Timer3 to overflow in 1us.
@@ -769,12 +814,26 @@ _Timer3us:
 ;	main.c:163: TMR3CN0 = 0x04;                 // Sart Timer3 and clear overflow flag
 	mov	_TMR3CN0,#0x04
 ;	main.c:164: for (i = 0; i < us; i++)       // Count <us> overflows
+=======
+;	main.c:143: CKCON0|=0b_0100_0000;
+	orl	_CKCON0,#0x40
+;	main.c:145: TMR3RL = (-(SYSCLK)/1000000L); // Set Timer3 to overflow in 1us.
+	mov	_TMR3RL,#0xB8
+	mov	(_TMR3RL >> 8),#0xFF
+;	main.c:146: TMR3 = TMR3RL;                 // Initialize Timer3 for first overflow
+	mov	_TMR3,_TMR3RL
+	mov	(_TMR3 >> 8),(_TMR3RL >> 8)
+;	main.c:148: TMR3CN0 = 0x04;                 // Sart Timer3 and clear overflow flag
+	mov	_TMR3CN0,#0x04
+;	main.c:149: for (i = 0; i < us; i++)       // Count <us> overflows
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	r3,#0x00
 L003004?:
 	clr	c
 	mov	a,r3
 	subb	a,r2
 	jnc	L003007?
+<<<<<<< HEAD
 ;	main.c:166: while (!(TMR3CN0 & 0x80));  // Wait for overflow
 L003001?:
 	mov	a,_TMR3CN0
@@ -786,6 +845,19 @@ L003001?:
 	sjmp	L003004?
 L003007?:
 ;	main.c:169: TMR3CN0 = 0 ;                   // Stop Timer3 and clear overflow flag
+=======
+;	main.c:151: while (!(TMR3CN0 & 0x80));  // Wait for overflow
+L003001?:
+	mov	a,_TMR3CN0
+	jnb	acc.7,L003001?
+;	main.c:152: TMR3CN0 &= ~(0x80);         // Clear overflow indicator
+	anl	_TMR3CN0,#0x7F
+;	main.c:149: for (i = 0; i < us; i++)       // Count <us> overflows
+	inc	r3
+	sjmp	L003004?
+L003007?:
+;	main.c:154: TMR3CN0 = 0 ;                   // Stop Timer3 and clear overflow flag
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	_TMR3CN0,#0x00
 	ret
 ;------------------------------------------------------------
@@ -795,14 +867,22 @@ L003007?:
 ;j                         Allocated to registers r4 r5 
 ;k                         Allocated to registers r6 
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:172: void waitms (unsigned int ms)
+=======
+;	main.c:157: void waitms (unsigned int ms)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function waitms
 ;	-----------------------------------------
 _waitms:
 	mov	r2,dpl
 	mov	r3,dph
+<<<<<<< HEAD
 ;	main.c:176: for(j=0; j<ms; j++)
+=======
+;	main.c:161: for(j=0; j<ms; j++)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	r4,#0x00
 	mov	r5,#0x00
 L004005?:
@@ -812,7 +892,11 @@ L004005?:
 	mov	a,r5
 	subb	a,r3
 	jnc	L004009?
+<<<<<<< HEAD
 ;	main.c:177: for (k=0; k<4; k++) Timer3us(250);
+=======
+;	main.c:162: for (k=0; k<4; k++) Timer3us(250);
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	r6,#0x00
 L004001?:
 	cjne	r6,#0x04,L004018?
@@ -833,7 +917,11 @@ L004018?:
 	inc	r6
 	sjmp	L004001?
 L004007?:
+<<<<<<< HEAD
 ;	main.c:176: for(j=0; j<ms; j++)
+=======
+;	main.c:161: for(j=0; j<ms; j++)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	inc	r4
 	cjne	r4,#0x00,L004005?
 	inc	r5
@@ -845,7 +933,11 @@ L004009?:
 ;------------------------------------------------------------
 ;baudrate                  Allocated to registers r2 r3 r4 r5 
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:180: void UART1_Init (unsigned long baudrate)
+=======
+;	main.c:165: void UART1_Init (unsigned long baudrate)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function UART1_Init
 ;	-----------------------------------------
@@ -854,6 +946,7 @@ _UART1_Init:
 	mov	r3,dph
 	mov	r4,b
 	mov	r5,a
+<<<<<<< HEAD
 ;	main.c:182: SFRPAGE = 0x20;
 	mov	_SFRPAGE,#0x20
 ;	main.c:183: SMOD1 = 0x0C; // no parity, 8 data bits, 1 stop bit
@@ -863,6 +956,17 @@ _UART1_Init:
 ;	main.c:185: SBCON1 =0x00;   // disable baud rate generator
 	mov	_SBCON1,#0x00
 ;	main.c:186: SBRL1 = 0x10000L-((SYSCLK/baudrate)/(12L*2L));
+=======
+;	main.c:167: SFRPAGE = 0x20;
+	mov	_SFRPAGE,#0x20
+;	main.c:168: SMOD1 = 0x0C; // no parity, 8 data bits, 1 stop bit
+	mov	_SMOD1,#0x0C
+;	main.c:169: SCON1 = 0x10;
+	mov	_SCON1,#0x10
+;	main.c:170: SBCON1 =0x00;   // disable baud rate generator
+	mov	_SBCON1,#0x00
+;	main.c:171: SBRL1 = 0x10000L-((SYSCLK/baudrate)/(12L*2L));
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	__divulong_PARM_2,r2
 	mov	(__divulong_PARM_2 + 1),r3
 	mov	(__divulong_PARM_2 + 2),r4
@@ -902,11 +1006,19 @@ _UART1_Init:
 	subb	a,r5
 	mov	_SBRL1,r2
 	mov	(_SBRL1 >> 8),r3
+<<<<<<< HEAD
 ;	main.c:187: TI1 = 1; // indicate ready for TX
 	setb	_TI1
 ;	main.c:188: SBCON1 |= 0x40;   // enable baud rate generator
 	orl	_SBCON1,#0x40
 ;	main.c:189: SFRPAGE = 0x00;
+=======
+;	main.c:172: TI1 = 1; // indicate ready for TX
+	setb	_TI1
+;	main.c:173: SBCON1 |= 0x40;   // enable baud rate generator
+	orl	_SBCON1,#0x40
+;	main.c:174: SFRPAGE = 0x00;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	_SFRPAGE,#0x00
 	ret
 ;------------------------------------------------------------
@@ -914,12 +1026,17 @@ _UART1_Init:
 ;------------------------------------------------------------
 ;c                         Allocated to registers r2 
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:192: void putchar1 (char c) 
+=======
+;	main.c:177: void putchar1 (char c) 
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function putchar1
 ;	-----------------------------------------
 _putchar1:
 	mov	r2,dpl
+<<<<<<< HEAD
 ;	main.c:194: SFRPAGE = 0x20;
 	mov	_SFRPAGE,#0x20
 ;	main.c:195: while (!TI1);
@@ -931,6 +1048,19 @@ L006008?:
 ;	main.c:197: SBUF1 = c;
 	mov	_SBUF1,r2
 ;	main.c:198: SFRPAGE = 0x00;
+=======
+;	main.c:179: SFRPAGE = 0x20;
+	mov	_SFRPAGE,#0x20
+;	main.c:180: while (!TI1);
+L006001?:
+;	main.c:181: TI1=0;
+	jbc	_TI1,L006008?
+	sjmp	L006001?
+L006008?:
+;	main.c:182: SBUF1 = c;
+	mov	_SBUF1,r2
+;	main.c:183: SFRPAGE = 0x00;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	_SFRPAGE,#0x00
 	ret
 ;------------------------------------------------------------
@@ -938,7 +1068,11 @@ L006008?:
 ;------------------------------------------------------------
 ;s                         Allocated to registers r2 r3 r4 
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:201: void sendstr1 (char * s)
+=======
+;	main.c:186: void sendstr1 (char * s)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function sendstr1
 ;	-----------------------------------------
@@ -946,7 +1080,11 @@ _sendstr1:
 	mov	r2,dpl
 	mov	r3,dph
 	mov	r4,b
+<<<<<<< HEAD
 ;	main.c:203: while(*s)
+=======
+;	main.c:188: while(*s)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 L007001?:
 	mov	dpl,r2
 	mov	dph,r3
@@ -954,7 +1092,11 @@ L007001?:
 	lcall	__gptrget
 	mov	r5,a
 	jz	L007004?
+<<<<<<< HEAD
 ;	main.c:205: putchar1(*s);
+=======
+;	main.c:190: putchar1(*s);
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	dpl,r5
 	push	ar2
 	push	ar3
@@ -963,7 +1105,11 @@ L007001?:
 	pop	ar4
 	pop	ar3
 	pop	ar2
+<<<<<<< HEAD
 ;	main.c:206: s++;	
+=======
+;	main.c:191: s++;	
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	inc	r2
 	cjne	r2,#0x00,L007001?
 	inc	r3
@@ -975,11 +1121,16 @@ L007004?:
 ;------------------------------------------------------------
 ;c                         Allocated to registers 
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:210: char getchar1 (void)
+=======
+;	main.c:195: char getchar1 (void)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function getchar1
 ;	-----------------------------------------
 _getchar1:
+<<<<<<< HEAD
 ;	main.c:213: SFRPAGE = 0x20;
 	mov	_SFRPAGE,#0x20
 ;	main.c:214: while (!RI1);
@@ -995,6 +1146,23 @@ L008008?:
 ;	main.c:219: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
 ;	main.c:220: return (c);
+=======
+;	main.c:198: SFRPAGE = 0x20;
+	mov	_SFRPAGE,#0x20
+;	main.c:199: while (!RI1);
+L008001?:
+;	main.c:200: RI1=0;
+	jbc	_RI1,L008008?
+	sjmp	L008001?
+L008008?:
+;	main.c:202: SCON1&=0b_0011_1111;
+	anl	_SCON1,#0x3F
+;	main.c:203: c = SBUF1;
+	mov	dpl,_SBUF1
+;	main.c:204: SFRPAGE = 0x00;
+	mov	_SFRPAGE,#0x00
+;	main.c:205: return (c);
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'getchar1_with_timeout'
@@ -1002,34 +1170,57 @@ L008008?:
 ;c                         Allocated to registers 
 ;timeout                   Allocated to registers r2 r3 
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:223: char getchar1_with_timeout (void)
+=======
+;	main.c:208: char getchar1_with_timeout (void)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function getchar1_with_timeout
 ;	-----------------------------------------
 _getchar1_with_timeout:
+<<<<<<< HEAD
 ;	main.c:227: SFRPAGE = 0x20;
 	mov	_SFRPAGE,#0x20
 ;	main.c:229: while (!RI1)
+=======
+;	main.c:212: SFRPAGE = 0x20;
+	mov	_SFRPAGE,#0x20
+;	main.c:214: while (!RI1)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	r2,#0x00
 	mov	r3,#0x00
 L009003?:
 	jb	_RI1,L009005?
+<<<<<<< HEAD
 ;	main.c:231: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
 ;	main.c:232: Timer3us(20);
+=======
+;	main.c:216: SFRPAGE = 0x00;
+	mov	_SFRPAGE,#0x00
+;	main.c:217: Timer3us(20);
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	dpl,#0x14
 	push	ar2
 	push	ar3
 	lcall	_Timer3us
 	pop	ar3
 	pop	ar2
+<<<<<<< HEAD
 ;	main.c:233: SFRPAGE = 0x20;
 	mov	_SFRPAGE,#0x20
 ;	main.c:234: timeout++;
+=======
+;	main.c:218: SFRPAGE = 0x20;
+	mov	_SFRPAGE,#0x20
+;	main.c:219: timeout++;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	inc	r2
 	cjne	r2,#0x00,L009012?
 	inc	r3
 L009012?:
+<<<<<<< HEAD
 ;	main.c:235: if(timeout==25000)
 	cjne	r2,#0xA8,L009003?
 	cjne	r3,#0x61,L009003?
@@ -1048,6 +1239,26 @@ L009005?:
 ;	main.c:245: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
 ;	main.c:246: return (c);
+=======
+;	main.c:220: if(timeout==25000)
+	cjne	r2,#0xA8,L009003?
+	cjne	r3,#0x61,L009003?
+;	main.c:222: SFRPAGE = 0x00;
+	mov	_SFRPAGE,#0x00
+;	main.c:223: return ('\n'); // Timeout after half second
+	mov	dpl,#0x0A
+	ret
+L009005?:
+;	main.c:226: RI1=0;
+	clr	_RI1
+;	main.c:228: SCON1&=0b_0011_1111;
+	anl	_SCON1,#0x3F
+;	main.c:229: c = SBUF1;
+	mov	dpl,_SBUF1
+;	main.c:230: SFRPAGE = 0x00;
+	mov	_SFRPAGE,#0x00
+;	main.c:231: return (c);
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'getstr1'
@@ -1057,7 +1268,11 @@ L009005?:
 ;c                         Allocated to registers r1 
 ;cnt                       Allocated to registers r5 
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:249: void getstr1 (char * s, unsigned char n)
+=======
+;	main.c:234: void getstr1 (char * s, unsigned char n)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function getstr1
 ;	-----------------------------------------
@@ -1065,13 +1280,21 @@ _getstr1:
 	mov	r2,dpl
 	mov	r3,dph
 	mov	r4,b
+<<<<<<< HEAD
 ;	main.c:255: while(1)
+=======
+;	main.c:240: while(1)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	r5,#0x00
 	mov	ar6,r2
 	mov	ar7,r3
 	mov	ar0,r4
 L010007?:
+<<<<<<< HEAD
 ;	main.c:257: c=getchar1_with_timeout();
+=======
+;	main.c:242: c=getchar1_with_timeout();
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	push	ar2
 	push	ar3
 	push	ar4
@@ -1088,24 +1311,43 @@ L010007?:
 	pop	ar4
 	pop	ar3
 	pop	ar2
+<<<<<<< HEAD
 ;	main.c:258: if(c=='\n')
 	cjne	r1,#0x0A,L010002?
 ;	main.c:260: *s=0;
+=======
+;	main.c:243: if(c=='\n')
+	cjne	r1,#0x0A,L010002?
+;	main.c:245: *s=0;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	dpl,r2
 	mov	dph,r3
 	mov	b,r4
 	clr	a
+<<<<<<< HEAD
 ;	main.c:261: return;
 	ljmp	__gptrput
 L010002?:
 ;	main.c:264: if (cnt<n)
+=======
+;	main.c:246: return;
+	ljmp	__gptrput
+L010002?:
+;	main.c:249: if (cnt<n)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	clr	c
 	mov	a,r5
 	subb	a,_getstr1_PARM_2
 	jnc	L010004?
+<<<<<<< HEAD
 ;	main.c:266: cnt++;
 	inc	r5
 ;	main.c:267: *s=c;
+=======
+;	main.c:251: cnt++;
+	inc	r5
+;	main.c:252: *s=c;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	dpl,r6
 	mov	dph,r7
 	mov	b,r0
@@ -1114,28 +1356,45 @@ L010002?:
 	inc	dptr
 	mov	r6,dpl
 	mov	r7,dph
+<<<<<<< HEAD
 ;	main.c:268: s++;
+=======
+;	main.c:253: s++;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	ar2,r6
 	mov	ar3,r7
 	mov	ar4,r0
 	sjmp	L010007?
 L010004?:
+<<<<<<< HEAD
 ;	main.c:272: *s=0;
+=======
+;	main.c:257: *s=0;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	dpl,r2
 	mov	dph,r3
 	mov	b,r4
 	clr	a
+<<<<<<< HEAD
 ;	main.c:273: return;
+=======
+;	main.c:258: return;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	ljmp	__gptrput
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'RXU1'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:279: bit RXU1 (void)
+=======
+;	main.c:264: bit RXU1 (void)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function RXU1
 ;	-----------------------------------------
 _RXU1:
+<<<<<<< HEAD
 ;	main.c:282: SFRPAGE = 0x20;
 	mov	_SFRPAGE,#0x20
 ;	main.c:283: mybit=RI1;
@@ -1143,6 +1402,15 @@ _RXU1:
 ;	main.c:284: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
 ;	main.c:285: return mybit;
+=======
+;	main.c:267: SFRPAGE = 0x20;
+	mov	_SFRPAGE,#0x20
+;	main.c:268: mybit=RI1;
+	mov	c,_RI1
+;	main.c:269: SFRPAGE = 0x00;
+	mov	_SFRPAGE,#0x00
+;	main.c:270: return mybit;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'waitms_or_RI1'
@@ -1151,14 +1419,22 @@ _RXU1:
 ;j                         Allocated to registers r4 r5 
 ;k                         Allocated to registers r6 
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:288: void waitms_or_RI1 (unsigned int ms)
+=======
+;	main.c:273: void waitms_or_RI1 (unsigned int ms)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function waitms_or_RI1
 ;	-----------------------------------------
 _waitms_or_RI1:
 	mov	r2,dpl
 	mov	r3,dph
+<<<<<<< HEAD
 ;	main.c:292: for(j=0; j<ms; j++)
+=======
+;	main.c:277: for(j=0; j<ms; j++)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	r4,#0x00
 	mov	r5,#0x00
 L012007?:
@@ -1168,13 +1444,21 @@ L012007?:
 	mov	a,r5
 	subb	a,r3
 	jnc	L012011?
+<<<<<<< HEAD
 ;	main.c:294: for (k=0; k<4; k++)
+=======
+;	main.c:279: for (k=0; k<4; k++)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	r6,#0x00
 L012003?:
 	cjne	r6,#0x04,L012019?
 L012019?:
 	jnc	L012009?
+<<<<<<< HEAD
 ;	main.c:296: if(RXU1()) return;
+=======
+;	main.c:281: if(RXU1()) return;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	push	ar2
 	push	ar3
 	push	ar4
@@ -1191,7 +1475,11 @@ L012019?:
 	jz	L012002?
 	ret
 L012002?:
+<<<<<<< HEAD
 ;	main.c:297: Timer3us(250);
+=======
+;	main.c:282: Timer3us(250);
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	dpl,#0xFA
 	push	ar2
 	push	ar3
@@ -1204,11 +1492,19 @@ L012002?:
 	pop	ar4
 	pop	ar3
 	pop	ar2
+<<<<<<< HEAD
 ;	main.c:294: for (k=0; k<4; k++)
 	inc	r6
 	sjmp	L012003?
 L012009?:
 ;	main.c:292: for(j=0; j<ms; j++)
+=======
+;	main.c:279: for (k=0; k<4; k++)
+	inc	r6
+	sjmp	L012003?
+L012009?:
+;	main.c:277: for(j=0; j<ms; j++)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	inc	r4
 	cjne	r4,#0x00,L012007?
 	inc	r5
@@ -1220,7 +1516,11 @@ L012011?:
 ;------------------------------------------------------------
 ;s                         Allocated to registers r2 r3 r4 
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:302: void SendATCommand (char * s)
+=======
+;	main.c:287: void SendATCommand (char * s)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function SendATCommand
 ;	-----------------------------------------
@@ -1228,7 +1528,11 @@ _SendATCommand:
 	mov	r2,dpl
 	mov	r3,dph
 	mov	r4,b
+<<<<<<< HEAD
 ;	main.c:304: printf("Command: %s", s);
+=======
+;	main.c:289: printf("Command: %s", s);
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	push	ar2
 	push	ar3
 	push	ar4
@@ -1245,30 +1549,53 @@ _SendATCommand:
 	mov	a,sp
 	add	a,#0xfa
 	mov	sp,a
+<<<<<<< HEAD
 ;	main.c:305: P2_0=0; // 'set' pin to 0 is 'AT' mode.
 	clr	_P2_0
 ;	main.c:306: waitms(5);
+=======
+;	main.c:290: P2_0=0; // 'set' pin to 0 is 'AT' mode.
+	clr	_P2_0
+;	main.c:291: waitms(5);
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	dptr,#0x0005
 	lcall	_waitms
 	pop	ar4
 	pop	ar3
 	pop	ar2
+<<<<<<< HEAD
 ;	main.c:307: sendstr1(s);
+=======
+;	main.c:292: sendstr1(s);
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	dpl,r2
 	mov	dph,r3
 	mov	b,r4
 	lcall	_sendstr1
+<<<<<<< HEAD
 ;	main.c:308: getstr1(buff, sizeof(buff)-1);
+=======
+;	main.c:293: getstr1(buff, sizeof(buff)-1);
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	_getstr1_PARM_2,#0x13
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_getstr1
+<<<<<<< HEAD
 ;	main.c:309: waitms(10);
 	mov	dptr,#0x000A
 	lcall	_waitms
 ;	main.c:310: P2_0=1; // 'set' pin to 1 is normal operation mode.
 	setb	_P2_0
 ;	main.c:311: printf("Response: %s\r\n", buff);
+=======
+;	main.c:294: waitms(10);
+	mov	dptr,#0x000A
+	lcall	_waitms
+;	main.c:295: P2_0=1; // 'set' pin to 1 is normal operation mode.
+	setb	_P2_0
+;	main.c:296: printf("Response: %s\r\n", buff);
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	a,#_buff
 	push	acc
 	mov	a,#(_buff >> 8)
@@ -1290,11 +1617,16 @@ _SendATCommand:
 ;Allocation info for local variables in function 'ReceptionOff'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:314: void ReceptionOff (void)
+=======
+;	main.c:299: void ReceptionOff (void)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function ReceptionOff
 ;	-----------------------------------------
 _ReceptionOff:
+<<<<<<< HEAD
 ;	main.c:316: P2_0=0; // 'set' pin to 0 is 'AT' mode.
 	clr	_P2_0
 ;	main.c:317: waitms(10);
@@ -1310,6 +1642,23 @@ _ReceptionOff:
 ;	main.c:321: SCON1&=0b_0011_1111;
 	anl	_SCON1,#0x3F
 ;	main.c:322: P2_0=1; // 'set' pin to 1 is normal operation mode.
+=======
+;	main.c:301: P2_0=0; // 'set' pin to 0 is 'AT' mode.
+	clr	_P2_0
+;	main.c:302: waitms(10);
+	mov	dptr,#0x000A
+	lcall	_waitms
+;	main.c:303: sendstr1("AT+DVID0000\r\n"); // Some unused id, so that we get nothing in RXD1.
+	mov	dptr,#__str_2
+	mov	b,#0x80
+	lcall	_sendstr1
+;	main.c:304: waitms(10);
+	mov	dptr,#0x000A
+	lcall	_waitms
+;	main.c:306: SCON1&=0b_0011_1111;
+	anl	_SCON1,#0x3F
+;	main.c:307: P2_0=1; // 'set' pin to 1 is normal operation mode.
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	setb	_P2_0
 	ret
 ;------------------------------------------------------------
@@ -1318,13 +1667,21 @@ _ReceptionOff:
 ;pin                       Allocated to registers r2 
 ;mask                      Allocated to registers r3 
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:325: void Set_Pin_Output (unsigned char pin)
+=======
+;	main.c:310: void Set_Pin_Output (unsigned char pin)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function Set_Pin_Output
 ;	-----------------------------------------
 _Set_Pin_Output:
 	mov	r2,dpl
+<<<<<<< HEAD
 ;	main.c:329: mask=(1<<(pin&0x7));
+=======
+;	main.c:314: mask=(1<<(pin&0x7));
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	a,#0x07
 	anl	a,r2
 	mov	b,a
@@ -1336,7 +1693,11 @@ L015009?:
 L015011?:
 	djnz	b,L015009?
 	mov	r3,a
+<<<<<<< HEAD
 ;	main.c:330: switch(pin/0x10)
+=======
+;	main.c:315: switch(pin/0x10)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	a,r2
 	swap	a
 	anl	a,#0x0f
@@ -1353,26 +1714,46 @@ L015013?:
 	ljmp	L015002?
 	ljmp	L015003?
 	ljmp	L015004?
+<<<<<<< HEAD
 ;	main.c:332: case 0: P0MDOUT |= mask; break;
 L015001?:
 	mov	a,r3
 	orl	_P0MDOUT,a
 ;	main.c:333: case 1: P1MDOUT |= mask; break;
+=======
+;	main.c:317: case 0: P0MDOUT |= mask; break;
+L015001?:
+	mov	a,r3
+	orl	_P0MDOUT,a
+;	main.c:318: case 1: P1MDOUT |= mask; break;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	ret
 L015002?:
 	mov	a,r3
 	orl	_P1MDOUT,a
+<<<<<<< HEAD
 ;	main.c:334: case 2: P2MDOUT |= mask; break; 
+=======
+;	main.c:319: case 2: P2MDOUT |= mask; break; 
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	ret
 L015003?:
 	mov	a,r3
 	orl	_P2MDOUT,a
+<<<<<<< HEAD
 ;	main.c:335: case 3: P3MDOUT |= mask; break; 
+=======
+;	main.c:320: case 3: P3MDOUT |= mask; break; 
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	ret
 L015004?:
 	mov	a,r3
 	orl	_P3MDOUT,a
+<<<<<<< HEAD
 ;	main.c:336: }	
+=======
+;	main.c:321: }	
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 L015006?:
 	ret
 ;------------------------------------------------------------
@@ -1381,13 +1762,21 @@ L015006?:
 ;mask                      Allocated with name '_Set_Pin_Input_mask_1_101'
 ;pin                       Allocated to registers r2 
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:339: void Set_Pin_Input (unsigned char pin)
+=======
+;	main.c:324: void Set_Pin_Input (unsigned char pin)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function Set_Pin_Input
 ;	-----------------------------------------
 _Set_Pin_Input:
 	mov	r2,dpl
+<<<<<<< HEAD
 ;	main.c:343: mask=(1<<(pin&0x7));
+=======
+;	main.c:328: mask=(1<<(pin&0x7));
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	a,#0x07
 	anl	a,r2
 	mov	b,a
@@ -1398,10 +1787,17 @@ L016009?:
 	add	a,acc
 L016011?:
 	djnz	b,L016009?
+<<<<<<< HEAD
 ;	main.c:344: mask=~mask;
 	cpl	a
 	mov	r3,a
 ;	main.c:345: switch(pin/0x10)
+=======
+;	main.c:329: mask=~mask;
+	cpl	a
+	mov	r3,a
+;	main.c:330: switch(pin/0x10)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	a,r2
 	swap	a
 	anl	a,#0x0f
@@ -1418,37 +1814,62 @@ L016013?:
 	ljmp	L016002?
 	ljmp	L016003?
 	ljmp	L016004?
+<<<<<<< HEAD
 ;	main.c:347: case 0: P0MDOUT &= mask; break;
 L016001?:
 	mov	a,r3
 	anl	_P0MDOUT,a
 ;	main.c:348: case 1: P1MDOUT &= mask; break;
+=======
+;	main.c:332: case 0: P0MDOUT &= mask; break;
+L016001?:
+	mov	a,r3
+	anl	_P0MDOUT,a
+;	main.c:333: case 1: P1MDOUT &= mask; break;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	ret
 L016002?:
 	mov	a,r3
 	anl	_P1MDOUT,a
+<<<<<<< HEAD
 ;	main.c:349: case 2: P2MDOUT &= mask; break; 
+=======
+;	main.c:334: case 2: P2MDOUT &= mask; break; 
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	ret
 L016003?:
 	mov	a,r3
 	anl	_P2MDOUT,a
+<<<<<<< HEAD
 ;	main.c:350: case 3: P3MDOUT &= mask; break; 
+=======
+;	main.c:335: case 3: P3MDOUT &= mask; break; 
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	ret
 L016004?:
 	mov	a,r3
 	anl	_P3MDOUT,a
+<<<<<<< HEAD
 ;	main.c:351: }	
+=======
+;	main.c:336: }	
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 L016006?:
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'InitADC'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:354: void InitADC (void)
+=======
+;	main.c:339: void InitADC (void)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function InitADC
 ;	-----------------------------------------
 _InitADC:
+<<<<<<< HEAD
 ;	main.c:356: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
 ;	main.c:357: ADEN=0; // Disable ADC
@@ -1466,6 +1887,25 @@ _InitADC:
 ;	main.c:388: (0x0 << 0) ; // ADCM. 0x0: ADBUSY, 0x1: TIMER0, 0x2: TIMER2, 0x3: TIMER3, 0x4: CNVSTR, 0x5: CEX5, 0x6: TIMER4, 0x7: TIMER5, 0x8: CLU0, 0x9: CLU1, 0xA: CLU2, 0xB: CLU3
 	mov	_ADC0CN2,#0x00
 ;	main.c:390: ADEN=1; // Enable ADC
+=======
+;	main.c:341: SFRPAGE = 0x00;
+	mov	_SFRPAGE,#0x00
+;	main.c:342: ADEN=0; // Disable ADC
+	clr	_ADEN
+;	main.c:347: (0x0 << 0) ; // Accumulate n conversions: 0x0: 1, 0x1:4, 0x2:8, 0x3:16, 0x4:32
+	mov	_ADC0CN1,#0x80
+;	main.c:351: (0x0 << 2); // 0:SYSCLK ADCCLK = SYSCLK. 1:HFOSC0 ADCCLK = HFOSC0.
+	mov	_ADC0CF0,#0x20
+;	main.c:355: (0x1E << 0); // Conversion Tracking Time. Tadtk = ADTK / (Fsarclk)
+	mov	_ADC0CF1,#0x1E
+;	main.c:364: (0x0 << 0) ; // TEMPE. 0: Disable the Temperature Sensor. 1: Enable the Temperature Sensor.
+	mov	_ADC0CN0,#0x00
+;	main.c:369: (0x1F << 0); // ADPWR. Power Up Delay Time. Tpwrtime = ((4 * (ADPWR + 1)) + 2) / (Fadcclk)
+	mov	_ADC0CF2,#0x3F
+;	main.c:373: (0x0 << 0) ; // ADCM. 0x0: ADBUSY, 0x1: TIMER0, 0x2: TIMER2, 0x3: TIMER3, 0x4: CNVSTR, 0x5: CEX5, 0x6: TIMER4, 0x7: TIMER5, 0x8: CLU0, 0x9: CLU1, 0xA: CLU2, 0xB: CLU3
+	mov	_ADC0CN2,#0x00
+;	main.c:375: ADEN=1; // Enable ADC
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	setb	_ADEN
 	ret
 ;------------------------------------------------------------
@@ -1475,13 +1915,21 @@ _InitADC:
 ;portno                    Allocated to registers r2 
 ;mask                      Allocated to registers r3 
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:393: void InitPinADC (unsigned char portno, unsigned char pin_num)
+=======
+;	main.c:378: void InitPinADC (unsigned char portno, unsigned char pin_num)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function InitPinADC
 ;	-----------------------------------------
 _InitPinADC:
 	mov	r2,dpl
+<<<<<<< HEAD
 ;	main.c:397: mask=1<<pin_num;
+=======
+;	main.c:382: mask=1<<pin_num;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	b,_InitPinADC_PARM_2
 	inc	b
 	mov	a,#0x01
@@ -1491,24 +1939,39 @@ L018011?:
 L018013?:
 	djnz	b,L018011?
 	mov	r3,a
+<<<<<<< HEAD
 ;	main.c:399: SFRPAGE = 0x20;
 	mov	_SFRPAGE,#0x20
 ;	main.c:400: switch (portno)
+=======
+;	main.c:384: SFRPAGE = 0x20;
+	mov	_SFRPAGE,#0x20
+;	main.c:385: switch (portno)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	cjne	r2,#0x00,L018014?
 	sjmp	L018001?
 L018014?:
 	cjne	r2,#0x01,L018015?
 	sjmp	L018002?
 L018015?:
+<<<<<<< HEAD
 ;	main.c:402: case 0:
 	cjne	r2,#0x02,L018005?
 	sjmp	L018003?
 L018001?:
 ;	main.c:403: P0MDIN &= (~mask); // Set pin as analog input
+=======
+;	main.c:387: case 0:
+	cjne	r2,#0x02,L018005?
+	sjmp	L018003?
+L018001?:
+;	main.c:388: P0MDIN &= (~mask); // Set pin as analog input
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	a,r3
 	cpl	a
 	mov	r2,a
 	anl	_P0MDIN,a
+<<<<<<< HEAD
 ;	main.c:404: P0SKIP |= mask; // Skip Crossbar decoding for this pin
 	mov	a,r3
 	orl	_P0SKIP,a
@@ -1517,10 +1980,21 @@ L018001?:
 	sjmp	L018005?
 L018002?:
 ;	main.c:407: P1MDIN &= (~mask); // Set pin as analog input
+=======
+;	main.c:389: P0SKIP |= mask; // Skip Crossbar decoding for this pin
+	mov	a,r3
+	orl	_P0SKIP,a
+;	main.c:390: break;
+;	main.c:391: case 1:
+	sjmp	L018005?
+L018002?:
+;	main.c:392: P1MDIN &= (~mask); // Set pin as analog input
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	a,r3
 	cpl	a
 	mov	r2,a
 	anl	_P1MDIN,a
+<<<<<<< HEAD
 ;	main.c:408: P1SKIP |= mask; // Skip Crossbar decoding for this pin
 	mov	a,r3
 	orl	_P1SKIP,a
@@ -1529,16 +2003,35 @@ L018002?:
 	sjmp	L018005?
 L018003?:
 ;	main.c:411: P2MDIN &= (~mask); // Set pin as analog input
+=======
+;	main.c:393: P1SKIP |= mask; // Skip Crossbar decoding for this pin
+	mov	a,r3
+	orl	_P1SKIP,a
+;	main.c:394: break;
+;	main.c:395: case 2:
+	sjmp	L018005?
+L018003?:
+;	main.c:396: P2MDIN &= (~mask); // Set pin as analog input
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	a,r3
 	cpl	a
 	mov	r2,a
 	anl	_P2MDIN,a
+<<<<<<< HEAD
 ;	main.c:412: P2SKIP |= mask; // Skip Crossbar decoding for this pin
 	mov	a,r3
 	orl	_P2SKIP,a
 ;	main.c:416: }
 L018005?:
 ;	main.c:417: SFRPAGE = 0x00;
+=======
+;	main.c:397: P2SKIP |= mask; // Skip Crossbar decoding for this pin
+	mov	a,r3
+	orl	_P2SKIP,a
+;	main.c:401: }
+L018005?:
+;	main.c:402: SFRPAGE = 0x00;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	_SFRPAGE,#0x00
 	ret
 ;------------------------------------------------------------
@@ -1546,12 +2039,17 @@ L018005?:
 ;------------------------------------------------------------
 ;pin                       Allocated to registers 
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:420: unsigned int ADC_at_Pin(unsigned char pin)
+=======
+;	main.c:405: unsigned int ADC_at_Pin(unsigned char pin)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function ADC_at_Pin
 ;	-----------------------------------------
 _ADC_at_Pin:
 	mov	_ADC0MX,dpl
+<<<<<<< HEAD
 ;	main.c:423: ADINT = 0;
 	clr	_ADINT
 ;	main.c:424: ADBUSY = 1;     // Convert voltage at the pin
@@ -1560,6 +2058,16 @@ _ADC_at_Pin:
 L019001?:
 	jnb	_ADINT,L019001?
 ;	main.c:426: return (ADC0);
+=======
+;	main.c:408: ADINT = 0;
+	clr	_ADINT
+;	main.c:409: ADBUSY = 1;     // Convert voltage at the pin
+	setb	_ADBUSY
+;	main.c:410: while (!ADINT); // Wait for conversion to complete
+L019001?:
+	jnb	_ADINT,L019001?
+;	main.c:411: return (ADC0);
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	dpl,_ADC0
 	mov	dph,(_ADC0 >> 8)
 	ret
@@ -1567,7 +2075,11 @@ L019001?:
 ;Allocation info for local variables in function 'Timer5_ISR'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:429: void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
+=======
+;	main.c:414: void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function Timer5_ISR
 ;	-----------------------------------------
@@ -1577,6 +2089,7 @@ _Timer5_ISR:
 	push	ar3
 	push	psw
 	mov	psw,#0x00
+<<<<<<< HEAD
 ;	main.c:431: SFRPAGE=0x10;
 	mov	_SFRPAGE,#0x10
 ;	main.c:432: TF5H = 0; // Clear Timer5 interrupt flag
@@ -1585,26 +2098,50 @@ _Timer5_ISR:
 	mov	_TMR5RL,#0xC4
 	mov	(_TMR5RL >> 8),#0xFF
 ;	main.c:435: pwm_counter++; 
+=======
+;	main.c:416: SFRPAGE=0x10;
+	mov	_SFRPAGE,#0x10
+;	main.c:417: TF5H = 0; // Clear Timer5 interrupt flag
+	clr	_TF5H
+;	main.c:418: TMR5RL = RELOAD_10us; // Reload Timer5 for 10us intervals 
+	mov	_TMR5RL,#0xC4
+	mov	(_TMR5RL >> 8),#0xFF
+;	main.c:420: pwm_counter++; 
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	inc	_pwm_counter
 	clr	a
-	cjne	a,_pwm_counter,L020022?
+	cjne	a,_pwm_counter,L020031?
 	inc	(_pwm_counter + 1)
+<<<<<<< HEAD
 L020022?:
 ;	main.c:436: if (pwm_counter == 100){
+=======
+L020031?:
+;	main.c:421: if (pwm_counter == 100){
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	a,#0x64
-	cjne	a,_pwm_counter,L020023?
+	cjne	a,_pwm_counter,L020032?
 	clr	a
-	cjne	a,(_pwm_counter + 1),L020023?
-	sjmp	L020024?
-L020023?:
+	cjne	a,(_pwm_counter + 1),L020032?
+	sjmp	L020033?
+L020032?:
 	sjmp	L020002?
+<<<<<<< HEAD
 L020024?:
 ;	main.c:437: pwm_counter = 0; 
+=======
+L020033?:
+;	main.c:422: pwm_counter = 0; 
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	clr	a
 	mov	_pwm_counter,a
 	mov	(_pwm_counter + 1),a
 L020002?:
+<<<<<<< HEAD
 ;	main.c:440: if (pwm_left > pwm_counter){
+=======
+;	main.c:425: if (pwm_left > pwm_counter){
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	r2,_pwm_left
 	mov	r3,#0x00
 	clr	c
@@ -1613,6 +2150,7 @@ L020002?:
 	mov	a,(_pwm_counter + 1)
 	subb	a,r3
 	jnc	L020007?
+<<<<<<< HEAD
 ;	main.c:441: if(L_motor_dir){
 	mov	a,_L_motor_dir
 	jz	L020004?
@@ -1634,6 +2172,29 @@ L020007?:
 	clr	_P2_2
 L020008?:
 ;	main.c:454: if (pwm_right > pwm_counter){
+=======
+;	main.c:426: if(L_motor_dir){
+	mov	a,_L_motor_dir
+	jz	L020004?
+;	main.c:427: L_bridge_1 = 1; 
+	setb	_P2_1
+;	main.c:428: L_bridge_2 = 0; 
+	clr	_P2_2
+	sjmp	L020008?
+L020004?:
+;	main.c:431: L_bridge_1 = 0; 
+	clr	_P2_1
+;	main.c:432: L_bridge_2 = 1; 
+	setb	_P2_2
+	sjmp	L020008?
+L020007?:
+;	main.c:436: L_bridge_1 = 0; 
+	clr	_P2_1
+;	main.c:437: L_bridge_2 = 0; 
+	clr	_P2_2
+L020008?:
+;	main.c:439: if (pwm_right > pwm_counter){
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	r2,_pwm_right
 	mov	r3,#0x00
 	clr	c
@@ -1642,21 +2203,37 @@ L020008?:
 	mov	a,(_pwm_counter + 1)
 	subb	a,r3
 	jnc	L020013?
+<<<<<<< HEAD
 ;	main.c:455: if (R_motor_dir){
 	mov	a,_R_motor_dir
 	jz	L020010?
 ;	main.c:456: R_bridge_1 = 1; 
 	setb	_P2_4
 ;	main.c:457: R_bridge_2 = 0;
+=======
+;	main.c:440: if (R_motor_dir){
+	mov	a,_R_motor_dir
+	jz	L020010?
+;	main.c:441: R_bridge_1 = 1; 
+	setb	_P2_4
+;	main.c:442: R_bridge_2 = 0;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	clr	_P2_3
-	sjmp	L020015?
+	sjmp	L020014?
 L020010?:
+<<<<<<< HEAD
 ;	main.c:460: R_bridge_1 = 0; 
 	clr	_P2_4
 ;	main.c:461: R_bridge_2 = 1;
+=======
+;	main.c:445: R_bridge_1 = 0; 
+	clr	_P2_4
+;	main.c:446: R_bridge_2 = 1;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	setb	_P2_3
-	sjmp	L020015?
+	sjmp	L020014?
 L020013?:
+<<<<<<< HEAD
 ;	main.c:465: R_bridge_1 = 0; 
 	clr	_P2_4
 ;	main.c:466: R_bridge_2 = 0; 
@@ -1690,10 +2267,19 @@ _Timer0_ISR:
 	mov	_TMR0,#0x60
 	mov	(_TMR0 >> 8),#0x73
 ;	main.c:476: servo_counter++;
+=======
+;	main.c:450: R_bridge_1 = 0; 
+	clr	_P2_4
+;	main.c:451: R_bridge_2 = 0; 
+	clr	_P2_3
+L020014?:
+;	main.c:454: servo_counter++;
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	inc	_servo_counter
 	clr	a
-	cjne	a,_servo_counter,L021014?
+	cjne	a,_servo_counter,L020038?
 	inc	(_servo_counter + 1)
+<<<<<<< HEAD
 L021014?:
 ;	main.c:477: if(servo_counter==1000)
 	mov	a,#0xE8
@@ -1737,6 +2323,43 @@ L021007?:
 ;	main.c:493: Servo_arm = 0; 
 	clr	_P0_3
 L021009?:
+=======
+L020038?:
+;	main.c:455: if(servo_counter==2000)
+	mov	a,#0xD0
+	cjne	a,_servo_counter,L020016?
+	mov	a,#0x07
+	cjne	a,(_servo_counter + 1),L020016?
+;	main.c:457: servo_counter=0;
+	clr	a
+	mov	_servo_counter,a
+	mov	(_servo_counter + 1),a
+;	main.c:458: Servo_arm=1;
+	setb	_P1_7
+;	main.c:459: Servo_base=1;
+	setb	_P1_6
+L020016?:
+;	main.c:461: if(servo_arm==servo_counter)
+	mov	r2,_servo_arm
+	mov	r3,#0x00
+	mov	a,r2
+	cjne	a,_servo_counter,L020018?
+	mov	a,r3
+	cjne	a,(_servo_counter + 1),L020018?
+;	main.c:463: Servo_arm=0;
+	clr	_P1_7
+L020018?:
+;	main.c:465: if(servo_base==servo_counter)
+	mov	r2,_servo_base
+	mov	r3,#0x00
+	mov	a,r2
+	cjne	a,_servo_counter,L020021?
+	mov	a,r3
+	cjne	a,(_servo_counter + 1),L020021?
+;	main.c:467: Servo_base=0;
+	clr	_P1_6
+L020021?:
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	pop	psw
 	pop	ar3
 	pop	ar2
@@ -1750,12 +2373,134 @@ L021009?:
 ;------------------------------------------------------------
 ;i                         Allocated to registers r2 r3 
 ;------------------------------------------------------------
+<<<<<<< HEAD
 ;	main.c:529: void Calibrate_Joystick(void)
+=======
+;	main.c:471: void MoveForward (int speed)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 ;	-----------------------------------------
 ;	 function Calibrate_Joystick
 ;	-----------------------------------------
+<<<<<<< HEAD
 _Calibrate_Joystick:
 ;	main.c:532: printf("Calibration Starts\r");
+=======
+_MoveForward:
+	mov	r2,dpl
+;	main.c:473: pwm_left = speed; 
+	mov	_pwm_left,r2
+;	main.c:474: pwm_right = speed; 
+	mov	_pwm_right,r2
+;	main.c:475: L_motor_dir = 0; 
+	mov	_L_motor_dir,#0x00
+;	main.c:476: R_motor_dir = 0; 
+	mov	_R_motor_dir,#0x00
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'MoveBackward'
+;------------------------------------------------------------
+;speed                     Allocated to registers r2 r3 
+;------------------------------------------------------------
+;	main.c:479: void MoveBackward (int speed)
+;	-----------------------------------------
+;	 function MoveBackward
+;	-----------------------------------------
+_MoveBackward:
+	mov	r2,dpl
+;	main.c:481: pwm_left = speed; 
+	mov	_pwm_left,r2
+;	main.c:482: pwm_right = speed; 
+	mov	_pwm_right,r2
+;	main.c:483: L_motor_dir = 1; 
+	mov	_L_motor_dir,#0x01
+;	main.c:484: R_motor_dir = 1;  
+	mov	_R_motor_dir,#0x01
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'TurnRight'
+;------------------------------------------------------------
+;speed                     Allocated to registers r2 r3 
+;------------------------------------------------------------
+;	main.c:487: void TurnRight (int speed)
+;	-----------------------------------------
+;	 function TurnRight
+;	-----------------------------------------
+_TurnRight:
+	mov	r2,dpl
+;	main.c:489: pwm_left = speed; 
+	mov	_pwm_left,r2
+;	main.c:490: pwm_right = speed; 
+	mov	_pwm_right,r2
+;	main.c:491: L_motor_dir = 1; 
+	mov	_L_motor_dir,#0x01
+;	main.c:492: R_motor_dir = 0; 
+	mov	_R_motor_dir,#0x00
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'TurnLeft'
+;------------------------------------------------------------
+;speed                     Allocated to registers r2 r3 
+;------------------------------------------------------------
+;	main.c:495: void TurnLeft (int speed)
+;	-----------------------------------------
+;	 function TurnLeft
+;	-----------------------------------------
+_TurnLeft:
+	mov	r2,dpl
+;	main.c:497: pwm_left = speed; 
+	mov	_pwm_left,r2
+;	main.c:498: pwm_right = speed; 
+	mov	_pwm_right,r2
+;	main.c:499: L_motor_dir = 0; 
+	mov	_L_motor_dir,#0x00
+;	main.c:500: R_motor_dir = 1; 
+	mov	_R_motor_dir,#0x01
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'main'
+;------------------------------------------------------------
+;cnt                       Allocated to registers 
+;c                         Allocated to registers r4 
+;vx                        Allocated with name '_main_vx_1_133'
+;vy                        Allocated with name '_main_vy_1_133'
+;threshold                 Allocated to registers 
+;motor_pwm                 Allocated with name '_main_motor_pwm_1_133'
+;sloc0                     Allocated with name '_main_sloc0_1_0'
+;------------------------------------------------------------
+;	main.c:503: void main (void)
+;	-----------------------------------------
+;	 function main
+;	-----------------------------------------
+_main:
+;	main.c:507: int vx = 0, vy = 0; 
+	clr	a
+	mov	_main_vx_1_133,a
+	mov	(_main_vx_1_133 + 1),a
+	mov	_main_vy_1_133,a
+	mov	(_main_vy_1_133 + 1),a
+;	main.c:511: Set_Pin_Output(0x24);
+	mov	dpl,#0x24
+	lcall	_Set_Pin_Output
+;	main.c:512: Set_Pin_Output(0x23);
+	mov	dpl,#0x23
+	lcall	_Set_Pin_Output
+;	main.c:513: Set_Pin_Output(0x22);
+	mov	dpl,#0x22
+	lcall	_Set_Pin_Output
+;	main.c:514: Set_Pin_Output(0x21);
+	mov	dpl,#0x21
+	lcall	_Set_Pin_Output
+;	main.c:515: Set_Pin_Output(0x17);
+	mov	dpl,#0x17
+	lcall	_Set_Pin_Output
+;	main.c:516: Set_Pin_Output(0x16);
+	mov	dpl,#0x16
+	lcall	_Set_Pin_Output
+;	main.c:518: waitms(500);
+	mov	dptr,#0x01F4
+	lcall	_waitms
+;	main.c:519: printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	a,#__str_3
 	push	acc
 	mov	a,#(__str_3 >> 8)
@@ -1766,6 +2511,7 @@ _Calibrate_Joystick:
 	dec	sp
 	dec	sp
 	dec	sp
+<<<<<<< HEAD
 ;	main.c:533: for (i = 0; (i<10) && (((155<=vx)&&(vx<=170))||((155<=vy)&&(vy<=170))); i++){
 	mov	r2,#0x00
 	mov	r3,#0x00
@@ -1894,10 +2640,14 @@ _main:
 	dec	sp
 	dec	sp
 ;	main.c:551: UART1_Init(9600);
+=======
+;	main.c:520: UART1_Init(9600);
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	dptr,#0x2580
 	clr	a
 	mov	b,a
 	lcall	_UART1_Init
+<<<<<<< HEAD
 ;	main.c:553: ReceptionOff();
 	lcall	_ReceptionOff
 ;	main.c:556: SendATCommand("AT+VER\r\n");
@@ -1964,19 +2714,76 @@ L023024?:
 	mov	dpl,#0x17
 	lcall	_Set_Pin_Input
 ;	main.c:582: if(RXU1()) // Something has arrived
+=======
+;	main.c:522: ReceptionOff();
+	lcall	_ReceptionOff
+;	main.c:525: SendATCommand("AT+VER\r\n");
+	mov	dptr,#__str_4
+	mov	b,#0x80
+	lcall	_SendATCommand
+;	main.c:526: SendATCommand("AT+BAUD\r\n");
+	mov	dptr,#__str_5
+	mov	b,#0x80
+	lcall	_SendATCommand
+;	main.c:527: SendATCommand("AT+RFID\r\n");
+	mov	dptr,#__str_6
+	mov	b,#0x80
+	lcall	_SendATCommand
+;	main.c:528: SendATCommand("AT+DVID\r\n");
+	mov	dptr,#__str_7
+	mov	b,#0x80
+	lcall	_SendATCommand
+;	main.c:529: SendATCommand("AT+RFC\r\n");
+	mov	dptr,#__str_8
+	mov	b,#0x80
+	lcall	_SendATCommand
+;	main.c:530: SendATCommand("AT+POWE\r\n");
+	mov	dptr,#__str_9
+	mov	b,#0x80
+	lcall	_SendATCommand
+;	main.c:531: SendATCommand("AT+CLSS\r\n");
+	mov	dptr,#__str_10
+	mov	b,#0x80
+	lcall	_SendATCommand
+;	main.c:532: SendATCommand("AT+DVIDEFEF\r\n");  
+	mov	dptr,#__str_11
+	mov	b,#0x80
+	lcall	_SendATCommand
+;	main.c:535: L_bridge_1 = 0; 
+	clr	_P2_1
+;	main.c:536: L_bridge_2 = 0; 
+	clr	_P2_2
+;	main.c:537: R_bridge_1 = 0; 
+	clr	_P2_4
+;	main.c:538: R_bridge_2 = 0; 
+	clr	_P2_3
+;	main.c:541: while(1)
+	mov	r2,#0x00
+	mov	r3,#0x00
+L025022?:
+;	main.c:545: if(RXU1()) // Something has arrived
+	push	ar2
+	push	ar3
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	lcall	_RXU1
 	clr	a
 	rlc	a
 	pop	ar3
 	pop	ar2
+<<<<<<< HEAD
 	jz	L023024?
 ;	main.c:584: c=getchar1();
+=======
+	jz	L025022?
+;	main.c:547: c=getchar1();
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	push	ar2
 	push	ar3
 	lcall	_getchar1
 	mov	r4,dpl
 	pop	ar3
 	pop	ar2
+<<<<<<< HEAD
 ;	main.c:586: if(c=='!') // Master is sending message
 	cjne	r4,#0x21,L023040?
 	sjmp	L023041?
@@ -1984,13 +2791,26 @@ L023040?:
 	ljmp	L023019?
 L023041?:
 ;	main.c:588: getstr1(buff, sizeof(buff)-1);
+=======
+;	main.c:549: if(c=='!') // Master is sending message
+	cjne	r4,#0x21,L025036?
+	sjmp	L025037?
+L025036?:
+	ljmp	L025017?
+L025037?:
+;	main.c:551: getstr1(buff, sizeof(buff)-1);
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	_getstr1_PARM_2,#0x13
 	mov	dptr,#_buff
 	mov	b,#0x40
 	push	ar2
 	push	ar3
 	lcall	_getstr1
+<<<<<<< HEAD
 ;	main.c:589: if(strlen(buff)==7)
+=======
+;	main.c:552: if(strlen(buff)==7)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_strlen
@@ -1998,6 +2818,7 @@ L023041?:
 	mov	r6,dph
 	pop	ar3
 	pop	ar2
+<<<<<<< HEAD
 	cjne	r5,#0x07,L023042?
 	cjne	r6,#0x00,L023042?
 	sjmp	L023043?
@@ -2016,6 +2837,26 @@ L023043?:
 	mov	a,#_vx
 	push	acc
 	mov	a,#(_vx >> 8)
+=======
+	cjne	r5,#0x07,L025038?
+	cjne	r6,#0x00,L025038?
+	sjmp	L025039?
+L025038?:
+	ljmp	L025012?
+L025039?:
+;	main.c:556: sscanf(buff, "%03d,%03d", &vx, &vy);
+	push	ar2
+	push	ar3
+	mov	a,#_main_vy_1_133
+	push	acc
+	mov	a,#(_main_vy_1_133 >> 8)
+	push	acc
+	mov	a,#0x40
+	push	acc
+	mov	a,#_main_vx_1_133
+	push	acc
+	mov	a,#(_main_vx_1_133 >> 8)
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	push	acc
 	mov	a,#0x40
 	push	acc
@@ -2035,12 +2876,21 @@ L023043?:
 	mov	a,sp
 	add	a,#0xf4
 	mov	sp,a
+<<<<<<< HEAD
 ;	main.c:595: printf("Joystick Received: Vx = %03d, Vy = %03d\r\n", vx, vy);
 	push	_vy
 	push	(_vy + 1)
 	push	_vx
 	push	(_vx + 1)
 	mov	a,#__str_15
+=======
+;	main.c:558: printf("Joystick Received: Vx = %03d, Vy = %03d\r\n", vx, vy);
+	push	_main_vy_1_133
+	push	(_main_vy_1_133 + 1)
+	push	_main_vx_1_133
+	push	(_main_vx_1_133 + 1)
+	mov	a,#__str_13
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	push	acc
 	mov	a,#(__str_15 >> 8)
 	push	acc
@@ -2050,6 +2900,7 @@ L023043?:
 	mov	a,sp
 	add	a,#0xf9
 	mov	sp,a
+<<<<<<< HEAD
 ;	main.c:598: vx_error = abs(vx-vx_thres)*100/vx_thres; 
 	mov	a,_vx
 	clr	c
@@ -2058,11 +2909,75 @@ L023043?:
 	mov	a,(_vx + 1)
 	subb	a,(_vx_thres + 1)
 	mov	dph,a
+=======
+;	main.c:560: if (vy > threshold){
+	mov	dpl,_main_vy_1_133
+	mov	dph,(_main_vy_1_133 + 1)
+	lcall	___sint2fs
+	mov	_main_sloc0_1_0,dpl
+	mov	(_main_sloc0_1_0 + 1),dph
+	mov	(_main_sloc0_1_0 + 2),b
+	mov	(_main_sloc0_1_0 + 3),a
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,_main_sloc0_1_0
+	mov	dph,(_main_sloc0_1_0 + 1)
+	mov	b,(_main_sloc0_1_0 + 2)
+	mov	a,(_main_sloc0_1_0 + 3)
+	lcall	___fsgt
+	mov	r5,dpl
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	pop	ar2
+	mov	a,r5
+	jnz	L025040?
+	ljmp	L025004?
+L025040?:
+;	main.c:561: motor_pwm = abs(vy - threshold) * 100 / threshold; 
+	push	ar2
+	push	ar3
+	push	ar3
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,_main_sloc0_1_0
+	mov	dph,(_main_sloc0_1_0 + 1)
+	mov	b,(_main_sloc0_1_0 + 2)
+	mov	a,(_main_sloc0_1_0 + 3)
+	lcall	___fssub
+	mov	r5,dpl
+	mov	r6,dph
+	mov	r7,b
+	mov	r2,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	mov	dpl,r5
+	mov	dph,r6
+	mov	b,r7
+	mov	a,r2
+	push	ar2
+	push	ar3
+	lcall	___fs2sint
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	lcall	_abs
 	mov	__mulint_PARM_2,dpl
 	mov	(__mulint_PARM_2 + 1),dph
 	mov	dptr,#0x0064
 	lcall	__mulint
+<<<<<<< HEAD
 	mov	__divsint_PARM_2,_vx_thres
 	mov	(__divsint_PARM_2 + 1),(_vx_thres + 1)
 	lcall	__divsint
@@ -2076,6 +2991,101 @@ L023043?:
 	mov	a,(_vy + 1)
 	subb	a,(_vy_thres + 1)
 	mov	dph,a
+=======
+	lcall	___sint2fs
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r5,b
+	mov	r6,a
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r5
+	mov	a,r6
+	lcall	___fsdiv
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r5,b
+	mov	r6,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r5
+	mov	a,r6
+	push	ar2
+	push	ar3
+	lcall	___fs2sint
+;	main.c:562: MoveForward(motor_pwm);
+	mov	_main_motor_pwm_1_133,dpl
+	mov  (_main_motor_pwm_1_133 + 1),dph
+	lcall	_MoveForward
+	pop	ar3
+	pop	ar2
+	pop	ar3
+	pop	ar2
+	ljmp	L025005?
+L025004?:
+;	main.c:564: else if (vy < threshold){
+	push	ar2
+	push	ar3
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,_main_sloc0_1_0
+	mov	dph,(_main_sloc0_1_0 + 1)
+	mov	b,(_main_sloc0_1_0 + 2)
+	mov	a,(_main_sloc0_1_0 + 3)
+	lcall	___fslt
+	mov	r5,dpl
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	pop	ar2
+	mov	a,r5
+	jnz	L025041?
+	ljmp	L025005?
+L025041?:
+;	main.c:565: motor_pwm = abs(threshold - vy) * 100 / threshold; 
+	push	ar2
+	push	ar3
+	push	ar3
+	push	_main_sloc0_1_0
+	push	(_main_sloc0_1_0 + 1)
+	push	(_main_sloc0_1_0 + 2)
+	push	(_main_sloc0_1_0 + 3)
+	mov	dptr,#0x0000
+	mov	b,#0x21
+	mov	a,#0x43
+	lcall	___fssub
+	mov	r5,dpl
+	mov	r6,dph
+	mov	r7,b
+	mov	r2,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	mov	dpl,r5
+	mov	dph,r6
+	mov	b,r7
+	mov	a,r2
+	push	ar2
+	push	ar3
+	lcall	___fs2sint
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	lcall	_abs
 	mov	__mulint_PARM_2,dpl
 	mov	(__mulint_PARM_2 + 1),dph
@@ -2093,6 +3103,7 @@ L023043?:
 	mov	a,#0x05
 	subb	a,_main_vy_error_1_132
 	clr	a
+<<<<<<< HEAD
 	xrl	a,#0x80
 	mov	b,(_main_vy_error_1_132 + 1)
 	xrl	b,#0x80
@@ -2121,6 +3132,80 @@ L023043?:
 	clr	c
 	clr	a
 	subb	a,r7
+=======
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r5
+	mov	a,r6
+	lcall	___fsdiv
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r5,b
+	mov	r6,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r5
+	mov	a,r6
+	push	ar2
+	push	ar3
+	lcall	___fs2sint
+;	main.c:566: MoveBackward(motor_pwm);
+	mov	_main_motor_pwm_1_133,dpl
+	mov  (_main_motor_pwm_1_133 + 1),dph
+	lcall	_MoveBackward
+	pop	ar3
+	pop	ar2
+;	main.c:590: sendstr1(buff);
+	pop	ar3
+	pop	ar2
+;	main.c:566: MoveBackward(motor_pwm);
+L025005?:
+;	main.c:568: if(vx > threshold){
+	mov	dpl,_main_vx_1_133
+	mov	dph,(_main_vx_1_133 + 1)
+	push	ar2
+	push	ar3
+	lcall	___sint2fs
+	mov	_main_sloc0_1_0,dpl
+	mov	(_main_sloc0_1_0 + 1),dph
+	mov	(_main_sloc0_1_0 + 2),b
+	mov	(_main_sloc0_1_0 + 3),a
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,_main_sloc0_1_0
+	mov	dph,(_main_sloc0_1_0 + 1)
+	mov	b,(_main_sloc0_1_0 + 2)
+	mov	a,(_main_sloc0_1_0 + 3)
+	lcall	___fsgt
+	mov	r5,dpl
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	pop	ar2
+	mov	a,r5
+	jnz	L025042?
+	ljmp	L025009?
+L025042?:
+;	main.c:569: motor_pwm = abs(vx - threshold) * 100 / threshold; 
+	push	ar2
+	push	ar3
+	push	ar3
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	clr	a
 	xrl	a,#0x80
 	mov	b,r5
@@ -2172,6 +3257,7 @@ L023048?:
 	mov	a,(_vx + 1)
 	subb	a,(_vx_thres + 1)
 	mov	r6,a
+<<<<<<< HEAD
 	clr	c
 	clr	a
 	subb	a,r5
@@ -2194,6 +3280,129 @@ L023008?:
 	ljmp	L023024?
 L023014?:
 ;	main.c:630: printf("*** BAD MESSAGE ***(%d): %s\r\n", buff,strlen(buff));
+=======
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r5
+	mov	a,r6
+	push	ar2
+	push	ar3
+	lcall	___fs2sint
+;	main.c:570: TurnRight(motor_pwm);
+	mov	_main_motor_pwm_1_133,dpl
+	mov  (_main_motor_pwm_1_133 + 1),dph
+	lcall	_TurnRight
+	pop	ar3
+	pop	ar2
+	pop	ar3
+	pop	ar2
+	ljmp	L025022?
+L025009?:
+;	main.c:572: else if (vx < threshold){
+	push	ar2
+	push	ar3
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,_main_sloc0_1_0
+	mov	dph,(_main_sloc0_1_0 + 1)
+	mov	b,(_main_sloc0_1_0 + 2)
+	mov	a,(_main_sloc0_1_0 + 3)
+	lcall	___fslt
+	mov	r5,dpl
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	pop	ar2
+	mov	a,r5
+	jnz	L025043?
+	ljmp	L025022?
+L025043?:
+;	main.c:573: motor_pwm = abs(threshold - vx) * 100 / threshold; 
+	push	ar2
+	push	ar3
+	push	ar3
+	push	_main_sloc0_1_0
+	push	(_main_sloc0_1_0 + 1)
+	push	(_main_sloc0_1_0 + 2)
+	push	(_main_sloc0_1_0 + 3)
+	mov	dptr,#0x0000
+	mov	b,#0x21
+	mov	a,#0x43
+	lcall	___fssub
+	mov	r5,dpl
+	mov	r6,dph
+	mov	r7,b
+	mov	r2,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	mov	dpl,r5
+	mov	dph,r6
+	mov	b,r7
+	mov	a,r2
+	push	ar2
+	push	ar3
+	lcall	___fs2sint
+	lcall	_abs
+	mov	__mulint_PARM_2,dpl
+	mov	(__mulint_PARM_2 + 1),dph
+	pop	ar3
+	pop	ar2
+	mov	dptr,#0x0064
+	lcall	__mulint
+	lcall	___sint2fs
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r5,b
+	mov	r6,a
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x21
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r5
+	mov	a,r6
+	lcall	___fsdiv
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r5,b
+	mov	r6,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r5
+	mov	a,r6
+	push	ar2
+	push	ar3
+	lcall	___fs2sint
+;	main.c:574: TurnLeft(motor_pwm);
+	mov	_main_motor_pwm_1_133,dpl
+	mov  (_main_motor_pwm_1_133 + 1),dph
+	lcall	_TurnLeft
+	pop	ar3
+	pop	ar2
+	pop	ar3
+	pop	ar2
+	ljmp	L025022?
+L025012?:
+;	main.c:579: printf("*** BAD MESSAGE ***(%d): %s\r\n", buff,strlen(buff));
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	dptr,#_buff
 	mov	b,#0x40
 	push	ar2
@@ -2221,6 +3430,7 @@ L023014?:
 	mov	sp,a
 	pop	ar3
 	pop	ar2
+<<<<<<< HEAD
 	ljmp	L023024?
 L023019?:
 ;	main.c:636: else if(c=='@') // Master wants slave data
@@ -2230,6 +3440,17 @@ L023050?:
 	ljmp	L023024?
 L023051?:
 ;	main.c:638: sprintf(buff, "%05u\n", cnt);
+=======
+	ljmp	L025022?
+L025017?:
+;	main.c:585: else if(c=='@') // Master wants slave data
+	cjne	r4,#0x40,L025044?
+	sjmp	L025045?
+L025044?:
+	ljmp	L025022?
+L025045?:
+;	main.c:587: sprintf(buff, "%05u\n", cnt);
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	push	ar2
 	push	ar3
 	push	ar2
@@ -2252,23 +3473,40 @@ L023051?:
 	mov	sp,a
 	pop	ar3
 	pop	ar2
+<<<<<<< HEAD
 ;	main.c:639: cnt++;
 	inc	r2
 	cjne	r2,#0x00,L023052?
 	inc	r3
 L023052?:
 ;	main.c:640: waitms(5); // The radio seems to need this delay...
+=======
+;	main.c:588: cnt++;
+	inc	r2
+	cjne	r2,#0x00,L025046?
+	inc	r3
+L025046?:
+;	main.c:589: waitms(5); // The radio seems to need this delay...
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	dptr,#0x0005
 	push	ar2
 	push	ar3
 	lcall	_waitms
+<<<<<<< HEAD
 ;	main.c:641: sendstr1(buff);
+=======
+;	main.c:590: sendstr1(buff);
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_sendstr1
 	pop	ar3
 	pop	ar2
+<<<<<<< HEAD
 	ljmp	L023024?
+=======
+	ljmp	L025022?
+>>>>>>> c9471fd6794bc30ec0ff21caa1440608c5b88ea1
 	rseg R_CSEG
 
 	rseg R_XINIT

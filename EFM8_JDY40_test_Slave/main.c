@@ -39,9 +39,9 @@
 #define R_bridge_2 P2_3
 #define L_bridge_2 P2_2
 #define L_bridge_1 P2_1
-#define Servo_base P0_2
-#define Servo_arm P0_3
-#define Calibration_EN P1_7
+#define Servo_base P1_6
+#define Servo_arm P1_7
+
 
 
 idata char buff[20];
@@ -49,6 +49,7 @@ unsigned int pwm_counter = 0;
 unsigned int servo_counter = 0; 
 unsigned char pwm_left = 0, pwm_right = 0; 
 unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
+unsigned char servo_base = 100, servo_arm = 100; 
 unsigned char servo_base_pwm = 0, servo_arm_pwm = 0; 
 int vx = 0, vy = 0; 
 int vx_thres = 0, vy_thres = 0; 
@@ -128,19 +129,6 @@ char _c51_external_startup (void)
 	TMR5=0xffff;   // Set to reload immediately
 	EIE2|=0b_0000_1000; // Enable Timer5 interrupts
 	TR5=1;         // Start Timer5 (TMR5CN0 is bit addressable)
-	
-	// Initialize Timer0
-	TR0=0;
-	TF0=0;
-	CKCON0|=0b_0000_0100; // Timer 0 uses the system clock
-	TMOD&=0xf0;
-	TMOD|=0x01; // Timer 0 in mode 1: 16-bit timer
-	#if (SYSCLK/(TIMER_0_FREQ)>0xFFFFL)
-		#error Timer 0 reload value is incorrect because SYSCLK/(TIMER_0_FREQ) > 0xFFFFL
-	#endif
-	TMR0=0x10000L-(SYSCLK/(TIMER_0_FREQ)); // Initialize reload value
-	ET0=1; // Enable Timer0 interrupts
-	TR0=1; // Start Timer0
 	
 
 	EA=1;  // Enable global interrupts
@@ -465,22 +453,15 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
         R_bridge_1 = 0; 
         R_bridge_2 = 0; 
     }
-}
 
-void Timer0_ISR (void) interrupt INTERRUPT_TIMER0
-{
-	SFRPAGE=0x0;
-	// Timer 0 in 16-bit mode doesn't have auto reload, so reload here
-	TMR0 = 0x10000L-(SYSCLK/(TIMER_0_FREQ));
-	
 	servo_counter++;
-	if(servo_counter==1000)
+	if(servo_counter==2000)
 	{
 		servo_counter=0;
 	}
-	if (servo_base_pwm > servo_counter)
+	if(servo_arm==servo_counter)
 	{
-		Servo_base = 1; 
+		Servo_arm=0;
 	}
 	else {
 		Servo_base = 0;
@@ -513,6 +494,16 @@ void main (void)
     unsigned int cnt=0;
     char c;
 	int vx_error, vy_error; 
+    int vx = 0, vy = 0; 
+    float threshold = 161;
+	int motor_pwm = 0; 
+
+	Set_Pin_Output(0x24);
+    Set_Pin_Output(0x23);
+    Set_Pin_Output(0x22);
+    Set_Pin_Output(0x21);
+	Set_Pin_Output(0x17);
+	Set_Pin_Output(0x16);
 	
 	waitms(500);
 	printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
@@ -540,11 +531,6 @@ void main (void)
 	cnt=0;
 	while(1)
 	{	
-        Set_Pin_Output(0x24);
-        Set_Pin_Output(0x23);
-        Set_Pin_Output(0x22);
-        Set_Pin_Output(0x21);
-		Set_Pin_Input(0x17);
 
 		// The message format: 000,000 --- (vx,vy)
 		if(RXU1()) // Something has arrived
@@ -590,6 +576,7 @@ void main (void)
 							R_motor_dir = 1; 
 						}
 					}
+
 				}
 				else
 				{

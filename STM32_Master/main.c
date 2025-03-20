@@ -232,13 +232,13 @@ void main(void)
 	SendATCommand("AT+BAUD\r\n");
 	SendATCommand("AT+RFID\r\n");
 	SendATCommand("AT+DVID\r\n");
-	SendATCommand("AT+RFC001\r\n");
+	SendATCommand("AT+RFC\r\n");
 	SendATCommand("AT+POWE\r\n");
 	SendATCommand("AT+CLSS\r\n");
 	
 	// We should select an unique device ID.  The device ID can be a hex
 	// number from 0x0000 to 0xFFFF.  In this case is set to 0xABBA
-	SendATCommand("AT+DVIDABBA\r\n");
+	SendATCommand("AT+DVIDEFEF\r\n");
 
    	// Display something in the LCD
 	        //1234567890123456
@@ -293,7 +293,7 @@ void main(void)
 		while(1)
 		{
 			if(ReceivedBytes2()>5) break; // Something has arrived
-			if(++timeout_cnt>500) break; // Wait up to 25ms for the repply
+			if(++timeout_cnt>250) break; // Wait up to 25ms for the repply
 			Delay_us(100); // 100us*250=25ms
 		}
 		
