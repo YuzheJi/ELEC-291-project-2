@@ -52,7 +52,7 @@ unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
 unsigned char servo_base = 100, servo_arm = 100; 
 unsigned char servo_base_pwm = 0, servo_arm_pwm = 0; 
 int vx = 0, vy = 0; 
-int vx_thres = 0, vy_thres = 0; 
+int vx_thres = 161, vy_thres = 166; 
 
 
 char _c51_external_startup (void)
@@ -425,7 +425,7 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
         pwm_counter = 0; 
     }
 
-    if (pwm_left > pwm_counter){
+    if (pwm_right > pwm_counter){
         if(L_motor_dir){
             L_bridge_1 = 1; 
             L_bridge_2 = 0; 
@@ -439,7 +439,7 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
         L_bridge_1 = 0; 
         L_bridge_2 = 0; 
     }
-    if (pwm_right > pwm_counter){
+    if (pwm_left > pwm_counter){
         if (R_motor_dir){
             R_bridge_1 = 1; 
             R_bridge_2 = 0;
@@ -493,7 +493,7 @@ void main (void)
 {
     unsigned int cnt=0;
     char c;
-	int vx_error, vy_error; 
+	int vx_error, vy_error, vx_err, vy_err; 
     int vx = 0, vy = 0; 
     float threshold = 161;
 	int motor_pwm = 0; 
@@ -526,12 +526,10 @@ void main (void)
     L_bridge_2 = 0; 
     R_bridge_1 = 0; 
     R_bridge_2 = 0; 
-	Calibrate_Joystick();
 
 	cnt=0;
 	while(1)
 	{	
-
 		// The message format: 000,000 --- (vx,vy)
 		if(RXU1()) // Something has arrived
 		{
@@ -551,15 +549,19 @@ void main (void)
 					// Determine of Vx and Vy are within 5% error
 					vx_error = abs(vx-vx_thres)*100/vx_thres; 
 					vy_error = abs(vy-vy_thres)*100/vy_thres; 
+					vx_err = vx-vx_thres; 
+					vy_err = vy-vy_thres; 
+					pwm_left = 0; 
+					pwm_right = 0; 
 					// if vx moved but vy didn't move => move forward 
 					if ((vy_error>5) && (vx_error<5)){
 						pwm_left = vy_error; 
 						pwm_right = vy_error; 
-						if ((vy-vy_thres) > 0){
+						if (vy_err > 0){ //move forward
 							L_motor_dir = 0; 
 							R_motor_dir = 0; 
 						}
-						else {
+						else { //move backward 
 							L_motor_dir = 1; 
 							R_motor_dir = 1; 
 						}
@@ -567,13 +569,69 @@ void main (void)
 					if ((vx_error>5)&&(vy_error<5)){
 						pwm_left = vx_error; 
 						pwm_right = vx_error; 
-						if ((vx-vx_thres) > 0){
+						if (vx_err > 0){ //turn right
 							L_motor_dir = 1; 
 							R_motor_dir = 0; 
 						}
-						else{
+						else{ //turn left 
 							L_motor_dir = 0; 
 							R_motor_dir = 1; 
+						}
+					}
+					if ((vx_error>5)&&(vy_error)>5){
+						// Region 1 & Region 2
+						if (vy_err>0){
+							L_motor_dir = 0; 
+							R_motor_dir = 0; 
+							// Region 1
+							if (vx_err>0){
+								if (vy*100<=vy_thres*100/2){
+									pwm_left = vy_error; 
+									pwm_right = vy_error*100/(vx_error+vy_error);
+								}
+								else {
+									pwm_left = vx_error; 
+									pwm_right = vx_error*100/(vx_error+vy_error);
+								}
+							}
+							// Region 2
+							else {
+								if (vy*100<=vy_thres*100/2){
+									pwm_left = vy_error*100/(vx_error+vy_error);
+									pwm_right = vy_error; 
+								}
+								else {
+									pwm_left = vx_error*100/(vx_error+vy_error);
+									pwm_right = vx_error; 
+								}
+							}
+						}
+						// Region 3 & 4
+						if (vy_err<0){
+							L_motor_dir = 1; 
+							R_motor_dir = 1; 
+							// Region 4
+							if (vx_err>0){
+								if (vy*100<=vy_thres*100/2){
+									pwm_left = vy_error; 
+									pwm_right = vy_error*100/(vx_error+vy_error);
+								}
+								else {
+									pwm_left = vx_error; 
+									pwm_right = vx_error*100/(vx_error+vy_error);
+								}
+							}
+							// Region 3
+							else {
+								if (vy*100<=vy_thres*100/2){
+									pwm_left = vy_error*100/(vx_error+vy_error);
+									pwm_right = vy_error; 
+								}
+								else {
+									pwm_left = vx_error*100/(vx_error+vy_error);
+									pwm_right = vx_error; 
+								}
+							}
 						}
 					}
 
