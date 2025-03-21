@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-; This file was generated Fri Mar 21 14:07:43 2025
+; This file was generated Fri Mar 21 14:20:01 2025
 ;--------------------------------------------------------
 $name main
 $optc51 --model-small
@@ -26,10 +26,6 @@ $optc51 --model-small
 	public _InitPinADC_PARM_2
 	public _main
 	public _servo_pick
-	public _TurnLeft
-	public _TurnRight
-	public _MoveBackward
-	public _MoveForward
 	public _Timer5_ISR
 	public _ADC_at_Pin
 	public _InitPinADC
@@ -51,6 +47,10 @@ $optc51 --model-small
 	public __c51_external_startup
 	public _buff
 	public _getstr1_PARM_2
+	public _vy
+	public _vx
+	public _vy_thres
+	public _vx_thres
 	public _servo_arm
 	public _servo_base
 	public _R_motor_dir
@@ -523,16 +523,28 @@ _servo_base:
 	ds 1
 _servo_arm:
 	ds 1
+_vx_thres:
+	ds 2
+_vy_thres:
+	ds 2
+_vx:
+	ds 2
+_vy:
+	ds 2
 _getstr1_PARM_2:
 	ds 1
-_main_vx_1_134:
+_main_vx_error_1_126:
 	ds 2
-_main_vy_1_134:
+_main_vy_error_1_126:
 	ds 2
-_main_motor_pwm_1_134:
+_main_vx_err_1_126:
 	ds 2
-_main_sloc0_1_0:
-	ds 4
+_main_vy_err_1_126:
+	ds 2
+_main_vx_1_126:
+	ds 2
+_main_vy_1_126:
+	ds 2
 ;--------------------------------------------------------
 ; overlayable items in internal ram 
 ;--------------------------------------------------------
@@ -544,10 +556,6 @@ _main_sloc0_1_0:
 	rseg	R_OSEG
 _InitPinADC_PARM_2:
 	ds 1
-	rseg	R_OSEG
-	rseg	R_OSEG
-	rseg	R_OSEG
-	rseg	R_OSEG
 	rseg	R_OSEG
 ;--------------------------------------------------------
 ; indirectly addressable internal ram data
@@ -599,26 +607,42 @@ _buff:
 ; data variables initialization
 ;--------------------------------------------------------
 	rseg R_DINIT
-;	main.c:48: unsigned int pwm_counter = 0; 
+;	main.c:49: unsigned int pwm_counter = 0; 
 	clr	a
 	mov	_pwm_counter,a
 	mov	(_pwm_counter + 1),a
-;	main.c:49: unsigned int servo_counter = 0; 
+;	main.c:50: unsigned int servo_counter = 0; 
 	clr	a
 	mov	_servo_counter,a
 	mov	(_servo_counter + 1),a
-;	main.c:50: unsigned char pwm_left = 0, pwm_right = 0; 
+;	main.c:51: unsigned char pwm_left = 0, pwm_right = 0; 
 	mov	_pwm_left,#0x00
-;	main.c:50: unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
-	mov	_pwm_right,#0x00
-;	main.c:51: unsigned char servo_base = 1, servo_arm = 1; 
-	mov	_L_motor_dir,#0x01
 ;	main.c:51: unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
-	mov	_R_motor_dir,#0x01
+	mov	_pwm_right,#0x00
 ;	main.c:52: unsigned char servo_base = 1, servo_arm = 1; 
+	mov	_L_motor_dir,#0x01
+;	main.c:52: unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
+	mov	_R_motor_dir,#0x01
+;	main.c:53: unsigned char servo_base = 1, servo_arm = 1; 
 	mov	_servo_base,#0x01
-;	main.c:52: 
+;	main.c:53: int vx_thres = 161, vy_thres = 166; 
 	mov	_servo_arm,#0x01
+;	main.c:54: int vx = 0, vy = 0; 
+	mov	_vx_thres,#0xA1
+	clr	a
+	mov	(_vx_thres + 1),a
+;	main.c:54: int vx_thres = 161, vy_thres = 166; 
+	mov	_vy_thres,#0xA6
+	clr	a
+	mov	(_vy_thres + 1),a
+;	main.c:55: int vx = 0, vy = 0; 
+	clr	a
+	mov	_vx,a
+	mov	(_vx + 1),a
+;	main.c:55: 
+	clr	a
+	mov	_vy,a
+	mov	(_vy + 1),a
 	; The linker places a 'ret' at the end of segment R_DINIT.
 ;--------------------------------------------------------
 ; code
@@ -628,86 +652,86 @@ _buff:
 ;Allocation info for local variables in function '_c51_external_startup'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	main.c:55: char _c51_external_startup (void)
+;	main.c:58: char _c51_external_startup (void)
 ;	-----------------------------------------
 ;	 function _c51_external_startup
 ;	-----------------------------------------
 __c51_external_startup:
 	using	0
-;	main.c:58: SFRPAGE = 0x00;
+;	main.c:61: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
-;	main.c:59: WDTCN = 0xDE; //First key
+;	main.c:62: WDTCN = 0xDE; //First key
 	mov	_WDTCN,#0xDE
-;	main.c:60: WDTCN = 0xAD; //Second key
+;	main.c:63: WDTCN = 0xAD; //Second key
 	mov	_WDTCN,#0xAD
-;	main.c:62: VDM0CN=0x80;       // enable VDD monitor
+;	main.c:65: VDM0CN=0x80;       // enable VDD monitor
 	mov	_VDM0CN,#0x80
-;	main.c:63: RSTSRC=0x02|0x04;  // Enable reset on missing clock detector and VDD
+;	main.c:66: RSTSRC=0x02|0x04;  // Enable reset on missing clock detector and VDD
 	mov	_RSTSRC,#0x06
-;	main.c:70: SFRPAGE = 0x10;
+;	main.c:73: SFRPAGE = 0x10;
 	mov	_SFRPAGE,#0x10
-;	main.c:71: PFE0CN  = 0x20; // SYSCLK < 75 MHz.
+;	main.c:74: PFE0CN  = 0x20; // SYSCLK < 75 MHz.
 	mov	_PFE0CN,#0x20
-;	main.c:72: SFRPAGE = 0x00;
+;	main.c:75: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
-;	main.c:93: CLKSEL = 0x00;
+;	main.c:96: CLKSEL = 0x00;
 	mov	_CLKSEL,#0x00
-;	main.c:94: CLKSEL = 0x00;
+;	main.c:97: CLKSEL = 0x00;
 	mov	_CLKSEL,#0x00
-;	main.c:95: while ((CLKSEL & 0x80) == 0);
+;	main.c:98: while ((CLKSEL & 0x80) == 0);
 L002001?:
 	mov	a,_CLKSEL
 	jnb	acc.7,L002001?
-;	main.c:96: CLKSEL = 0x03;
+;	main.c:99: CLKSEL = 0x03;
 	mov	_CLKSEL,#0x03
-;	main.c:97: CLKSEL = 0x03;
+;	main.c:100: CLKSEL = 0x03;
 	mov	_CLKSEL,#0x03
-;	main.c:98: while ((CLKSEL & 0x80) == 0);
+;	main.c:101: while ((CLKSEL & 0x80) == 0);
 L002004?:
 	mov	a,_CLKSEL
 	jnb	acc.7,L002004?
-;	main.c:103: P0MDOUT |= 0x11; // Enable UART0 TX (P0.4) and UART1 TX (P0.0) as push-pull outputs
+;	main.c:106: P0MDOUT |= 0x11; // Enable UART0 TX (P0.4) and UART1 TX (P0.0) as push-pull outputs
 	orl	_P0MDOUT,#0x11
-;	main.c:104: P2MDOUT |= 0x01; // P2.0 in push-pull mode
+;	main.c:107: P2MDOUT |= 0x01; // P2.0 in push-pull mode
 	orl	_P2MDOUT,#0x01
-;	main.c:105: XBR0     = 0x01; // Enable UART0 on P0.4(TX) and P0.5(RX)                     
+;	main.c:108: XBR0     = 0x01; // Enable UART0 on P0.4(TX) and P0.5(RX)                     
 	mov	_XBR0,#0x01
-;	main.c:106: XBR1     = 0X00;
+;	main.c:109: XBR1     = 0X00;
 	mov	_XBR1,#0x00
-;	main.c:107: XBR2     = 0x41; // Enable crossbar and uart 1
+;	main.c:110: XBR2     = 0x41; // Enable crossbar and uart 1
 	mov	_XBR2,#0x41
-;	main.c:113: SCON0 = 0x10;
+;	main.c:116: SCON0 = 0x10;
 	mov	_SCON0,#0x10
-;	main.c:114: TH1 = 0x100-((SYSCLK/BAUDRATE)/(2L*12L));
+;	main.c:117: TH1 = 0x100-((SYSCLK/BAUDRATE)/(2L*12L));
 	mov	_TH1,#0xE6
-;	main.c:115: TL1 = TH1;      // Init Timer1
+;	main.c:118: TL1 = TH1;      // Init Timer1
 	mov	_TL1,_TH1
-;	main.c:116: TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit auto-reload
+;	main.c:119: TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit auto-reload
 	anl	_TMOD,#0x0F
-;	main.c:117: TMOD |=  0x20;                       
+;	main.c:120: TMOD |=  0x20;                       
 	orl	_TMOD,#0x20
-;	main.c:118: TR1 = 1; // START Timer1
+;	main.c:121: TR1 = 1; // START Timer1
 	setb	_TR1
-;	main.c:119: TI = 1;  // Indicate TX0 ready
+;	main.c:122: TI = 1;  // Indicate TX0 ready
 	setb	_TI
-;	main.c:121: P2_0=1; // 'set' pin to 1 is normal operation mode.
+;	main.c:124: P2_0=1; // 'set' pin to 1 is normal operation mode.
 	setb	_P2_0
-;	main.c:124: SFRPAGE=0x10;
+;	main.c:127: SFRPAGE=0x10;
 	mov	_SFRPAGE,#0x10
-;	main.c:125: TMR5CN0=0x00;
+;	main.c:128: TMR5CN0=0x00;
 	mov	_TMR5CN0,#0x00
-;	main.c:126: TMR5=0xffff;   // Set to reload immediately
+;	main.c:129: TMR5=0xffff;   // Set to reload immediately
 	mov	_TMR5,#0xFF
 	mov	(_TMR5 >> 8),#0xFF
-;	main.c:127: EIE2|=0b_0000_1000; // Enable Timer5 interrupts
+;	main.c:130: EIE2|=0b_0000_1000; // Enable Timer5 interrupts
 	orl	_EIE2,#0x08
-;	main.c:128: TR5=1;         // Start Timer5 (TMR5CN0 is bit addressable)
+;	main.c:131: TR5=1;         // Start Timer5 (TMR5CN0 is bit addressable)
 	setb	_TR5
-;	main.c:131: EA=1;  // Enable global interrupts
+;	main.c:134: EA=1;  // Enable global interrupts
 	setb	_EA
-;	main.c:132: SFRPAGE=0x00;
+;	main.c:135: SFRPAGE=0x00;
 	mov	_SFRPAGE,#0x00
-;	main.c:134: return 0;
+;	main.c:137: return 0;
 	mov	dpl,#0x00
 	ret
 ;------------------------------------------------------------
@@ -716,40 +740,40 @@ L002004?:
 ;us                        Allocated to registers r2 
 ;i                         Allocated to registers r3 
 ;------------------------------------------------------------
-;	main.c:138: void Timer3us(unsigned char us)
+;	main.c:141: void Timer3us(unsigned char us)
 ;	-----------------------------------------
 ;	 function Timer3us
 ;	-----------------------------------------
 _Timer3us:
 	mov	r2,dpl
-;	main.c:143: CKCON0|=0b_0100_0000;
+;	main.c:146: CKCON0|=0b_0100_0000;
 	orl	_CKCON0,#0x40
-;	main.c:145: TMR3RL = (-(SYSCLK)/1000000L); // Set Timer3 to overflow in 1us.
+;	main.c:148: TMR3RL = (-(SYSCLK)/1000000L); // Set Timer3 to overflow in 1us.
 	mov	_TMR3RL,#0xB8
 	mov	(_TMR3RL >> 8),#0xFF
-;	main.c:146: TMR3 = TMR3RL;                 // Initialize Timer3 for first overflow
+;	main.c:149: TMR3 = TMR3RL;                 // Initialize Timer3 for first overflow
 	mov	_TMR3,_TMR3RL
 	mov	(_TMR3 >> 8),(_TMR3RL >> 8)
-;	main.c:148: TMR3CN0 = 0x04;                 // Sart Timer3 and clear overflow flag
+;	main.c:151: TMR3CN0 = 0x04;                 // Sart Timer3 and clear overflow flag
 	mov	_TMR3CN0,#0x04
-;	main.c:149: for (i = 0; i < us; i++)       // Count <us> overflows
+;	main.c:152: for (i = 0; i < us; i++)       // Count <us> overflows
 	mov	r3,#0x00
 L003004?:
 	clr	c
 	mov	a,r3
 	subb	a,r2
 	jnc	L003007?
-;	main.c:151: while (!(TMR3CN0 & 0x80));  // Wait for overflow
+;	main.c:154: while (!(TMR3CN0 & 0x80));  // Wait for overflow
 L003001?:
 	mov	a,_TMR3CN0
 	jnb	acc.7,L003001?
-;	main.c:152: TMR3CN0 &= ~(0x80);         // Clear overflow indicator
+;	main.c:155: TMR3CN0 &= ~(0x80);         // Clear overflow indicator
 	anl	_TMR3CN0,#0x7F
-;	main.c:149: for (i = 0; i < us; i++)       // Count <us> overflows
+;	main.c:152: for (i = 0; i < us; i++)       // Count <us> overflows
 	inc	r3
 	sjmp	L003004?
 L003007?:
-;	main.c:154: TMR3CN0 = 0 ;                   // Stop Timer3 and clear overflow flag
+;	main.c:157: TMR3CN0 = 0 ;                   // Stop Timer3 and clear overflow flag
 	mov	_TMR3CN0,#0x00
 	ret
 ;------------------------------------------------------------
@@ -759,14 +783,14 @@ L003007?:
 ;j                         Allocated to registers r4 r5 
 ;k                         Allocated to registers r6 
 ;------------------------------------------------------------
-;	main.c:157: void waitms (unsigned int ms)
+;	main.c:160: void waitms (unsigned int ms)
 ;	-----------------------------------------
 ;	 function waitms
 ;	-----------------------------------------
 _waitms:
 	mov	r2,dpl
 	mov	r3,dph
-;	main.c:161: for(j=0; j<ms; j++)
+;	main.c:164: for(j=0; j<ms; j++)
 	mov	r4,#0x00
 	mov	r5,#0x00
 L004005?:
@@ -776,7 +800,7 @@ L004005?:
 	mov	a,r5
 	subb	a,r3
 	jnc	L004009?
-;	main.c:162: for (k=0; k<4; k++) Timer3us(250);
+;	main.c:165: for (k=0; k<4; k++) Timer3us(250);
 	mov	r6,#0x00
 L004001?:
 	cjne	r6,#0x04,L004018?
@@ -797,7 +821,7 @@ L004018?:
 	inc	r6
 	sjmp	L004001?
 L004007?:
-;	main.c:161: for(j=0; j<ms; j++)
+;	main.c:164: for(j=0; j<ms; j++)
 	inc	r4
 	cjne	r4,#0x00,L004005?
 	inc	r5
@@ -809,7 +833,7 @@ L004009?:
 ;------------------------------------------------------------
 ;baudrate                  Allocated to registers r2 r3 r4 r5 
 ;------------------------------------------------------------
-;	main.c:165: void UART1_Init (unsigned long baudrate)
+;	main.c:168: void UART1_Init (unsigned long baudrate)
 ;	-----------------------------------------
 ;	 function UART1_Init
 ;	-----------------------------------------
@@ -818,15 +842,15 @@ _UART1_Init:
 	mov	r3,dph
 	mov	r4,b
 	mov	r5,a
-;	main.c:167: SFRPAGE = 0x20;
+;	main.c:170: SFRPAGE = 0x20;
 	mov	_SFRPAGE,#0x20
-;	main.c:168: SMOD1 = 0x0C; // no parity, 8 data bits, 1 stop bit
+;	main.c:171: SMOD1 = 0x0C; // no parity, 8 data bits, 1 stop bit
 	mov	_SMOD1,#0x0C
-;	main.c:169: SCON1 = 0x10;
+;	main.c:172: SCON1 = 0x10;
 	mov	_SCON1,#0x10
-;	main.c:170: SBCON1 =0x00;   // disable baud rate generator
+;	main.c:173: SBCON1 =0x00;   // disable baud rate generator
 	mov	_SBCON1,#0x00
-;	main.c:171: SBRL1 = 0x10000L-((SYSCLK/baudrate)/(12L*2L));
+;	main.c:174: SBRL1 = 0x10000L-((SYSCLK/baudrate)/(12L*2L));
 	mov	__divulong_PARM_2,r2
 	mov	(__divulong_PARM_2 + 1),r3
 	mov	(__divulong_PARM_2 + 2),r4
@@ -866,11 +890,11 @@ _UART1_Init:
 	subb	a,r5
 	mov	_SBRL1,r2
 	mov	(_SBRL1 >> 8),r3
-;	main.c:172: TI1 = 1; // indicate ready for TX
+;	main.c:175: TI1 = 1; // indicate ready for TX
 	setb	_TI1
-;	main.c:173: SBCON1 |= 0x40;   // enable baud rate generator
+;	main.c:176: SBCON1 |= 0x40;   // enable baud rate generator
 	orl	_SBCON1,#0x40
-;	main.c:174: SFRPAGE = 0x00;
+;	main.c:177: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
 	ret
 ;------------------------------------------------------------
@@ -878,23 +902,23 @@ _UART1_Init:
 ;------------------------------------------------------------
 ;c                         Allocated to registers r2 
 ;------------------------------------------------------------
-;	main.c:177: void putchar1 (char c) 
+;	main.c:180: void putchar1 (char c) 
 ;	-----------------------------------------
 ;	 function putchar1
 ;	-----------------------------------------
 _putchar1:
 	mov	r2,dpl
-;	main.c:179: SFRPAGE = 0x20;
+;	main.c:182: SFRPAGE = 0x20;
 	mov	_SFRPAGE,#0x20
-;	main.c:180: while (!TI1);
+;	main.c:183: while (!TI1);
 L006001?:
-;	main.c:181: TI1=0;
+;	main.c:184: TI1=0;
 	jbc	_TI1,L006008?
 	sjmp	L006001?
 L006008?:
-;	main.c:182: SBUF1 = c;
+;	main.c:185: SBUF1 = c;
 	mov	_SBUF1,r2
-;	main.c:183: SFRPAGE = 0x00;
+;	main.c:186: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
 	ret
 ;------------------------------------------------------------
@@ -902,7 +926,7 @@ L006008?:
 ;------------------------------------------------------------
 ;s                         Allocated to registers r2 r3 r4 
 ;------------------------------------------------------------
-;	main.c:186: void sendstr1 (char * s)
+;	main.c:189: void sendstr1 (char * s)
 ;	-----------------------------------------
 ;	 function sendstr1
 ;	-----------------------------------------
@@ -910,7 +934,7 @@ _sendstr1:
 	mov	r2,dpl
 	mov	r3,dph
 	mov	r4,b
-;	main.c:188: while(*s)
+;	main.c:191: while(*s)
 L007001?:
 	mov	dpl,r2
 	mov	dph,r3
@@ -918,7 +942,7 @@ L007001?:
 	lcall	__gptrget
 	mov	r5,a
 	jz	L007004?
-;	main.c:190: putchar1(*s);
+;	main.c:193: putchar1(*s);
 	mov	dpl,r5
 	push	ar2
 	push	ar3
@@ -927,7 +951,7 @@ L007001?:
 	pop	ar4
 	pop	ar3
 	pop	ar2
-;	main.c:191: s++;	
+;	main.c:194: s++;	
 	inc	r2
 	cjne	r2,#0x00,L007001?
 	inc	r3
@@ -939,26 +963,26 @@ L007004?:
 ;------------------------------------------------------------
 ;c                         Allocated to registers 
 ;------------------------------------------------------------
-;	main.c:195: char getchar1 (void)
+;	main.c:198: char getchar1 (void)
 ;	-----------------------------------------
 ;	 function getchar1
 ;	-----------------------------------------
 _getchar1:
-;	main.c:198: SFRPAGE = 0x20;
+;	main.c:201: SFRPAGE = 0x20;
 	mov	_SFRPAGE,#0x20
-;	main.c:199: while (!RI1);
+;	main.c:202: while (!RI1);
 L008001?:
-;	main.c:200: RI1=0;
+;	main.c:203: RI1=0;
 	jbc	_RI1,L008008?
 	sjmp	L008001?
 L008008?:
-;	main.c:202: SCON1&=0b_0011_1111;
+;	main.c:205: SCON1&=0b_0011_1111;
 	anl	_SCON1,#0x3F
-;	main.c:203: c = SBUF1;
+;	main.c:206: c = SBUF1;
 	mov	dpl,_SBUF1
-;	main.c:204: SFRPAGE = 0x00;
+;	main.c:207: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
-;	main.c:205: return (c);
+;	main.c:208: return (c);
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'getchar1_with_timeout'
@@ -966,52 +990,52 @@ L008008?:
 ;c                         Allocated to registers 
 ;timeout                   Allocated to registers r2 r3 
 ;------------------------------------------------------------
-;	main.c:208: char getchar1_with_timeout (void)
+;	main.c:211: char getchar1_with_timeout (void)
 ;	-----------------------------------------
 ;	 function getchar1_with_timeout
 ;	-----------------------------------------
 _getchar1_with_timeout:
-;	main.c:212: SFRPAGE = 0x20;
+;	main.c:215: SFRPAGE = 0x20;
 	mov	_SFRPAGE,#0x20
-;	main.c:214: while (!RI1)
+;	main.c:217: while (!RI1)
 	mov	r2,#0x00
 	mov	r3,#0x00
 L009003?:
 	jb	_RI1,L009005?
-;	main.c:216: SFRPAGE = 0x00;
+;	main.c:219: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
-;	main.c:217: Timer3us(20);
+;	main.c:220: Timer3us(20);
 	mov	dpl,#0x14
 	push	ar2
 	push	ar3
 	lcall	_Timer3us
 	pop	ar3
 	pop	ar2
-;	main.c:218: SFRPAGE = 0x20;
+;	main.c:221: SFRPAGE = 0x20;
 	mov	_SFRPAGE,#0x20
-;	main.c:219: timeout++;
+;	main.c:222: timeout++;
 	inc	r2
 	cjne	r2,#0x00,L009012?
 	inc	r3
 L009012?:
-;	main.c:220: if(timeout==25000)
+;	main.c:223: if(timeout==25000)
 	cjne	r2,#0xA8,L009003?
 	cjne	r3,#0x61,L009003?
-;	main.c:222: SFRPAGE = 0x00;
+;	main.c:225: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
-;	main.c:223: return ('\n'); // Timeout after half second
+;	main.c:226: return ('\n'); // Timeout after half second
 	mov	dpl,#0x0A
 	ret
 L009005?:
-;	main.c:226: RI1=0;
+;	main.c:229: RI1=0;
 	clr	_RI1
-;	main.c:228: SCON1&=0b_0011_1111;
+;	main.c:231: SCON1&=0b_0011_1111;
 	anl	_SCON1,#0x3F
-;	main.c:229: c = SBUF1;
+;	main.c:232: c = SBUF1;
 	mov	dpl,_SBUF1
-;	main.c:230: SFRPAGE = 0x00;
+;	main.c:233: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
-;	main.c:231: return (c);
+;	main.c:234: return (c);
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'getstr1'
@@ -1021,7 +1045,7 @@ L009005?:
 ;c                         Allocated to registers r1 
 ;cnt                       Allocated to registers r5 
 ;------------------------------------------------------------
-;	main.c:234: void getstr1 (char * s, unsigned char n)
+;	main.c:237: void getstr1 (char * s, unsigned char n)
 ;	-----------------------------------------
 ;	 function getstr1
 ;	-----------------------------------------
@@ -1029,13 +1053,13 @@ _getstr1:
 	mov	r2,dpl
 	mov	r3,dph
 	mov	r4,b
-;	main.c:240: while(1)
+;	main.c:243: while(1)
 	mov	r5,#0x00
 	mov	ar6,r2
 	mov	ar7,r3
 	mov	ar0,r4
 L010007?:
-;	main.c:242: c=getchar1_with_timeout();
+;	main.c:245: c=getchar1_with_timeout();
 	push	ar2
 	push	ar3
 	push	ar4
@@ -1052,24 +1076,24 @@ L010007?:
 	pop	ar4
 	pop	ar3
 	pop	ar2
-;	main.c:243: if(c=='\n')
+;	main.c:246: if(c=='\n')
 	cjne	r1,#0x0A,L010002?
-;	main.c:245: *s=0;
+;	main.c:248: *s=0;
 	mov	dpl,r2
 	mov	dph,r3
 	mov	b,r4
 	clr	a
-;	main.c:246: return;
+;	main.c:249: return;
 	ljmp	__gptrput
 L010002?:
-;	main.c:249: if (cnt<n)
+;	main.c:252: if (cnt<n)
 	clr	c
 	mov	a,r5
 	subb	a,_getstr1_PARM_2
 	jnc	L010004?
-;	main.c:251: cnt++;
+;	main.c:254: cnt++;
 	inc	r5
-;	main.c:252: *s=c;
+;	main.c:255: *s=c;
 	mov	dpl,r6
 	mov	dph,r7
 	mov	b,r0
@@ -1078,35 +1102,35 @@ L010002?:
 	inc	dptr
 	mov	r6,dpl
 	mov	r7,dph
-;	main.c:253: s++;
+;	main.c:256: s++;
 	mov	ar2,r6
 	mov	ar3,r7
 	mov	ar4,r0
 	sjmp	L010007?
 L010004?:
-;	main.c:257: *s=0;
+;	main.c:260: *s=0;
 	mov	dpl,r2
 	mov	dph,r3
 	mov	b,r4
 	clr	a
-;	main.c:258: return;
+;	main.c:261: return;
 	ljmp	__gptrput
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'RXU1'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	main.c:264: bit RXU1 (void)
+;	main.c:267: bit RXU1 (void)
 ;	-----------------------------------------
 ;	 function RXU1
 ;	-----------------------------------------
 _RXU1:
-;	main.c:267: SFRPAGE = 0x20;
+;	main.c:270: SFRPAGE = 0x20;
 	mov	_SFRPAGE,#0x20
-;	main.c:268: mybit=RI1;
+;	main.c:271: mybit=RI1;
 	mov	c,_RI1
-;	main.c:269: SFRPAGE = 0x00;
+;	main.c:272: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
-;	main.c:270: return mybit;
+;	main.c:273: return mybit;
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'waitms_or_RI1'
@@ -1115,14 +1139,14 @@ _RXU1:
 ;j                         Allocated to registers r4 r5 
 ;k                         Allocated to registers r6 
 ;------------------------------------------------------------
-;	main.c:273: void waitms_or_RI1 (unsigned int ms)
+;	main.c:276: void waitms_or_RI1 (unsigned int ms)
 ;	-----------------------------------------
 ;	 function waitms_or_RI1
 ;	-----------------------------------------
 _waitms_or_RI1:
 	mov	r2,dpl
 	mov	r3,dph
-;	main.c:277: for(j=0; j<ms; j++)
+;	main.c:280: for(j=0; j<ms; j++)
 	mov	r4,#0x00
 	mov	r5,#0x00
 L012007?:
@@ -1132,13 +1156,13 @@ L012007?:
 	mov	a,r5
 	subb	a,r3
 	jnc	L012011?
-;	main.c:279: for (k=0; k<4; k++)
+;	main.c:282: for (k=0; k<4; k++)
 	mov	r6,#0x00
 L012003?:
 	cjne	r6,#0x04,L012019?
 L012019?:
 	jnc	L012009?
-;	main.c:281: if(RXU1()) return;
+;	main.c:284: if(RXU1()) return;
 	push	ar2
 	push	ar3
 	push	ar4
@@ -1155,7 +1179,7 @@ L012019?:
 	jz	L012002?
 	ret
 L012002?:
-;	main.c:282: Timer3us(250);
+;	main.c:285: Timer3us(250);
 	mov	dpl,#0xFA
 	push	ar2
 	push	ar3
@@ -1168,11 +1192,11 @@ L012002?:
 	pop	ar4
 	pop	ar3
 	pop	ar2
-;	main.c:279: for (k=0; k<4; k++)
+;	main.c:282: for (k=0; k<4; k++)
 	inc	r6
 	sjmp	L012003?
 L012009?:
-;	main.c:277: for(j=0; j<ms; j++)
+;	main.c:280: for(j=0; j<ms; j++)
 	inc	r4
 	cjne	r4,#0x00,L012007?
 	inc	r5
@@ -1184,7 +1208,7 @@ L012011?:
 ;------------------------------------------------------------
 ;s                         Allocated to registers r2 r3 r4 
 ;------------------------------------------------------------
-;	main.c:287: void SendATCommand (char * s)
+;	main.c:290: void SendATCommand (char * s)
 ;	-----------------------------------------
 ;	 function SendATCommand
 ;	-----------------------------------------
@@ -1192,7 +1216,7 @@ _SendATCommand:
 	mov	r2,dpl
 	mov	r3,dph
 	mov	r4,b
-;	main.c:289: printf("Command: %s", s);
+;	main.c:292: printf("Command: %s", s);
 	push	ar2
 	push	ar3
 	push	ar4
@@ -1209,30 +1233,30 @@ _SendATCommand:
 	mov	a,sp
 	add	a,#0xfa
 	mov	sp,a
-;	main.c:290: P2_0=0; // 'set' pin to 0 is 'AT' mode.
+;	main.c:293: P2_0=0; // 'set' pin to 0 is 'AT' mode.
 	clr	_P2_0
-;	main.c:291: waitms(5);
+;	main.c:294: waitms(5);
 	mov	dptr,#0x0005
 	lcall	_waitms
 	pop	ar4
 	pop	ar3
 	pop	ar2
-;	main.c:292: sendstr1(s);
+;	main.c:295: sendstr1(s);
 	mov	dpl,r2
 	mov	dph,r3
 	mov	b,r4
 	lcall	_sendstr1
-;	main.c:293: getstr1(buff, sizeof(buff)-1);
+;	main.c:296: getstr1(buff, sizeof(buff)-1);
 	mov	_getstr1_PARM_2,#0x13
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_getstr1
-;	main.c:294: waitms(10);
+;	main.c:297: waitms(10);
 	mov	dptr,#0x000A
 	lcall	_waitms
-;	main.c:295: P2_0=1; // 'set' pin to 1 is normal operation mode.
+;	main.c:298: P2_0=1; // 'set' pin to 1 is normal operation mode.
 	setb	_P2_0
-;	main.c:296: printf("Response: %s\r\n", buff);
+;	main.c:299: printf("Response: %s\r\n", buff);
 	mov	a,#_buff
 	push	acc
 	mov	a,#(_buff >> 8)
@@ -1254,26 +1278,26 @@ _SendATCommand:
 ;Allocation info for local variables in function 'ReceptionOff'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	main.c:299: void ReceptionOff (void)
+;	main.c:302: void ReceptionOff (void)
 ;	-----------------------------------------
 ;	 function ReceptionOff
 ;	-----------------------------------------
 _ReceptionOff:
-;	main.c:301: P2_0=0; // 'set' pin to 0 is 'AT' mode.
+;	main.c:304: P2_0=0; // 'set' pin to 0 is 'AT' mode.
 	clr	_P2_0
-;	main.c:302: waitms(10);
+;	main.c:305: waitms(10);
 	mov	dptr,#0x000A
 	lcall	_waitms
-;	main.c:303: sendstr1("AT+DVID0000\r\n"); // Some unused id, so that we get nothing in RXD1.
+;	main.c:306: sendstr1("AT+DVID0000\r\n"); // Some unused id, so that we get nothing in RXD1.
 	mov	dptr,#__str_2
 	mov	b,#0x80
 	lcall	_sendstr1
-;	main.c:304: waitms(10);
+;	main.c:307: waitms(10);
 	mov	dptr,#0x000A
 	lcall	_waitms
-;	main.c:306: SCON1&=0b_0011_1111;
+;	main.c:309: SCON1&=0b_0011_1111;
 	anl	_SCON1,#0x3F
-;	main.c:307: P2_0=1; // 'set' pin to 1 is normal operation mode.
+;	main.c:310: P2_0=1; // 'set' pin to 1 is normal operation mode.
 	setb	_P2_0
 	ret
 ;------------------------------------------------------------
@@ -1282,13 +1306,13 @@ _ReceptionOff:
 ;pin                       Allocated to registers r2 
 ;mask                      Allocated to registers r3 
 ;------------------------------------------------------------
-;	main.c:310: void Set_Pin_Output (unsigned char pin)
+;	main.c:313: void Set_Pin_Output (unsigned char pin)
 ;	-----------------------------------------
 ;	 function Set_Pin_Output
 ;	-----------------------------------------
 _Set_Pin_Output:
 	mov	r2,dpl
-;	main.c:314: mask=(1<<(pin&0x7));
+;	main.c:317: mask=(1<<(pin&0x7));
 	mov	a,#0x07
 	anl	a,r2
 	mov	b,a
@@ -1300,7 +1324,7 @@ L015009?:
 L015011?:
 	djnz	b,L015009?
 	mov	r3,a
-;	main.c:315: switch(pin/0x10)
+;	main.c:318: switch(pin/0x10)
 	mov	a,r2
 	swap	a
 	anl	a,#0x0f
@@ -1317,26 +1341,26 @@ L015013?:
 	ljmp	L015002?
 	ljmp	L015003?
 	ljmp	L015004?
-;	main.c:317: case 0: P0MDOUT |= mask; break;
+;	main.c:320: case 0: P0MDOUT |= mask; break;
 L015001?:
 	mov	a,r3
 	orl	_P0MDOUT,a
-;	main.c:318: case 1: P1MDOUT |= mask; break;
+;	main.c:321: case 1: P1MDOUT |= mask; break;
 	ret
 L015002?:
 	mov	a,r3
 	orl	_P1MDOUT,a
-;	main.c:319: case 2: P2MDOUT |= mask; break; 
+;	main.c:322: case 2: P2MDOUT |= mask; break; 
 	ret
 L015003?:
 	mov	a,r3
 	orl	_P2MDOUT,a
-;	main.c:320: case 3: P3MDOUT |= mask; break; 
+;	main.c:323: case 3: P3MDOUT |= mask; break; 
 	ret
 L015004?:
 	mov	a,r3
 	orl	_P3MDOUT,a
-;	main.c:321: }	
+;	main.c:324: }	
 L015006?:
 	ret
 ;------------------------------------------------------------
@@ -1345,13 +1369,13 @@ L015006?:
 ;mask                      Allocated with name '_Set_Pin_Input_mask_1_101'
 ;pin                       Allocated to registers r2 
 ;------------------------------------------------------------
-;	main.c:324: void Set_Pin_Input (unsigned char pin)
+;	main.c:327: void Set_Pin_Input (unsigned char pin)
 ;	-----------------------------------------
 ;	 function Set_Pin_Input
 ;	-----------------------------------------
 _Set_Pin_Input:
 	mov	r2,dpl
-;	main.c:328: mask=(1<<(pin&0x7));
+;	main.c:331: mask=(1<<(pin&0x7));
 	mov	a,#0x07
 	anl	a,r2
 	mov	b,a
@@ -1362,10 +1386,10 @@ L016009?:
 	add	a,acc
 L016011?:
 	djnz	b,L016009?
-;	main.c:329: mask=~mask;
+;	main.c:332: mask=~mask;
 	cpl	a
 	mov	r3,a
-;	main.c:330: switch(pin/0x10)
+;	main.c:333: switch(pin/0x10)
 	mov	a,r2
 	swap	a
 	anl	a,#0x0f
@@ -1382,54 +1406,54 @@ L016013?:
 	ljmp	L016002?
 	ljmp	L016003?
 	ljmp	L016004?
-;	main.c:332: case 0: P0MDOUT &= mask; break;
+;	main.c:335: case 0: P0MDOUT &= mask; break;
 L016001?:
 	mov	a,r3
 	anl	_P0MDOUT,a
-;	main.c:333: case 1: P1MDOUT &= mask; break;
+;	main.c:336: case 1: P1MDOUT &= mask; break;
 	ret
 L016002?:
 	mov	a,r3
 	anl	_P1MDOUT,a
-;	main.c:334: case 2: P2MDOUT &= mask; break; 
+;	main.c:337: case 2: P2MDOUT &= mask; break; 
 	ret
 L016003?:
 	mov	a,r3
 	anl	_P2MDOUT,a
-;	main.c:335: case 3: P3MDOUT &= mask; break; 
+;	main.c:338: case 3: P3MDOUT &= mask; break; 
 	ret
 L016004?:
 	mov	a,r3
 	anl	_P3MDOUT,a
-;	main.c:336: }	
+;	main.c:339: }	
 L016006?:
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'InitADC'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	main.c:339: void InitADC (void)
+;	main.c:342: void InitADC (void)
 ;	-----------------------------------------
 ;	 function InitADC
 ;	-----------------------------------------
 _InitADC:
-;	main.c:341: SFRPAGE = 0x00;
+;	main.c:344: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
-;	main.c:342: ADEN=0; // Disable ADC
+;	main.c:345: ADEN=0; // Disable ADC
 	clr	_ADEN
-;	main.c:347: (0x0 << 0) ; // Accumulate n conversions: 0x0: 1, 0x1:4, 0x2:8, 0x3:16, 0x4:32
+;	main.c:350: (0x0 << 0) ; // Accumulate n conversions: 0x0: 1, 0x1:4, 0x2:8, 0x3:16, 0x4:32
 	mov	_ADC0CN1,#0x80
-;	main.c:351: (0x0 << 2); // 0:SYSCLK ADCCLK = SYSCLK. 1:HFOSC0 ADCCLK = HFOSC0.
+;	main.c:354: (0x0 << 2); // 0:SYSCLK ADCCLK = SYSCLK. 1:HFOSC0 ADCCLK = HFOSC0.
 	mov	_ADC0CF0,#0x20
-;	main.c:355: (0x1E << 0); // Conversion Tracking Time. Tadtk = ADTK / (Fsarclk)
+;	main.c:358: (0x1E << 0); // Conversion Tracking Time. Tadtk = ADTK / (Fsarclk)
 	mov	_ADC0CF1,#0x1E
-;	main.c:364: (0x0 << 0) ; // TEMPE. 0: Disable the Temperature Sensor. 1: Enable the Temperature Sensor.
+;	main.c:367: (0x0 << 0) ; // TEMPE. 0: Disable the Temperature Sensor. 1: Enable the Temperature Sensor.
 	mov	_ADC0CN0,#0x00
-;	main.c:369: (0x1F << 0); // ADPWR. Power Up Delay Time. Tpwrtime = ((4 * (ADPWR + 1)) + 2) / (Fadcclk)
+;	main.c:372: (0x1F << 0); // ADPWR. Power Up Delay Time. Tpwrtime = ((4 * (ADPWR + 1)) + 2) / (Fadcclk)
 	mov	_ADC0CF2,#0x3F
-;	main.c:373: (0x0 << 0) ; // ADCM. 0x0: ADBUSY, 0x1: TIMER0, 0x2: TIMER2, 0x3: TIMER3, 0x4: CNVSTR, 0x5: CEX5, 0x6: TIMER4, 0x7: TIMER5, 0x8: CLU0, 0x9: CLU1, 0xA: CLU2, 0xB: CLU3
+;	main.c:376: (0x0 << 0) ; // ADCM. 0x0: ADBUSY, 0x1: TIMER0, 0x2: TIMER2, 0x3: TIMER3, 0x4: CNVSTR, 0x5: CEX5, 0x6: TIMER4, 0x7: TIMER5, 0x8: CLU0, 0x9: CLU1, 0xA: CLU2, 0xB: CLU3
 	mov	_ADC0CN2,#0x00
-;	main.c:375: ADEN=1; // Enable ADC
+;	main.c:378: ADEN=1; // Enable ADC
 	setb	_ADEN
 	ret
 ;------------------------------------------------------------
@@ -1439,13 +1463,13 @@ _InitADC:
 ;portno                    Allocated to registers r2 
 ;mask                      Allocated to registers r3 
 ;------------------------------------------------------------
-;	main.c:378: void InitPinADC (unsigned char portno, unsigned char pin_num)
+;	main.c:381: void InitPinADC (unsigned char portno, unsigned char pin_num)
 ;	-----------------------------------------
 ;	 function InitPinADC
 ;	-----------------------------------------
 _InitPinADC:
 	mov	r2,dpl
-;	main.c:382: mask=1<<pin_num;
+;	main.c:385: mask=1<<pin_num;
 	mov	b,_InitPinADC_PARM_2
 	inc	b
 	mov	a,#0x01
@@ -1455,54 +1479,54 @@ L018011?:
 L018013?:
 	djnz	b,L018011?
 	mov	r3,a
-;	main.c:384: SFRPAGE = 0x20;
+;	main.c:387: SFRPAGE = 0x20;
 	mov	_SFRPAGE,#0x20
-;	main.c:385: switch (portno)
+;	main.c:388: switch (portno)
 	cjne	r2,#0x00,L018014?
 	sjmp	L018001?
 L018014?:
 	cjne	r2,#0x01,L018015?
 	sjmp	L018002?
 L018015?:
-;	main.c:387: case 0:
+;	main.c:390: case 0:
 	cjne	r2,#0x02,L018005?
 	sjmp	L018003?
 L018001?:
-;	main.c:388: P0MDIN &= (~mask); // Set pin as analog input
+;	main.c:391: P0MDIN &= (~mask); // Set pin as analog input
 	mov	a,r3
 	cpl	a
 	mov	r2,a
 	anl	_P0MDIN,a
-;	main.c:389: P0SKIP |= mask; // Skip Crossbar decoding for this pin
+;	main.c:392: P0SKIP |= mask; // Skip Crossbar decoding for this pin
 	mov	a,r3
 	orl	_P0SKIP,a
-;	main.c:390: break;
-;	main.c:391: case 1:
+;	main.c:393: break;
+;	main.c:394: case 1:
 	sjmp	L018005?
 L018002?:
-;	main.c:392: P1MDIN &= (~mask); // Set pin as analog input
+;	main.c:395: P1MDIN &= (~mask); // Set pin as analog input
 	mov	a,r3
 	cpl	a
 	mov	r2,a
 	anl	_P1MDIN,a
-;	main.c:393: P1SKIP |= mask; // Skip Crossbar decoding for this pin
+;	main.c:396: P1SKIP |= mask; // Skip Crossbar decoding for this pin
 	mov	a,r3
 	orl	_P1SKIP,a
-;	main.c:394: break;
-;	main.c:395: case 2:
+;	main.c:397: break;
+;	main.c:398: case 2:
 	sjmp	L018005?
 L018003?:
-;	main.c:396: P2MDIN &= (~mask); // Set pin as analog input
+;	main.c:399: P2MDIN &= (~mask); // Set pin as analog input
 	mov	a,r3
 	cpl	a
 	mov	r2,a
 	anl	_P2MDIN,a
-;	main.c:397: P2SKIP |= mask; // Skip Crossbar decoding for this pin
+;	main.c:400: P2SKIP |= mask; // Skip Crossbar decoding for this pin
 	mov	a,r3
 	orl	_P2SKIP,a
-;	main.c:401: }
+;	main.c:404: }
 L018005?:
-;	main.c:402: SFRPAGE = 0x00;
+;	main.c:405: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
 	ret
 ;------------------------------------------------------------
@@ -1510,20 +1534,20 @@ L018005?:
 ;------------------------------------------------------------
 ;pin                       Allocated to registers 
 ;------------------------------------------------------------
-;	main.c:405: unsigned int ADC_at_Pin(unsigned char pin)
+;	main.c:408: unsigned int ADC_at_Pin(unsigned char pin)
 ;	-----------------------------------------
 ;	 function ADC_at_Pin
 ;	-----------------------------------------
 _ADC_at_Pin:
 	mov	_ADC0MX,dpl
-;	main.c:408: ADINT = 0;
+;	main.c:411: ADINT = 0;
 	clr	_ADINT
-;	main.c:409: ADBUSY = 1;     // Convert voltage at the pin
+;	main.c:412: ADBUSY = 1;     // Convert voltage at the pin
 	setb	_ADBUSY
-;	main.c:410: while (!ADINT); // Wait for conversion to complete
+;	main.c:413: while (!ADINT); // Wait for conversion to complete
 L019001?:
 	jnb	_ADINT,L019001?
-;	main.c:411: return (ADC0);
+;	main.c:414: return (ADC0);
 	mov	dpl,_ADC0
 	mov	dph,(_ADC0 >> 8)
 	ret
@@ -1531,7 +1555,7 @@ L019001?:
 ;Allocation info for local variables in function 'Timer5_ISR'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	main.c:414: void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
+;	main.c:417: void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 ;	-----------------------------------------
 ;	 function Timer5_ISR
 ;	-----------------------------------------
@@ -1541,20 +1565,20 @@ _Timer5_ISR:
 	push	ar3
 	push	psw
 	mov	psw,#0x00
-;	main.c:416: SFRPAGE=0x10;
+;	main.c:419: SFRPAGE=0x10;
 	mov	_SFRPAGE,#0x10
-;	main.c:417: TF5H = 0; // Clear Timer5 interrupt flag
+;	main.c:420: TF5H = 0; // Clear Timer5 interrupt flag
 	clr	_TF5H
-;	main.c:418: TMR5RL = RELOAD_10us; // Reload Timer5 for 10us intervals 
+;	main.c:421: TMR5RL = RELOAD_10us; // Reload Timer5 for 10us intervals 
 	mov	_TMR5RL,#0xC4
 	mov	(_TMR5RL >> 8),#0xFF
-;	main.c:420: pwm_counter++; 
+;	main.c:423: pwm_counter++; 
 	inc	_pwm_counter
 	clr	a
 	cjne	a,_pwm_counter,L020031?
 	inc	(_pwm_counter + 1)
 L020031?:
-;	main.c:421: if (pwm_counter == 100){
+;	main.c:424: if (pwm_counter == 100){
 	mov	a,#0x64
 	cjne	a,_pwm_counter,L020032?
 	clr	a
@@ -1563,41 +1587,12 @@ L020031?:
 L020032?:
 	sjmp	L020002?
 L020033?:
-;	main.c:422: pwm_counter = 0; 
+;	main.c:425: pwm_counter = 0; 
 	clr	a
 	mov	_pwm_counter,a
 	mov	(_pwm_counter + 1),a
 L020002?:
-;	main.c:425: if (pwm_left > pwm_counter){
-	mov	r2,_pwm_left
-	mov	r3,#0x00
-	clr	c
-	mov	a,_pwm_counter
-	subb	a,r2
-	mov	a,(_pwm_counter + 1)
-	subb	a,r3
-	jnc	L020007?
-;	main.c:426: if(L_motor_dir){
-	mov	a,_L_motor_dir
-	jz	L020004?
-;	main.c:427: L_bridge_1 = 1; 
-	setb	_P2_1
-;	main.c:428: L_bridge_2 = 0; 
-	clr	_P2_2
-	sjmp	L020008?
-L020004?:
-;	main.c:431: L_bridge_1 = 0; 
-	clr	_P2_1
-;	main.c:432: L_bridge_2 = 1; 
-	setb	_P2_2
-	sjmp	L020008?
-L020007?:
-;	main.c:436: L_bridge_1 = 0; 
-	clr	_P2_1
-;	main.c:437: L_bridge_2 = 0; 
-	clr	_P2_2
-L020008?:
-;	main.c:439: if (pwm_right > pwm_counter){
+;	main.c:428: if (pwm_right > pwm_counter){
 	mov	r2,_pwm_right
 	mov	r3,#0x00
 	clr	c
@@ -1605,65 +1600,94 @@ L020008?:
 	subb	a,r2
 	mov	a,(_pwm_counter + 1)
 	subb	a,r3
+	jnc	L020007?
+;	main.c:429: if(L_motor_dir){
+	mov	a,_L_motor_dir
+	jz	L020004?
+;	main.c:430: L_bridge_1 = 1; 
+	setb	_P2_1
+;	main.c:431: L_bridge_2 = 0; 
+	clr	_P2_2
+	sjmp	L020008?
+L020004?:
+;	main.c:434: L_bridge_1 = 0; 
+	clr	_P2_1
+;	main.c:435: L_bridge_2 = 1; 
+	setb	_P2_2
+	sjmp	L020008?
+L020007?:
+;	main.c:439: L_bridge_1 = 0; 
+	clr	_P2_1
+;	main.c:440: L_bridge_2 = 0; 
+	clr	_P2_2
+L020008?:
+;	main.c:442: if (pwm_left > pwm_counter){
+	mov	r2,_pwm_left
+	mov	r3,#0x00
+	clr	c
+	mov	a,_pwm_counter
+	subb	a,r2
+	mov	a,(_pwm_counter + 1)
+	subb	a,r3
 	jnc	L020013?
-;	main.c:440: if (R_motor_dir){
+;	main.c:443: if (R_motor_dir){
 	mov	a,_R_motor_dir
 	jz	L020010?
-;	main.c:441: R_bridge_1 = 1; 
+;	main.c:444: R_bridge_1 = 1; 
 	setb	_P2_4
-;	main.c:442: R_bridge_2 = 0;
+;	main.c:445: R_bridge_2 = 0;
 	clr	_P2_3
 	sjmp	L020014?
 L020010?:
-;	main.c:445: R_bridge_1 = 0; 
+;	main.c:448: R_bridge_1 = 0; 
 	clr	_P2_4
-;	main.c:446: R_bridge_2 = 1;
+;	main.c:449: R_bridge_2 = 1;
 	setb	_P2_3
 	sjmp	L020014?
 L020013?:
-;	main.c:450: R_bridge_1 = 0; 
+;	main.c:453: R_bridge_1 = 0; 
 	clr	_P2_4
-;	main.c:451: R_bridge_2 = 0; 
+;	main.c:454: R_bridge_2 = 0; 
 	clr	_P2_3
 L020014?:
-;	main.c:454: servo_counter++;
+;	main.c:457: servo_counter++;
 	inc	_servo_counter
 	clr	a
 	cjne	a,_servo_counter,L020038?
 	inc	(_servo_counter + 1)
 L020038?:
-;	main.c:455: if(servo_counter==2000)
+;	main.c:458: if(servo_counter==2000)
 	mov	a,#0xD0
 	cjne	a,_servo_counter,L020016?
 	mov	a,#0x07
 	cjne	a,(_servo_counter + 1),L020016?
-;	main.c:457: servo_counter=0;
+;	main.c:460: servo_counter=0;
 	clr	a
 	mov	_servo_counter,a
 	mov	(_servo_counter + 1),a
-;	main.c:458: Servo_arm=1;
+;	main.c:461: Servo_arm=1;
 	setb	_P1_6
-;	main.c:459: Servo_base=1;
+;	main.c:462: Servo_base=1;
 	setb	_P1_7
 L020016?:
-;	main.c:461: if(servo_arm==servo_counter)
+;	main.c:464: if(servo_arm==servo_counter)
 	mov	r2,_servo_arm
 	mov	r3,#0x00
 	mov	a,r2
 	cjne	a,_servo_counter,L020018?
 	mov	a,r3
 	cjne	a,(_servo_counter + 1),L020018?
-;	main.c:463: Servo_arm=0;
+;	main.c:466: Servo_arm=0;
 	clr	_P1_6
 L020018?:
-;	main.c:465: if(servo_base==servo_counter)
+;	main.c:468: if(servo_base==servo_counter)
 	mov	r2,_servo_base
 	mov	r3,#0x00
 	mov	a,r2
 	cjne	a,_servo_counter,L020021?
 	mov	a,r3
 	cjne	a,(_servo_counter + 1),L020021?
-;	main.c:467: Servo_base=0;
+;	main.c:470: Servo_base=0;
 	clr	_P1_7
 L020021?:
 	pop	psw
@@ -1675,117 +1699,37 @@ L020021?:
 ;	eliminated unneeded push/pop dph
 ;	eliminated unneeded push/pop b
 ;------------------------------------------------------------
-;Allocation info for local variables in function 'MoveForward'
-;------------------------------------------------------------
-;speed                     Allocated to registers r2 r3 
-;------------------------------------------------------------
-;	main.c:471: void MoveForward (int speed)
-;	-----------------------------------------
-;	 function MoveForward
-;	-----------------------------------------
-_MoveForward:
-	mov	r2,dpl
-;	main.c:473: pwm_left = speed; 
-	mov	_pwm_left,r2
-;	main.c:474: pwm_right = speed; 
-	mov	_pwm_right,r2
-;	main.c:475: L_motor_dir = 0; 
-	mov	_L_motor_dir,#0x00
-;	main.c:476: R_motor_dir = 0; 
-	mov	_R_motor_dir,#0x00
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'MoveBackward'
-;------------------------------------------------------------
-;speed                     Allocated to registers r2 r3 
-;------------------------------------------------------------
-;	main.c:479: void MoveBackward (int speed)
-;	-----------------------------------------
-;	 function MoveBackward
-;	-----------------------------------------
-_MoveBackward:
-	mov	r2,dpl
-;	main.c:481: pwm_left = speed; 
-	mov	_pwm_left,r2
-;	main.c:482: pwm_right = speed; 
-	mov	_pwm_right,r2
-;	main.c:483: L_motor_dir = 1; 
-	mov	_L_motor_dir,#0x01
-;	main.c:484: R_motor_dir = 1;  
-	mov	_R_motor_dir,#0x01
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'TurnRight'
-;------------------------------------------------------------
-;speed                     Allocated to registers r2 r3 
-;------------------------------------------------------------
-;	main.c:487: void TurnRight (int speed)
-;	-----------------------------------------
-;	 function TurnRight
-;	-----------------------------------------
-_TurnRight:
-	mov	r2,dpl
-;	main.c:489: pwm_left = speed; 
-	mov	_pwm_left,r2
-;	main.c:490: pwm_right = speed; 
-	mov	_pwm_right,r2
-;	main.c:491: L_motor_dir = 1; 
-	mov	_L_motor_dir,#0x01
-;	main.c:492: R_motor_dir = 0; 
-	mov	_R_motor_dir,#0x00
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'TurnLeft'
-;------------------------------------------------------------
-;speed                     Allocated to registers r2 r3 
-;------------------------------------------------------------
-;	main.c:495: void TurnLeft (int speed)
-;	-----------------------------------------
-;	 function TurnLeft
-;	-----------------------------------------
-_TurnLeft:
-	mov	r2,dpl
-;	main.c:497: pwm_left = speed; 
-	mov	_pwm_left,r2
-;	main.c:498: pwm_right = speed; 
-	mov	_pwm_right,r2
-;	main.c:499: L_motor_dir = 0; 
-	mov	_L_motor_dir,#0x00
-;	main.c:500: R_motor_dir = 1; 
-	mov	_R_motor_dir,#0x01
-	ret
-;------------------------------------------------------------
 ;Allocation info for local variables in function 'servo_pick'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	main.c:503: servo_pick(){
+;	main.c:474: servo_pick(){
 ;	-----------------------------------------
 ;	 function servo_pick
 ;	-----------------------------------------
 _servo_pick:
-;	main.c:504: servo_arm = 1;
+;	main.c:475: servo_arm = 1;
 	mov	_servo_arm,#0x01
-;	main.c:505: servo_base = 1;
+;	main.c:476: servo_base = 1;
 	mov	_servo_base,#0x01
-;	main.c:506: waitms(1000);
+;	main.c:477: waitms(1000);
 	mov	dptr,#0x03E8
 	lcall	_waitms
-;	main.c:507: servo_base = 250;
+;	main.c:478: servo_base = 250;
 	mov	_servo_base,#0xFA
-;	main.c:508: waitms(1000);
+;	main.c:479: waitms(1000);
 	mov	dptr,#0x03E8
 	lcall	_waitms
-;	main.c:509: servo_arm = 250;
+;	main.c:480: servo_arm = 250;
 	mov	_servo_arm,#0xFA
-;	main.c:510: waitms(1000);
+;	main.c:481: waitms(1000);
 	mov	dptr,#0x03E8
 	lcall	_waitms
-;	main.c:511: servo_base = 2;
+;	main.c:482: servo_base = 2;
 	mov	_servo_base,#0x02
-;	main.c:512: waitms(1000);
+;	main.c:483: waitms(1000);
 	mov	dptr,#0x03E8
 	lcall	_waitms
-;	main.c:513: servo_arm = 2;
+;	main.c:484: servo_arm = 2;
 	mov	_servo_arm,#0x02
 	ret
 ;------------------------------------------------------------
@@ -1793,49 +1737,52 @@ _servo_pick:
 ;------------------------------------------------------------
 ;cnt                       Allocated to registers 
 ;c                         Allocated to registers r4 
-;vx                        Allocated with name '_main_vx_1_134'
-;vy                        Allocated with name '_main_vy_1_134'
+;vx_error                  Allocated with name '_main_vx_error_1_126'
+;vy_error                  Allocated with name '_main_vy_error_1_126'
+;vx_err                    Allocated with name '_main_vx_err_1_126'
+;vy_err                    Allocated with name '_main_vy_err_1_126'
+;vx                        Allocated with name '_main_vx_1_126'
+;vy                        Allocated with name '_main_vy_1_126'
 ;threshold                 Allocated to registers 
-;motor_pwm                 Allocated with name '_main_motor_pwm_1_134'
-;sloc0                     Allocated with name '_main_sloc0_1_0'
+;motor_pwm                 Allocated to registers 
 ;------------------------------------------------------------
-;	main.c:516: void main (void)
+;	main.c:487: void main (void)
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
-;	main.c:520: int vx = 0, vy = 0; 
+;	main.c:492: int vx = 0, vy = 0; 
 	clr	a
-	mov	_main_vx_1_134,a
-	mov	(_main_vx_1_134 + 1),a
-	mov	_main_vy_1_134,a
-	mov	(_main_vy_1_134 + 1),a
-;	main.c:524: Set_Pin_Output(0x24);
+	mov	_main_vx_1_126,a
+	mov	(_main_vx_1_126 + 1),a
+	mov	_main_vy_1_126,a
+	mov	(_main_vy_1_126 + 1),a
+;	main.c:496: Set_Pin_Output(0x24);
 	mov	dpl,#0x24
 	lcall	_Set_Pin_Output
-;	main.c:525: Set_Pin_Output(0x23);
+;	main.c:497: Set_Pin_Output(0x23);
 	mov	dpl,#0x23
 	lcall	_Set_Pin_Output
-;	main.c:526: Set_Pin_Output(0x22);
+;	main.c:498: Set_Pin_Output(0x22);
 	mov	dpl,#0x22
 	lcall	_Set_Pin_Output
-;	main.c:527: Set_Pin_Output(0x21);
+;	main.c:499: Set_Pin_Output(0x21);
 	mov	dpl,#0x21
 	lcall	_Set_Pin_Output
-;	main.c:528: Set_Pin_Output(0x17);
+;	main.c:500: Set_Pin_Output(0x17);
 	mov	dpl,#0x17
 	lcall	_Set_Pin_Output
-;	main.c:529: Set_Pin_Output(0x16);
+;	main.c:501: Set_Pin_Output(0x16);
 	mov	dpl,#0x16
 	lcall	_Set_Pin_Output
-;	main.c:531: Servo_arm=0;
+;	main.c:503: Servo_arm=0;
 	clr	_P1_6
-;	main.c:532: Servo_base=0;
+;	main.c:504: Servo_base=0;
 	clr	_P1_7
-;	main.c:534: waitms(500);
+;	main.c:506: waitms(500);
 	mov	dptr,#0x01F4
 	lcall	_waitms
-;	main.c:535: printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
+;	main.c:507: printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
 	mov	a,#__str_3
 	push	acc
 	mov	a,#(__str_3 >> 8)
@@ -1846,60 +1793,60 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:536: UART1_Init(9600);
+;	main.c:508: UART1_Init(9600);
 	mov	dptr,#0x2580
 	clr	a
 	mov	b,a
 	lcall	_UART1_Init
-;	main.c:538: ReceptionOff();
+;	main.c:510: ReceptionOff();
 	lcall	_ReceptionOff
-;	main.c:539: servo_pick();
+;	main.c:511: servo_pick();
 	lcall	_servo_pick
-;	main.c:542: SendATCommand("AT+VER\r\n");
+;	main.c:514: SendATCommand("AT+VER\r\n");
 	mov	dptr,#__str_4
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:543: SendATCommand("AT+BAUD\r\n");
+;	main.c:515: SendATCommand("AT+BAUD\r\n");
 	mov	dptr,#__str_5
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:544: SendATCommand("AT+RFID\r\n");
+;	main.c:516: SendATCommand("AT+RFID\r\n");
 	mov	dptr,#__str_6
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:545: SendATCommand("AT+DVID\r\n");
+;	main.c:517: SendATCommand("AT+DVID\r\n");
 	mov	dptr,#__str_7
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:546: SendATCommand("AT+RFC\r\n");
+;	main.c:518: SendATCommand("AT+RFC\r\n");
 	mov	dptr,#__str_8
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:547: SendATCommand("AT+POWE\r\n");
+;	main.c:519: SendATCommand("AT+POWE\r\n");
 	mov	dptr,#__str_9
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:548: SendATCommand("AT+CLSS\r\n");
+;	main.c:520: SendATCommand("AT+CLSS\r\n");
 	mov	dptr,#__str_10
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:549: SendATCommand("AT+DVIDEFEF\r\n");  
+;	main.c:521: SendATCommand("AT+DVIDEFEF\r\n");  
 	mov	dptr,#__str_11
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:552: L_bridge_1 = 0; 
+;	main.c:524: L_bridge_1 = 0; 
 	clr	_P2_1
-;	main.c:553: L_bridge_2 = 0; 
+;	main.c:525: L_bridge_2 = 0; 
 	clr	_P2_2
-;	main.c:554: R_bridge_1 = 0; 
+;	main.c:526: R_bridge_1 = 0; 
 	clr	_P2_4
-;	main.c:555: R_bridge_2 = 0; 
+;	main.c:527: R_bridge_2 = 0; 
 	clr	_P2_3
-;	main.c:558: while(1)
+;	main.c:530: while(1)
 	mov	r2,#0x00
 	mov	r3,#0x00
-L026022?:
-;	main.c:562: if(RXU1()) // Something has arrived
+L022049?:
+;	main.c:534: if(RXU1()) // Something has arrived
 	push	ar2
 	push	ar3
 	lcall	_RXU1
@@ -1907,28 +1854,28 @@ L026022?:
 	rlc	a
 	pop	ar3
 	pop	ar2
-	jz	L026022?
-;	main.c:564: c=getchar1();
+	jz	L022049?
+;	main.c:536: c=getchar1();
 	push	ar2
 	push	ar3
 	lcall	_getchar1
 	mov	r4,dpl
 	pop	ar3
 	pop	ar2
-;	main.c:566: if(c=='!') // Master is sending message
-	cjne	r4,#0x21,L026036?
-	sjmp	L026037?
-L026036?:
-	ljmp	L026017?
-L026037?:
-;	main.c:568: getstr1(buff, sizeof(buff)-1);
+;	main.c:538: if(c=='!') // Master is sending message
+	cjne	r4,#0x21,L022075?
+	sjmp	L022076?
+L022075?:
+	ljmp	L022044?
+L022076?:
+;	main.c:540: getstr1(buff, sizeof(buff)-1);
 	mov	_getstr1_PARM_2,#0x13
 	mov	dptr,#_buff
 	mov	b,#0x40
 	push	ar2
 	push	ar3
 	lcall	_getstr1
-;	main.c:569: if(strlen(buff)==7)
+;	main.c:541: if(strlen(buff)==7)
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_strlen
@@ -1936,24 +1883,24 @@ L026037?:
 	mov	r6,dph
 	pop	ar3
 	pop	ar2
-	cjne	r5,#0x07,L026038?
-	cjne	r6,#0x00,L026038?
-	sjmp	L026039?
-L026038?:
-	ljmp	L026012?
-L026039?:
-;	main.c:573: sscanf(buff, "%03d,%03d", &vx, &vy);
+	cjne	r5,#0x07,L022077?
+	cjne	r6,#0x00,L022077?
+	sjmp	L022078?
+L022077?:
+	ljmp	L022039?
+L022078?:
+;	main.c:545: sscanf(buff, "%03d,%03d", &vx, &vy);
 	push	ar2
 	push	ar3
-	mov	a,#_main_vy_1_134
+	mov	a,#_main_vy_1_126
 	push	acc
-	mov	a,#(_main_vy_1_134 >> 8)
+	mov	a,#(_main_vy_1_126 >> 8)
 	push	acc
 	mov	a,#0x40
 	push	acc
-	mov	a,#_main_vx_1_134
+	mov	a,#_main_vx_1_126
 	push	acc
-	mov	a,#(_main_vx_1_134 >> 8)
+	mov	a,#(_main_vx_1_126 >> 8)
 	push	acc
 	mov	a,#0x40
 	push	acc
@@ -1973,11 +1920,11 @@ L026039?:
 	mov	a,sp
 	add	a,#0xf4
 	mov	sp,a
-;	main.c:575: printf("Joystick Received: Vx = %03d, Vy = %03d\r\n", vx, vy);
-	push	_main_vy_1_134
-	push	(_main_vy_1_134 + 1)
-	push	_main_vx_1_134
-	push	(_main_vx_1_134 + 1)
+;	main.c:547: printf("Joystick Received: Vx = %03d, Vy = %03d\r\n", vx, vy);
+	push	_main_vy_1_126
+	push	(_main_vy_1_126 + 1)
+	push	_main_vx_1_126
+	push	(_main_vx_1_126 + 1)
 	mov	a,#__str_13
 	push	acc
 	mov	a,#(__str_13 >> 8)
@@ -1988,428 +1935,622 @@ L026039?:
 	mov	a,sp
 	add	a,#0xf9
 	mov	sp,a
-;	main.c:577: if (vy > threshold){
-	mov	dpl,_main_vy_1_134
-	mov	dph,(_main_vy_1_134 + 1)
-	lcall	___sint2fs
-	mov	_main_sloc0_1_0,dpl
-	mov	(_main_sloc0_1_0 + 1),dph
-	mov	(_main_sloc0_1_0 + 2),b
-	mov	(_main_sloc0_1_0 + 3),a
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0x21
-	push	acc
-	mov	a,#0x43
-	push	acc
-	mov	dpl,_main_sloc0_1_0
-	mov	dph,(_main_sloc0_1_0 + 1)
-	mov	b,(_main_sloc0_1_0 + 2)
-	mov	a,(_main_sloc0_1_0 + 3)
-	lcall	___fsgt
-	mov	r5,dpl
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar3
-	pop	ar2
-	mov	a,r5
-	jnz	L026040?
-	ljmp	L026004?
-L026040?:
-;	main.c:578: motor_pwm = abs(vy - threshold) * 100 / threshold; 
-	push	ar2
-	push	ar3
-	push	ar3
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0x21
-	push	acc
-	mov	a,#0x43
-	push	acc
-	mov	dpl,_main_sloc0_1_0
-	mov	dph,(_main_sloc0_1_0 + 1)
-	mov	b,(_main_sloc0_1_0 + 2)
-	mov	a,(_main_sloc0_1_0 + 3)
-	lcall	___fssub
-	mov	r5,dpl
-	mov	r6,dph
-	mov	r7,b
-	mov	r2,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar3
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	mov	a,r2
-	push	ar2
-	push	ar3
-	lcall	___fs2sint
+;	main.c:550: vx_error = abs(vx-vx_thres)*100/vx_thres; 
+	mov	a,_main_vx_1_126
+	clr	c
+	subb	a,_vx_thres
+	mov	dpl,a
+	mov	a,(_main_vx_1_126 + 1)
+	subb	a,(_vx_thres + 1)
+	mov	dph,a
 	lcall	_abs
 	mov	__mulint_PARM_2,dpl
 	mov	(__mulint_PARM_2 + 1),dph
-	pop	ar3
-	pop	ar2
 	mov	dptr,#0x0064
 	lcall	__mulint
-	lcall	___sint2fs
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r5,b
-	mov	r6,a
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0x21
-	push	acc
-	mov	a,#0x43
-	push	acc
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r5
-	mov	a,r6
-	lcall	___fsdiv
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r5,b
-	mov	r6,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r5
-	mov	a,r6
-	push	ar2
-	push	ar3
-	lcall	___fs2sint
-;	main.c:579: MoveForward(motor_pwm);
-	mov	_main_motor_pwm_1_134,dpl
-	mov  (_main_motor_pwm_1_134 + 1),dph
-	lcall	_MoveForward
-	pop	ar3
-	pop	ar2
-	pop	ar3
-	pop	ar2
-	ljmp	L026005?
-L026004?:
-;	main.c:581: else if (vy < threshold){
-	push	ar2
-	push	ar3
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0x21
-	push	acc
-	mov	a,#0x43
-	push	acc
-	mov	dpl,_main_sloc0_1_0
-	mov	dph,(_main_sloc0_1_0 + 1)
-	mov	b,(_main_sloc0_1_0 + 2)
-	mov	a,(_main_sloc0_1_0 + 3)
-	lcall	___fslt
-	mov	r5,dpl
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar3
-	pop	ar2
-	mov	a,r5
-	jnz	L026041?
-	ljmp	L026005?
-L026041?:
-;	main.c:582: motor_pwm = abs(threshold - vy) * 100 / threshold; 
-	push	ar2
-	push	ar3
-	push	ar3
-	push	_main_sloc0_1_0
-	push	(_main_sloc0_1_0 + 1)
-	push	(_main_sloc0_1_0 + 2)
-	push	(_main_sloc0_1_0 + 3)
-	mov	dptr,#0x0000
-	mov	b,#0x21
-	mov	a,#0x43
-	lcall	___fssub
-	mov	r5,dpl
-	mov	r6,dph
-	mov	r7,b
-	mov	r2,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar3
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	mov	a,r2
-	push	ar2
-	push	ar3
-	lcall	___fs2sint
+	mov	__divsint_PARM_2,_vx_thres
+	mov	(__divsint_PARM_2 + 1),(_vx_thres + 1)
+	lcall	__divsint
+	mov	_main_vx_error_1_126,dpl
+	mov	(_main_vx_error_1_126 + 1),dph
+;	main.c:551: vy_error = abs(vy-vy_thres)*100/vy_thres; 
+	mov	a,_main_vy_1_126
+	clr	c
+	subb	a,_vy_thres
+	mov	dpl,a
+	mov	a,(_main_vy_1_126 + 1)
+	subb	a,(_vy_thres + 1)
+	mov	dph,a
 	lcall	_abs
 	mov	__mulint_PARM_2,dpl
 	mov	(__mulint_PARM_2 + 1),dph
-	pop	ar3
-	pop	ar2
 	mov	dptr,#0x0064
 	lcall	__mulint
-	lcall	___sint2fs
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r5,b
-	mov	r6,a
+	mov	__divsint_PARM_2,_vy_thres
+	mov	(__divsint_PARM_2 + 1),(_vy_thres + 1)
+	lcall	__divsint
+	mov	_main_vy_error_1_126,dpl
+	mov	(_main_vy_error_1_126 + 1),dph
+	pop	ar3
+	pop	ar2
+;	main.c:552: vx_err = vx-vx_thres; 
+	mov	a,_main_vx_1_126
+	clr	c
+	subb	a,_vx_thres
+	mov	_main_vx_err_1_126,a
+	mov	a,(_main_vx_1_126 + 1)
+	subb	a,(_vx_thres + 1)
+	mov	(_main_vx_err_1_126 + 1),a
+;	main.c:553: vy_err = vy-vy_thres; 
+	mov	a,_main_vy_1_126
+	clr	c
+	subb	a,_vy_thres
+	mov	_main_vy_err_1_126,a
+	mov	a,(_main_vy_1_126 + 1)
+	subb	a,(_vy_thres + 1)
+	mov	(_main_vy_err_1_126 + 1),a
+;	main.c:554: pwm_left = 0; 
+	mov	_pwm_left,#0x00
+;	main.c:555: pwm_right = 0; 
+	mov	_pwm_right,#0x00
+;	main.c:557: if ((vy_error>5) && (vx_error<5)){
+	clr	c
+	mov	a,#0x05
+	subb	a,_main_vy_error_1_126
 	clr	a
-	push	acc
-	push	acc
-	mov	a,#0x21
-	push	acc
-	mov	a,#0x43
-	push	acc
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r5
-	mov	a,r6
-	lcall	___fsdiv
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r5,b
-	mov	r6,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r5
-	mov	a,r6
-	push	ar2
-	push	ar3
-	lcall	___fs2sint
-;	main.c:583: MoveBackward(motor_pwm);
-	mov	_main_motor_pwm_1_134,dpl
-	mov  (_main_motor_pwm_1_134 + 1),dph
-	lcall	_MoveBackward
-	pop	ar3
-	pop	ar2
-;	main.c:607: sendstr1(buff);
-	pop	ar3
-	pop	ar2
-;	main.c:583: MoveBackward(motor_pwm);
-L026005?:
-;	main.c:585: if(vx > threshold){
-	mov	dpl,_main_vx_1_134
-	mov	dph,(_main_vx_1_134 + 1)
-	push	ar2
-	push	ar3
-	lcall	___sint2fs
-	mov	_main_sloc0_1_0,dpl
-	mov	(_main_sloc0_1_0 + 1),dph
-	mov	(_main_sloc0_1_0 + 2),b
-	mov	(_main_sloc0_1_0 + 3),a
+	xrl	a,#0x80
+	mov	b,(_main_vy_error_1_126 + 1)
+	xrl	b,#0x80
+	subb	a,b
 	clr	a
-	push	acc
-	push	acc
-	mov	a,#0x21
-	push	acc
-	mov	a,#0x43
-	push	acc
-	mov	dpl,_main_sloc0_1_0
-	mov	dph,(_main_sloc0_1_0 + 1)
-	mov	b,(_main_sloc0_1_0 + 2)
-	mov	a,(_main_sloc0_1_0 + 3)
-	lcall	___fsgt
-	mov	r5,dpl
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar3
-	pop	ar2
+	rlc	a
+	mov	r7,a
+	jz	L022005?
+	clr	c
+	mov	a,_main_vx_error_1_126
+	subb	a,#0x05
+	mov	a,(_main_vx_error_1_126 + 1)
+	xrl	a,#0x80
+	subb	a,#0x80
+	jnc	L022005?
+;	main.c:558: pwm_left = vy_error; 
+	mov	r5,_main_vy_error_1_126
+	mov	_pwm_left,r5
+;	main.c:559: pwm_right = vy_error; 
+	mov	_pwm_right,r5
+;	main.c:560: if (vy_err > 0){ //move forward
+	clr	c
+	clr	a
+	subb	a,_main_vy_err_1_126
+	clr	a
+	xrl	a,#0x80
+	mov	b,(_main_vy_err_1_126 + 1)
+	xrl	b,#0x80
+	subb	a,b
+	jnc	L022002?
+;	main.c:561: L_motor_dir = 0; 
+	mov	_L_motor_dir,#0x00
+;	main.c:562: R_motor_dir = 0; 
+	mov	_R_motor_dir,#0x00
+	sjmp	L022005?
+L022002?:
+;	main.c:565: L_motor_dir = 1; 
+	mov	_L_motor_dir,#0x01
+;	main.c:566: R_motor_dir = 1; 
+	mov	_R_motor_dir,#0x01
+L022005?:
+;	main.c:569: if ((vx_error>5)&&(vy_error<5)){
+	clr	c
+	mov	a,#0x05
+	subb	a,_main_vx_error_1_126
+	clr	a
+	xrl	a,#0x80
+	mov	b,(_main_vx_error_1_126 + 1)
+	xrl	b,#0x80
+	subb	a,b
+	clr	a
+	rlc	a
+	mov	r5,a
+	jz	L022011?
+	clr	c
+	mov	a,_main_vy_error_1_126
+	subb	a,#0x05
+	mov	a,(_main_vy_error_1_126 + 1)
+	xrl	a,#0x80
+	subb	a,#0x80
+	jnc	L022011?
+;	main.c:570: pwm_left = vx_error; 
+	mov	r6,_main_vx_error_1_126
+	mov	_pwm_left,r6
+;	main.c:571: pwm_right = vx_error; 
+	mov	_pwm_right,r6
+;	main.c:572: if (vx_err > 0){ //turn right
+	clr	c
+	clr	a
+	subb	a,_main_vx_err_1_126
+	clr	a
+	xrl	a,#0x80
+	mov	b,(_main_vx_err_1_126 + 1)
+	xrl	b,#0x80
+	subb	a,b
+	jnc	L022008?
+;	main.c:573: L_motor_dir = 1; 
+	mov	_L_motor_dir,#0x01
+;	main.c:574: R_motor_dir = 0; 
+	mov	_R_motor_dir,#0x00
+	sjmp	L022011?
+L022008?:
+;	main.c:577: L_motor_dir = 0; 
+	mov	_L_motor_dir,#0x00
+;	main.c:578: R_motor_dir = 1; 
+	mov	_R_motor_dir,#0x01
+L022011?:
+;	main.c:581: if ((vx_error>5)&&(vy_error)>5){
 	mov	a,r5
-	jnz	L026042?
-	ljmp	L026009?
-L026042?:
-;	main.c:586: motor_pwm = abs(vx - threshold) * 100 / threshold; 
+	jnz	L022085?
+	ljmp	L022049?
+L022085?:
+	mov	a,r7
+	jnz	L022086?
+	ljmp	L022049?
+L022086?:
+;	main.c:583: if (vy_err>0){
+	clr	c
+	clr	a
+	subb	a,_main_vy_err_1_126
+	clr	a
+	xrl	a,#0x80
+	mov	b,(_main_vy_err_1_126 + 1)
+	xrl	b,#0x80
+	subb	a,b
+	jc	L022087?
+	ljmp	L022023?
+L022087?:
+;	main.c:584: L_motor_dir = 0; 
+	mov	_L_motor_dir,#0x00
+;	main.c:585: R_motor_dir = 0; 
+	mov	_R_motor_dir,#0x00
+;	main.c:587: if (vx_err>0){
+	clr	c
+	clr	a
+	subb	a,_main_vx_err_1_126
+	clr	a
+	xrl	a,#0x80
+	mov	b,(_main_vx_err_1_126 + 1)
+	xrl	b,#0x80
+	subb	a,b
+	jc	L022088?
+	ljmp	L022020?
+L022088?:
+;	main.c:588: if (vy*100<=vy_thres*100/2){
 	push	ar2
 	push	ar3
+	mov	__mulint_PARM_2,_main_vy_1_126
+	mov	(__mulint_PARM_2 + 1),(_main_vy_1_126 + 1)
+	mov	dptr,#0x0064
+	push	ar2
 	push	ar3
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0x21
-	push	acc
-	mov	a,#0x43
-	push	acc
-	mov	dpl,_main_sloc0_1_0
-	mov	dph,(_main_sloc0_1_0 + 1)
-	mov	b,(_main_sloc0_1_0 + 2)
-	mov	a,(_main_sloc0_1_0 + 3)
-	lcall	___fssub
+	lcall	__mulint
 	mov	r5,dpl
 	mov	r6,dph
-	mov	r7,b
-	mov	r2,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar3
-	mov	dpl,r5
-	mov	dph,r6
-	mov	b,r7
-	mov	a,r2
-	push	ar2
-	push	ar3
-	lcall	___fs2sint
-	lcall	_abs
-	mov	__mulint_PARM_2,dpl
-	mov	(__mulint_PARM_2 + 1),dph
 	pop	ar3
 	pop	ar2
+	mov	__mulint_PARM_2,_vy_thres
+	mov	(__mulint_PARM_2 + 1),(_vy_thres + 1)
 	mov	dptr,#0x0064
+	push	ar3
+	push	ar5
+	push	ar6
 	lcall	__mulint
-	lcall	___sint2fs
+	mov	r7,dpl
+	mov	r2,dph
+	pop	ar6
+	pop	ar5
+	pop	ar3
+	mov	__divsint_PARM_2,#0x02
+	clr	a
+	mov	(__divsint_PARM_2 + 1),a
+	mov	dpl,r7
+	mov	dph,r2
+	push	ar5
+	push	ar6
+	lcall	__divsint
 	mov	r2,dpl
 	mov	r3,dph
-	mov	r5,b
-	mov	r6,a
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0x21
-	push	acc
-	mov	a,#0x43
-	push	acc
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r5
-	mov	a,r6
-	lcall	___fsdiv
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r5,b
-	mov	r6,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r5
-	mov	a,r6
-	push	ar2
-	push	ar3
-	lcall	___fs2sint
-;	main.c:587: TurnRight(motor_pwm);
-	mov	_main_motor_pwm_1_134,dpl
-	mov  (_main_motor_pwm_1_134 + 1),dph
-	lcall	_TurnRight
+	pop	ar6
+	pop	ar5
+	clr	c
+	mov	a,r2
+	subb	a,r5
+	mov	a,r3
+	xrl	a,#0x80
+	mov	b,r6
+	xrl	b,#0x80
+	subb	a,b
 	pop	ar3
 	pop	ar2
-	pop	ar3
-	pop	ar2
-	ljmp	L026022?
-L026009?:
-;	main.c:589: else if (vx < threshold){
+	jc	L022014?
+;	main.c:589: pwm_left = vy_error; 
+	mov	_pwm_left,_main_vy_error_1_126
+;	main.c:590: pwm_right = vy_error*100/(vx_error+vy_error);
+	mov	__mulint_PARM_2,_main_vy_error_1_126
+	mov	(__mulint_PARM_2 + 1),(_main_vy_error_1_126 + 1)
+	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0x21
-	push	acc
-	mov	a,#0x43
-	push	acc
-	mov	dpl,_main_sloc0_1_0
-	mov	dph,(_main_sloc0_1_0 + 1)
-	mov	b,(_main_sloc0_1_0 + 2)
-	mov	a,(_main_sloc0_1_0 + 3)
-	lcall	___fslt
-	mov	r5,dpl
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar3
-	pop	ar2
-	mov	a,r5
-	jnz	L026043?
-	ljmp	L026022?
-L026043?:
-;	main.c:590: motor_pwm = abs(threshold - vx) * 100 / threshold; 
-	push	ar2
-	push	ar3
-	push	ar3
-	push	_main_sloc0_1_0
-	push	(_main_sloc0_1_0 + 1)
-	push	(_main_sloc0_1_0 + 2)
-	push	(_main_sloc0_1_0 + 3)
-	mov	dptr,#0x0000
-	mov	b,#0x21
-	mov	a,#0x43
-	lcall	___fssub
+	lcall	__mulint
 	mov	r5,dpl
 	mov	r6,dph
-	mov	r7,b
-	mov	r2,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar3
+	mov	a,_main_vy_error_1_126
+	add	a,_main_vx_error_1_126
+	mov	__divsint_PARM_2,a
+	mov	a,(_main_vy_error_1_126 + 1)
+	addc	a,(_main_vx_error_1_126 + 1)
+	mov	(__divsint_PARM_2 + 1),a
 	mov	dpl,r5
 	mov	dph,r6
-	mov	b,r7
-	mov	a,r2
-	push	ar2
-	push	ar3
-	lcall	___fs2sint
-	lcall	_abs
-	mov	__mulint_PARM_2,dpl
-	mov	(__mulint_PARM_2 + 1),dph
+	lcall	__divsint
+	mov	r5,dpl
+	mov	r6,dph
 	pop	ar3
 	pop	ar2
+	mov	_pwm_right,r5
+	ljmp	L022023?
+L022014?:
+;	main.c:593: pwm_left = vx_error; 
+	mov	_pwm_left,_main_vx_error_1_126
+;	main.c:594: pwm_right = vx_error*100/(vx_error+vy_error);
+	mov	__mulint_PARM_2,_main_vx_error_1_126
+	mov	(__mulint_PARM_2 + 1),(_main_vx_error_1_126 + 1)
 	mov	dptr,#0x0064
-	lcall	__mulint
-	lcall	___sint2fs
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r5,b
-	mov	r6,a
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0x21
-	push	acc
-	mov	a,#0x43
-	push	acc
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r5
-	mov	a,r6
-	lcall	___fsdiv
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r5,b
-	mov	r6,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r5
-	mov	a,r6
 	push	ar2
 	push	ar3
-	lcall	___fs2sint
-;	main.c:591: TurnLeft(motor_pwm);
-	mov	_main_motor_pwm_1_134,dpl
-	mov  (_main_motor_pwm_1_134 + 1),dph
-	lcall	_TurnLeft
+	lcall	__mulint
+	mov	r5,dpl
+	mov	r6,dph
+	mov	a,_main_vy_error_1_126
+	add	a,_main_vx_error_1_126
+	mov	__divsint_PARM_2,a
+	mov	a,(_main_vy_error_1_126 + 1)
+	addc	a,(_main_vx_error_1_126 + 1)
+	mov	(__divsint_PARM_2 + 1),a
+	mov	dpl,r5
+	mov	dph,r6
+	lcall	__divsint
+	mov	r5,dpl
+	mov	r6,dph
 	pop	ar3
 	pop	ar2
+	mov	_pwm_right,r5
+	ljmp	L022023?
+L022020?:
+;	main.c:599: if (vy*100<=vy_thres*100/2){
+	push	ar2
+	push	ar3
+	mov	__mulint_PARM_2,_main_vy_1_126
+	mov	(__mulint_PARM_2 + 1),(_main_vy_1_126 + 1)
+	mov	dptr,#0x0064
+	push	ar2
+	push	ar3
+	lcall	__mulint
+	mov	r5,dpl
+	mov	r6,dph
 	pop	ar3
 	pop	ar2
-	ljmp	L026022?
-L026012?:
-;	main.c:596: printf("*** BAD MESSAGE ***(%d): %s\r\n", buff,strlen(buff));
+	mov	__mulint_PARM_2,_vy_thres
+	mov	(__mulint_PARM_2 + 1),(_vy_thres + 1)
+	mov	dptr,#0x0064
+	push	ar3
+	push	ar5
+	push	ar6
+	lcall	__mulint
+	mov	r7,dpl
+	mov	r2,dph
+	pop	ar6
+	pop	ar5
+	pop	ar3
+	mov	__divsint_PARM_2,#0x02
+	clr	a
+	mov	(__divsint_PARM_2 + 1),a
+	mov	dpl,r7
+	mov	dph,r2
+	push	ar5
+	push	ar6
+	lcall	__divsint
+	mov	r2,dpl
+	mov	r3,dph
+	pop	ar6
+	pop	ar5
+	clr	c
+	mov	a,r2
+	subb	a,r5
+	mov	a,r3
+	xrl	a,#0x80
+	mov	b,r6
+	xrl	b,#0x80
+	subb	a,b
+	pop	ar3
+	pop	ar2
+	jc	L022017?
+;	main.c:600: pwm_left = vy_error*100/(vx_error+vy_error);
+	mov	__mulint_PARM_2,_main_vy_error_1_126
+	mov	(__mulint_PARM_2 + 1),(_main_vy_error_1_126 + 1)
+	mov	dptr,#0x0064
+	push	ar2
+	push	ar3
+	lcall	__mulint
+	mov	r5,dpl
+	mov	r6,dph
+	mov	a,_main_vy_error_1_126
+	add	a,_main_vx_error_1_126
+	mov	__divsint_PARM_2,a
+	mov	a,(_main_vy_error_1_126 + 1)
+	addc	a,(_main_vx_error_1_126 + 1)
+	mov	(__divsint_PARM_2 + 1),a
+	mov	dpl,r5
+	mov	dph,r6
+	lcall	__divsint
+	mov	r5,dpl
+	mov	r6,dph
+	pop	ar3
+	pop	ar2
+	mov	_pwm_left,r5
+;	main.c:601: pwm_right = vy_error; 
+	mov	_pwm_right,_main_vy_error_1_126
+	sjmp	L022023?
+L022017?:
+;	main.c:604: pwm_left = vx_error*100/(vx_error+vy_error);
+	mov	__mulint_PARM_2,_main_vx_error_1_126
+	mov	(__mulint_PARM_2 + 1),(_main_vx_error_1_126 + 1)
+	mov	dptr,#0x0064
+	push	ar2
+	push	ar3
+	lcall	__mulint
+	mov	r5,dpl
+	mov	r6,dph
+	mov	a,_main_vy_error_1_126
+	add	a,_main_vx_error_1_126
+	mov	__divsint_PARM_2,a
+	mov	a,(_main_vy_error_1_126 + 1)
+	addc	a,(_main_vx_error_1_126 + 1)
+	mov	(__divsint_PARM_2 + 1),a
+	mov	dpl,r5
+	mov	dph,r6
+	lcall	__divsint
+	mov	r5,dpl
+	mov	r6,dph
+	pop	ar3
+	pop	ar2
+	mov	_pwm_left,r5
+;	main.c:605: pwm_right = vx_error; 
+	mov	_pwm_right,_main_vx_error_1_126
+L022023?:
+;	main.c:610: if (vy_err<0){
+	mov	a,(_main_vy_err_1_126 + 1)
+	jb	acc.7,L022091?
+	ljmp	L022049?
+L022091?:
+;	main.c:611: L_motor_dir = 1; 
+	mov	_L_motor_dir,#0x01
+;	main.c:612: R_motor_dir = 1; 
+	mov	_R_motor_dir,#0x01
+;	main.c:614: if (vx_err>0){
+	clr	c
+	clr	a
+	subb	a,_main_vx_err_1_126
+	clr	a
+	xrl	a,#0x80
+	mov	b,(_main_vx_err_1_126 + 1)
+	xrl	b,#0x80
+	subb	a,b
+	jc	L022092?
+	ljmp	L022031?
+L022092?:
+;	main.c:615: if (vy*100<=vy_thres*100/2){
+	push	ar2
+	push	ar3
+	mov	__mulint_PARM_2,_main_vy_1_126
+	mov	(__mulint_PARM_2 + 1),(_main_vy_1_126 + 1)
+	mov	dptr,#0x0064
+	push	ar2
+	push	ar3
+	lcall	__mulint
+	mov	r5,dpl
+	mov	r6,dph
+	pop	ar3
+	pop	ar2
+	mov	__mulint_PARM_2,_vy_thres
+	mov	(__mulint_PARM_2 + 1),(_vy_thres + 1)
+	mov	dptr,#0x0064
+	push	ar3
+	push	ar5
+	push	ar6
+	lcall	__mulint
+	mov	r7,dpl
+	mov	r2,dph
+	pop	ar6
+	pop	ar5
+	pop	ar3
+	mov	__divsint_PARM_2,#0x02
+	clr	a
+	mov	(__divsint_PARM_2 + 1),a
+	mov	dpl,r7
+	mov	dph,r2
+	push	ar5
+	push	ar6
+	lcall	__divsint
+	mov	r2,dpl
+	mov	r3,dph
+	pop	ar6
+	pop	ar5
+	clr	c
+	mov	a,r2
+	subb	a,r5
+	mov	a,r3
+	xrl	a,#0x80
+	mov	b,r6
+	xrl	b,#0x80
+	subb	a,b
+	pop	ar3
+	pop	ar2
+	jc	L022025?
+;	main.c:616: pwm_left = vy_error; 
+	mov	_pwm_left,_main_vy_error_1_126
+;	main.c:617: pwm_right = vy_error*100/(vx_error+vy_error);
+	mov	__mulint_PARM_2,_main_vy_error_1_126
+	mov	(__mulint_PARM_2 + 1),(_main_vy_error_1_126 + 1)
+	mov	dptr,#0x0064
+	push	ar2
+	push	ar3
+	lcall	__mulint
+	mov	r5,dpl
+	mov	r6,dph
+	mov	a,_main_vy_error_1_126
+	add	a,_main_vx_error_1_126
+	mov	__divsint_PARM_2,a
+	mov	a,(_main_vy_error_1_126 + 1)
+	addc	a,(_main_vx_error_1_126 + 1)
+	mov	(__divsint_PARM_2 + 1),a
+	mov	dpl,r5
+	mov	dph,r6
+	lcall	__divsint
+	mov	r5,dpl
+	mov	r6,dph
+	pop	ar3
+	pop	ar2
+	mov	_pwm_right,r5
+	ljmp	L022049?
+L022025?:
+;	main.c:620: pwm_left = vx_error; 
+	mov	_pwm_left,_main_vx_error_1_126
+;	main.c:621: pwm_right = vx_error*100/(vx_error+vy_error);
+	mov	__mulint_PARM_2,_main_vx_error_1_126
+	mov	(__mulint_PARM_2 + 1),(_main_vx_error_1_126 + 1)
+	mov	dptr,#0x0064
+	push	ar2
+	push	ar3
+	lcall	__mulint
+	mov	r5,dpl
+	mov	r6,dph
+	mov	a,_main_vy_error_1_126
+	add	a,_main_vx_error_1_126
+	mov	__divsint_PARM_2,a
+	mov	a,(_main_vy_error_1_126 + 1)
+	addc	a,(_main_vx_error_1_126 + 1)
+	mov	(__divsint_PARM_2 + 1),a
+	mov	dpl,r5
+	mov	dph,r6
+	lcall	__divsint
+	mov	r5,dpl
+	mov	r6,dph
+	pop	ar3
+	pop	ar2
+	mov	_pwm_right,r5
+	ljmp	L022049?
+L022031?:
+;	main.c:626: if (vy*100<=vy_thres*100/2){
+	push	ar2
+	push	ar3
+	mov	__mulint_PARM_2,_main_vy_1_126
+	mov	(__mulint_PARM_2 + 1),(_main_vy_1_126 + 1)
+	mov	dptr,#0x0064
+	push	ar2
+	push	ar3
+	lcall	__mulint
+	mov	r5,dpl
+	mov	r6,dph
+	pop	ar3
+	pop	ar2
+	mov	__mulint_PARM_2,_vy_thres
+	mov	(__mulint_PARM_2 + 1),(_vy_thres + 1)
+	mov	dptr,#0x0064
+	push	ar3
+	push	ar5
+	push	ar6
+	lcall	__mulint
+	mov	r7,dpl
+	mov	r2,dph
+	pop	ar6
+	pop	ar5
+	pop	ar3
+	mov	__divsint_PARM_2,#0x02
+	clr	a
+	mov	(__divsint_PARM_2 + 1),a
+	mov	dpl,r7
+	mov	dph,r2
+	push	ar5
+	push	ar6
+	lcall	__divsint
+	mov	r2,dpl
+	mov	r3,dph
+	pop	ar6
+	pop	ar5
+	clr	c
+	mov	a,r2
+	subb	a,r5
+	mov	a,r3
+	xrl	a,#0x80
+	mov	b,r6
+	xrl	b,#0x80
+	subb	a,b
+	pop	ar3
+	pop	ar2
+	jc	L022028?
+;	main.c:627: pwm_left = vy_error*100/(vx_error+vy_error);
+	mov	__mulint_PARM_2,_main_vy_error_1_126
+	mov	(__mulint_PARM_2 + 1),(_main_vy_error_1_126 + 1)
+	mov	dptr,#0x0064
+	push	ar2
+	push	ar3
+	lcall	__mulint
+	mov	r5,dpl
+	mov	r6,dph
+	mov	a,_main_vy_error_1_126
+	add	a,_main_vx_error_1_126
+	mov	__divsint_PARM_2,a
+	mov	a,(_main_vy_error_1_126 + 1)
+	addc	a,(_main_vx_error_1_126 + 1)
+	mov	(__divsint_PARM_2 + 1),a
+	mov	dpl,r5
+	mov	dph,r6
+	lcall	__divsint
+	mov	r5,dpl
+	mov	r6,dph
+	pop	ar3
+	pop	ar2
+	mov	_pwm_left,r5
+;	main.c:628: pwm_right = vy_error; 
+	mov	_pwm_right,_main_vy_error_1_126
+	ljmp	L022049?
+L022028?:
+;	main.c:631: pwm_left = vx_error*100/(vx_error+vy_error);
+	mov	__mulint_PARM_2,_main_vx_error_1_126
+	mov	(__mulint_PARM_2 + 1),(_main_vx_error_1_126 + 1)
+	mov	dptr,#0x0064
+	push	ar2
+	push	ar3
+	lcall	__mulint
+	mov	r5,dpl
+	mov	r6,dph
+	mov	a,_main_vy_error_1_126
+	add	a,_main_vx_error_1_126
+	mov	__divsint_PARM_2,a
+	mov	a,(_main_vy_error_1_126 + 1)
+	addc	a,(_main_vx_error_1_126 + 1)
+	mov	(__divsint_PARM_2 + 1),a
+	mov	dpl,r5
+	mov	dph,r6
+	lcall	__divsint
+	mov	r5,dpl
+	mov	r6,dph
+	pop	ar3
+	pop	ar2
+	mov	_pwm_left,r5
+;	main.c:632: pwm_right = vx_error; 
+	mov	_pwm_right,_main_vx_error_1_126
+	ljmp	L022049?
+L022039?:
+;	main.c:640: printf("*** BAD MESSAGE ***(%d): %s\r\n", buff,strlen(buff));
 	mov	dptr,#_buff
 	mov	b,#0x40
 	push	ar2
@@ -2437,15 +2578,15 @@ L026012?:
 	mov	sp,a
 	pop	ar3
 	pop	ar2
-	ljmp	L026022?
-L026017?:
-;	main.c:602: else if(c=='@') // Master wants slave data
-	cjne	r4,#0x40,L026044?
-	sjmp	L026045?
-L026044?:
-	ljmp	L026022?
-L026045?:
-;	main.c:604: sprintf(buff, "%05u\n", cnt);
+	ljmp	L022049?
+L022044?:
+;	main.c:646: else if(c=='@') // Master wants slave data
+	cjne	r4,#0x40,L022095?
+	sjmp	L022096?
+L022095?:
+	ljmp	L022049?
+L022096?:
+;	main.c:648: sprintf(buff, "%05u\n", cnt);
 	push	ar2
 	push	ar3
 	push	ar2
@@ -2468,23 +2609,23 @@ L026045?:
 	mov	sp,a
 	pop	ar3
 	pop	ar2
-;	main.c:605: cnt++;
+;	main.c:649: cnt++;
 	inc	r2
-	cjne	r2,#0x00,L026046?
+	cjne	r2,#0x00,L022097?
 	inc	r3
-L026046?:
-;	main.c:606: waitms(5); // The radio seems to need this delay...
+L022097?:
+;	main.c:650: waitms(5); // The radio seems to need this delay...
 	mov	dptr,#0x0005
 	push	ar2
 	push	ar3
 	lcall	_waitms
-;	main.c:607: sendstr1(buff);
+;	main.c:651: sendstr1(buff);
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_sendstr1
 	pop	ar3
 	pop	ar2
-	ljmp	L026022?
+	ljmp	L022049?
 	rseg R_CSEG
 
 	rseg R_XINIT

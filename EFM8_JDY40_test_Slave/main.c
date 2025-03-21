@@ -41,7 +41,7 @@
 #define L_bridge_1 P2_1
 #define Servo_base P1_7
 #define Servo_arm  P1_6
-#
+
 
 
 
@@ -51,6 +51,8 @@ unsigned int servo_counter = 0;
 unsigned char pwm_left = 0, pwm_right = 0; 
 unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
 unsigned char servo_base = 1, servo_arm = 1; 
+int vx_thres = 161, vy_thres = 166; 
+int vx = 0, vy = 0; 
 
 
 char _c51_external_startup (void)
@@ -423,7 +425,7 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
         pwm_counter = 0; 
     }
 
-    if (pwm_left > pwm_counter){
+    if (pwm_right > pwm_counter){
         if(L_motor_dir){
             L_bridge_1 = 1; 
             L_bridge_2 = 0; 
@@ -437,7 +439,7 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
         L_bridge_1 = 0; 
         L_bridge_2 = 0; 
     }
-    if (pwm_right > pwm_counter){
+    if (pwm_left > pwm_counter){
         if (R_motor_dir){
             R_bridge_1 = 1; 
             R_bridge_2 = 0;
@@ -469,38 +471,6 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 	}
 }
 
-void MoveForward (int speed)
-{
-    pwm_left = speed; 
-    pwm_right = speed; 
-    L_motor_dir = 0; 
-    R_motor_dir = 0; 
-}
-
-void MoveBackward (int speed)
-{
-    pwm_left = speed; 
-    pwm_right = speed; 
-    L_motor_dir = 1; 
-    R_motor_dir = 1;  
-}
-
-void TurnRight (int speed)
-{
-    pwm_left = speed; 
-    pwm_right = speed; 
-    L_motor_dir = 1; 
-    R_motor_dir = 0; 
-}
-
-void TurnLeft (int speed)
-{
-    pwm_left = speed; 
-    pwm_right = speed; 
-    L_motor_dir = 0; 
-    R_motor_dir = 1; 
-}
-
 servo_pick(){
 	servo_arm = 1;
 	servo_base = 1;
@@ -518,6 +488,7 @@ void main (void)
 {
     unsigned int cnt=0;
     char c;
+	int vx_error, vy_error, vx_err, vy_err;
     int vx = 0, vy = 0; 
     float threshold = 161;
 	int motor_pwm = 0; 
@@ -663,24 +634,6 @@ void main (void)
 							}
 						}
 					}
-
-
-					// if (vy > threshold){
-					// 	motor_pwm = abs(vy - threshold) * 100 / threshold; 
-					// 	MoveForward(motor_pwm);
-					// }
-					// else if (vy < threshold){
-					// 	motor_pwm = abs(threshold - vy) * 100 / threshold; 
-					// 	MoveBackward(motor_pwm);
-					// }
-					// if(vx > threshold){
-					// 	motor_pwm = abs(vx - threshold) * 100 / threshold; 
-					// 	TurnRight(motor_pwm);
-					// }
-					// else if (vx < threshold){
-					// 	motor_pwm = abs(threshold - vx) * 100 / threshold; 
-					// 	TurnLeft(motor_pwm);
-					// }
 				}
 				else
 				{
