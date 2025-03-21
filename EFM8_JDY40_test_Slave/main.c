@@ -39,8 +39,9 @@
 #define R_bridge_2 P2_3
 #define L_bridge_2 P2_2
 #define L_bridge_1 P2_1
-#define Servo_base P1_6
-#define Servo_arm P1_7
+#define Servo_arm P1_6
+#define Servo_base P1_7
+#define Magnet P1_5
 
 
 
@@ -49,7 +50,7 @@ unsigned int pwm_counter = 0;
 unsigned int servo_counter = 0; 
 unsigned char pwm_left = 0, pwm_right = 0; 
 unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
-unsigned char servo_base = 100, servo_arm = 100; 
+unsigned char servo_base = 1, servo_arm = 1; 
 
 
 char _c51_external_startup (void)
@@ -500,6 +501,29 @@ void TurnLeft (int speed)
     R_motor_dir = 1; 
 }
 
+void Servo_pick(){
+	int i;
+	servo_base = 1;
+	servo_base = 250;
+	waitms(1000);
+	servo_arm = 1;
+	servo_arm = 250;
+	Magnet = 1;
+	waitms(1000);
+	servo_base = 200;
+	waitms(1000);
+	for(i=0;i<249;i++){
+		waitms(5);
+		servo_arm-=1;
+	}
+	for(i=0;i<199;i++){
+		waitms(5);
+		servo_base-=1;
+	}
+	Magnet = 0;
+	
+}
+
 void main (void)
 {
     unsigned int cnt=0;
@@ -514,6 +538,9 @@ void main (void)
     Set_Pin_Output(0x21);
 	Set_Pin_Output(0x17);
 	Set_Pin_Output(0x16);
+	Set_Pin_Output(0x15);
+
+	Magnet = 0;
 	
 	waitms(500);
 	printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
@@ -538,6 +565,8 @@ void main (void)
     R_bridge_2 = 0; 
 	
 	cnt=0;
+
+	Servo_pick();
 	while(1)
 	{	
 
