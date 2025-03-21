@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include "../Common/Include/stm32l051xx.h"
 #include "../Common/Include/serial.h"
 #include <stdio.h>
@@ -188,6 +189,8 @@ void main(void)
     int timeout_cnt=0;
 	int nadc;
 
+	bool pick_order = 0;
+
 	// note: x,y here are not the same as the x,y printed on joystick
 	int vx100;
 	int vy100;
@@ -278,7 +281,8 @@ void main(void)
 		sprintf(lb,"Vy=%.2f", vy100/100.0);
 		LCDprint(lb,2,1);
 
-		sprintf(buff, "%03d,%03d\n", vx100, vy100); // Construct a test message
+		sprintf(buff, "%03d,%03d,%01d\n", vx100, vy100, pick_order); // Construct a test message
+		printf("%s\r\n",buff);
 		eputc2('!'); // Send a message to the slave. First send the 'attention' character which is '!'
 		// Wait a bit so the slave has a chance to get ready
 		waitms(10); // This may need adjustment depending on how busy is the slave
@@ -316,6 +320,7 @@ void main(void)
 
 		if(!JOYBUT){
 			while(!JOYBUT);
+
 			Buzzer(2); // toggle buzzer 
 		}
 		
