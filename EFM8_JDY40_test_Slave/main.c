@@ -11,8 +11,8 @@
 
 //                                    ----------  
 // RF_RXD               P0.0      1  |          |  32      P0.1     RF_TXD
-//                      GND       2  |          |  31      P0.2  	Servo_base
-//                      5V        3  |          |  30      P0.3  	Servo_arm
+//                      GND       2  |          |  31      P0.2  	
+//                      5V        3  |          |  30      P0.3  	
 //                      5V        4  |          |  29      P0.4  
 //                      RST       5  |          |  28      P0.5  
 //                      P3.7      6  |          |  27      P0.6  
@@ -22,9 +22,9 @@
 //                      P3.0     10  |          |  23      P1.2  
 //                      P2.6     11  |          |  22      P1.3  
 //                      P2.5     12  |          |  21      P1.4  
-// R_bridge_2           P2.4     13  |          |  20      P1.5  
-// R_bridge_1           P2.3     14  |          |  19      P1.6  
-// L_bridge_2           P2.2     15  |          |  18      P1.7  	Servo_EN
+// R_bridge_2           P2.4     13  |          |  20      P1.5  	Magnet
+// R_bridge_1           P2.3     14  |          |  19      P1.6  	Servo_arm
+// L_bridge_2           P2.2     15  |          |  18      P1.7  	Servo_base
 // L_bridge_1           P2.1     16  |          |  17      P2.0     RF_SET
 //                                    ----------  
 
