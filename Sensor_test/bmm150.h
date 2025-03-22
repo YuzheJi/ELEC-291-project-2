@@ -365,112 +365,112 @@
   */
  int8_t bmm150_read_mag_data(struct bmm150_mag_data *mag_data, struct bmm150_dev *dev);
  
- /**
-  * \ingroup bmm150
-  * \defgroup bmm150ApiSelftest Self test
-  * @brief Perform self test
-  */
+//  /**
+//   * \ingroup bmm150
+//   * \defgroup bmm150ApiSelftest Self test
+//   * @brief Perform self test
+//   */
  
- /*!
-  * \ingroup bmm150ApiSelftest
-  * \page bmm150_api_bmm150_perform_self_test bmm150_perform_self_test
-  * \code
-  * int8_t bmm150_perform_self_test(uint8_t self_test_mode, struct bmm150_dev *dev);
-  * \endcode
-  * @details This API is used to perform the complete self test
-  * (both normal and advanced) for the BMM150 sensor
-  *
-  * @param[in] self_test_mode    : The type of self test to be performed
-  * @param[in] dev               : Structure instance of bmm150_dev.
-  *
-  *@verbatim
-  *   self_test_mode    |  Self test enabled
-  * --------------------|--------------------------
-  *      0              | BMM150_SELF_TEST_NORMAL
-  *      1              | BMM150_SELF_TEST_ADVANCED
-  *@endverbatim
-  *
-  * @note The return value of this API gives us the result of self test.
-  *
-  * @note Performing advanced self test does soft reset of the sensor, User can
-  * set the desired settings after performing the advanced self test.
-  *
-  * @return Result of API execution status and self test result.
-  * @retval  0       BMM150_OK
-  * @retval  1       BMM150_W_NORMAL_SELF_TEST_YZ_FAIL
-  * @retval  2       BMM150_W_NORMAL_SELF_TEST_XZ_FAIL
-  * @retval  3       BMM150_W_NORMAL_SELF_TEST_Z_FAIL
-  * @retval  4       BMM150_W_NORMAL_SELF_TEST_XY_FAIL
-  * @retval  5       BMM150_W_NORMAL_SELF_TEST_Y_FAIL
-  * @retval  6       BMM150_W_NORMAL_SELF_TEST_X_FAIL
-  * @retval  7       BMM150_W_NORMAL_SELF_TEST_XYZ_FAIL
-  * @retval  8       BMM150_W_ADV_SELF_TEST_FAIL
-  */
- int8_t bmm150_perform_self_test(uint8_t self_test_mode, struct bmm150_dev *dev);
+//  /*!
+//   * \ingroup bmm150ApiSelftest
+//   * \page bmm150_api_bmm150_perform_self_test bmm150_perform_self_test
+//   * \code
+//   * int8_t bmm150_perform_self_test(uint8_t self_test_mode, struct bmm150_dev *dev);
+//   * \endcode
+//   * @details This API is used to perform the complete self test
+//   * (both normal and advanced) for the BMM150 sensor
+//   *
+//   * @param[in] self_test_mode    : The type of self test to be performed
+//   * @param[in] dev               : Structure instance of bmm150_dev.
+//   *
+//   *@verbatim
+//   *   self_test_mode    |  Self test enabled
+//   * --------------------|--------------------------
+//   *      0              | BMM150_SELF_TEST_NORMAL
+//   *      1              | BMM150_SELF_TEST_ADVANCED
+//   *@endverbatim
+//   *
+//   * @note The return value of this API gives us the result of self test.
+//   *
+//   * @note Performing advanced self test does soft reset of the sensor, User can
+//   * set the desired settings after performing the advanced self test.
+//   *
+//   * @return Result of API execution status and self test result.
+//   * @retval  0       BMM150_OK
+//   * @retval  1       BMM150_W_NORMAL_SELF_TEST_YZ_FAIL
+//   * @retval  2       BMM150_W_NORMAL_SELF_TEST_XZ_FAIL
+//   * @retval  3       BMM150_W_NORMAL_SELF_TEST_Z_FAIL
+//   * @retval  4       BMM150_W_NORMAL_SELF_TEST_XY_FAIL
+//   * @retval  5       BMM150_W_NORMAL_SELF_TEST_Y_FAIL
+//   * @retval  6       BMM150_W_NORMAL_SELF_TEST_X_FAIL
+//   * @retval  7       BMM150_W_NORMAL_SELF_TEST_XYZ_FAIL
+//   * @retval  8       BMM150_W_ADV_SELF_TEST_FAIL
+//   */
+//  int8_t bmm150_perform_self_test(uint8_t self_test_mode, struct bmm150_dev *dev);
  
- /**
-  * \ingroup bmm150
-  * \defgroup bmm150ApiInt Interrupt status
-  * @brief Obtain interrupt staus flags
-  */
+//  /**
+//   * \ingroup bmm150
+//   * \defgroup bmm150ApiInt Interrupt status
+//   * @brief Obtain interrupt staus flags
+//   */
  
- /*!
-  * \ingroup bmm150ApiInt
-  * \page bmm150_api_bmm150_get_interrupt_status bmm150_get_interrupt_status
-  * \code
-  * int8_t bmm150_get_interrupt_status(struct bmm150_dev *dev);
-  * \endcode
-  * @details This API obtains the status flags of all interrupt
-  * which is used to check for the assertion of interrupts
-  *
-  * @param[in,out] dev       : Structure instance of bmm150_dev.
-  *
-  * @note The status flags of all the interrupts are stored in the
-  * dev->int_status.
-  *
-  * @note The value of dev->int_status is performed a bitwise AND operation
-  * with predefined interrupt status macros to find the interrupt status
-  * which is either set or reset.
-  *
-  * Ex.
-  * if (dev->int_status & BMM150_INT_ASSERTED_DRDY)
-  * {
-  *  Occurrence of data ready interrupt
-  * } else {
-  *  No interrupt occurred
-  * }
-  *
-  * @return Result of API execution status and self test result.
-  * @retval 0 -> Success
-  * @retval >0 -> Warning
-  * @retval <0 -> Fail
-  */
- int8_t bmm150_get_interrupt_status(struct bmm150_dev *dev);
+//  /*!
+//   * \ingroup bmm150ApiInt
+//   * \page bmm150_api_bmm150_get_interrupt_status bmm150_get_interrupt_status
+//   * \code
+//   * int8_t bmm150_get_interrupt_status(struct bmm150_dev *dev);
+//   * \endcode
+//   * @details This API obtains the status flags of all interrupt
+//   * which is used to check for the assertion of interrupts
+//   *
+//   * @param[in,out] dev       : Structure instance of bmm150_dev.
+//   *
+//   * @note The status flags of all the interrupts are stored in the
+//   * dev->int_status.
+//   *
+//   * @note The value of dev->int_status is performed a bitwise AND operation
+//   * with predefined interrupt status macros to find the interrupt status
+//   * which is either set or reset.
+//   *
+//   * Ex.
+//   * if (dev->int_status & BMM150_INT_ASSERTED_DRDY)
+//   * {
+//   *  Occurrence of data ready interrupt
+//   * } else {
+//   *  No interrupt occurred
+//   * }
+//   *
+//   * @return Result of API execution status and self test result.
+//   * @retval 0 -> Success
+//   * @retval >0 -> Warning
+//   * @retval <0 -> Fail
+//   */
+//  int8_t bmm150_get_interrupt_status(struct bmm150_dev *dev);
  
- /**
-  * \ingroup bmm150
-  * \defgroup bmm150ApiAux Compensate magnetometer data
-  * @brief Compensation of magnetometer data
-  */
+//  /**
+//   * \ingroup bmm150
+//   * \defgroup bmm150ApiAux Compensate magnetometer data
+//   * @brief Compensation of magnetometer data
+//   */
  
- /*!
-  * \ingroup bmm150ApiAux
-  * \page bmm150_api_bmm150_aux_mag_data bmm150_aux_mag_data
-  * \code
-  * int8_t bmm150_aux_mag_data(uint8_t *aux_data, struct bmm150_mag_data *mag_data, const struct bmm150_dev *dev);
-  * \endcode
-  * @details This API is used to compensate the raw mag data
-  *
-  * @param[in] aux_data   : Raw mag data obtained from BMI160 registers
-  * @param[in] mag_data   : Structure instance of bmm150_mag_data.
-  * @param[in,out] dev    : Structure instance of bmm150_dev.
-  *
-  * @return Result of API execution status and self test result.
-  * @retval 0 -> Success
-  * @retval >0 -> Warning
-  * @retval <0 -> Fail
-  */
- int8_t bmm150_aux_mag_data(uint8_t *aux_data, struct bmm150_mag_data *mag_data, const struct bmm150_dev *dev);
+//  /*!
+//   * \ingroup bmm150ApiAux
+//   * \page bmm150_api_bmm150_aux_mag_data bmm150_aux_mag_data
+//   * \code
+//   * int8_t bmm150_aux_mag_data(uint8_t *aux_data, struct bmm150_mag_data *mag_data, const struct bmm150_dev *dev);
+//   * \endcode
+//   * @details This API is used to compensate the raw mag data
+//   *
+//   * @param[in] aux_data   : Raw mag data obtained from BMI160 registers
+//   * @param[in] mag_data   : Structure instance of bmm150_mag_data.
+//   * @param[in,out] dev    : Structure instance of bmm150_dev.
+//   *
+//   * @return Result of API execution status and self test result.
+//   * @retval 0 -> Success
+//   * @retval >0 -> Warning
+//   * @retval <0 -> Fail
+//   */
+//  int8_t bmm150_aux_mag_data(uint8_t *aux_data, struct bmm150_mag_data *mag_data, const struct bmm150_dev *dev);
  
  #ifdef __cplusplus
  }

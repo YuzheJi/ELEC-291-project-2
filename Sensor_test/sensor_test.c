@@ -19,7 +19,7 @@
 // RF_RXD               P0.0      1  |          |  32      P0.1     RF_TXD
 //                      GND       2  |          |  31      P0.2  	
 //                      5V        3  |          |  30      P0.3  	
-//                      5V        4  |          |  29      P0.4  	DRDY interrupt
+//                      5V        4  |          |  29      P0.4  	
 //                      RST       5  |          |  28      P0.5  	CS
 //                      P3.7      6  |          |  27      P0.6  	SDO
 //                      P3.3      7  |          |  26      P0.7  	SDI
@@ -34,8 +34,7 @@
 // L_bridge_1           P2.1     16  |          |  17      P2.0     RF_SET
 //         
 
-// #define ADC_CE P0_3
-	
+
 char _c51_external_startup (void)
 {
 	// Disable Watchdog with key sequence
@@ -117,7 +116,7 @@ char _c51_external_startup (void)
 
 void Set_Pin_Output (unsigned char pin)
 {
-	__xdata unsigned char mask;
+	xdata unsigned char mask;
 	
 	mask=(1<<(pin&0x7));
 	switch(pin/0x10)
@@ -132,7 +131,7 @@ void Set_Pin_Output (unsigned char pin)
 // Uses Timer3 to delay <us> micro-seconds. 
 void Timer3us(unsigned char us)
 {
-	__xdata unsigned char i;               // usec counter
+	xdata unsigned char i;               // usec counter
 	
 	// The input for Timer 3 is selected as SYSCLK by setting T3ML (bit 6) of CKCON0:
 	CKCON0|=0b_0100_0000;
@@ -161,8 +160,8 @@ void ptr_delay_us (uint32_t period, void *intf_ptr) reentrant
 
 void waitms (unsigned int ms)
 {
-	__xdata unsigned int j;
-	__xdata unsigned char k;
+	xdata unsigned int j;
+	xdata unsigned char k;
 	for(j=0; j<ms; j++)
 		for (k=0; k<4; k++) Timer3us(250);
 }
@@ -262,13 +261,6 @@ int8_t bmm150_spi_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t leng
 	return BMM150_OK; // If all transfers succeeded, return success
 }
 
-
-void bmm150_delay_us(uint32_t period, void *intf_ptr) __reentrant
-{
-	(void)intf_ptr; 
-	while (period--) Timer3us(1); 
-}
-
  /*!
   *  @brief Prints the execution status of the APIs.
   */
@@ -311,9 +303,10 @@ void bmm150_delay_us(uint32_t period, void *intf_ptr) __reentrant
   /*!
   *  @brief Function to select the interface between SPI and I2C.
   */
- __xdata int8_t bmm150_interface_selection(struct bmm150_dev *dev, uint8_t intf)
+xdata int8_t bmm150_interface_selection(xdata struct bmm150_dev *dev, uint8_t intf)
 {
-    __xdata int8_t rslt = BMM150_OK;
+    xdata int8_t rslt = BMM150_OK;
+	printf("Configuring SPI\n"); 
 
     if (dev != NULL)
     {
@@ -325,12 +318,8 @@ void bmm150_delay_us(uint32_t period, void *intf_ptr) __reentrant
             dev->read = bmm150_spi_read;
             dev->write = bmm150_spi_write;
             dev->intf = BMM150_SPI_INTF;
-
-            // Holds the SPI Chip Select pin
             dev->intf_ptr = NULL; // We don't need an intf_ptr for direct GPIO control
-
-            // Assign delay function
-            dev->delay_us = bmm150_delay_us;
+            dev->delay_us = ptr_delay_us;
         }
         else
         {
@@ -346,14 +335,15 @@ void bmm150_delay_us(uint32_t period, void *intf_ptr) __reentrant
     return rslt;
 }
 
-static int8_t set_config(__xdata struct bmm150_dev *dev)
+static int8_t set_config(xdata struct bmm150_dev *dev)
 {
     /* Status of api are returned to this variable. */
-    __xdata int8_t rslt;
+    xdata int8_t rslt;
 
-    __xdata struct bmm150_settings settings;
+    xdata struct bmm150_settings settings;
 
     /* Set powermode as normal mode */
+	printf("Configuring Powermode\n"); 
     settings.pwr_mode = BMM150_POWERMODE_NORMAL;
     rslt = bmm150_set_op_mode(&settings, dev);
     bmm150_error_codes_print_result("bmm150_set_op_mode", rslt);
@@ -363,67 +353,49 @@ static int8_t set_config(__xdata struct bmm150_dev *dev)
         /* Setting the preset mode as Low power mode
          * i.e. data rate = 10Hz, XY-rep = 1, Z-rep = 2
          */
+		printf("Configuring Presetmode\n"); 
         settings.preset_mode = BMM150_PRESETMODE_LOWPOWER;
         rslt = bmm150_set_presetmode(&settings, dev);
         bmm150_error_codes_print_result("bmm150_set_presetmode", rslt);
-
-        if (rslt == BMM150_OK)
-        {
-            /* Map the data interrupt pin */
-            settings.int_settings.drdy_pin_en = 0x01;
-            rslt = bmm150_set_sensor_settings(BMM150_SEL_DRDY_PIN_EN, &settings, dev);
-            bmm150_error_codes_print_result("bmm150_set_sensor_settings", rslt);
-        }
     }
 
     return rslt;
 }
 
-static int8_t get_data(__xdata struct bmm150_dev *dev)
+static int8_t get_data(xdata struct bmm150_dev *dev)
 {
 	/* Status of api are returned to this variable. */
-    __xdata int8_t rslt; 
+    xdata int8_t rslt; 
 
-    __xdata int8_t idx;
+    xdata int8_t idx;
 
-    __xdata struct bmm150_mag_data mag_data;
+    xdata struct bmm150_mag_data mag_data;
 
+	rslt = BMM150_OK; 
     /* Reading the mag data */
     while (1)
     {
-        /* Get the interrupt status */
-        rslt = bmm150_get_interrupt_status(dev);
-
-        if (dev->int_status & BMM150_INT_ASSERTED_DRDY)
+		for (idx = 0; idx < 50; idx++)
         {
-            printf("Data interrupt occurred\n");
+            /* Read mag data */
+            rslt = bmm150_read_mag_data(&mag_data, dev);
+            bmm150_error_codes_print_result("bmm150_read_mag_data", rslt);
 
-            for (idx = 0; idx < 50; idx++)
-            {
-                /* Read mag data */
-                rslt = bmm150_read_mag_data(&mag_data, dev);
-                bmm150_error_codes_print_result("bmm150_read_mag_data", rslt);
-
-                /* Unit for magnetometer data is microtesla(uT) */
-                printf("MAG DATA[%d]  X : %d uT   Y : %d uT   Z : %d uT\n", idx, mag_data.x, mag_data.y, mag_data.z);
-            }
+            /* Unit for magnetometer data is microtesla(uT) */
+            printf("MAG DATA[%d]  X : %d uT   Y : %d uT \n", idx, mag_data.x, mag_data.y);
         }
-
-        break;
+		break; 
     }
-
     return rslt;
 }
 
 
 void main (void)
 {
-	__xdata int8_t rslt; 
-	__xdata struct bmm150_dev dev; 
+	xdata int8_t rslt; 
+	xdata struct bmm150_dev dev; 
 
-	//assign function pointers 
-	dev.delay_us = ptr_delay_us; 
-
+	waitms(500);
 	printf("\x1b[2J"); // Clear screen using ANSI escape sequence.
 	
 	printf ("EFM8LB1 SPI/BMM150 test program\n"
@@ -451,6 +423,7 @@ void main (void)
 			{
 				rslt = get_data(&dev); 
 				bmm150_error_codes_print_result("get_data", rslt); 
+				printf("Configuration Complete - Ready to get data"); 
 			}
 		}
 	}
