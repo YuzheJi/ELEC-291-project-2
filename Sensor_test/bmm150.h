@@ -131,7 +131,7 @@
   * @retval >0 -> Warning
   * @retval <0 -> Fail
   */
- int8_t bmm150_get_regs(uint8_t reg_addr, uint8_t *reg_data, uint32_t len, struct bmm150_dev *dev);
+ int8_t bmm150_get_regs(uint8_t reg_addr, uint8_t *reg_data, uint32_t len, struct bmm150_dev *dev) __reentrant;
  
  /**
   * \ingroup bmm150

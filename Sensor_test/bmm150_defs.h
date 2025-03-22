@@ -421,7 +421,7 @@ enum bmm150_intf {
  * @retval Non-zero for Failure
  */
 typedef BMM150_INTF_RET_TYPE (*bmm150_read_fptr_t)(uint8_t reg_addr, uint8_t *reg_data, uint32_t length,
-                                                   void *intf_ptr);
+                                                   void *intf_ptr) __reentrant; 
 
 /*!
  * @brief Bus communication function pointer which should be mapped to
@@ -437,7 +437,7 @@ typedef BMM150_INTF_RET_TYPE (*bmm150_read_fptr_t)(uint8_t reg_addr, uint8_t *re
  *
  */
 typedef BMM150_INTF_RET_TYPE (*bmm150_write_fptr_t)(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length,
-                                                    void *intf_ptr);
+                                                    void *intf_ptr) __reentrant;
 
 /*!
  * @brief Delay function pointer which should be mapped to
@@ -447,7 +447,7 @@ typedef BMM150_INTF_RET_TYPE (*bmm150_write_fptr_t)(uint8_t reg_addr, const uint
  * @param[in,out] intf_ptr : Void pointer that can enable the linking of descriptors
  *                           for interface related callbacks
  */
-typedef void (*bmm150_delay_us_fptr_t)(uint32_t period, void *intf_ptr);
+typedef void (*bmm150_delay_us_fptr_t)(uint32_t period, void *intf_ptr) __reentrant;
 
 /******************************************************************************/
 /*!  @name         Structure Declarations                             */
@@ -456,7 +456,7 @@ typedef void (*bmm150_delay_us_fptr_t)(uint32_t period, void *intf_ptr);
 /*!
  * @brief bmm150 trim data structure
  */
-struct bmm150_trim_registers
+__xdata struct bmm150_trim_registers
 {
     /*! trim x1 data */
     int8_t dig_x1;
@@ -495,7 +495,7 @@ struct bmm150_trim_registers
 /*!
  * @brief bmm150 interrupt pin settings
  */
-struct bmm150_int_ctrl_settings
+__xdata struct bmm150_int_ctrl_settings
 {
     /*! Data ready interrupt enable */
     uint8_t drdy_pin_en;
@@ -534,7 +534,7 @@ struct bmm150_int_ctrl_settings
 /*!
  * @brief bmm150 sensor settings
  */
-struct bmm150_settings
+__xdata struct bmm150_settings
 {
     /*! Control measurement of XYZ axes */
     uint8_t xyz_axes_control;
@@ -561,7 +561,7 @@ struct bmm150_settings
 /*!
  * @brief bmm150 un-compensated (raw) magnetometer data
  */
-struct bmm150_raw_mag_data
+__xdata struct bmm150_raw_mag_data
 {
     /*! Raw mag X data */
     int16_t raw_datax;
@@ -598,7 +598,7 @@ struct bmm150_mag_data
 /*!
  * @brief bmm150 compensated magnetometer data in int16_t format
  */
-struct bmm150_mag_data
+__xdata struct bmm150_mag_data
 {
     /*! compensated mag X data */
     int16_t x;
@@ -615,7 +615,7 @@ struct bmm150_mag_data
 /*!
  * @brief bmm150 device structure
  */
-struct bmm150_dev
+__xdata struct bmm150_dev
 {
     /*! Chip Id */
     uint8_t chip_id;
