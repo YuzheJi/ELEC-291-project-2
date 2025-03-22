@@ -41,6 +41,7 @@
 #define L_bridge_1 P2_1
 #define Servo_base P1_7
 #define Servo_arm  P1_6
+#define Magnet 	   P1_5
 
 
 
@@ -471,17 +472,42 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 	}
 }
 
-servo_pick(){
+
+void servo_pick(){
+	int i;
 	servo_arm = 1;
 	servo_base = 1;
-	waitms(1000);
 	servo_base = 250;
-	waitms(1000);
+	waitms(200);
 	servo_arm = 250;
-	waitms(1000);
-	servo_base = 2;
-	waitms(1000);
-	servo_arm = 2;
+	Magnet = 1;
+	waitms(500);
+	for(i = 0; i<69; i++){
+		waitms(10);
+		servo_base--;
+	}
+	waitms(200);
+	for(i = 0; i<149; i++){
+		waitms(10);
+		servo_arm--;
+	}
+	waitms(500);
+	for(i = 0; i<60; i++){
+		waitms(10);
+		servo_base--;
+	}
+	Magnet = 0;
+	waitms(200);
+	for(i = 0; i<100; i++){
+		waitms(10);
+		servo_arm--;
+	}
+	waitms(200);
+	for(i = 0; i<120; i++){
+		waitms(10);
+		servo_base--;
+	}
+	return;
 }
 
 void main (void)
@@ -492,6 +518,7 @@ void main (void)
     int vx = 0, vy = 0; 
     float threshold = 161;
 	int motor_pwm = 0; 
+	char pick;
 
 	Set_Pin_Output(0x24);
     Set_Pin_Output(0x23);
@@ -499,9 +526,11 @@ void main (void)
     Set_Pin_Output(0x21);
 	Set_Pin_Output(0x17);
 	Set_Pin_Output(0x16);
+	Set_Pin_Output(0x15);
 
 	Servo_arm=0;
 	Servo_base=0;
+	Magnet = 0;
 	
 	waitms(500);
 	printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
@@ -542,7 +571,7 @@ void main (void)
 				{
 					//printf("Master says: %s\r\n", buff);
 
-					sscanf(buff, "%03d,%03d", &vx, &vy);
+					sscanf(buff, "%03d,%03d,%01d", &vx, &vy, &pick);
                 
                 	printf("Joystick Received: Vx = %03d, Vy = %03d\r\n", vx, vy);
 
