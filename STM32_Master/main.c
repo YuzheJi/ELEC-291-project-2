@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdbool.h>
 #include "../Common/Include/stm32l051xx.h"
 #include "../Common/Include/serial.h"
 #include <stdio.h>
@@ -189,12 +188,15 @@ void main(void)
     int timeout_cnt=0;
 	int nadc;
 
-	bool pick_order = 0;
+	int pick_order = 0;
 
 	// note: x,y here are not the same as the x,y printed on joystick
 	int vx100;
 	int vy100;
 	int vctrl100;
+
+	unsigned cnt_rec;
+	
 
 	
 	uint8_t charge[8] = {
@@ -304,9 +306,10 @@ void main(void)
 		if(ReceivedBytes2()>5) // Something has arrived from the slave
 		{
 			egets2(buff, sizeof(buff)-1);
-			if(strlen(buff)==6) // Check for valid message size (5 characters + new line '\n')
+			if(strlen(buff)==8) // Check for valid message size (5 characters + new line '\n')
 			{
 				printf("Slave says: %s\r", buff);
+				sscanf(buff, "%01d,%05u",&pick_order,&cnt_rec);
 			}
 			else
 			{
@@ -320,7 +323,7 @@ void main(void)
 
 		if(!JOYBUT){
 			while(!JOYBUT);
-
+			pick_order = 1;
 			Buzzer(2); // toggle buzzer 
 		}
 		
