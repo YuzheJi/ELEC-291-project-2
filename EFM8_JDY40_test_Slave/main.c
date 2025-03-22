@@ -481,32 +481,26 @@ void servo_pick(){
 	waitms(200);
 	servo_arm = 250;
 	Magnet = 1;
-	waitms(500);
-	for(i = 0; i<69; i++){
-		waitms(10);
+	waitms(200);
+	for(i = 0; i<109; i++){
+		waitms(5);
 		servo_base--;
 	}
 	waitms(200);
-	for(i = 0; i<149; i++){
-		waitms(10);
+	for(i = 0; i<159; i++){
+		waitms(5);
 		servo_arm--;
 	}
-	waitms(500);
-	for(i = 0; i<60; i++){
-		waitms(10);
+	waitms(200);
+	for(i = 0; i<45; i++){
+		waitms(5);
 		servo_base--;
 	}
+	waitms(500);
 	Magnet = 0;
 	waitms(200);
-	for(i = 0; i<100; i++){
-		waitms(10);
-		servo_arm--;
-	}
-	waitms(200);
-	for(i = 0; i<120; i++){
-		waitms(10);
-		servo_base--;
-	}
+	servo_arm=1;
+	servo_base=1;
 	return;
 }
 
@@ -518,7 +512,8 @@ void main (void)
     int vx = 0, vy = 0; 
     float threshold = 161;
 	int motor_pwm = 0; 
-	char pick;
+	int pick;
+	char pick_done = 1;
 
 	Set_Pin_Output(0x24);
     Set_Pin_Output(0x23);
@@ -537,7 +532,7 @@ void main (void)
 	UART1_Init(9600);
 	
 	ReceptionOff();
-	servo_pick();
+	//servo_pick();
 
 	// To check configuration
 	SendATCommand("AT+VER\r\n");
@@ -567,13 +562,17 @@ void main (void)
 			if(c=='!') // Master is sending message
 			{
 				getstr1(buff, sizeof(buff)-1);
-				if(strlen(buff)==7)
+				if(strlen(buff)==9)
 				{
-					//printf("Master says: %s\r\n", buff);
+					printf("Master says: %s\r\n", buff);
 
 					sscanf(buff, "%03d,%03d,%01d", &vx, &vy, &pick);
                 
-                	printf("Joystick Received: Vx = %03d, Vy = %03d\r\n", vx, vy);
+                	printf("Joystick Received: Vx = %03d, Vy = %03d, Order = %01d\r\n", vx, vy, pick);
+
+					if(pick==1){
+						servo_pick();
+					}	
 
 					// Determine of Vx and Vy are within 5% error
 					vx_error = abs(vx-vx_thres)*100/vx_thres; 
@@ -674,7 +673,7 @@ void main (void)
 			}
 			else if(c=='@') // Master wants slave data
 			{
-				sprintf(buff, "%05u\n", cnt);
+				sprintf(buff, "%01d,%05u\n", 0, cnt);
 				cnt++;
 				waitms(5); // The radio seems to need this delay...
 				sendstr1(buff);

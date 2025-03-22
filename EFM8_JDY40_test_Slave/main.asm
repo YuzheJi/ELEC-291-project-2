@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-; This file was generated Fri Mar 21 16:04:58 2025
+; This file was generated Fri Mar 21 17:22:00 2025
 ;--------------------------------------------------------
 $name main
 $optc51 --model-small
@@ -533,17 +533,19 @@ _vy:
 	ds 2
 _getstr1_PARM_2:
 	ds 1
-_main_vx_error_1_131:
+_main_vx_error_1_129:
 	ds 2
-_main_vy_error_1_131:
+_main_vy_error_1_129:
 	ds 2
-_main_vx_err_1_131:
+_main_vx_err_1_129:
 	ds 2
-_main_vy_err_1_131:
+_main_vy_err_1_129:
 	ds 2
-_main_vx_1_131:
+_main_vx_1_129:
 	ds 2
-_main_vy_1_131:
+_main_vy_1_129:
+	ds 2
+_main_pick_1_129:
 	ds 2
 ;--------------------------------------------------------
 ; overlayable items in internal ram 
@@ -1719,22 +1721,22 @@ _servo_pick:
 	mov	_servo_arm,#0xFA
 ;	main.c:483: Magnet = 1;
 	setb	_P1_5
-;	main.c:484: waitms(500);
-	mov	dptr,#0x01F4
+;	main.c:484: waitms(200);
+	mov	dptr,#0x00C8
 	lcall	_waitms
-;	main.c:485: for(i = 0; i<69; i++){
+;	main.c:485: for(i = 0; i<109; i++){
 	mov	r2,#0x00
 	mov	r3,#0x00
 L021001?:
 	clr	c
 	mov	a,r2
-	subb	a,#0x45
+	subb	a,#0x6D
 	mov	a,r3
 	xrl	a,#0x80
 	subb	a,#0x80
 	jnc	L021004?
-;	main.c:486: waitms(10);
-	mov	dptr,#0x000A
+;	main.c:486: waitms(5);
+	mov	dptr,#0x0005
 	push	ar2
 	push	ar3
 	lcall	_waitms
@@ -1742,7 +1744,7 @@ L021001?:
 	pop	ar2
 ;	main.c:487: servo_base--;
 	dec	_servo_base
-;	main.c:485: for(i = 0; i<69; i++){
+;	main.c:485: for(i = 0; i<109; i++){
 	inc	r2
 	cjne	r2,#0x00,L021001?
 	inc	r3
@@ -1751,19 +1753,19 @@ L021004?:
 ;	main.c:489: waitms(200);
 	mov	dptr,#0x00C8
 	lcall	_waitms
-;	main.c:490: for(i = 0; i<149; i++){
+;	main.c:490: for(i = 0; i<159; i++){
 	mov	r2,#0x00
 	mov	r3,#0x00
 L021005?:
 	clr	c
 	mov	a,r2
-	subb	a,#0x95
+	subb	a,#0x9F
 	mov	a,r3
 	xrl	a,#0x80
 	subb	a,#0x80
 	jnc	L021008?
-;	main.c:491: waitms(10);
-	mov	dptr,#0x000A
+;	main.c:491: waitms(5);
+	mov	dptr,#0x0005
 	push	ar2
 	push	ar3
 	lcall	_waitms
@@ -1771,28 +1773,28 @@ L021005?:
 	pop	ar2
 ;	main.c:492: servo_arm--;
 	dec	_servo_arm
-;	main.c:490: for(i = 0; i<149; i++){
+;	main.c:490: for(i = 0; i<159; i++){
 	inc	r2
 	cjne	r2,#0x00,L021005?
 	inc	r3
 	sjmp	L021005?
 L021008?:
-;	main.c:494: waitms(500);
-	mov	dptr,#0x01F4
+;	main.c:494: waitms(200);
+	mov	dptr,#0x00C8
 	lcall	_waitms
-;	main.c:495: for(i = 0; i<60; i++){
+;	main.c:495: for(i = 0; i<45; i++){
 	mov	r2,#0x00
 	mov	r3,#0x00
 L021009?:
 	clr	c
 	mov	a,r2
-	subb	a,#0x3C
+	subb	a,#0x2D
 	mov	a,r3
 	xrl	a,#0x80
 	subb	a,#0x80
 	jnc	L021012?
-;	main.c:496: waitms(10);
-	mov	dptr,#0x000A
+;	main.c:496: waitms(5);
+	mov	dptr,#0x0005
 	push	ar2
 	push	ar3
 	lcall	_waitms
@@ -1800,130 +1802,84 @@ L021009?:
 	pop	ar2
 ;	main.c:497: servo_base--;
 	dec	_servo_base
-;	main.c:495: for(i = 0; i<60; i++){
+;	main.c:495: for(i = 0; i<45; i++){
 	inc	r2
 	cjne	r2,#0x00,L021009?
 	inc	r3
 	sjmp	L021009?
 L021012?:
-;	main.c:499: Magnet = 0;
+;	main.c:499: waitms(500);
+	mov	dptr,#0x01F4
+	lcall	_waitms
+;	main.c:500: Magnet = 0;
 	clr	_P1_5
-;	main.c:500: waitms(200);
+;	main.c:501: waitms(200);
 	mov	dptr,#0x00C8
 	lcall	_waitms
-;	main.c:501: for(i = 0; i<100; i++){
-	mov	r2,#0x00
-	mov	r3,#0x00
-L021013?:
-	clr	c
-	mov	a,r2
-	subb	a,#0x64
-	mov	a,r3
-	xrl	a,#0x80
-	subb	a,#0x80
-	jnc	L021016?
-;	main.c:502: waitms(10);
-	mov	dptr,#0x000A
-	push	ar2
-	push	ar3
-	lcall	_waitms
-	pop	ar3
-	pop	ar2
-;	main.c:503: servo_arm--;
-	dec	_servo_arm
-;	main.c:501: for(i = 0; i<100; i++){
-	inc	r2
-	cjne	r2,#0x00,L021013?
-	inc	r3
-	sjmp	L021013?
-L021016?:
-;	main.c:505: waitms(200);
-	mov	dptr,#0x00C8
-	lcall	_waitms
-;	main.c:506: for(i = 0; i<120; i++){
-	mov	r2,#0x00
-	mov	r3,#0x00
-L021017?:
-	clr	c
-	mov	a,r2
-	subb	a,#0x78
-	mov	a,r3
-	xrl	a,#0x80
-	subb	a,#0x80
-	jnc	L021020?
-;	main.c:507: waitms(10);
-	mov	dptr,#0x000A
-	push	ar2
-	push	ar3
-	lcall	_waitms
-	pop	ar3
-	pop	ar2
-;	main.c:508: servo_base--;
-	dec	_servo_base
-;	main.c:506: for(i = 0; i<120; i++){
-	inc	r2
-	cjne	r2,#0x00,L021017?
-	inc	r3
-	sjmp	L021017?
-L021020?:
-;	main.c:510: return;
+;	main.c:502: servo_arm=1;
+	mov	_servo_arm,#0x01
+;	main.c:503: servo_base=1;
+	mov	_servo_base,#0x01
+;	main.c:504: return;
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
 ;cnt                       Allocated to registers 
 ;c                         Allocated to registers r4 
-;vx_error                  Allocated with name '_main_vx_error_1_131'
-;vy_error                  Allocated with name '_main_vy_error_1_131'
-;vx_err                    Allocated with name '_main_vx_err_1_131'
-;vy_err                    Allocated with name '_main_vy_err_1_131'
-;vx                        Allocated with name '_main_vx_1_131'
-;vy                        Allocated with name '_main_vy_1_131'
+;vx_error                  Allocated with name '_main_vx_error_1_129'
+;vy_error                  Allocated with name '_main_vy_error_1_129'
+;vx_err                    Allocated with name '_main_vx_err_1_129'
+;vy_err                    Allocated with name '_main_vy_err_1_129'
+;vx                        Allocated with name '_main_vx_1_129'
+;vy                        Allocated with name '_main_vy_1_129'
 ;threshold                 Allocated to registers 
 ;motor_pwm                 Allocated to registers 
+;pick                      Allocated with name '_main_pick_1_129'
+;pick_done                 Allocated to registers 
 ;------------------------------------------------------------
-;	main.c:513: void main (void)
+;	main.c:507: void main (void)
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
-;	main.c:518: int vx = 0, vy = 0; 
+;	main.c:512: int vx = 0, vy = 0; 
 	clr	a
-	mov	_main_vx_1_131,a
-	mov	(_main_vx_1_131 + 1),a
-	mov	_main_vy_1_131,a
-	mov	(_main_vy_1_131 + 1),a
-;	main.c:522: Set_Pin_Output(0x24);
+	mov	_main_vx_1_129,a
+	mov	(_main_vx_1_129 + 1),a
+	mov	_main_vy_1_129,a
+	mov	(_main_vy_1_129 + 1),a
+;	main.c:518: Set_Pin_Output(0x24);
 	mov	dpl,#0x24
 	lcall	_Set_Pin_Output
-;	main.c:523: Set_Pin_Output(0x23);
+;	main.c:519: Set_Pin_Output(0x23);
 	mov	dpl,#0x23
 	lcall	_Set_Pin_Output
-;	main.c:524: Set_Pin_Output(0x22);
+;	main.c:520: Set_Pin_Output(0x22);
 	mov	dpl,#0x22
 	lcall	_Set_Pin_Output
-;	main.c:525: Set_Pin_Output(0x21);
+;	main.c:521: Set_Pin_Output(0x21);
 	mov	dpl,#0x21
 	lcall	_Set_Pin_Output
-;	main.c:526: Set_Pin_Output(0x17);
+;	main.c:522: Set_Pin_Output(0x17);
 	mov	dpl,#0x17
 	lcall	_Set_Pin_Output
-;	main.c:527: Set_Pin_Output(0x16);
+;	main.c:523: Set_Pin_Output(0x16);
 	mov	dpl,#0x16
 	lcall	_Set_Pin_Output
-;	main.c:528: Set_Pin_Output(0x15);
+;	main.c:524: Set_Pin_Output(0x15);
 	mov	dpl,#0x15
 	lcall	_Set_Pin_Output
-;	main.c:530: Servo_arm=0;
+;	main.c:526: Servo_arm=0;
 	clr	_P1_6
-;	main.c:531: Servo_base=0;
+;	main.c:527: Servo_base=0;
 	clr	_P1_7
-;	main.c:532: Magnet = 0;
+;	main.c:528: Magnet = 0;
 	clr	_P1_5
-;	main.c:534: waitms(500);
+;	main.c:530: waitms(500);
 	mov	dptr,#0x01F4
 	lcall	_waitms
-;	main.c:535: printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
+;	main.c:531: printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
 	mov	a,#__str_3
 	push	acc
 	mov	a,#(__str_3 >> 8)
@@ -1934,60 +1890,58 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:536: UART1_Init(9600);
+;	main.c:532: UART1_Init(9600);
 	mov	dptr,#0x2580
 	clr	a
 	mov	b,a
 	lcall	_UART1_Init
-;	main.c:538: ReceptionOff();
+;	main.c:534: ReceptionOff();
 	lcall	_ReceptionOff
-;	main.c:539: servo_pick();
-	lcall	_servo_pick
-;	main.c:542: SendATCommand("AT+VER\r\n");
+;	main.c:538: SendATCommand("AT+VER\r\n");
 	mov	dptr,#__str_4
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:543: SendATCommand("AT+BAUD\r\n");
+;	main.c:539: SendATCommand("AT+BAUD\r\n");
 	mov	dptr,#__str_5
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:544: SendATCommand("AT+RFID\r\n");
+;	main.c:540: SendATCommand("AT+RFID\r\n");
 	mov	dptr,#__str_6
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:545: SendATCommand("AT+DVID\r\n");
+;	main.c:541: SendATCommand("AT+DVID\r\n");
 	mov	dptr,#__str_7
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:546: SendATCommand("AT+RFC\r\n");
+;	main.c:542: SendATCommand("AT+RFC\r\n");
 	mov	dptr,#__str_8
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:547: SendATCommand("AT+POWE\r\n");
+;	main.c:543: SendATCommand("AT+POWE\r\n");
 	mov	dptr,#__str_9
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:548: SendATCommand("AT+CLSS\r\n");
+;	main.c:544: SendATCommand("AT+CLSS\r\n");
 	mov	dptr,#__str_10
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:549: SendATCommand("AT+DVIDEFEF\r\n");  
+;	main.c:545: SendATCommand("AT+DVIDEFEF\r\n");  
 	mov	dptr,#__str_11
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:552: L_bridge_1 = 0; 
+;	main.c:548: L_bridge_1 = 0; 
 	clr	_P2_1
-;	main.c:553: L_bridge_2 = 0; 
+;	main.c:549: L_bridge_2 = 0; 
 	clr	_P2_2
-;	main.c:554: R_bridge_1 = 0; 
+;	main.c:550: R_bridge_1 = 0; 
 	clr	_P2_4
-;	main.c:555: R_bridge_2 = 0; 
+;	main.c:551: R_bridge_2 = 0; 
 	clr	_P2_3
-;	main.c:558: while(1)
+;	main.c:554: while(1)
 	mov	r2,#0x00
 	mov	r3,#0x00
-L022049?:
-;	main.c:562: if(RXU1()) // Something has arrived
+L022051?:
+;	main.c:558: if(RXU1()) // Something has arrived
 	push	ar2
 	push	ar3
 	lcall	_RXU1
@@ -1995,28 +1949,28 @@ L022049?:
 	rlc	a
 	pop	ar3
 	pop	ar2
-	jz	L022049?
-;	main.c:564: c=getchar1();
+	jz	L022051?
+;	main.c:560: c=getchar1();
 	push	ar2
 	push	ar3
 	lcall	_getchar1
 	mov	r4,dpl
 	pop	ar3
 	pop	ar2
-;	main.c:566: if(c=='!') // Master is sending message
-	cjne	r4,#0x21,L022075?
-	sjmp	L022076?
-L022075?:
-	ljmp	L022044?
-L022076?:
-;	main.c:568: getstr1(buff, sizeof(buff)-1);
+;	main.c:562: if(c=='!') // Master is sending message
+	cjne	r4,#0x21,L022078?
+	sjmp	L022079?
+L022078?:
+	ljmp	L022046?
+L022079?:
+;	main.c:564: getstr1(buff, sizeof(buff)-1);
 	mov	_getstr1_PARM_2,#0x13
 	mov	dptr,#_buff
 	mov	b,#0x40
 	push	ar2
 	push	ar3
 	lcall	_getstr1
-;	main.c:569: if(strlen(buff)==7)
+;	main.c:565: if(strlen(buff)==9)
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_strlen
@@ -2024,30 +1978,53 @@ L022076?:
 	mov	r6,dph
 	pop	ar3
 	pop	ar2
-	cjne	r5,#0x07,L022077?
-	cjne	r6,#0x00,L022077?
-	sjmp	L022078?
-L022077?:
-	ljmp	L022039?
-L022078?:
-;	main.c:573: sscanf(buff, "%03d,%03d", &vx, &vy);
+	cjne	r5,#0x09,L022080?
+	cjne	r6,#0x00,L022080?
+	sjmp	L022081?
+L022080?:
+	ljmp	L022041?
+L022081?:
+;	main.c:567: printf("Master says: %s\r\n", buff);
 	push	ar2
 	push	ar3
-	mov	a,#_main_vy_1_131
+	mov	a,#_buff
 	push	acc
-	mov	a,#(_main_vy_1_131 >> 8)
-	push	acc
-	mov	a,#0x40
-	push	acc
-	mov	a,#_main_vx_1_131
-	push	acc
-	mov	a,#(_main_vx_1_131 >> 8)
+	mov	a,#(_buff >> 8)
 	push	acc
 	mov	a,#0x40
 	push	acc
 	mov	a,#__str_12
 	push	acc
 	mov	a,#(__str_12 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	lcall	_printf
+	mov	a,sp
+	add	a,#0xfa
+	mov	sp,a
+;	main.c:569: sscanf(buff, "%03d,%03d,%01d", &vx, &vy, &pick);
+	mov	a,#_main_pick_1_129
+	push	acc
+	mov	a,#(_main_pick_1_129 >> 8)
+	push	acc
+	mov	a,#0x40
+	push	acc
+	mov	a,#_main_vy_1_129
+	push	acc
+	mov	a,#(_main_vy_1_129 >> 8)
+	push	acc
+	mov	a,#0x40
+	push	acc
+	mov	a,#_main_vx_1_129
+	push	acc
+	mov	a,#(_main_vx_1_129 >> 8)
+	push	acc
+	mov	a,#0x40
+	push	acc
+	mov	a,#__str_13
+	push	acc
+	mov	a,#(__str_13 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -2059,31 +2036,53 @@ L022078?:
 	push	acc
 	lcall	_sscanf
 	mov	a,sp
-	add	a,#0xf4
+	add	a,#0xf1
 	mov	sp,a
-;	main.c:575: printf("Joystick Received: Vx = %03d, Vy = %03d\r\n", vx, vy);
-	push	_main_vy_1_131
-	push	(_main_vy_1_131 + 1)
-	push	_main_vx_1_131
-	push	(_main_vx_1_131 + 1)
-	mov	a,#__str_13
+;	main.c:571: printf("Joystick Received: Vx = %03d, Vy = %03d, Order = %01d\r\n", vx, vy, pick);
+	push	_main_pick_1_129
+	push	(_main_pick_1_129 + 1)
+	push	_main_vy_1_129
+	push	(_main_vy_1_129 + 1)
+	push	_main_vx_1_129
+	push	(_main_vx_1_129 + 1)
+	mov	a,#__str_14
 	push	acc
-	mov	a,#(__str_13 >> 8)
+	mov	a,#(__str_14 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
 	lcall	_printf
 	mov	a,sp
-	add	a,#0xf9
+	add	a,#0xf7
 	mov	sp,a
+	pop	ar3
+	pop	ar2
+;	main.c:573: if(pick==1){
+	mov	a,#0x01
+	cjne	a,_main_pick_1_129,L022082?
+	clr	a
+	cjne	a,(_main_pick_1_129 + 1),L022082?
+	sjmp	L022083?
+L022082?:
+	sjmp	L022002?
+L022083?:
+;	main.c:574: servo_pick();
+	push	ar2
+	push	ar3
+	lcall	_servo_pick
+	pop	ar3
+	pop	ar2
+L022002?:
 ;	main.c:578: vx_error = abs(vx-vx_thres)*100/vx_thres; 
-	mov	a,_main_vx_1_131
+	mov	a,_main_vx_1_129
 	clr	c
 	subb	a,_vx_thres
 	mov	dpl,a
-	mov	a,(_main_vx_1_131 + 1)
+	mov	a,(_main_vx_1_129 + 1)
 	subb	a,(_vx_thres + 1)
 	mov	dph,a
+	push	ar2
+	push	ar3
 	lcall	_abs
 	mov	__mulint_PARM_2,dpl
 	mov	(__mulint_PARM_2 + 1),dph
@@ -2092,14 +2091,14 @@ L022078?:
 	mov	__divsint_PARM_2,_vx_thres
 	mov	(__divsint_PARM_2 + 1),(_vx_thres + 1)
 	lcall	__divsint
-	mov	_main_vx_error_1_131,dpl
-	mov	(_main_vx_error_1_131 + 1),dph
+	mov	_main_vx_error_1_129,dpl
+	mov	(_main_vx_error_1_129 + 1),dph
 ;	main.c:579: vy_error = abs(vy-vy_thres)*100/vy_thres; 
-	mov	a,_main_vy_1_131
+	mov	a,_main_vy_1_129
 	clr	c
 	subb	a,_vy_thres
 	mov	dpl,a
-	mov	a,(_main_vy_1_131 + 1)
+	mov	a,(_main_vy_1_129 + 1)
 	subb	a,(_vy_thres + 1)
 	mov	dph,a
 	lcall	_abs
@@ -2110,26 +2109,26 @@ L022078?:
 	mov	__divsint_PARM_2,_vy_thres
 	mov	(__divsint_PARM_2 + 1),(_vy_thres + 1)
 	lcall	__divsint
-	mov	_main_vy_error_1_131,dpl
-	mov	(_main_vy_error_1_131 + 1),dph
+	mov	_main_vy_error_1_129,dpl
+	mov	(_main_vy_error_1_129 + 1),dph
 	pop	ar3
 	pop	ar2
 ;	main.c:580: vx_err = vx-vx_thres; 
-	mov	a,_main_vx_1_131
+	mov	a,_main_vx_1_129
 	clr	c
 	subb	a,_vx_thres
-	mov	_main_vx_err_1_131,a
-	mov	a,(_main_vx_1_131 + 1)
+	mov	_main_vx_err_1_129,a
+	mov	a,(_main_vx_1_129 + 1)
 	subb	a,(_vx_thres + 1)
-	mov	(_main_vx_err_1_131 + 1),a
+	mov	(_main_vx_err_1_129 + 1),a
 ;	main.c:581: vy_err = vy-vy_thres; 
-	mov	a,_main_vy_1_131
+	mov	a,_main_vy_1_129
 	clr	c
 	subb	a,_vy_thres
-	mov	_main_vy_err_1_131,a
-	mov	a,(_main_vy_1_131 + 1)
+	mov	_main_vy_err_1_129,a
+	mov	a,(_main_vy_1_129 + 1)
 	subb	a,(_vy_thres + 1)
-	mov	(_main_vy_err_1_131 + 1),a
+	mov	(_main_vy_err_1_129 + 1),a
 ;	main.c:582: pwm_left = 0; 
 	mov	_pwm_left,#0x00
 ;	main.c:583: pwm_right = 0; 
@@ -2137,116 +2136,116 @@ L022078?:
 ;	main.c:585: if ((vy_error>5) && (vx_error<5)){
 	clr	c
 	mov	a,#0x05
-	subb	a,_main_vy_error_1_131
+	subb	a,_main_vy_error_1_129
 	clr	a
 	xrl	a,#0x80
-	mov	b,(_main_vy_error_1_131 + 1)
+	mov	b,(_main_vy_error_1_129 + 1)
 	xrl	b,#0x80
 	subb	a,b
 	clr	a
 	rlc	a
 	mov	r7,a
-	jz	L022005?
+	jz	L022007?
 	clr	c
-	mov	a,_main_vx_error_1_131
+	mov	a,_main_vx_error_1_129
 	subb	a,#0x05
-	mov	a,(_main_vx_error_1_131 + 1)
+	mov	a,(_main_vx_error_1_129 + 1)
 	xrl	a,#0x80
 	subb	a,#0x80
-	jnc	L022005?
+	jnc	L022007?
 ;	main.c:586: pwm_left = vy_error; 
-	mov	r5,_main_vy_error_1_131
+	mov	r5,_main_vy_error_1_129
 	mov	_pwm_left,r5
 ;	main.c:587: pwm_right = vy_error; 
 	mov	_pwm_right,r5
 ;	main.c:588: if (vy_err > 0){ //move forward
 	clr	c
 	clr	a
-	subb	a,_main_vy_err_1_131
+	subb	a,_main_vy_err_1_129
 	clr	a
 	xrl	a,#0x80
-	mov	b,(_main_vy_err_1_131 + 1)
+	mov	b,(_main_vy_err_1_129 + 1)
 	xrl	b,#0x80
 	subb	a,b
-	jnc	L022002?
+	jnc	L022004?
 ;	main.c:589: L_motor_dir = 0; 
 	mov	_L_motor_dir,#0x00
 ;	main.c:590: R_motor_dir = 0; 
 	mov	_R_motor_dir,#0x00
-	sjmp	L022005?
-L022002?:
+	sjmp	L022007?
+L022004?:
 ;	main.c:593: L_motor_dir = 1; 
 	mov	_L_motor_dir,#0x01
 ;	main.c:594: R_motor_dir = 1; 
 	mov	_R_motor_dir,#0x01
-L022005?:
+L022007?:
 ;	main.c:597: if ((vx_error>5)&&(vy_error<5)){
 	clr	c
 	mov	a,#0x05
-	subb	a,_main_vx_error_1_131
+	subb	a,_main_vx_error_1_129
 	clr	a
 	xrl	a,#0x80
-	mov	b,(_main_vx_error_1_131 + 1)
+	mov	b,(_main_vx_error_1_129 + 1)
 	xrl	b,#0x80
 	subb	a,b
 	clr	a
 	rlc	a
 	mov	r5,a
-	jz	L022011?
+	jz	L022013?
 	clr	c
-	mov	a,_main_vy_error_1_131
+	mov	a,_main_vy_error_1_129
 	subb	a,#0x05
-	mov	a,(_main_vy_error_1_131 + 1)
+	mov	a,(_main_vy_error_1_129 + 1)
 	xrl	a,#0x80
 	subb	a,#0x80
-	jnc	L022011?
+	jnc	L022013?
 ;	main.c:598: pwm_left = vx_error; 
-	mov	r6,_main_vx_error_1_131
+	mov	r6,_main_vx_error_1_129
 	mov	_pwm_left,r6
 ;	main.c:599: pwm_right = vx_error; 
 	mov	_pwm_right,r6
 ;	main.c:600: if (vx_err > 0){ //turn right
 	clr	c
 	clr	a
-	subb	a,_main_vx_err_1_131
+	subb	a,_main_vx_err_1_129
 	clr	a
 	xrl	a,#0x80
-	mov	b,(_main_vx_err_1_131 + 1)
+	mov	b,(_main_vx_err_1_129 + 1)
 	xrl	b,#0x80
 	subb	a,b
-	jnc	L022008?
+	jnc	L022010?
 ;	main.c:601: L_motor_dir = 1; 
 	mov	_L_motor_dir,#0x01
 ;	main.c:602: R_motor_dir = 0; 
 	mov	_R_motor_dir,#0x00
-	sjmp	L022011?
-L022008?:
+	sjmp	L022013?
+L022010?:
 ;	main.c:605: L_motor_dir = 0; 
 	mov	_L_motor_dir,#0x00
 ;	main.c:606: R_motor_dir = 1; 
 	mov	_R_motor_dir,#0x01
-L022011?:
+L022013?:
 ;	main.c:609: if ((vx_error>5)&&(vy_error)>5){
 	mov	a,r5
-	jnz	L022085?
-	ljmp	L022049?
-L022085?:
+	jnz	L022090?
+	ljmp	L022051?
+L022090?:
 	mov	a,r7
-	jnz	L022086?
-	ljmp	L022049?
-L022086?:
+	jnz	L022091?
+	ljmp	L022051?
+L022091?:
 ;	main.c:611: if (vy_err>0){
 	clr	c
 	clr	a
-	subb	a,_main_vy_err_1_131
+	subb	a,_main_vy_err_1_129
 	clr	a
 	xrl	a,#0x80
-	mov	b,(_main_vy_err_1_131 + 1)
+	mov	b,(_main_vy_err_1_129 + 1)
 	xrl	b,#0x80
 	subb	a,b
-	jc	L022087?
-	ljmp	L022023?
-L022087?:
+	jc	L022092?
+	ljmp	L022025?
+L022092?:
 ;	main.c:612: L_motor_dir = 0; 
 	mov	_L_motor_dir,#0x00
 ;	main.c:613: R_motor_dir = 0; 
@@ -2254,20 +2253,20 @@ L022087?:
 ;	main.c:615: if (vx_err>0){
 	clr	c
 	clr	a
-	subb	a,_main_vx_err_1_131
+	subb	a,_main_vx_err_1_129
 	clr	a
 	xrl	a,#0x80
-	mov	b,(_main_vx_err_1_131 + 1)
+	mov	b,(_main_vx_err_1_129 + 1)
 	xrl	b,#0x80
 	subb	a,b
-	jc	L022088?
-	ljmp	L022020?
-L022088?:
+	jc	L022093?
+	ljmp	L022022?
+L022093?:
 ;	main.c:616: if (vy*100<=vy_thres*100/2){
 	push	ar2
 	push	ar3
-	mov	__mulint_PARM_2,_main_vy_1_131
-	mov	(__mulint_PARM_2 + 1),(_main_vy_1_131 + 1)
+	mov	__mulint_PARM_2,_main_vy_1_129
+	mov	(__mulint_PARM_2 + 1),(_main_vy_1_129 + 1)
 	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
@@ -2310,23 +2309,23 @@ L022088?:
 	subb	a,b
 	pop	ar3
 	pop	ar2
-	jc	L022014?
+	jc	L022016?
 ;	main.c:617: pwm_left = vy_error; 
-	mov	_pwm_left,_main_vy_error_1_131
+	mov	_pwm_left,_main_vy_error_1_129
 ;	main.c:618: pwm_right = vy_error*100/(vx_error+vy_error);
-	mov	__mulint_PARM_2,_main_vy_error_1_131
-	mov	(__mulint_PARM_2 + 1),(_main_vy_error_1_131 + 1)
+	mov	__mulint_PARM_2,_main_vy_error_1_129
+	mov	(__mulint_PARM_2 + 1),(_main_vy_error_1_129 + 1)
 	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
 	lcall	__mulint
 	mov	r5,dpl
 	mov	r6,dph
-	mov	a,_main_vy_error_1_131
-	add	a,_main_vx_error_1_131
+	mov	a,_main_vy_error_1_129
+	add	a,_main_vx_error_1_129
 	mov	__divsint_PARM_2,a
-	mov	a,(_main_vy_error_1_131 + 1)
-	addc	a,(_main_vx_error_1_131 + 1)
+	mov	a,(_main_vy_error_1_129 + 1)
+	addc	a,(_main_vx_error_1_129 + 1)
 	mov	(__divsint_PARM_2 + 1),a
 	mov	dpl,r5
 	mov	dph,r6
@@ -2336,24 +2335,24 @@ L022088?:
 	pop	ar3
 	pop	ar2
 	mov	_pwm_right,r5
-	ljmp	L022023?
-L022014?:
+	ljmp	L022025?
+L022016?:
 ;	main.c:621: pwm_left = vx_error; 
-	mov	_pwm_left,_main_vx_error_1_131
+	mov	_pwm_left,_main_vx_error_1_129
 ;	main.c:622: pwm_right = vx_error*100/(vx_error+vy_error);
-	mov	__mulint_PARM_2,_main_vx_error_1_131
-	mov	(__mulint_PARM_2 + 1),(_main_vx_error_1_131 + 1)
+	mov	__mulint_PARM_2,_main_vx_error_1_129
+	mov	(__mulint_PARM_2 + 1),(_main_vx_error_1_129 + 1)
 	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
 	lcall	__mulint
 	mov	r5,dpl
 	mov	r6,dph
-	mov	a,_main_vy_error_1_131
-	add	a,_main_vx_error_1_131
+	mov	a,_main_vy_error_1_129
+	add	a,_main_vx_error_1_129
 	mov	__divsint_PARM_2,a
-	mov	a,(_main_vy_error_1_131 + 1)
-	addc	a,(_main_vx_error_1_131 + 1)
+	mov	a,(_main_vy_error_1_129 + 1)
+	addc	a,(_main_vx_error_1_129 + 1)
 	mov	(__divsint_PARM_2 + 1),a
 	mov	dpl,r5
 	mov	dph,r6
@@ -2363,13 +2362,13 @@ L022014?:
 	pop	ar3
 	pop	ar2
 	mov	_pwm_right,r5
-	ljmp	L022023?
-L022020?:
+	ljmp	L022025?
+L022022?:
 ;	main.c:627: if (vy*100<=vy_thres*100/2){
 	push	ar2
 	push	ar3
-	mov	__mulint_PARM_2,_main_vy_1_131
-	mov	(__mulint_PARM_2 + 1),(_main_vy_1_131 + 1)
+	mov	__mulint_PARM_2,_main_vy_1_129
+	mov	(__mulint_PARM_2 + 1),(_main_vy_1_129 + 1)
 	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
@@ -2412,21 +2411,21 @@ L022020?:
 	subb	a,b
 	pop	ar3
 	pop	ar2
-	jc	L022017?
+	jc	L022019?
 ;	main.c:628: pwm_left = vy_error*100/(vx_error+vy_error);
-	mov	__mulint_PARM_2,_main_vy_error_1_131
-	mov	(__mulint_PARM_2 + 1),(_main_vy_error_1_131 + 1)
+	mov	__mulint_PARM_2,_main_vy_error_1_129
+	mov	(__mulint_PARM_2 + 1),(_main_vy_error_1_129 + 1)
 	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
 	lcall	__mulint
 	mov	r5,dpl
 	mov	r6,dph
-	mov	a,_main_vy_error_1_131
-	add	a,_main_vx_error_1_131
+	mov	a,_main_vy_error_1_129
+	add	a,_main_vx_error_1_129
 	mov	__divsint_PARM_2,a
-	mov	a,(_main_vy_error_1_131 + 1)
-	addc	a,(_main_vx_error_1_131 + 1)
+	mov	a,(_main_vy_error_1_129 + 1)
+	addc	a,(_main_vx_error_1_129 + 1)
 	mov	(__divsint_PARM_2 + 1),a
 	mov	dpl,r5
 	mov	dph,r6
@@ -2437,23 +2436,23 @@ L022020?:
 	pop	ar2
 	mov	_pwm_left,r5
 ;	main.c:629: pwm_right = vy_error; 
-	mov	_pwm_right,_main_vy_error_1_131
-	sjmp	L022023?
-L022017?:
+	mov	_pwm_right,_main_vy_error_1_129
+	sjmp	L022025?
+L022019?:
 ;	main.c:632: pwm_left = vx_error*100/(vx_error+vy_error);
-	mov	__mulint_PARM_2,_main_vx_error_1_131
-	mov	(__mulint_PARM_2 + 1),(_main_vx_error_1_131 + 1)
+	mov	__mulint_PARM_2,_main_vx_error_1_129
+	mov	(__mulint_PARM_2 + 1),(_main_vx_error_1_129 + 1)
 	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
 	lcall	__mulint
 	mov	r5,dpl
 	mov	r6,dph
-	mov	a,_main_vy_error_1_131
-	add	a,_main_vx_error_1_131
+	mov	a,_main_vy_error_1_129
+	add	a,_main_vx_error_1_129
 	mov	__divsint_PARM_2,a
-	mov	a,(_main_vy_error_1_131 + 1)
-	addc	a,(_main_vx_error_1_131 + 1)
+	mov	a,(_main_vy_error_1_129 + 1)
+	addc	a,(_main_vx_error_1_129 + 1)
 	mov	(__divsint_PARM_2 + 1),a
 	mov	dpl,r5
 	mov	dph,r6
@@ -2464,13 +2463,13 @@ L022017?:
 	pop	ar2
 	mov	_pwm_left,r5
 ;	main.c:633: pwm_right = vx_error; 
-	mov	_pwm_right,_main_vx_error_1_131
-L022023?:
+	mov	_pwm_right,_main_vx_error_1_129
+L022025?:
 ;	main.c:638: if (vy_err<0){
-	mov	a,(_main_vy_err_1_131 + 1)
-	jb	acc.7,L022091?
-	ljmp	L022049?
-L022091?:
+	mov	a,(_main_vy_err_1_129 + 1)
+	jb	acc.7,L022096?
+	ljmp	L022051?
+L022096?:
 ;	main.c:639: L_motor_dir = 1; 
 	mov	_L_motor_dir,#0x01
 ;	main.c:640: R_motor_dir = 1; 
@@ -2478,20 +2477,20 @@ L022091?:
 ;	main.c:642: if (vx_err>0){
 	clr	c
 	clr	a
-	subb	a,_main_vx_err_1_131
+	subb	a,_main_vx_err_1_129
 	clr	a
 	xrl	a,#0x80
-	mov	b,(_main_vx_err_1_131 + 1)
+	mov	b,(_main_vx_err_1_129 + 1)
 	xrl	b,#0x80
 	subb	a,b
-	jc	L022092?
-	ljmp	L022031?
-L022092?:
+	jc	L022097?
+	ljmp	L022033?
+L022097?:
 ;	main.c:643: if (vy*100<=vy_thres*100/2){
 	push	ar2
 	push	ar3
-	mov	__mulint_PARM_2,_main_vy_1_131
-	mov	(__mulint_PARM_2 + 1),(_main_vy_1_131 + 1)
+	mov	__mulint_PARM_2,_main_vy_1_129
+	mov	(__mulint_PARM_2 + 1),(_main_vy_1_129 + 1)
 	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
@@ -2534,23 +2533,23 @@ L022092?:
 	subb	a,b
 	pop	ar3
 	pop	ar2
-	jc	L022025?
+	jc	L022027?
 ;	main.c:644: pwm_left = vy_error; 
-	mov	_pwm_left,_main_vy_error_1_131
+	mov	_pwm_left,_main_vy_error_1_129
 ;	main.c:645: pwm_right = vy_error*100/(vx_error+vy_error);
-	mov	__mulint_PARM_2,_main_vy_error_1_131
-	mov	(__mulint_PARM_2 + 1),(_main_vy_error_1_131 + 1)
+	mov	__mulint_PARM_2,_main_vy_error_1_129
+	mov	(__mulint_PARM_2 + 1),(_main_vy_error_1_129 + 1)
 	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
 	lcall	__mulint
 	mov	r5,dpl
 	mov	r6,dph
-	mov	a,_main_vy_error_1_131
-	add	a,_main_vx_error_1_131
+	mov	a,_main_vy_error_1_129
+	add	a,_main_vx_error_1_129
 	mov	__divsint_PARM_2,a
-	mov	a,(_main_vy_error_1_131 + 1)
-	addc	a,(_main_vx_error_1_131 + 1)
+	mov	a,(_main_vy_error_1_129 + 1)
+	addc	a,(_main_vx_error_1_129 + 1)
 	mov	(__divsint_PARM_2 + 1),a
 	mov	dpl,r5
 	mov	dph,r6
@@ -2560,24 +2559,24 @@ L022092?:
 	pop	ar3
 	pop	ar2
 	mov	_pwm_right,r5
-	ljmp	L022049?
-L022025?:
+	ljmp	L022051?
+L022027?:
 ;	main.c:648: pwm_left = vx_error; 
-	mov	_pwm_left,_main_vx_error_1_131
+	mov	_pwm_left,_main_vx_error_1_129
 ;	main.c:649: pwm_right = vx_error*100/(vx_error+vy_error);
-	mov	__mulint_PARM_2,_main_vx_error_1_131
-	mov	(__mulint_PARM_2 + 1),(_main_vx_error_1_131 + 1)
+	mov	__mulint_PARM_2,_main_vx_error_1_129
+	mov	(__mulint_PARM_2 + 1),(_main_vx_error_1_129 + 1)
 	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
 	lcall	__mulint
 	mov	r5,dpl
 	mov	r6,dph
-	mov	a,_main_vy_error_1_131
-	add	a,_main_vx_error_1_131
+	mov	a,_main_vy_error_1_129
+	add	a,_main_vx_error_1_129
 	mov	__divsint_PARM_2,a
-	mov	a,(_main_vy_error_1_131 + 1)
-	addc	a,(_main_vx_error_1_131 + 1)
+	mov	a,(_main_vy_error_1_129 + 1)
+	addc	a,(_main_vx_error_1_129 + 1)
 	mov	(__divsint_PARM_2 + 1),a
 	mov	dpl,r5
 	mov	dph,r6
@@ -2587,13 +2586,13 @@ L022025?:
 	pop	ar3
 	pop	ar2
 	mov	_pwm_right,r5
-	ljmp	L022049?
-L022031?:
+	ljmp	L022051?
+L022033?:
 ;	main.c:654: if (vy*100<=vy_thres*100/2){
 	push	ar2
 	push	ar3
-	mov	__mulint_PARM_2,_main_vy_1_131
-	mov	(__mulint_PARM_2 + 1),(_main_vy_1_131 + 1)
+	mov	__mulint_PARM_2,_main_vy_1_129
+	mov	(__mulint_PARM_2 + 1),(_main_vy_1_129 + 1)
 	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
@@ -2636,21 +2635,21 @@ L022031?:
 	subb	a,b
 	pop	ar3
 	pop	ar2
-	jc	L022028?
+	jc	L022030?
 ;	main.c:655: pwm_left = vy_error*100/(vx_error+vy_error);
-	mov	__mulint_PARM_2,_main_vy_error_1_131
-	mov	(__mulint_PARM_2 + 1),(_main_vy_error_1_131 + 1)
+	mov	__mulint_PARM_2,_main_vy_error_1_129
+	mov	(__mulint_PARM_2 + 1),(_main_vy_error_1_129 + 1)
 	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
 	lcall	__mulint
 	mov	r5,dpl
 	mov	r6,dph
-	mov	a,_main_vy_error_1_131
-	add	a,_main_vx_error_1_131
+	mov	a,_main_vy_error_1_129
+	add	a,_main_vx_error_1_129
 	mov	__divsint_PARM_2,a
-	mov	a,(_main_vy_error_1_131 + 1)
-	addc	a,(_main_vx_error_1_131 + 1)
+	mov	a,(_main_vy_error_1_129 + 1)
+	addc	a,(_main_vx_error_1_129 + 1)
 	mov	(__divsint_PARM_2 + 1),a
 	mov	dpl,r5
 	mov	dph,r6
@@ -2661,23 +2660,23 @@ L022031?:
 	pop	ar2
 	mov	_pwm_left,r5
 ;	main.c:656: pwm_right = vy_error; 
-	mov	_pwm_right,_main_vy_error_1_131
-	ljmp	L022049?
-L022028?:
+	mov	_pwm_right,_main_vy_error_1_129
+	ljmp	L022051?
+L022030?:
 ;	main.c:659: pwm_left = vx_error*100/(vx_error+vy_error);
-	mov	__mulint_PARM_2,_main_vx_error_1_131
-	mov	(__mulint_PARM_2 + 1),(_main_vx_error_1_131 + 1)
+	mov	__mulint_PARM_2,_main_vx_error_1_129
+	mov	(__mulint_PARM_2 + 1),(_main_vx_error_1_129 + 1)
 	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
 	lcall	__mulint
 	mov	r5,dpl
 	mov	r6,dph
-	mov	a,_main_vy_error_1_131
-	add	a,_main_vx_error_1_131
+	mov	a,_main_vy_error_1_129
+	add	a,_main_vx_error_1_129
 	mov	__divsint_PARM_2,a
-	mov	a,(_main_vy_error_1_131 + 1)
-	addc	a,(_main_vx_error_1_131 + 1)
+	mov	a,(_main_vy_error_1_129 + 1)
+	addc	a,(_main_vx_error_1_129 + 1)
 	mov	(__divsint_PARM_2 + 1),a
 	mov	dpl,r5
 	mov	dph,r6
@@ -2688,9 +2687,9 @@ L022028?:
 	pop	ar2
 	mov	_pwm_left,r5
 ;	main.c:660: pwm_right = vx_error; 
-	mov	_pwm_right,_main_vx_error_1_131
-	ljmp	L022049?
-L022039?:
+	mov	_pwm_right,_main_vx_error_1_129
+	ljmp	L022051?
+L022041?:
 ;	main.c:668: printf("*** BAD MESSAGE ***(%d): %s\r\n", buff,strlen(buff));
 	mov	dptr,#_buff
 	mov	b,#0x40
@@ -2707,9 +2706,9 @@ L022039?:
 	push	acc
 	mov	a,#0x40
 	push	acc
-	mov	a,#__str_14
+	mov	a,#__str_15
 	push	acc
-	mov	a,#(__str_14 >> 8)
+	mov	a,#(__str_15 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -2719,22 +2718,25 @@ L022039?:
 	mov	sp,a
 	pop	ar3
 	pop	ar2
-	ljmp	L022049?
-L022044?:
+	ljmp	L022051?
+L022046?:
 ;	main.c:674: else if(c=='@') // Master wants slave data
-	cjne	r4,#0x40,L022095?
-	sjmp	L022096?
-L022095?:
-	ljmp	L022049?
-L022096?:
-;	main.c:676: sprintf(buff, "%05u\n", cnt);
+	cjne	r4,#0x40,L022100?
+	sjmp	L022101?
+L022100?:
+	ljmp	L022051?
+L022101?:
+;	main.c:676: sprintf(buff, "%01d,%05u\n", 0, cnt);
 	push	ar2
 	push	ar3
 	push	ar2
 	push	ar3
-	mov	a,#__str_15
+	clr	a
 	push	acc
-	mov	a,#(__str_15 >> 8)
+	push	acc
+	mov	a,#__str_16
+	push	acc
+	mov	a,#(__str_16 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -2746,15 +2748,15 @@ L022096?:
 	push	acc
 	lcall	_sprintf
 	mov	a,sp
-	add	a,#0xf8
+	add	a,#0xf6
 	mov	sp,a
 	pop	ar3
 	pop	ar2
 ;	main.c:677: cnt++;
 	inc	r2
-	cjne	r2,#0x00,L022097?
+	cjne	r2,#0x00,L022102?
 	inc	r3
-L022097?:
+L022102?:
 ;	main.c:678: waitms(5); // The radio seems to need this delay...
 	mov	dptr,#0x0005
 	push	ar2
@@ -2766,7 +2768,7 @@ L022097?:
 	lcall	_sendstr1
 	pop	ar3
 	pop	ar2
-	ljmp	L022049?
+	ljmp	L022051?
 	rseg R_CSEG
 
 	rseg R_XINIT
@@ -2833,20 +2835,25 @@ __str_11:
 	db 0x0A
 	db 0x00
 __str_12:
-	db '%03d,%03d'
-	db 0x00
-__str_13:
-	db 'Joystick Received: Vx = %03d, Vy = %03d'
+	db 'Master says: %s'
 	db 0x0D
 	db 0x0A
 	db 0x00
+__str_13:
+	db '%03d,%03d,%01d'
+	db 0x00
 __str_14:
-	db '*** BAD MESSAGE ***(%d): %s'
+	db 'Joystick Received: Vx = %03d, Vy = %03d, Order = %01d'
 	db 0x0D
 	db 0x0A
 	db 0x00
 __str_15:
-	db '%05u'
+	db '*** BAD MESSAGE ***(%d): %s'
+	db 0x0D
+	db 0x0A
+	db 0x00
+__str_16:
+	db '%01d,%05u'
 	db 0x0A
 	db 0x00
 
