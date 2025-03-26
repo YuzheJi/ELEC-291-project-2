@@ -4,3 +4,4 @@ lib=libint.lib
 lib=liblong.lib
 lib=libfloat.lib
 obj=main.obj
+obj=freq.obj

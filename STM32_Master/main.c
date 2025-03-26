@@ -10,14 +10,13 @@
 
 
 #define SYSCLK 32000000L
+#define TIMER22_FREQ 1000L
+
+long timer22_counter = 0;
+int buzzer_wait = 6000; 		//buzzer wait time in ms
 
 
-// timer21 ISR
-void TIM21_Handler(void) 
-{
-	TIM21->SR &= ~BIT0; // clear update interrupt flag
-	GPIOB->ODR ^= BIT7; // toggle output pin
-}
+
 // LQFP32 pinout
 //              ----------
 // 3.3v   VDD -|1       32|- VSS
@@ -117,6 +116,14 @@ void Configure_Pins (void)
 	NVIC->ISER[0] |= BIT20; // enable timer 21 interrupts in the NVIC
 	TIM21->CR1 |= BIT4;      // Downcounting      
 	TIM21->DIER |= BIT0;     // enable update event (reload event) interrupt  
+
+	// Set up timer22 for Buzzer
+	RCC->APB2ENR |= BIT5;  // turn on clock for timer22 (UM: page 188)
+	NVIC->ISER[0] |= BIT22; // enable timer 22 interrupts in the NVIC
+	TIM22->ARR = SYSCLK/TIMER22_FREQ; // timer 22 freq: 1000Hz 
+	TIM22->CR1 |= BIT4;   
+	TIM22->DIER |= BIT0;     // enable update event (reload event) interrupt 
+
 	__enable_irq();
 }
 
@@ -140,6 +147,19 @@ void Buzzer(char mode){
 		break;
 	}
 	return;
+}
+
+void buzzer_ctrl(int freq100){
+
+	if (freq100 < 5263){
+		Setbuzzer_freq(300L);
+		buzzer_wait = 3000;
+	} 
+	else{
+		Setbuzzer_freq(300+30*(freq100-5263));
+		buzzer_wait = 3000 - 20*(freq100-5263);
+	}
+
 }
 
 void SendATCommand (char * s)
@@ -178,16 +198,31 @@ void LCD_Custom_Char(unsigned char loc, unsigned char *charmap)
     }
 }
 
+// timer21 ISR
+void TIM21_Handler(void) 
+{
+	TIM21->SR &= ~BIT0; // clear update interrupt flag
+	GPIOB->ODR ^= BIT7; // toggle output pin
+}
 
+// timer22 ISR
+void TIM22_Handler(void) 
+{	
+	TIM22->SR &= ~BIT0; // clear update interrupt flag
+	timer22_counter++; 
+	if(timer22_counter < 101) Buzzer(1);
+	else if (timer22_counter < buzzer_wait) Buzzer(0);
+	else{
+		timer22_counter = 0;
+	} 
+}
 
 void main(void)
 {  
 	char buff[80];
 	char lb[17];
-	long buzzer_freq = 300L;
     int timeout_cnt=0;
 	int nadc;
-
 	int pick_order = 0;
 
 	// note: x,y here are not the same as the x,y printed on joystick
@@ -195,10 +230,8 @@ void main(void)
 	int vy100;
 	int vctrl100;
 
-	unsigned cnt_rec;
-	
-
-	
+	int metal_freq = 0;
+		
 	uint8_t charge[8] = {
 		0b00000010, //       
 		0b00000100, //   
@@ -216,8 +249,6 @@ void main(void)
 	initADC();
 	LCD_Custom_Char(0, charge);
 
-	Setbuzzer_freq(buzzer_freq);
-
 	initUART2(9600);
 	LCDprint("ELEC-291:       ", 1, 1);
 	LCDprint("       Project2 ", 2, 1);
@@ -230,24 +261,16 @@ void main(void)
 	waitms(1000);
 
 	ReceptionOff();
-	
-	//WARNING: notice that printf() of floating point numbers is not enabled in the makefile!
 
 	SendATCommand("AT+VER\r\n");
 	SendATCommand("AT+BAUD\r\n");
 	SendATCommand("AT+RFID\r\n");
 	SendATCommand("AT+DVID\r\n");
-	SendATCommand("AT+RFC\r\n");
+	SendATCommand("AT+RFC002\r\n");
 	SendATCommand("AT+POWE\r\n");
 	SendATCommand("AT+CLSS\r\n");
 	
-	// We should select an unique device ID.  The device ID can be a hex
-	// number from 0x0000 to 0xFFFF.  In this case is set to 0xABBA
 	SendATCommand("AT+DVIDEFEF\r\n");
-
-   	// Display something in the LCD
-	        //1234567890123456
-	
 
 	while(1)
 	{
@@ -287,47 +310,53 @@ void main(void)
 		printf("%s\r\n",buff);
 		eputc2('!'); // Send a message to the slave. First send the 'attention' character which is '!'
 		// Wait a bit so the slave has a chance to get ready
-		waitms(10); // This may need adjustment depending on how busy is the slave
+		waitms(15); // This may need adjustment depending on how busy is the slave
 		eputs2(buff); // Send the test message
 		
 		
-		waitms(10); // This may need adjustment depending on how busy is the slave
+		waitms(15); // This may need adjustment depending on how busy is the slave
 
 		eputc2('@'); // Request a message from the slave
 		
 		timeout_cnt=0;
 		while(1)
 		{
-			if(ReceivedBytes2()>5) break; // Something has arrived
+			if(ReceivedBytes2()>6) break; // Something has arrived
 			if(++timeout_cnt>250) break; // Wait up to 25ms for the repply
 			Delay_us(100); // 100us*250=25ms
 		}
 		
-		if(ReceivedBytes2()>5) // Something has arrived from the slave
+		if(ReceivedBytes2()>6) // Something has arrived from the slave
 		{
 			egets2(buff, sizeof(buff)-1);
-			if(strlen(buff)==8) // Check for valid message size (5 characters + new line '\n')
+			if(strlen(buff)==7) // Check for valid message size (5 characters + new line '\n')
 			{
 				printf("Slave says: %s\r", buff);
-				sscanf(buff, "%01d,%05u",&pick_order,&cnt_rec);
+				sscanf(buff, "%01d,%04d",&pick_order,&metal_freq);
 			}
 			else
 			{
+				while (ReceivedBytes2()) egetc2(); 
 				printf("*** BAD MESSAGE ***: %s\r", buff);
 			}
 		}
 		else // Timed out waiting for reply
 		{
-			printf("NO RESPONSE\r\n", buff);
+			while (ReceivedBytes2()) egetc2(); 
+			printf("NO RESPONSE\r\n");
+			pick_order = 0;
 		}
 
 		if(!JOYBUT){
 			while(!JOYBUT);
 			pick_order = 1;
-			Buzzer(2); // toggle buzzer 
 		}
-		
-		
+
+		buzzer_ctrl(metal_freq);
+
+		buzzer_wait = 3000 - 9*vy100; 
+
+		TIM22->CR1 |= BIT0; 
 		waitms(50);  // Set the information interchange pace: communicate about every 50ms
 	}
 	
