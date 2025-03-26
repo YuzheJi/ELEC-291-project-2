@@ -1,10 +1,11 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-; This file was generated Sat Mar 22 15:47:02 2025
+; This file was generated Wed Mar 26 02:10:34 2025
 ;--------------------------------------------------------
 $name sensor_test
 $optc51 --model-small
+$printf_float
 	R_DSEG    segment data
 	R_CSEG    segment code
 	R_BSEG    segment bit
@@ -24,18 +25,39 @@ $optc51 --model-small
 ; Public variables in this module
 ;--------------------------------------------------------
 	public _main
-	public _bmm150_interface_selection
-	public _bmm150_error_codes_print_result
-	public _bmm150_spi_write
-	public _bmm150_spi_read
-	public _spi_transfer
+	public _BMM150_Read_Data
+	public _BMM150_compensate_z
+	public _BMM150_compensate_y
+	public _BMM150_compensate_x
+	public _BMM150_Init
+	public _BMM150_Read_Trim_Registers
+	public _SPI_write
+	public _SPI_read_block
+	public _SPI_read
+	public _SPI_transfer
 	public _waitms
-	public _ptr_delay_us
 	public _Timer3us
 	public _Set_Pin_Output
 	public __c51_external_startup
-	public _bmm150_interface_selection_PARM_2
-	public _bmm150_error_codes_print_result_PARM_2
+	public _BMM150_Read_Data_PARM_3
+	public _BMM150_Read_Data_PARM_2
+	public _BMM150_compensate_z_PARM_2
+	public _BMM150_compensate_y_PARM_2
+	public _BMM150_compensate_x_PARM_2
+	public _SPI_write_PARM_2
+	public _SPI_read_block_PARM_3
+	public _SPI_read_block_PARM_2
+	public _dig_xyz1
+	public _dig_xy2
+	public _dig_xy1
+	public _dig_z4
+	public _dig_z3
+	public _dig_z2
+	public _dig_z1
+	public _dig_y2
+	public _dig_y1
+	public _dig_x2
+	public _dig_x1
 ;--------------------------------------------------------
 ; Special Function Registers
 ;--------------------------------------------------------
@@ -484,12 +506,88 @@ _TFRQ           BIT 0xdf
 ; internal ram data
 ;--------------------------------------------------------
 	rseg R_DSEG
-_bmm150_error_codes_print_result_PARM_2:
+_dig_x1:
 	ds 1
-_bmm150_interface_selection_PARM_2:
+_dig_x2:
 	ds 1
-_get_data_dev_1_92:
+_dig_y1:
+	ds 1
+_dig_y2:
+	ds 1
+_dig_z1:
+	ds 1
+_dig_z2:
+	ds 1
+_dig_z3:
+	ds 1
+_dig_z4:
+	ds 1
+_dig_xy1:
+	ds 1
+_dig_xy2:
+	ds 1
+_dig_xyz1:
+	ds 1
+_SPI_read_block_PARM_2:
+	ds 3
+_SPI_read_block_PARM_3:
+	ds 1
+_SPI_write_PARM_2:
+	ds 1
+_BMM150_compensate_x_PARM_2:
+	ds 3
+_BMM150_compensate_x_sloc0_1_0:
+	ds 4
+_BMM150_compensate_y_PARM_2:
+	ds 3
+_BMM150_compensate_y_sloc0_1_0:
+	ds 4
+_BMM150_compensate_z_PARM_2:
+	ds 3
+_BMM150_compensate_z_sloc0_1_0:
 	ds 2
+_BMM150_compensate_z_sloc1_1_0:
+	ds 4
+_BMM150_compensate_z_sloc2_1_0:
+	ds 4
+_BMM150_Read_Data_PARM_2:
+	ds 3
+_BMM150_Read_Data_PARM_3:
+	ds 3
+_BMM150_Read_Data_mag_x_1_118:
+	ds 3
+_BMM150_Read_Data_raw_y_lsb_1_119:
+	ds 1
+_BMM150_Read_Data_raw_y_msb_1_119:
+	ds 1
+_BMM150_Read_Data_raw_z_lsb_1_119:
+	ds 1
+_BMM150_Read_Data_raw_z_msb_1_119:
+	ds 1
+_BMM150_Read_Data_raw_rhall_lsb_1_119:
+	ds 1
+_BMM150_Read_Data_raw_rhall_msb_1_119:
+	ds 1
+_BMM150_Read_Data_raw_z_1_119:
+	ds 2
+_BMM150_Read_Data_x_val_1_119:
+	ds 2
+_BMM150_Read_Data_y_val_1_119:
+	ds 2
+_BMM150_Read_Data_z_val_1_119:
+	ds 2
+_BMM150_Read_Data_rhall_val_1_119:
+	ds 2
+_main_i_1_123:
+	ds 1
+_main_mag_x_1_123:
+	ds 2
+_main_mag_y_1_123:
+	ds 2
+_main_mag_z_1_123:
+	ds 2
+_main_avg_angle_1_123:
+	ds 4
 ;--------------------------------------------------------
 ; overlayable items in internal ram 
 ;--------------------------------------------------------
@@ -516,18 +614,22 @@ _get_data_dev_1_92:
 ; external ram data
 ;--------------------------------------------------------
 	rseg R_XSEG
-_bmm150_interface_selection_rslt_1_84:
-	ds 1
-_set_config_rslt_1_90:
-	ds 1
-_set_config_settings_1_90:
-	ds 5
-_get_data_rslt_1_93:
-	ds 1
-_get_data_mag_data_1_93:
+_BMM150_Read_Trim_Registers_trim_x1y1_1_84:
+	ds 2
+_BMM150_Read_Trim_Registers_trim_xyz_data_1_84:
 	ds 4
-_main_dev_1_97:
-	ds 21
+_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84:
+	ds 10
+_BMM150_compensate_x_retval_1_93:
+	ds 2
+_BMM150_compensate_x_process_comp_x0_1_93:
+	ds 2
+_BMM150_compensate_y_retval_1_102:
+	ds 2
+_BMM150_compensate_y_process_comp_y0_1_102:
+	ds 2
+_BMM150_compensate_z_retval_1_111:
+	ds 4
 ;--------------------------------------------------------
 ; absolute external ram data
 ;--------------------------------------------------------
@@ -563,96 +665,90 @@ _main_dev_1_97:
 ;Allocation info for local variables in function '_c51_external_startup'
 ;------------------------------------------------------------
 ;------------------------------------------------------------
-;	sensor_test.c:38: char _c51_external_startup (void)
+;	sensor_test.c:74: char _c51_external_startup (void)
 ;	-----------------------------------------
 ;	 function _c51_external_startup
 ;	-----------------------------------------
 __c51_external_startup:
 	using	0
-;	sensor_test.c:41: SFRPAGE = 0x00;
+;	sensor_test.c:77: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
-;	sensor_test.c:42: WDTCN = 0xDE; //First key
+;	sensor_test.c:78: WDTCN = 0xDE; //First key
 	mov	_WDTCN,#0xDE
-;	sensor_test.c:43: WDTCN = 0xAD; //Second key
+;	sensor_test.c:79: WDTCN = 0xAD; //Second key
 	mov	_WDTCN,#0xAD
-;	sensor_test.c:45: VDM0CN=0x80;       // enable VDD monitor
+;	sensor_test.c:81: VDM0CN=0x80;       // enable VDD monitor
 	mov	_VDM0CN,#0x80
-;	sensor_test.c:46: RSTSRC=0x02|0x04;  // Enable reset on missing clock detector and VDD
+;	sensor_test.c:82: RSTSRC=0x02|0x04;  // Enable reset on missing clock detector and VDD
 	mov	_RSTSRC,#0x06
-;	sensor_test.c:53: SFRPAGE = 0x10;
+;	sensor_test.c:89: SFRPAGE = 0x10;
 	mov	_SFRPAGE,#0x10
-;	sensor_test.c:54: PFE0CN  = 0x20; // SYSCLK < 75 MHz.
+;	sensor_test.c:90: PFE0CN  = 0x20; // SYSCLK < 75 MHz.
 	mov	_PFE0CN,#0x20
-;	sensor_test.c:55: SFRPAGE = 0x00;
+;	sensor_test.c:91: SFRPAGE = 0x00;
 	mov	_SFRPAGE,#0x00
-;	sensor_test.c:76: CLKSEL = 0x00;
+;	sensor_test.c:112: CLKSEL = 0x00;
 	mov	_CLKSEL,#0x00
-;	sensor_test.c:77: CLKSEL = 0x00;
+;	sensor_test.c:113: CLKSEL = 0x00;
 	mov	_CLKSEL,#0x00
-;	sensor_test.c:78: while ((CLKSEL & 0x80) == 0);
+;	sensor_test.c:114: while ((CLKSEL & 0x80) == 0);
 L002001?:
 	mov	a,_CLKSEL
 	jnb	acc.7,L002001?
-;	sensor_test.c:79: CLKSEL = 0x03;
+;	sensor_test.c:115: CLKSEL = 0x03;
 	mov	_CLKSEL,#0x03
-;	sensor_test.c:80: CLKSEL = 0x03;
+;	sensor_test.c:116: CLKSEL = 0x03;
 	mov	_CLKSEL,#0x03
-;	sensor_test.c:81: while ((CLKSEL & 0x80) == 0);
+;	sensor_test.c:117: while ((CLKSEL & 0x80) == 0);
 L002004?:
 	mov	a,_CLKSEL
 	jnb	acc.7,L002004?
-;	sensor_test.c:86: P0MDOUT |= 0xE0;
-	orl	_P0MDOUT,#0xE0
-;	sensor_test.c:87: P1MDOUT |= 0x01; 
-	orl	_P1MDOUT,#0x01
-;	sensor_test.c:88: XBR0=0b_0000_0011; //SPI0E=1, URT0E=1
+;	sensor_test.c:123: P0MDOUT = 0b_0000_1101; // SCK, MOSI, and P0.3 are push-pull, others open-drain
+	mov	_P0MDOUT,#0x0D
+;	sensor_test.c:124: P1MDOUT = 0b_0000_0000; // P1 all open-drain
+	mov	_P1MDOUT,#0x00
+;	sensor_test.c:125: XBR0 = 0b_0000_0011;    // SPI0E=1, URT0E=1
 	mov	_XBR0,#0x03
-;	sensor_test.c:89: XBR1=0b_0000_0000;
+;	sensor_test.c:126: XBR1 = 0b_0000_0000;
 	mov	_XBR1,#0x00
-;	sensor_test.c:90: XBR2=0b_0100_0000; // Enable crossbar and weak pull-ups
+;	sensor_test.c:127: XBR2 = 0b_0100_0000;    // Enable crossbar and weak pull-ups
 	mov	_XBR2,#0x40
-;	sensor_test.c:96: SCON0 = 0x10;
+;	sensor_test.c:133: SCON0 = 0x10;
 	mov	_SCON0,#0x10
-;	sensor_test.c:97: TH1 = 0x100-((SYSCLK/BAUDRATE)/(12L*2L));
+;	sensor_test.c:134: TH1 = 0x100-((SYSCLK/BAUDRATE)/(12L*2L));
 	mov	_TH1,#0xE6
-;	sensor_test.c:98: TL1 = TH1;      // Init Timer1
+;	sensor_test.c:135: TL1 = TH1;      // Init Timer1
 	mov	_TL1,_TH1
-;	sensor_test.c:99: TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit auto-reload
+;	sensor_test.c:136: TMOD &= ~0xf0;  // TMOD: timer 1 in 8-bit auto-reload
 	anl	_TMOD,#0x0F
-;	sensor_test.c:100: TMOD |=  0x20;                       
+;	sensor_test.c:137: TMOD |=  0x20;                       
 	orl	_TMOD,#0x20
-;	sensor_test.c:101: TR1 = 1; // START Timer1
+;	sensor_test.c:138: TR1 = 1; // START Timer1
 	setb	_TR1
-;	sensor_test.c:102: TI = 1;  // Indicate TX0 ready
+;	sensor_test.c:139: TI = 1;  // Indicate TX0 ready
 	setb	_TI
-;	sensor_test.c:105: SPI0CKR = (SYSCLK/(2*F_SCK_MAX))-1;
-	mov	_SPI0CKR,#0x23
-;	sensor_test.c:106: SPI0CFG = 0b_0100_0000; //SPI in master mode
-	mov	_SPI0CFG,#0x40
-;	sensor_test.c:107: SPI0CN0 = 0b_0000_0001; //SPI enabled and in three wire mode
+;	sensor_test.c:142: SPI0CKR = (SYSCLK/(2*F_SCK_MAX))-1;
+	mov	_SPI0CKR,#0x11
+;	sensor_test.c:143: SPI0CFG = 0b_1110_0000; // this is mode 3, you need to determine the sampling etc. in datasheet
+	mov	_SPI0CFG,#0xE0
+;	sensor_test.c:144: SPI0CN0 = 0b_0000_0001; // SPI enabled and in three wire mode
 	mov	_SPI0CN0,#0x01
-;	sensor_test.c:110: P0MDOUT &= ~(1<<4); // set P0.4 as open drain input 
-	anl	_P0MDOUT,#0xEF
-;	sensor_test.c:111: P0 |= (1<<4); //enable pull up resistor on P0.4 
-	orl	_P0,#0x10
-;	sensor_test.c:112: EIE2 |= 0x02; 
-	orl	_EIE2,#0x02
-;	sensor_test.c:114: return 0;
+;	sensor_test.c:146: return 0;
 	mov	dpl,#0x00
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'Set_Pin_Output'
 ;------------------------------------------------------------
-;mask                      Allocated with name '_Set_Pin_Output_mask_1_58'
+;mask                      Allocated with name '_Set_Pin_Output_mask_1_67'
 ;pin                       Allocated to registers r2 
 ;------------------------------------------------------------
-;	sensor_test.c:117: void Set_Pin_Output (unsigned char pin)
+;	sensor_test.c:149: void Set_Pin_Output (unsigned char pin)
 ;	-----------------------------------------
 ;	 function Set_Pin_Output
 ;	-----------------------------------------
 _Set_Pin_Output:
 	mov	r2,dpl
-;	sensor_test.c:121: mask=(1<<(pin&0x7));
+;	sensor_test.c:153: mask=(1<<(pin&0x7));
 	mov	a,#0x07
 	anl	a,r2
 	mov	b,a
@@ -664,7 +760,7 @@ L003009?:
 L003011?:
 	djnz	b,L003009?
 	mov	r3,a
-;	sensor_test.c:122: switch(pin/0x10)
+;	sensor_test.c:154: switch(pin/0x10)
 	mov	a,r2
 	swap	a
 	anl	a,#0x0f
@@ -681,151 +777,100 @@ L003013?:
 	ljmp	L003002?
 	ljmp	L003003?
 	ljmp	L003004?
-;	sensor_test.c:124: case 0: P0MDOUT |= mask; break;
+;	sensor_test.c:156: case 0: P0MDOUT |= mask; break;
 L003001?:
 	mov	a,r3
 	orl	_P0MDOUT,a
-;	sensor_test.c:125: case 1: P1MDOUT |= mask; break;
+;	sensor_test.c:157: case 1: P1MDOUT |= mask; break;
 	ret
 L003002?:
 	mov	a,r3
 	orl	_P1MDOUT,a
-;	sensor_test.c:126: case 2: P2MDOUT |= mask; break; 
+;	sensor_test.c:158: case 2: P2MDOUT |= mask; break; 
 	ret
 L003003?:
 	mov	a,r3
 	orl	_P2MDOUT,a
-;	sensor_test.c:127: case 3: P3MDOUT |= mask; break; 
+;	sensor_test.c:159: case 3: P3MDOUT |= mask; break; 
 	ret
 L003004?:
 	mov	a,r3
 	orl	_P3MDOUT,a
-;	sensor_test.c:128: }	
+;	sensor_test.c:160: }	
 L003006?:
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'Timer3us'
 ;------------------------------------------------------------
-;i                         Allocated with name '_Timer3us_i_1_61'
+;i                         Allocated with name '_Timer3us_i_1_70'
 ;us                        Allocated to registers r2 
 ;------------------------------------------------------------
-;	sensor_test.c:132: void Timer3us(unsigned char us)
+;	sensor_test.c:164: void Timer3us(unsigned char us)
 ;	-----------------------------------------
 ;	 function Timer3us
 ;	-----------------------------------------
 _Timer3us:
 	mov	r2,dpl
-;	sensor_test.c:137: CKCON0|=0b_0100_0000;
+;	sensor_test.c:169: CKCON0|=0b_0100_0000;
 	orl	_CKCON0,#0x40
-;	sensor_test.c:139: TMR3RL = (-(SYSCLK)/1000000L); // Set Timer3 to overflow in 1us.
+;	sensor_test.c:171: TMR3RL = (-(SYSCLK)/1000000L); // Set Timer3 to overflow in 1us.
 	mov	_TMR3RL,#0xB8
 	mov	(_TMR3RL >> 8),#0xFF
-;	sensor_test.c:140: TMR3 = TMR3RL;                 // Initialize Timer3 for first overflow
+;	sensor_test.c:172: TMR3 = TMR3RL;                 // Initialize Timer3 for first overflow
 	mov	_TMR3,_TMR3RL
 	mov	(_TMR3 >> 8),(_TMR3RL >> 8)
-;	sensor_test.c:142: TMR3CN0 = 0x04;                 // Sart Timer3 and clear overflow flag
+;	sensor_test.c:174: TMR3CN0 = 0x04;                 // Sart Timer3 and clear overflow flag
 	mov	_TMR3CN0,#0x04
-;	sensor_test.c:143: for (i = 0; i < us; i++)       // Count <us> overflows
+;	sensor_test.c:175: for (i = 0; i < us; i++)       // Count <us> overflows
 	mov	r3,#0x00
 L004004?:
 	clr	c
 	mov	a,r3
 	subb	a,r2
 	jnc	L004007?
-;	sensor_test.c:145: while (!(TMR3CN0 & 0x80));  // Wait for overflow
+;	sensor_test.c:177: while (!(TMR3CN0 & 0x80));  // Wait for overflow
 L004001?:
 	mov	a,_TMR3CN0
 	jnb	acc.7,L004001?
-;	sensor_test.c:146: TMR3CN0 &= ~(0x80);         // Clear overflow indicator
+;	sensor_test.c:178: TMR3CN0 &= ~(0x80);         // Clear overflow indicator
 	anl	_TMR3CN0,#0x7F
-;	sensor_test.c:143: for (i = 0; i < us; i++)       // Count <us> overflows
+;	sensor_test.c:175: for (i = 0; i < us; i++)       // Count <us> overflows
 	inc	r3
 	sjmp	L004004?
 L004007?:
-;	sensor_test.c:148: TMR3CN0 = 0 ;                   // Stop Timer3 and clear overflow flag
+;	sensor_test.c:180: TMR3CN0 = 0 ;                   // Stop Timer3 and clear overflow flag
 	mov	_TMR3CN0,#0x00
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'ptr_delay_us'
-;------------------------------------------------------------
-;intf_ptr                  Allocated to stack - offset -5
-;period                    Allocated to registers r2 r3 r4 r5 
-;------------------------------------------------------------
-;	sensor_test.c:152: void ptr_delay_us (uint32_t period, void *intf_ptr) reentrant
-;	-----------------------------------------
-;	 function ptr_delay_us
-;	-----------------------------------------
-_ptr_delay_us:
-	push	_bp
-	mov	_bp,sp
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-;	sensor_test.c:155: while (period--)
-L005001?:
-	mov	ar6,r2
-	mov	ar7,r3
-	mov	ar0,r4
-	mov	ar1,r5
-	dec	r2
-	cjne	r2,#0xff,L005009?
-	dec	r3
-	cjne	r3,#0xff,L005009?
-	dec	r4
-	cjne	r4,#0xff,L005009?
-	dec	r5
-L005009?:
-	mov	a,r6
-	orl	a,r7
-	orl	a,r0
-	orl	a,r1
-	jz	L005004?
-;	sensor_test.c:157: Timer3us(1);
-	mov	dpl,#0x01
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
-	lcall	_Timer3us
-	pop	ar5
-	pop	ar4
-	pop	ar3
-	pop	ar2
-	sjmp	L005001?
-L005004?:
-	pop	_bp
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'waitms'
 ;------------------------------------------------------------
 ;ms                        Allocated to registers r2 r3 
-;j                         Allocated with name '_waitms_j_1_67'
-;k                         Allocated with name '_waitms_k_1_67'
+;j                         Allocated with name '_waitms_j_1_73'
+;k                         Allocated with name '_waitms_k_1_73'
 ;------------------------------------------------------------
-;	sensor_test.c:161: void waitms (unsigned int ms)
+;	sensor_test.c:183: void waitms (unsigned int ms)
 ;	-----------------------------------------
 ;	 function waitms
 ;	-----------------------------------------
 _waitms:
 	mov	r2,dpl
 	mov	r3,dph
-;	sensor_test.c:165: for(j=0; j<ms; j++)
+;	sensor_test.c:187: for(j=0; j<ms; j++)
 	mov	r4,#0x00
 	mov	r5,#0x00
-L006005?:
+L005005?:
 	clr	c
 	mov	a,r4
 	subb	a,r2
 	mov	a,r5
 	subb	a,r3
-	jnc	L006009?
-;	sensor_test.c:166: for (k=0; k<4; k++) Timer3us(250);
+	jnc	L005009?
+;	sensor_test.c:188: for (k=0; k<4; k++) Timer3us(250);
 	mov	r6,#0x00
-L006001?:
-	cjne	r6,#0x04,L006018?
-L006018?:
-	jnc	L006007?
+L005001?:
+	cjne	r6,#0x04,L005018?
+L005018?:
+	jnc	L005007?
 	mov	dpl,#0xFA
 	push	ar2
 	push	ar3
@@ -839,302 +884,293 @@ L006018?:
 	pop	ar3
 	pop	ar2
 	inc	r6
-	sjmp	L006001?
-L006007?:
-;	sensor_test.c:165: for(j=0; j<ms; j++)
+	sjmp	L005001?
+L005007?:
+;	sensor_test.c:187: for(j=0; j<ms; j++)
 	inc	r4
-	cjne	r4,#0x00,L006005?
+	cjne	r4,#0x00,L005005?
 	inc	r5
-	sjmp	L006005?
-L006009?:
+	sjmp	L005005?
+L005009?:
 	ret
 ;------------------------------------------------------------
-;Allocation info for local variables in function 'spi_transfer'
+;Allocation info for local variables in function 'SPI_transfer'
 ;------------------------------------------------------------
-;x                         Allocated to registers 
+;tx_data                   Allocated to registers 
 ;------------------------------------------------------------
-;	sensor_test.c:170: uint8_t spi_transfer(uint8_t x) // instead of data we used x
+;	sensor_test.c:191: unsigned char SPI_transfer(unsigned char tx_data)
 ;	-----------------------------------------
-;	 function spi_transfer
+;	 function SPI_transfer
 ;	-----------------------------------------
-_spi_transfer:
+_SPI_transfer:
 	mov	_SPI0DAT,dpl
-;	sensor_test.c:173: while (!(SPI0CN0 & 0x80)); // Wait for transmission to complete (SPIF flag)
-L007001?:
-	mov	a,_SPI0CN0
-	jnb	acc.7,L007001?
-;	sensor_test.c:174: SPI0CN0 &= ~0x80;          // Clear the flag
-	anl	_SPI0CN0,#0x7F
-;	sensor_test.c:175: return SPI0DAT;            // Return received byte
+;	sensor_test.c:194: while (!SPIF);      // Wait for transfer to complete
+L006001?:
+;	sensor_test.c:195: SPIF = 0;           // Clear SPI interrupt flag
+	jbc	_SPIF,L006008?
+	sjmp	L006001?
+L006008?:
+;	sensor_test.c:196: return SPI0DAT;     // Return received data
 	mov	dpl,_SPI0DAT
 	ret
 ;------------------------------------------------------------
-;Allocation info for local variables in function 'bmm150_spi_read'
+;Allocation info for local variables in function 'SPI_read'
 ;------------------------------------------------------------
-;reg_data                  Allocated to stack - offset -5
-;length                    Allocated to stack - offset -9
-;intf_ptr                  Allocated to stack - offset -12
 ;reg_addr                  Allocated to registers r2 
-;i                         Allocated to stack - offset 1
+;value                     Allocated to registers 
 ;------------------------------------------------------------
-;	sensor_test.c:194: int8_t bmm150_spi_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr) __reentrant
+;	sensor_test.c:199: unsigned char SPI_read(unsigned char reg_addr)
 ;	-----------------------------------------
-;	 function bmm150_spi_read
+;	 function SPI_read
 ;	-----------------------------------------
-_bmm150_spi_read:
-	push	_bp
-	mov	a,sp
-	mov	_bp,a
-	add	a,#0x04
-	mov	sp,a
+_SPI_read:
 	mov	r2,dpl
-;	sensor_test.c:200: reg_addr |= 0x80;
+;	sensor_test.c:204: reg_addr = reg_addr | 0x80;
 	orl	ar2,#0x80
-;	sensor_test.c:201: CS = 0;
-	clr	_P0_5
-;	sensor_test.c:204: if (spi_transfer(reg_addr) == 0xFF)
+;	sensor_test.c:206: CS = 0;                // Select the device
+	clr	_P0_3
+;	sensor_test.c:207: SPI_transfer(reg_addr);     // Send register address
 	mov	dpl,r2
-	lcall	_spi_transfer
+	lcall	_SPI_transfer
+;	sensor_test.c:208: value = SPI_transfer(0x00); // Read value (send dummy byte) dummy byte is a placeholder byte sent by the master when it wants to receive data
+	mov	dpl,#0x00
+	lcall	_SPI_transfer
+;	sensor_test.c:209: CS = 1;                // Deselect the device
+	setb	_P0_3
+;	sensor_test.c:211: return value;
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'SPI_read_block'
+;------------------------------------------------------------
+;buffer                    Allocated with name '_SPI_read_block_PARM_2'
+;len                       Allocated with name '_SPI_read_block_PARM_3'
+;start_addr                Allocated to registers r2 
+;i                         Allocated to registers r2 
+;------------------------------------------------------------
+;	sensor_test.c:214: void SPI_read_block(unsigned char start_addr, uint8_t *buffer, uint8_t len)
+;	-----------------------------------------
+;	 function SPI_read_block
+;	-----------------------------------------
+_SPI_read_block:
 	mov	r2,dpl
-	cjne	r2,#0xFF,L008011?
-;	sensor_test.c:206: CS = 1; // End SPI 
-	setb	_P0_5
-;	sensor_test.c:207: return BMM150_E_COM_FAIL;
-	mov	dpl,#0xFC
-;	sensor_test.c:210: for (i = 0; i < length; i++)
-	sjmp	L008007?
-L008011?:
-	mov	r0,_bp
-	inc	r0
-	clr	a
-	mov	@r0,a
-	inc	r0
-	mov	@r0,a
-	inc	r0
-	mov	@r0,a
-	inc	r0
-	mov	@r0,a
-L008003?:
-	mov	r0,_bp
-	inc	r0
-	mov	a,_bp
-	add	a,#0xf7
-	mov	r1,a
+;	sensor_test.c:217: start_addr |= 0x80; // Set MSB for read
+	orl	ar2,#0x80
+;	sensor_test.c:218: CS = 0;
+	clr	_P0_3
+;	sensor_test.c:219: SPI_transfer(start_addr);
+	mov	dpl,r2
+	lcall	_SPI_transfer
+;	sensor_test.c:220: for (i = 0; i < len; i++) {
+	mov	r2,#0x00
+L008001?:
 	clr	c
-	mov	a,@r0
-	subb	a,@r1
-	inc	r0
-	mov	a,@r0
-	inc	r1
-	subb	a,@r1
-	inc	r0
-	mov	a,@r0
-	inc	r1
-	subb	a,@r1
-	inc	r0
-	mov	a,@r0
-	inc	r1
-	subb	a,@r1
-	jnc	L008006?
-;	sensor_test.c:212: reg_data[i] = spi_transfer(0x00);
-	mov	a,_bp
-	add	a,#0xfb
-	mov	r0,a
-	mov	r1,_bp
-	inc	r1
-	mov	a,@r1
-	add	a,@r0
-	mov	r6,a
-	inc	r1
-	mov	a,@r1
-	inc	r0
-	addc	a,@r0
-	mov	r7,a
-	inc	r0
-	mov	ar2,@r0
-	mov	dpl,#0x00
-	push	ar2
-	push	ar6
-	push	ar7
-	lcall	_spi_transfer
-	mov	r3,dpl
-	pop	ar7
-	pop	ar6
-	pop	ar2
-	mov	dpl,r6
-	mov	dph,r7
-	mov	b,r2
-	mov	a,r3
-	lcall	__gptrput
-;	sensor_test.c:210: for (i = 0; i < length; i++)
-	mov	r0,_bp
-	inc	r0
-	inc	@r0
-	cjne	@r0,#0x00,L008016?
-	inc	r0
-	inc	@r0
-	cjne	@r0,#0x00,L008016?
-	inc	r0
-	inc	@r0
-	cjne	@r0,#0x00,L008016?
-	inc	r0
-	inc	@r0
-L008016?:
-	sjmp	L008003?
-L008006?:
-;	sensor_test.c:215: CS = 1;
-	setb	_P0_5
-;	sensor_test.c:216: return BMM150_OK;
-	mov	dpl,#0x00
-L008007?:
-	mov	sp,_bp
-	pop	_bp
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'bmm150_spi_write'
-;------------------------------------------------------------
-;reg_data                  Allocated to stack - offset -5
-;length                    Allocated to stack - offset -9
-;intf_ptr                  Allocated to stack - offset -12
-;reg_addr                  Allocated to registers r2 
-;i                         Allocated to stack - offset 1
-;------------------------------------------------------------
-;	sensor_test.c:235: int8_t bmm150_spi_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr) __reentrant
-;	-----------------------------------------
-;	 function bmm150_spi_write
-;	-----------------------------------------
-_bmm150_spi_write:
-	push	_bp
-	mov	a,sp
-	mov	_bp,a
-	add	a,#0x04
-	mov	sp,a
-	mov	r2,dpl
-;	sensor_test.c:240: CS = 0; // Pull CS low to start communication
-	clr	_P0_5
-;	sensor_test.c:243: if (spi_transfer(reg_addr & 0x7F) == 0xFF) // Check if transfer failed
-	mov	a,#0x7F
-	anl	a,r2
-	mov	dpl,a
-	lcall	_spi_transfer
-	mov	r2,dpl
-	cjne	r2,#0xFF,L009014?
-;	sensor_test.c:245: CS = 1; // Pull CS high
-	setb	_P0_5
-;	sensor_test.c:246: return BMM150_E_COM_FAIL; // Return communication failure
-	mov	dpl,#0xFC
-;	sensor_test.c:250: for (i = 0; i < length; i++)
-	sjmp	L009009?
-L009014?:
-	mov	r0,_bp
-	inc	r0
+	mov	a,r2
+	subb	a,_SPI_read_block_PARM_3
+	jnc	L008004?
+;	sensor_test.c:221: buffer[i] = SPI_transfer(0x00); // Dummy writes
+	mov	a,r2
+	add	a,_SPI_read_block_PARM_2
+	mov	r3,a
 	clr	a
-	mov	@r0,a
-	inc	r0
-	mov	@r0,a
-	inc	r0
-	mov	@r0,a
-	inc	r0
-	mov	@r0,a
-L009005?:
-	mov	r0,_bp
-	inc	r0
-	mov	a,_bp
-	add	a,#0xf7
-	mov	r1,a
-	clr	c
-	mov	a,@r0
-	subb	a,@r1
-	inc	r0
-	mov	a,@r0
-	inc	r1
-	subb	a,@r1
-	inc	r0
-	mov	a,@r0
-	inc	r1
-	subb	a,@r1
-	inc	r0
-	mov	a,@r0
-	inc	r1
-	subb	a,@r1
-	jnc	L009008?
-;	sensor_test.c:252: if (spi_transfer(reg_data[i]) == 0xFF) // Check if transfer failed
-	mov	a,_bp
-	add	a,#0xfb
-	mov	r0,a
-	mov	r1,_bp
-	inc	r1
-	mov	a,@r1
-	add	a,@r0
-	mov	r6,a
-	inc	r1
-	mov	a,@r1
-	inc	r0
-	addc	a,@r0
-	mov	r7,a
-	inc	r0
-	mov	ar2,@r0
-	mov	dpl,r6
-	mov	dph,r7
-	mov	b,r2
-	lcall	__gptrget
-	mov	dpl,a
-	lcall	_spi_transfer
-	mov	r2,dpl
-	cjne	r2,#0xFF,L009007?
-;	sensor_test.c:254: CS = 1; // Pull CS high
-	setb	_P0_5
-;	sensor_test.c:255: return BMM150_E_COM_FAIL; // Return communication failure
-	mov	dpl,#0xFC
-	sjmp	L009009?
-L009007?:
-;	sensor_test.c:250: for (i = 0; i < length; i++)
-	mov	r0,_bp
-	inc	r0
-	inc	@r0
-	cjne	@r0,#0x00,L009020?
-	inc	r0
-	inc	@r0
-	cjne	@r0,#0x00,L009020?
-	inc	r0
-	inc	@r0
-	cjne	@r0,#0x00,L009020?
-	inc	r0
-	inc	@r0
-L009020?:
-	sjmp	L009005?
-L009008?:
-;	sensor_test.c:259: CS = 1; // Pull CS high to end communication
-	setb	_P0_5
-;	sensor_test.c:261: return BMM150_OK; // If all transfers succeeded, return success
+	addc	a,(_SPI_read_block_PARM_2 + 1)
+	mov	r4,a
+	mov	r5,(_SPI_read_block_PARM_2 + 2)
 	mov	dpl,#0x00
-L009009?:
-	mov	sp,_bp
-	pop	_bp
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'bmm150_error_codes_print_result'
-;------------------------------------------------------------
-;rslt                      Allocated with name '_bmm150_error_codes_print_result_PARM_2'
-;api_name                  Allocated to registers r2 r3 r4 
-;------------------------------------------------------------
-;	sensor_test.c:267: void bmm150_error_codes_print_result(const char api_name[], int8_t rslt)
-;	-----------------------------------------
-;	 function bmm150_error_codes_print_result
-;	-----------------------------------------
-_bmm150_error_codes_print_result:
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-;	sensor_test.c:269: if (rslt != BMM150_OK)
-	mov	a,_bmm150_error_codes_print_result_PARM_2
-	jnz	L010016?
-	ret
-L010016?:
-;	sensor_test.c:271: printf("%s\t", api_name);
 	push	ar2
 	push	ar3
 	push	ar4
+	push	ar5
+	lcall	_SPI_transfer
+	mov	r6,dpl
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	dpl,r3
+	mov	dph,r4
+	mov	b,r5
+	mov	a,r6
+	lcall	__gptrput
+;	sensor_test.c:220: for (i = 0; i < len; i++) {
+	inc	r2
+	sjmp	L008001?
+L008004?:
+;	sensor_test.c:223: CS = 1;
+	setb	_P0_3
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'SPI_write'
+;------------------------------------------------------------
+;reg_value                 Allocated with name '_SPI_write_PARM_2'
+;reg_addr                  Allocated to registers r2 
+;------------------------------------------------------------
+;	sensor_test.c:227: void SPI_write(unsigned char reg_addr, unsigned char reg_value)
+;	-----------------------------------------
+;	 function SPI_write
+;	-----------------------------------------
+_SPI_write:
+	mov	r2,dpl
+;	sensor_test.c:230: reg_addr = reg_addr & 0x7F;
+	anl	ar2,#0x7F
+;	sensor_test.c:232: CS = 0;                // Select device
+	clr	_P0_3
+;	sensor_test.c:233: SPI_transfer(reg_addr);     // Send register address
+	mov	dpl,r2
+	lcall	_SPI_transfer
+;	sensor_test.c:234: SPI_transfer(reg_value);    // Send value
+	mov	dpl,_SPI_write_PARM_2
+	lcall	_SPI_transfer
+;	sensor_test.c:235: CS = 1;                // Deselect device
+	setb	_P0_3
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'BMM150_Read_Trim_Registers'
+;------------------------------------------------------------
+;i                         Allocated with name '_BMM150_Read_Trim_Registers_i_1_84'
+;temp_msb                  Allocated with name '_BMM150_Read_Trim_Registers_temp_msb_1_84'
+;trim_x1y1                 Allocated with name '_BMM150_Read_Trim_Registers_trim_x1y1_1_84'
+;trim_xyz_data             Allocated with name '_BMM150_Read_Trim_Registers_trim_xyz_data_1_84'
+;trim_xy1xy2               Allocated with name '_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84'
+;------------------------------------------------------------
+;	sensor_test.c:238: void BMM150_Read_Trim_Registers(void)
+;	-----------------------------------------
+;	 function BMM150_Read_Trim_Registers
+;	-----------------------------------------
+_BMM150_Read_Trim_Registers:
+;	sensor_test.c:242: xdata uint8_t trim_x1y1[2] = {0};
+	mov	dptr,#_BMM150_Read_Trim_Registers_trim_x1y1_1_84
+;	sensor_test.c:243: xdata uint8_t trim_xyz_data[4] = {0};
+	clr	a
+	movx	@dptr,a
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_x1y1_1_84 + 0x0001)
+	movx	@dptr,a
+	mov	dptr,#_BMM150_Read_Trim_Registers_trim_xyz_data_1_84
+	movx	@dptr,a
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xyz_data_1_84 + 0x0001)
+	movx	@dptr,a
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xyz_data_1_84 + 0x0002)
+;	sensor_test.c:244: xdata uint8_t trim_xy1xy2[10] = {0};
+	clr	a
+	movx	@dptr,a
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xyz_data_1_84 + 0x0003)
+	movx	@dptr,a
+	mov	dptr,#_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84
+	movx	@dptr,a
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0001)
+	movx	@dptr,a
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0002)
+	clr	a
+	movx	@dptr,a
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0003)
+	movx	@dptr,a
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0004)
+	movx	@dptr,a
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0005)
+	movx	@dptr,a
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0006)
+	clr	a
+	movx	@dptr,a
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0007)
+	movx	@dptr,a
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0008)
+	movx	@dptr,a
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0009)
+	movx	@dptr,a
+;	sensor_test.c:247: for (i=0;i<2;i++){
+	mov	r2,#0x00
+L010001?:
+	cjne	r2,#0x02,L010024?
+L010024?:
+	jnc	L010004?
+;	sensor_test.c:248: trim_x1y1[i] = SPI_read(BMM150_DIG_X1+i); 
+	mov	a,r2
+	add	a,#_BMM150_Read_Trim_Registers_trim_x1y1_1_84
+	mov	r3,a
+	clr	a
+	addc	a,#(_BMM150_Read_Trim_Registers_trim_x1y1_1_84 >> 8)
+	mov	r4,a
+	mov	a,#0x5D
+	add	a,r2
+	mov	dpl,a
+	push	ar2
+	push	ar3
+	push	ar4
+	lcall	_SPI_read
+	mov	r5,dpl
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	dpl,r3
+	mov	dph,r4
+	mov	a,r5
+	movx	@dptr,a
+;	sensor_test.c:247: for (i=0;i<2;i++){
+	inc	r2
+	sjmp	L010001?
+L010004?:
+;	sensor_test.c:250: for (i=0;i<4;i++){
+	mov	r2,#0x00
+L010005?:
+	cjne	r2,#0x04,L010026?
+L010026?:
+	jnc	L010008?
+;	sensor_test.c:251: trim_xyz_data[i] = SPI_read(BMM150_DIG_Z4_LSB+i);
+	mov	a,r2
+	add	a,#_BMM150_Read_Trim_Registers_trim_xyz_data_1_84
+	mov	r3,a
+	clr	a
+	addc	a,#(_BMM150_Read_Trim_Registers_trim_xyz_data_1_84 >> 8)
+	mov	r4,a
+	mov	a,#0x62
+	add	a,r2
+	mov	dpl,a
+	push	ar2
+	push	ar3
+	push	ar4
+	lcall	_SPI_read
+	mov	r5,dpl
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	dpl,r3
+	mov	dph,r4
+	mov	a,r5
+	movx	@dptr,a
+;	sensor_test.c:250: for (i=0;i<4;i++){
+	inc	r2
+	sjmp	L010005?
+L010008?:
+;	sensor_test.c:253: for (i=0;i<10;i++){
+	mov	r2,#0x00
+L010009?:
+	cjne	r2,#0x0A,L010028?
+L010028?:
+	jnc	L010012?
+;	sensor_test.c:254: trim_xy1xy2[i] = SPI_read(BMM150_DIG_Z2_LSB+i);
+	mov	a,r2
+	add	a,#_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84
+	mov	r3,a
+	clr	a
+	addc	a,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 >> 8)
+	mov	r4,a
+	mov	a,#0x68
+	add	a,r2
+	mov	dpl,a
+	push	ar2
+	push	ar3
+	push	ar4
+	lcall	_SPI_read
+	mov	r5,dpl
+	pop	ar4
+	pop	ar3
+	mov	dpl,r3
+	mov	dph,r4
+	mov	a,r5
+	movx	@dptr,a
+;	sensor_test.c:255: printf("%d ", trim_xy1xy2[i]);
+	mov	r3,#0x00
+	push	ar5
+	push	ar3
 	mov	a,#__str_0
 	push	acc
 	mov	a,#(__str_0 >> 8)
@@ -1143,35 +1179,133 @@ L010016?:
 	push	acc
 	lcall	_printf
 	mov	a,sp
-	add	a,#0xfa
+	add	a,#0xfb
 	mov	sp,a
-;	sensor_test.c:273: switch (rslt)
-	mov	a,#0xFC
-	cjne	a,_bmm150_error_codes_print_result_PARM_2,L010017?
-	sjmp	L010002?
-L010017?:
-	mov	a,#0xFD
-	cjne	a,_bmm150_error_codes_print_result_PARM_2,L010018?
-	ljmp	L010004?
-L010018?:
-	mov	a,#0xFE
-	cjne	a,_bmm150_error_codes_print_result_PARM_2,L010019?
-	sjmp	L010003?
-L010019?:
-	mov	a,#0xFF
-	cjne	a,_bmm150_error_codes_print_result_PARM_2,L010020?
-	sjmp	L010021?
-L010020?:
-	ljmp	L010005?
-L010021?:
-;	sensor_test.c:276: printf("Error [%d] : Null pointer error.", rslt);
-	mov	a,_bmm150_error_codes_print_result_PARM_2
+	pop	ar2
+;	sensor_test.c:253: for (i=0;i<10;i++){
+	inc	r2
+	sjmp	L010009?
+L010012?:
+;	sensor_test.c:258: dig_x1 = (int8_t) trim_x1y1[0]; 
+	mov	dptr,#_BMM150_Read_Trim_Registers_trim_x1y1_1_84
+	movx	a,@dptr
+	mov	_dig_x1,a
+;	sensor_test.c:259: dig_y1 = (int8_t) trim_x1y1[1]; 
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_x1y1_1_84 + 0x0001)
+	movx	a,@dptr
+	mov	_dig_y1,a
+;	sensor_test.c:260: dig_x2 = (int8_t) trim_xyz_data[2]; 
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xyz_data_1_84 + 0x0002)
+	movx	a,@dptr
+	mov	_dig_x2,a
+;	sensor_test.c:261: dig_y2 = (int8_t) trim_xyz_data[3]; 
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xyz_data_1_84 + 0x0003)
+	movx	a,@dptr
+	mov	_dig_y2,a
+;	sensor_test.c:263: temp_msb = ((uint16_t)trim_xy1xy2[3]) << 8;
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0003)
+	movx	a,@dptr
+	mov	r3,a
+	mov	r2,#0x00
+;	sensor_test.c:264: dig_z1 = (uint16_t)(temp_msb | trim_xy1xy2[2]);
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0002)
+	movx	a,@dptr
+	mov	r5,#0x00
+	orl	ar2,a
+	mov	a,r5
+	orl	ar3,a
+	mov	_dig_z1,r2
+;	sensor_test.c:266: temp_msb = ((uint16_t)trim_xy1xy2[1]) << 8;
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0001)
+	movx	a,@dptr
+	mov	r3,a
+	mov	r2,#0x00
+;	sensor_test.c:267: dig_z2 = (int16_t)(temp_msb | trim_xy1xy2[0]);
+	mov	dptr,#_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84
+	movx	a,@dptr
+	mov	r5,#0x00
+	orl	ar2,a
+	mov	a,r5
+	orl	ar3,a
+	mov	_dig_z2,r2
+;	sensor_test.c:269: temp_msb = ((uint16_t)trim_xy1xy2[7]) << 8;
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0007)
+	movx	a,@dptr
+	mov	r3,a
+	mov	r2,#0x00
+;	sensor_test.c:270: dig_z3 = (int16_t)(temp_msb | trim_xy1xy2[6]);
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0006)
+	movx	a,@dptr
+	mov	r5,#0x00
+	orl	ar2,a
+	mov	a,r5
+	orl	ar3,a
+	mov	_dig_z3,r2
+;	sensor_test.c:272: temp_msb = ((uint16_t)trim_xyz_data[1]) << 8;
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xyz_data_1_84 + 0x0001)
+	movx	a,@dptr
+	mov	r3,a
+	mov	r2,#0x00
+;	sensor_test.c:273: dig_z4 = (int16_t)(temp_msb | trim_xyz_data[0]);
+	mov	dptr,#_BMM150_Read_Trim_Registers_trim_xyz_data_1_84
+	movx	a,@dptr
+	mov	r5,#0x00
+	orl	ar2,a
+	mov	a,r5
+	orl	ar3,a
+	mov	_dig_z4,r2
+;	sensor_test.c:275: dig_xy1 = trim_xy1xy2[9];
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0009)
+	movx	a,@dptr
+	mov	_dig_xy1,a
+;	sensor_test.c:276: dig_xy2 = (int8_t)trim_xy1xy2[8];
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0008)
+	movx	a,@dptr
+	mov	_dig_xy2,a
+;	sensor_test.c:278: temp_msb = ((uint16_t)(trim_xy1xy2[5] & 0x7F)) << 8;
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0005)
+	movx	a,@dptr
+	mov	r2,a
+	anl	ar2,#0x7F
+	mov	ar3,r2
+	mov	r2,#0x00
+;	sensor_test.c:279: dig_xyz1 = (uint16_t)(temp_msb | trim_xy1xy2[4]);
+	mov	dptr,#(_BMM150_Read_Trim_Registers_trim_xy1xy2_1_84 + 0x0004)
+	movx	a,@dptr
+	mov	r5,#0x00
+	orl	ar2,a
+	mov	a,r5
+	orl	ar3,a
+	mov	_dig_xyz1,r2
+;	sensor_test.c:281: printf("%d %d %d %d\n", dig_z1, dig_z2, dig_z3, dig_z4);
+	mov	a,_dig_z4
 	mov	r2,a
 	rlc	a
 	subb	a,acc
 	mov	r3,a
+	mov	a,_dig_z3
+	mov	r4,a
+	rlc	a
+	subb	a,acc
+	mov	r5,a
+	mov	a,_dig_z2
+	mov	r6,a
+	rlc	a
+	subb	a,acc
+	mov	r7,a
+	mov	a,_dig_z1
+	mov	r0,a
+	rlc	a
+	subb	a,acc
+	mov	r1,a
 	push	ar2
 	push	ar3
+	push	ar4
+	push	ar5
+	push	ar6
+	push	ar7
+	push	ar0
+	push	ar1
 	mov	a,#__str_1
 	push	acc
 	mov	a,#(__str_1 >> 8)
@@ -1180,9 +1314,51 @@ L010021?:
 	push	acc
 	lcall	_printf
 	mov	a,sp
-	add	a,#0xfb
+	add	a,#0xf5
 	mov	sp,a
-;	sensor_test.c:278: "It occurs when the user tries to assign value (not address) to a pointer, which has been initialized to NULL.\r\n");
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'BMM150_Init'
+;------------------------------------------------------------
+;chip_id                   Allocated to registers r2 
+;------------------------------------------------------------
+;	sensor_test.c:284: void BMM150_Init(void)
+;	-----------------------------------------
+;	 function BMM150_Init
+;	-----------------------------------------
+_BMM150_Init:
+;	sensor_test.c:289: CS = 1;         // Deselect BMM150
+	setb	_P0_3
+;	sensor_test.c:292: waitms(10);
+	mov	dptr,#0x000A
+	lcall	_waitms
+;	sensor_test.c:295: SPI_write(BMM150_POWER_CONTROL, 0x82);
+	mov	_SPI_write_PARM_2,#0x82
+	mov	dpl,#0x4B
+	lcall	_SPI_write
+;	sensor_test.c:296: waitms(10);  // Wait for reset to complete
+	mov	dptr,#0x000A
+	lcall	_waitms
+;	sensor_test.c:299: SPI_write(BMM150_POWER_CONTROL, BMM150_POWER_ON);
+	mov	_SPI_write_PARM_2,#0x01
+	mov	dpl,#0x4B
+	lcall	_SPI_write
+;	sensor_test.c:300: waitms(5);
+	mov	dptr,#0x0005
+	lcall	_waitms
+;	sensor_test.c:303: chip_id = SPI_read(BMM150_CHIP_ID);
+	mov	dpl,#0x40
+	lcall	_SPI_read
+	mov	r2,dpl
+;	sensor_test.c:304: if (chip_id != BMM150_CHIP_ID_VALUE)
+	cjne	r2,#0x32,L011010?
+	sjmp	L011005?
+L011010?:
+;	sensor_test.c:306: printf("Error: Could not find BMM150 sensor (Chip ID: 0x%02X)\r\n", chip_id);
+	mov	ar3,r2
+	mov	r4,#0x00
+	push	ar3
+	push	ar4
 	mov	a,#__str_2
 	push	acc
 	mov	a,#(__str_2 >> 8)
@@ -1190,21 +1366,12 @@ L010021?:
 	mov	a,#0x80
 	push	acc
 	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-;	sensor_test.c:279: break;
-	ret
-;	sensor_test.c:281: case BMM150_E_COM_FAIL:
-L010002?:
-;	sensor_test.c:282: printf("Error [%d] : Communication failure error.", rslt);
-	mov	a,_bmm150_error_codes_print_result_PARM_2
-	mov	r2,a
-	rlc	a
-	subb	a,acc
-	mov	r3,a
-	push	ar2
-	push	ar3
+	mov	a,sp
+	add	a,#0xfb
+	mov	sp,a
+;	sensor_test.c:307: while (1) {
+L011002?:
+;	sensor_test.c:308: printf("Press restart to check again!\r");
 	mov	a,#__str_3
 	push	acc
 	mov	a,#(__str_3 >> 8)
@@ -1212,10 +1379,29 @@ L010002?:
 	mov	a,#0x80
 	push	acc
 	lcall	_printf
-	mov	a,sp
-	add	a,#0xfb
-	mov	sp,a
-;	sensor_test.c:284: "It occurs due to read/write operation failure and also due to power failure during communication\r\n");
+	dec	sp
+	dec	sp
+	dec	sp
+	sjmp	L011002?
+L011005?:
+;	sensor_test.c:313: SPI_write(BMM150_OP_MODE, BMM150_NORMAL_MODE | (BMM150_ODR_10HZ * 8));
+	mov	_SPI_write_PARM_2,#0x00
+	mov	dpl,#0x4C
+	push	ar2
+	lcall	_SPI_write
+;	sensor_test.c:316: SPI_write(BMM150_REP_XY, 0x04); // XY-repetitions = 9
+	mov	_SPI_write_PARM_2,#0x04
+	mov	dpl,#0x51
+	lcall	_SPI_write
+;	sensor_test.c:317: SPI_write(BMM150_REP_Z, 0x0E);  // Z-repetitions = 15
+	mov	_SPI_write_PARM_2,#0x0E
+	mov	dpl,#0x52
+	lcall	_SPI_write
+;	sensor_test.c:319: BMM150_Read_Trim_Registers();
+	lcall	_BMM150_Read_Trim_Registers
+;	sensor_test.c:321: printf("BMM150 initialized successfully! Chip ID: 0x%02X\r\n", chip_id);
+	mov	r3,#0x00
+	push	ar3
 	mov	a,#__str_4
 	push	acc
 	mov	a,#(__str_4 >> 8)
@@ -1223,21 +1409,1486 @@ L010002?:
 	mov	a,#0x80
 	push	acc
 	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-;	sensor_test.c:285: break;
+	mov	a,sp
+	add	a,#0xfb
+	mov	sp,a
 	ret
-;	sensor_test.c:287: case BMM150_E_DEV_NOT_FOUND:
-L010003?:
-;	sensor_test.c:288: printf("Error [%d] : Device not found error. It occurs when the device chip id is incorrectly read\r\n", rslt);
-	mov	a,_bmm150_error_codes_print_result_PARM_2
+;------------------------------------------------------------
+;Allocation info for local variables in function 'BMM150_compensate_x'
+;------------------------------------------------------------
+;data_rhall                Allocated with name '_BMM150_compensate_x_PARM_2'
+;mag_data_x                Allocated to registers r2 r3 r4 
+;sloc0                     Allocated with name '_BMM150_compensate_x_sloc0_1_0'
+;retval                    Allocated with name '_BMM150_compensate_x_retval_1_93'
+;process_comp_x0           Allocated with name '_BMM150_compensate_x_process_comp_x0_1_93'
+;process_comp_x1           Allocated with name '_BMM150_compensate_x_process_comp_x1_1_93'
+;process_comp_x2           Allocated with name '_BMM150_compensate_x_process_comp_x2_1_93'
+;process_comp_x3           Allocated with name '_BMM150_compensate_x_process_comp_x3_1_93'
+;process_comp_x4           Allocated with name '_BMM150_compensate_x_process_comp_x4_1_93'
+;process_comp_x5           Allocated with name '_BMM150_compensate_x_process_comp_x5_1_93'
+;process_comp_x6           Allocated with name '_BMM150_compensate_x_process_comp_x6_1_93'
+;process_comp_x7           Allocated with name '_BMM150_compensate_x_process_comp_x7_1_93'
+;process_comp_x8           Allocated with name '_BMM150_compensate_x_process_comp_x8_1_93'
+;process_comp_x9           Allocated with name '_BMM150_compensate_x_process_comp_x9_1_93'
+;process_comp_x10          Allocated with name '_BMM150_compensate_x_process_comp_x10_1_93'
+;------------------------------------------------------------
+;	sensor_test.c:324: int16_t BMM150_compensate_x(int16_t *mag_data_x, int16_t *data_rhall)
+;	-----------------------------------------
+;	 function BMM150_compensate_x
+;	-----------------------------------------
+_BMM150_compensate_x:
+;	sensor_test.c:342: if (*mag_data_x != BMM150_OVERFLOW_ADCVAL_XYAXES_FLIP){
+	mov	r4,b
+	lcall	__gptrget
+	mov	r2,a
+	inc	dptr
+	lcall	__gptrget
+	mov	r3,a
+	cjne	r2,#0x00,L012019?
+	cjne	r3,#0xF0,L012019?
+	ljmp	L012011?
+L012019?:
+;	sensor_test.c:343: if (*data_rhall != 0)
+	mov	r4,_BMM150_compensate_x_PARM_2
+	mov	r5,(_BMM150_compensate_x_PARM_2 + 1)
+	mov	r6,(_BMM150_compensate_x_PARM_2 + 2)
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r6
+	lcall	__gptrget
+	mov	r4,a
+	inc	dptr
+	lcall	__gptrget
+	mov	r5,a
+	orl	a,r4
+	jz	L012005?
+;	sensor_test.c:346: process_comp_x0 = *data_rhall;
+	mov	dptr,#_BMM150_compensate_x_process_comp_x0_1_93
+	mov	a,r4
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r5
+	movx	@dptr,a
+	sjmp	L012006?
+L012005?:
+;	sensor_test.c:348: else if (dig_xyz1 != 0)
+	mov	a,_dig_xyz1
+	jz	L012002?
+;	sensor_test.c:350: process_comp_x0 = dig_xyz1;
+	mov	dptr,#_BMM150_compensate_x_process_comp_x0_1_93
+	mov	a,_dig_xyz1
+	movx	@dptr,a
+	mov	a,_dig_xyz1
+	rlc	a
+	subb	a,acc
+	inc	dptr
+	movx	@dptr,a
+	sjmp	L012006?
+L012002?:
+;	sensor_test.c:354: process_comp_x0 = 0;
+	mov	dptr,#_BMM150_compensate_x_process_comp_x0_1_93
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+L012006?:
+;	sensor_test.c:356: if (process_comp_x0 != 0)
+	mov	dptr,#_BMM150_compensate_x_process_comp_x0_1_93
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r5,a
+	orl	a,r4
+	jnz	L012022?
+	ljmp	L012008?
+L012022?:
+;	sensor_test.c:359: process_comp_x1 = ((int32_t)dig_xyz1) * 16384;
+	mov	a,_dig_xyz1
+	mov	r6,a
+	rlc	a
+	subb	a,acc
+	mov	r0,a
+	xch	a,r0
+	anl	a,#0x03
+	mov	c,acc.0
+	xch	a,r0
+	rrc	a
+	xch	a,r0
+	rrc	a
+	mov	c,acc.0
+	xch	a,r0
+	rrc	a
+	xch	a,r0
+	rrc	a
+	xch	a,r0
+	mov	r1,a
+	mov	a,r6
+	rr	a
+	rr	a
+	anl	a,#0xc0
+	mov	r7,a
+	mov	a,r6
+	rr	a
+	rr	a
+	anl	a,#0x3f
+	orl	a,r0
+	mov	r0,a
+	mov	r6,#0x00
+;	sensor_test.c:360: process_comp_x2 = ((uint16_t)(process_comp_x1 / process_comp_x0)) - ((uint16_t)0x4000);
+	mov	__divslong_PARM_2,r4
+	mov	(__divslong_PARM_2 + 1),r5
+	mov	(__divslong_PARM_2 + 2),#0x00
+	mov	(__divslong_PARM_2 + 3),#0x00
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	push	ar2
+	push	ar3
+	lcall	__divslong
+	mov	r4,dpl
+	mov	a,dph
+	add	a,#0xc0
+	mov	r5,a
+;	sensor_test.c:362: process_comp_x3 = (((int32_t)retval) * ((int32_t)retval));
+	mov	ar6,r4
+	mov	ar7,r5
+	mov	_BMM150_compensate_x_sloc0_1_0,r6
+	mov	a,r7
+	mov	(_BMM150_compensate_x_sloc0_1_0 + 1),a
+	rlc	a
+	subb	a,acc
+	mov	(_BMM150_compensate_x_sloc0_1_0 + 2),a
+	mov	(_BMM150_compensate_x_sloc0_1_0 + 3),a
+	mov	ar6,r4
+	mov	ar7,r5
+	mov	__mullong_PARM_2,r6
+	mov	a,r7
+	mov	(__mullong_PARM_2 + 1),a
+	rlc	a
+	subb	a,acc
+	mov	(__mullong_PARM_2 + 2),a
+	mov	(__mullong_PARM_2 + 3),a
+;	sensor_test.c:363: process_comp_x4 = (((int32_t)dig_xy2) * (process_comp_x3 / 128));
+	mov	dpl,_BMM150_compensate_x_sloc0_1_0
+	mov	dph,(_BMM150_compensate_x_sloc0_1_0 + 1)
+	mov	b,(_BMM150_compensate_x_sloc0_1_0 + 2)
+	mov	a,(_BMM150_compensate_x_sloc0_1_0 + 3)
+	push	ar4
+	push	ar5
+	lcall	__mullong
+	mov	_BMM150_compensate_x_sloc0_1_0,dpl
+	mov	(_BMM150_compensate_x_sloc0_1_0 + 1),dph
+	mov	(_BMM150_compensate_x_sloc0_1_0 + 2),b
+	mov	(_BMM150_compensate_x_sloc0_1_0 + 3),a
+	mov	a,_dig_xy2
+	mov	r6,a
+	rlc	a
+	subb	a,acc
+	mov	r7,a
+	mov	r0,a
+	mov	r1,a
+	mov	__divslong_PARM_2,#0x80
+	clr	a
+	mov	(__divslong_PARM_2 + 1),a
+	mov	(__divslong_PARM_2 + 2),a
+	mov	(__divslong_PARM_2 + 3),a
+	mov	dpl,_BMM150_compensate_x_sloc0_1_0
+	mov	dph,(_BMM150_compensate_x_sloc0_1_0 + 1)
+	mov	b,(_BMM150_compensate_x_sloc0_1_0 + 2)
+	mov	a,(_BMM150_compensate_x_sloc0_1_0 + 3)
+	push	ar6
+	push	ar7
+	push	ar0
+	push	ar1
+	lcall	__divslong
+	mov	__mullong_PARM_2,dpl
+	mov	(__mullong_PARM_2 + 1),dph
+	mov	(__mullong_PARM_2 + 2),b
+	mov	(__mullong_PARM_2 + 3),a
+	pop	ar1
+	pop	ar0
+	pop	ar7
+	pop	ar6
+;	sensor_test.c:364: process_comp_x5 = (int32_t)(((int16_t)dig_xy1) * 128);
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	__mullong
+	mov	_BMM150_compensate_x_sloc0_1_0,dpl
+	mov	(_BMM150_compensate_x_sloc0_1_0 + 1),dph
+	mov	(_BMM150_compensate_x_sloc0_1_0 + 2),b
+	mov	(_BMM150_compensate_x_sloc0_1_0 + 3),a
+	pop	ar5
+	pop	ar4
+	mov	a,_dig_xy1
+	mov	r6,a
+	rlc	a
+	subb	a,acc
+	anl	a,#0x01
+	mov	c,acc.0
+	xch	a,r6
+	rrc	a
+	xch	a,r6
+	rrc	a
+	xch	a,r6
+	mov	__mullong_PARM_2,r6
+	mov	(__mullong_PARM_2 + 1),a
+	rlc	a
+	subb	a,acc
+	mov	(__mullong_PARM_2 + 2),a
+	mov	(__mullong_PARM_2 + 3),a
+;	sensor_test.c:365: process_comp_x6 = ((int32_t)retval) * process_comp_x5;
+	mov	a,r5
+	rlc	a
+	subb	a,acc
+	mov	r6,a
+;	sensor_test.c:366: process_comp_x7 = (((process_comp_x4 + process_comp_x6) / 512) + ((int32_t)0x100000));
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r6
+	lcall	__mullong
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r6,b
+	mov	r7,a
+	mov	a,r4
+	add	a,_BMM150_compensate_x_sloc0_1_0
+	mov	r4,a
+	mov	a,r5
+	addc	a,(_BMM150_compensate_x_sloc0_1_0 + 1)
+	mov	r5,a
+	mov	a,r6
+	addc	a,(_BMM150_compensate_x_sloc0_1_0 + 2)
+	mov	r6,a
+	mov	a,r7
+	addc	a,(_BMM150_compensate_x_sloc0_1_0 + 3)
+	mov	r7,a
+	mov	__divslong_PARM_2,#0x00
+	mov	(__divslong_PARM_2 + 1),#0x02
+	mov	(__divslong_PARM_2 + 2),#0x00
+	mov	(__divslong_PARM_2 + 3),#0x00
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r6
+	mov	a,r7
+	lcall	__divslong
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r6,b
+	mov	r7,a
+	mov	a,#0x10
+	add	a,r6
+	mov	r6,a
+	clr	a
+	addc	a,r7
+	mov	r7,a
+;	sensor_test.c:367: process_comp_x8 = ((int32_t)(((int16_t)dig_x2) + ((int16_t)0xA0)));
+	mov	a,_dig_x2
+	mov	r0,a
+	rlc	a
+	subb	a,acc
+	mov	r1,a
+	mov	a,#0xA0
+	add	a,r0
+	mov	r0,a
+	clr	a
+	addc	a,r1
+	mov	__mullong_PARM_2,r0
+	mov	(__mullong_PARM_2 + 1),a
+	rlc	a
+	subb	a,acc
+	mov	(__mullong_PARM_2 + 2),a
+	mov	(__mullong_PARM_2 + 3),a
+;	sensor_test.c:368: process_comp_x9 = ((process_comp_x7 * process_comp_x8) / 4096);
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r6
+	mov	a,r7
+	lcall	__mullong
+;	sensor_test.c:369: process_comp_x10 = ((int32_t)*mag_data_x) * process_comp_x9;
+	mov	__divslong_PARM_2,#0x00
+	mov	(__divslong_PARM_2 + 1),#0x10
+	mov	(__divslong_PARM_2 + 2),#0x00
+	mov	(__divslong_PARM_2 + 3),#0x00
+	lcall	__divslong
+	mov	__mullong_PARM_2,dpl
+	mov	(__mullong_PARM_2 + 1),dph
+	mov	(__mullong_PARM_2 + 2),b
+	mov	(__mullong_PARM_2 + 3),a
+	pop	ar3
+	pop	ar2
+	mov	a,r3
+	rlc	a
+	subb	a,acc
+	mov	r4,a
+;	sensor_test.c:370: retval = ((int16_t)(process_comp_x10 / 8192));
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r4
+	lcall	__mullong
+	mov	__divslong_PARM_2,#0x00
+	mov	(__divslong_PARM_2 + 1),#0x20
+	mov	(__divslong_PARM_2 + 2),#0x00
+	mov	(__divslong_PARM_2 + 3),#0x00
+	lcall	__divslong
+	mov	r2,dpl
+	mov	r3,dph
+;	sensor_test.c:371: retval = (retval + (((int16_t)dig_x1) * 8)) / 16;
+	mov	a,_dig_x1
+	mov	r4,a
+	rlc	a
+	subb	a,acc
+	swap	a
+	rr	a
+	anl	a,#0xf8
+	xch	a,r4
+	swap	a
+	rr	a
+	xch	a,r4
+	xrl	a,r4
+	xch	a,r4
+	anl	a,#0xf8
+	xch	a,r4
+	xrl	a,r4
+	mov	r5,a
+	mov	a,r4
+	add	a,r2
+	mov	dpl,a
+	mov	a,r5
+	addc	a,r3
+	mov	dph,a
+	mov	__divsint_PARM_2,#0x10
+	clr	a
+	mov	(__divsint_PARM_2 + 1),a
+	lcall	__divsint
+	mov	a,dpl
+	mov	b,dph
+	mov	dptr,#_BMM150_compensate_x_retval_1_93
+	movx	@dptr,a
+	inc	dptr
+	mov	a,b
+	movx	@dptr,a
+	sjmp	L012012?
+L012008?:
+;	sensor_test.c:374: retval = BMM150_OVERFLOW_OUTPUT; 
+	mov	dptr,#_BMM150_compensate_x_retval_1_93
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	mov	a,#0x80
+	movx	@dptr,a
+	sjmp	L012012?
+L012011?:
+;	sensor_test.c:378: retval = BMM150_OVERFLOW_OUTPUT; 
+	mov	dptr,#_BMM150_compensate_x_retval_1_93
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	mov	a,#0x80
+	movx	@dptr,a
+L012012?:
+;	sensor_test.c:380: return retval; 
+	mov	dptr,#_BMM150_compensate_x_retval_1_93
+	movx	a,@dptr
+	mov	r2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	dpl,r2
+	mov	dph,a
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'BMM150_compensate_y'
+;------------------------------------------------------------
+;data_rhall                Allocated with name '_BMM150_compensate_y_PARM_2'
+;mag_data_y                Allocated to registers r2 r3 r4 
+;sloc0                     Allocated with name '_BMM150_compensate_y_sloc0_1_0'
+;retval                    Allocated with name '_BMM150_compensate_y_retval_1_102'
+;process_comp_y0           Allocated with name '_BMM150_compensate_y_process_comp_y0_1_102'
+;process_comp_y1           Allocated with name '_BMM150_compensate_y_process_comp_y1_1_102'
+;process_comp_y2           Allocated with name '_BMM150_compensate_y_process_comp_y2_1_102'
+;process_comp_y3           Allocated with name '_BMM150_compensate_y_process_comp_y3_1_102'
+;process_comp_y4           Allocated with name '_BMM150_compensate_y_process_comp_y4_1_102'
+;process_comp_y5           Allocated with name '_BMM150_compensate_y_process_comp_y5_1_102'
+;process_comp_y6           Allocated with name '_BMM150_compensate_y_process_comp_y6_1_102'
+;process_comp_y7           Allocated with name '_BMM150_compensate_y_process_comp_y7_1_102'
+;process_comp_y8           Allocated with name '_BMM150_compensate_y_process_comp_y8_1_102'
+;process_comp_y9           Allocated with name '_BMM150_compensate_y_process_comp_y9_1_102'
+;------------------------------------------------------------
+;	sensor_test.c:383: int16_t BMM150_compensate_y (int16_t *mag_data_y, int16_t *data_rhall)
+;	-----------------------------------------
+;	 function BMM150_compensate_y
+;	-----------------------------------------
+_BMM150_compensate_y:
+;	sensor_test.c:401: if (*mag_data_y != BMM150_OVERFLOW_ADCVAL_XYAXES_FLIP)
+	mov	r4,b
+	lcall	__gptrget
+	mov	r2,a
+	inc	dptr
+	lcall	__gptrget
+	mov	r3,a
+	cjne	r2,#0x00,L013019?
+	cjne	r3,#0xF0,L013019?
+	ljmp	L013011?
+L013019?:
+;	sensor_test.c:403: if (*data_rhall != 0)
+	mov	r4,_BMM150_compensate_y_PARM_2
+	mov	r5,(_BMM150_compensate_y_PARM_2 + 1)
+	mov	r6,(_BMM150_compensate_y_PARM_2 + 2)
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r6
+	lcall	__gptrget
+	mov	r4,a
+	inc	dptr
+	lcall	__gptrget
+	mov	r5,a
+	orl	a,r4
+	jz	L013005?
+;	sensor_test.c:406: process_comp_y0 = *data_rhall;
+	mov	dptr,#_BMM150_compensate_y_process_comp_y0_1_102
+	mov	a,r4
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r5
+	movx	@dptr,a
+	sjmp	L013006?
+L013005?:
+;	sensor_test.c:408: else if (dig_xyz1 != 0)
+	mov	a,_dig_xyz1
+	jz	L013002?
+;	sensor_test.c:410: process_comp_y0 = dig_xyz1;
+	mov	dptr,#_BMM150_compensate_y_process_comp_y0_1_102
+	mov	a,_dig_xyz1
+	movx	@dptr,a
+	mov	a,_dig_xyz1
+	rlc	a
+	subb	a,acc
+	inc	dptr
+	movx	@dptr,a
+	sjmp	L013006?
+L013002?:
+;	sensor_test.c:414: process_comp_y0 = 0;
+	mov	dptr,#_BMM150_compensate_y_process_comp_y0_1_102
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+L013006?:
+;	sensor_test.c:417: if (process_comp_y0 != 0)
+	mov	dptr,#_BMM150_compensate_y_process_comp_y0_1_102
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r5,a
+	orl	a,r4
+	jnz	L013022?
+	ljmp	L013008?
+L013022?:
+;	sensor_test.c:420: process_comp_y1 = (((int32_t)dig_xyz1) * 16384) / process_comp_y0;
+	mov	a,_dig_xyz1
+	mov	r6,a
+	rlc	a
+	subb	a,acc
+	mov	r0,a
+	xch	a,r0
+	anl	a,#0x03
+	mov	c,acc.0
+	xch	a,r0
+	rrc	a
+	xch	a,r0
+	rrc	a
+	mov	c,acc.0
+	xch	a,r0
+	rrc	a
+	xch	a,r0
+	rrc	a
+	xch	a,r0
+	mov	r1,a
+	mov	a,r6
+	rr	a
+	rr	a
+	anl	a,#0xc0
+	mov	r7,a
+	mov	a,r6
+	rr	a
+	rr	a
+	anl	a,#0x3f
+	orl	a,r0
+	mov	r0,a
+	mov	r6,#0x00
+	mov	__divslong_PARM_2,r4
+	mov	(__divslong_PARM_2 + 1),r5
+	mov	(__divslong_PARM_2 + 2),#0x00
+	mov	(__divslong_PARM_2 + 3),#0x00
+;	sensor_test.c:421: process_comp_y2 = ((uint16_t)process_comp_y1) - ((uint16_t)0x4000);
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	push	ar2
+	push	ar3
+	lcall	__divslong
+	mov	r4,dpl
+	mov	a,dph
+	add	a,#0xc0
+	mov	r5,a
+;	sensor_test.c:423: process_comp_y3 = ((int32_t) retval) * ((int32_t)retval);
+	mov	ar6,r4
+	mov	ar7,r5
+	mov	_BMM150_compensate_y_sloc0_1_0,r6
+	mov	a,r7
+	mov	(_BMM150_compensate_y_sloc0_1_0 + 1),a
+	rlc	a
+	subb	a,acc
+	mov	(_BMM150_compensate_y_sloc0_1_0 + 2),a
+	mov	(_BMM150_compensate_y_sloc0_1_0 + 3),a
+	mov	ar6,r4
+	mov	ar7,r5
+	mov	__mullong_PARM_2,r6
+	mov	a,r7
+	mov	(__mullong_PARM_2 + 1),a
+	rlc	a
+	subb	a,acc
+	mov	(__mullong_PARM_2 + 2),a
+	mov	(__mullong_PARM_2 + 3),a
+;	sensor_test.c:424: process_comp_y4 = ((int32_t)dig_xy2) * (process_comp_y3 / 128);
+	mov	dpl,_BMM150_compensate_y_sloc0_1_0
+	mov	dph,(_BMM150_compensate_y_sloc0_1_0 + 1)
+	mov	b,(_BMM150_compensate_y_sloc0_1_0 + 2)
+	mov	a,(_BMM150_compensate_y_sloc0_1_0 + 3)
+	push	ar4
+	push	ar5
+	lcall	__mullong
+	mov	_BMM150_compensate_y_sloc0_1_0,dpl
+	mov	(_BMM150_compensate_y_sloc0_1_0 + 1),dph
+	mov	(_BMM150_compensate_y_sloc0_1_0 + 2),b
+	mov	(_BMM150_compensate_y_sloc0_1_0 + 3),a
+	mov	a,_dig_xy2
+	mov	r6,a
+	rlc	a
+	subb	a,acc
+	mov	r7,a
+	mov	r0,a
+	mov	r1,a
+	mov	__divslong_PARM_2,#0x80
+	clr	a
+	mov	(__divslong_PARM_2 + 1),a
+	mov	(__divslong_PARM_2 + 2),a
+	mov	(__divslong_PARM_2 + 3),a
+	mov	dpl,_BMM150_compensate_y_sloc0_1_0
+	mov	dph,(_BMM150_compensate_y_sloc0_1_0 + 1)
+	mov	b,(_BMM150_compensate_y_sloc0_1_0 + 2)
+	mov	a,(_BMM150_compensate_y_sloc0_1_0 + 3)
+	push	ar6
+	push	ar7
+	push	ar0
+	push	ar1
+	lcall	__divslong
+	mov	__mullong_PARM_2,dpl
+	mov	(__mullong_PARM_2 + 1),dph
+	mov	(__mullong_PARM_2 + 2),b
+	mov	(__mullong_PARM_2 + 3),a
+	pop	ar1
+	pop	ar0
+	pop	ar7
+	pop	ar6
+;	sensor_test.c:425: process_comp_y5 = ((int32_t)(((int16_t)dig_xy1) * 128));
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	__mullong
+	mov	_BMM150_compensate_y_sloc0_1_0,dpl
+	mov	(_BMM150_compensate_y_sloc0_1_0 + 1),dph
+	mov	(_BMM150_compensate_y_sloc0_1_0 + 2),b
+	mov	(_BMM150_compensate_y_sloc0_1_0 + 3),a
+	pop	ar5
+	pop	ar4
+	mov	a,_dig_xy1
+	mov	r6,a
+	rlc	a
+	subb	a,acc
+	anl	a,#0x01
+	mov	c,acc.0
+	xch	a,r6
+	rrc	a
+	xch	a,r6
+	rrc	a
+	xch	a,r6
+	mov	__mullong_PARM_2,r6
+	mov	(__mullong_PARM_2 + 1),a
+	rlc	a
+	subb	a,acc
+	mov	(__mullong_PARM_2 + 2),a
+	mov	(__mullong_PARM_2 + 3),a
+;	sensor_test.c:426: process_comp_y6 = ((process_comp_y4 + (((int32_t)retval) * process_comp_y5)) / 512);
+	mov	a,r5
+	rlc	a
+	subb	a,acc
+	mov	r6,a
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r6
+	lcall	__mullong
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r6,b
+	mov	r7,a
+	mov	a,r4
+	add	a,_BMM150_compensate_y_sloc0_1_0
+	mov	r4,a
+	mov	a,r5
+	addc	a,(_BMM150_compensate_y_sloc0_1_0 + 1)
+	mov	r5,a
+	mov	a,r6
+	addc	a,(_BMM150_compensate_y_sloc0_1_0 + 2)
+	mov	r6,a
+	mov	a,r7
+	addc	a,(_BMM150_compensate_y_sloc0_1_0 + 3)
+	mov	r7,a
+	mov	__divslong_PARM_2,#0x00
+	mov	(__divslong_PARM_2 + 1),#0x02
+	mov	(__divslong_PARM_2 + 2),#0x00
+	mov	(__divslong_PARM_2 + 3),#0x00
+;	sensor_test.c:427: process_comp_y7 = ((int32_t)(((int16_t)dig_y2) + ((int16_t)0xA0)));
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r6
+	mov	a,r7
+	lcall	__divslong
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r6,b
+	mov	r7,a
+	mov	a,_dig_y2
+	mov	r0,a
+	rlc	a
+	subb	a,acc
+	mov	r1,a
+	mov	a,#0xA0
+	add	a,r0
+	mov	r0,a
+	clr	a
+	addc	a,r1
+	mov	__mullong_PARM_2,r0
+	mov	(__mullong_PARM_2 + 1),a
+	rlc	a
+	subb	a,acc
+	mov	(__mullong_PARM_2 + 2),a
+	mov	(__mullong_PARM_2 + 3),a
+;	sensor_test.c:428: process_comp_y8 = (((process_comp_y6 + ((int32_t)0x100000)) * process_comp_y7) / 4096);
+	mov	a,#0x10
+	add	a,r6
+	mov	r6,a
+	clr	a
+	addc	a,r7
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r6
+	lcall	__mullong
+;	sensor_test.c:429: process_comp_y9 = (((int32_t)*mag_data_y) * process_comp_y8);
+	mov	__divslong_PARM_2,#0x00
+	mov	(__divslong_PARM_2 + 1),#0x10
+	mov	(__divslong_PARM_2 + 2),#0x00
+	mov	(__divslong_PARM_2 + 3),#0x00
+	lcall	__divslong
+	mov	__mullong_PARM_2,dpl
+	mov	(__mullong_PARM_2 + 1),dph
+	mov	(__mullong_PARM_2 + 2),b
+	mov	(__mullong_PARM_2 + 3),a
+	pop	ar3
+	pop	ar2
+	mov	a,r3
+	rlc	a
+	subb	a,acc
+	mov	r4,a
+;	sensor_test.c:430: retval = (int16_t)(process_comp_y9 / 8192);
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r4
+	lcall	__mullong
+	mov	__divslong_PARM_2,#0x00
+	mov	(__divslong_PARM_2 + 1),#0x20
+	mov	(__divslong_PARM_2 + 2),#0x00
+	mov	(__divslong_PARM_2 + 3),#0x00
+	lcall	__divslong
+	mov	r2,dpl
+	mov	r3,dph
+;	sensor_test.c:431: retval = (retval + (((int16_t)dig_y1) * 8)) / 16;
+	mov	a,_dig_y1
+	mov	r4,a
+	rlc	a
+	subb	a,acc
+	swap	a
+	rr	a
+	anl	a,#0xf8
+	xch	a,r4
+	swap	a
+	rr	a
+	xch	a,r4
+	xrl	a,r4
+	xch	a,r4
+	anl	a,#0xf8
+	xch	a,r4
+	xrl	a,r4
+	mov	r5,a
+	mov	a,r4
+	add	a,r2
+	mov	dpl,a
+	mov	a,r5
+	addc	a,r3
+	mov	dph,a
+	mov	__divsint_PARM_2,#0x10
+	clr	a
+	mov	(__divsint_PARM_2 + 1),a
+	lcall	__divsint
+	mov	a,dpl
+	mov	b,dph
+	mov	dptr,#_BMM150_compensate_y_retval_1_102
+	movx	@dptr,a
+	inc	dptr
+	mov	a,b
+	movx	@dptr,a
+	sjmp	L013012?
+L013008?:
+;	sensor_test.c:435: retval = BMM150_OVERFLOW_OUTPUT;
+	mov	dptr,#_BMM150_compensate_y_retval_1_102
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	mov	a,#0x80
+	movx	@dptr,a
+	sjmp	L013012?
+L013011?:
+;	sensor_test.c:441: retval = BMM150_OVERFLOW_OUTPUT;
+	mov	dptr,#_BMM150_compensate_y_retval_1_102
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	mov	a,#0x80
+	movx	@dptr,a
+L013012?:
+;	sensor_test.c:444: return retval;
+	mov	dptr,#_BMM150_compensate_y_retval_1_102
+	movx	a,@dptr
+	mov	r2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	dpl,r2
+	mov	dph,a
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'BMM150_compensate_z'
+;------------------------------------------------------------
+;data_rhall                Allocated with name '_BMM150_compensate_z_PARM_2'
+;mag_data_z                Allocated to registers r2 r3 r4 
+;sloc0                     Allocated with name '_BMM150_compensate_z_sloc0_1_0'
+;sloc1                     Allocated with name '_BMM150_compensate_z_sloc1_1_0'
+;sloc2                     Allocated with name '_BMM150_compensate_z_sloc2_1_0'
+;retval                    Allocated with name '_BMM150_compensate_z_retval_1_111'
+;process_comp_z0           Allocated with name '_BMM150_compensate_z_process_comp_z0_1_111'
+;process_comp_z1           Allocated with name '_BMM150_compensate_z_process_comp_z1_1_111'
+;process_comp_z2           Allocated with name '_BMM150_compensate_z_process_comp_z2_1_111'
+;process_comp_z3           Allocated with name '_BMM150_compensate_z_process_comp_z3_1_111'
+;process_comp_z4           Allocated with name '_BMM150_compensate_z_process_comp_z4_1_111'
+;------------------------------------------------------------
+;	sensor_test.c:447: int16_t BMM150_compensate_z (int16_t *mag_data_z, int16_t *data_rhall){
+;	-----------------------------------------
+;	 function BMM150_compensate_z
+;	-----------------------------------------
+_BMM150_compensate_z:
+;	sensor_test.c:455: if (*mag_data_z != BMM150_OVERFLOW_ADCVAL_ZAXIS_HALL)
+	mov	r4,b
+	lcall	__gptrget
+	mov	r2,a
+	inc	dptr
+	lcall	__gptrget
+	mov	r3,a
+	cjne	r2,#0x00,L014024?
+	cjne	r3,#0xC0,L014024?
+	ljmp	L014013?
+L014024?:
+;	sensor_test.c:457: if ((dig_z2 != 0) && (dig_z1 != 0) && (*data_rhall != 0) &&
+	mov	a,_dig_z2
+	jnz	L014025?
+	ljmp	L014007?
+L014025?:
+	mov	a,_dig_z1
+	jnz	L014026?
+	ljmp	L014007?
+L014026?:
+	mov	r4,_BMM150_compensate_z_PARM_2
+	mov	r5,(_BMM150_compensate_z_PARM_2 + 1)
+	mov	r6,(_BMM150_compensate_z_PARM_2 + 2)
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r6
+	lcall	__gptrget
+	mov	r4,a
+	inc	dptr
+	lcall	__gptrget
+	mov	r5,a
+	orl	a,r4
+	jnz	L014027?
+	ljmp	L014007?
+L014027?:
+;	sensor_test.c:458: (dig_xyz1 != 0))
+	mov	a,_dig_xyz1
+	jnz	L014028?
+	ljmp	L014007?
+L014028?:
+;	sensor_test.c:461: process_comp_z0 = ((int16_t)*data_rhall) - ((int16_t)dig_xyz1);
+	mov	a,_dig_xyz1
+	mov	r6,a
+	rlc	a
+	subb	a,acc
+	mov	r7,a
+	mov	a,r4
+	clr	c
+	subb	a,r6
+	mov	_BMM150_compensate_z_sloc0_1_0,a
+	mov	a,r5
+	subb	a,r7
+	mov	(_BMM150_compensate_z_sloc0_1_0 + 1),a
+;	sensor_test.c:462: process_comp_z1 = (((int32_t)dig_z3) * ((int32_t)(process_comp_z0))) / 4;
+	mov	a,_dig_z3
+	mov	r0,a
+	rlc	a
+	subb	a,acc
+	mov	r1,a
+	mov	r6,a
+	mov	r7,a
+	mov	__mullong_PARM_2,_BMM150_compensate_z_sloc0_1_0
+	mov	a,(_BMM150_compensate_z_sloc0_1_0 + 1)
+	mov	(__mullong_PARM_2 + 1),a
+	rlc	a
+	subb	a,acc
+	mov	(__mullong_PARM_2 + 2),a
+	mov	(__mullong_PARM_2 + 3),a
+	mov	dpl,r0
+	mov	dph,r1
+	mov	b,r6
+	mov	a,r7
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	lcall	__mullong
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	mov	__divslong_PARM_2,#0x04
+	clr	a
+	mov	(__divslong_PARM_2 + 1),a
+	mov	(__divslong_PARM_2 + 2),a
+	mov	(__divslong_PARM_2 + 3),a
+;	sensor_test.c:463: process_comp_z2 = (((int32_t)(*mag_data_z - dig_z4)) * 32768);
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	__divslong
+	mov	_BMM150_compensate_z_sloc1_1_0,dpl
+	mov	(_BMM150_compensate_z_sloc1_1_0 + 1),dph
+	mov	(_BMM150_compensate_z_sloc1_1_0 + 2),b
+	mov	(_BMM150_compensate_z_sloc1_1_0 + 3),a
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	a,_dig_z4
+	mov	r6,a
+	rlc	a
+	subb	a,acc
+	mov	r7,a
+	mov	a,r2
+	clr	c
+	subb	a,r6
+	mov	r2,a
+	mov	a,r3
+	subb	a,r7
+	mov	r3,a
+	rlc	a
+	subb	a,acc
+	mov	(_BMM150_compensate_z_sloc2_1_0 + 2),r3
+	anl	a,#0x01
+	mov	c,acc.0
+	xch	a,(_BMM150_compensate_z_sloc2_1_0 + 2)
+	rrc	a
+	xch	a,(_BMM150_compensate_z_sloc2_1_0 + 2)
+	rrc	a
+	xch	a,(_BMM150_compensate_z_sloc2_1_0 + 2)
+	mov	(_BMM150_compensate_z_sloc2_1_0 + 3),a
+	mov	a,r2
+	rr	a
+	anl	a,#0x80
+	mov	(_BMM150_compensate_z_sloc2_1_0 + 1),a
+	mov	a,r2
+	clr	c
+	rrc	a
+	orl	a,(_BMM150_compensate_z_sloc2_1_0 + 2)
+	mov	(_BMM150_compensate_z_sloc2_1_0 + 2),a
+	mov	_BMM150_compensate_z_sloc2_1_0,#0x00
+;	sensor_test.c:464: process_comp_z3 = ((int32_t)dig_z1) * (((int16_t)*data_rhall) * 2);
+	mov	a,_dig_z1
+	mov	r0,a
+	rlc	a
+	subb	a,acc
+	mov	r1,a
+	mov	r2,a
+	mov	r3,a
+	mov	a,r5
+	xch	a,r4
+	add	a,acc
+	xch	a,r4
+	rlc	a
+	mov	__mullong_PARM_2,r4
+	mov	(__mullong_PARM_2 + 1),a
+	rlc	a
+	subb	a,acc
+	mov	(__mullong_PARM_2 + 2),a
+	mov	(__mullong_PARM_2 + 3),a
+;	sensor_test.c:465: process_comp_z4 = (int16_t)((process_comp_z3 + (32768)) / 65536);
+	mov	dpl,r0
+	mov	dph,r1
+	mov	b,r2
+	mov	a,r3
+	lcall	__mullong
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r4,b
+	mov	r5,a
+	mov	a,#0x80
+	add	a,r3
+	mov	r3,a
+	clr	a
+	addc	a,r4
+	mov	r4,a
+	clr	a
+	addc	a,r5
+	mov	r5,a
+	mov	__divslong_PARM_2,#0x00
+	mov	(__divslong_PARM_2 + 1),#0x00
+	mov	(__divslong_PARM_2 + 2),#0x01
+	mov	(__divslong_PARM_2 + 3),#0x00
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r4
+	mov	a,r5
+	lcall	__divslong
+	mov	r2,dpl
+	mov	r3,dph
+;	sensor_test.c:466: retval = ((process_comp_z2 - process_comp_z1) / (dig_z2 + process_comp_z4));
+	mov	a,_BMM150_compensate_z_sloc2_1_0
+	clr	c
+	subb	a,_BMM150_compensate_z_sloc1_1_0
+	mov	r4,a
+	mov	a,(_BMM150_compensate_z_sloc2_1_0 + 1)
+	subb	a,(_BMM150_compensate_z_sloc1_1_0 + 1)
+	mov	r5,a
+	mov	a,(_BMM150_compensate_z_sloc2_1_0 + 2)
+	subb	a,(_BMM150_compensate_z_sloc1_1_0 + 2)
+	mov	r6,a
+	mov	a,(_BMM150_compensate_z_sloc2_1_0 + 3)
+	subb	a,(_BMM150_compensate_z_sloc1_1_0 + 3)
+	mov	r7,a
+	mov	a,_dig_z2
+	mov	r0,a
+	rlc	a
+	subb	a,acc
+	mov	r1,a
+	mov	a,r2
+	add	a,r0
+	mov	r2,a
+	mov	a,r3
+	addc	a,r1
+	mov	__divslong_PARM_2,r2
+	mov	(__divslong_PARM_2 + 1),a
+	rlc	a
+	subb	a,acc
+	mov	(__divslong_PARM_2 + 2),a
+	mov	(__divslong_PARM_2 + 3),a
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r6
+	mov	a,r7
+	lcall	__divslong
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r4,b
+	mov	r5,a
+	mov	dptr,#_BMM150_compensate_z_retval_1_111
+	mov	a,r2
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r3
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r4
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r5
+	movx	@dptr,a
+;	sensor_test.c:469: if (retval > BMM150_POSITIVE_SATURATION_Z)
+	clr	c
+	mov	a,#0xFF
+	subb	a,r2
+	mov	a,#0x7F
+	subb	a,r3
+	clr	a
+	subb	a,r4
+	clr	a
+	xrl	a,#0x80
+	mov	b,r5
+	xrl	b,#0x80
+	subb	a,b
+	jnc	L014004?
+;	sensor_test.c:471: retval = BMM150_POSITIVE_SATURATION_Z;
+	mov	dptr,#_BMM150_compensate_z_retval_1_111
+	mov	a,#0xFF
+	movx	@dptr,a
+	inc	dptr
+	mov	a,#0x7F
+	movx	@dptr,a
+	inc	dptr
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	sjmp	L014005?
+L014004?:
+;	sensor_test.c:473: else if (retval < BMM150_NEGATIVE_SATURATION_Z)
+	clr	c
+	mov	a,r2
+	subb	a,#0x01
+	mov	a,r3
+	subb	a,#0x80
+	mov	a,r4
+	subb	a,#0xFF
+	mov	a,r5
+	xrl	a,#0x80
+	subb	a,#0x7f
+	jnc	L014005?
+;	sensor_test.c:475: retval = BMM150_NEGATIVE_SATURATION_Z;
+	mov	dptr,#_BMM150_compensate_z_retval_1_111
+	mov	a,#0x01
+	movx	@dptr,a
+	inc	dptr
+	mov	a,#0x80
+	movx	@dptr,a
+	inc	dptr
+	mov	a,#0xFF
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+L014005?:
+;	sensor_test.c:479: retval = retval / 16;
+	mov	dptr,#_BMM150_compensate_z_retval_1_111
+	movx	a,@dptr
+	mov	r2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r3,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r5,a
+	mov	__divslong_PARM_2,#0x10
+	clr	a
+	mov	(__divslong_PARM_2 + 1),a
+	mov	(__divslong_PARM_2 + 2),a
+	mov	(__divslong_PARM_2 + 3),a
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r4
+	mov	a,r5
+	lcall	__divslong
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r4,b
+	mov	r5,a
+	mov	dptr,#_BMM150_compensate_z_retval_1_111
+	mov	a,r2
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r3
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r4
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r5
+	movx	@dptr,a
+	sjmp	L014014?
+L014007?:
+;	sensor_test.c:483: retval = BMM150_OVERFLOW_OUTPUT;
+	mov	dptr,#_BMM150_compensate_z_retval_1_111
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	mov	a,#0x80
+	movx	@dptr,a
+	inc	dptr
+	mov	a,#0xFF
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	sjmp	L014014?
+L014013?:
+;	sensor_test.c:489: retval = BMM150_OVERFLOW_OUTPUT;
+	mov	dptr,#_BMM150_compensate_z_retval_1_111
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	mov	a,#0x80
+	movx	@dptr,a
+	inc	dptr
+	mov	a,#0xFF
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+L014014?:
+;	sensor_test.c:492: return (int16_t)retval;
+	mov	dptr,#_BMM150_compensate_z_retval_1_111
+	movx	a,@dptr
+	mov	r2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r3,a
+	inc	dptr
+	movx	a,@dptr
+	inc	dptr
+	movx	a,@dptr
+	mov	dpl,r2
+	mov	dph,r3
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'BMM150_Read_Data'
+;------------------------------------------------------------
+;mag_y                     Allocated with name '_BMM150_Read_Data_PARM_2'
+;mag_z                     Allocated with name '_BMM150_Read_Data_PARM_3'
+;mag_x                     Allocated with name '_BMM150_Read_Data_mag_x_1_118'
+;raw_x_lsb                 Allocated to registers r5 
+;raw_x_msb                 Allocated to registers r6 
+;raw_y_lsb                 Allocated with name '_BMM150_Read_Data_raw_y_lsb_1_119'
+;raw_y_msb                 Allocated with name '_BMM150_Read_Data_raw_y_msb_1_119'
+;raw_z_lsb                 Allocated with name '_BMM150_Read_Data_raw_z_lsb_1_119'
+;raw_z_msb                 Allocated with name '_BMM150_Read_Data_raw_z_msb_1_119'
+;raw_rhall_lsb             Allocated with name '_BMM150_Read_Data_raw_rhall_lsb_1_119'
+;raw_rhall_msb             Allocated with name '_BMM150_Read_Data_raw_rhall_msb_1_119'
+;raw_z                     Allocated with name '_BMM150_Read_Data_raw_z_1_119'
+;x_val                     Allocated with name '_BMM150_Read_Data_x_val_1_119'
+;y_val                     Allocated with name '_BMM150_Read_Data_y_val_1_119'
+;z_val                     Allocated with name '_BMM150_Read_Data_z_val_1_119'
+;rhall_val                 Allocated with name '_BMM150_Read_Data_rhall_val_1_119'
+;z_raw                     Allocated to registers r3 r2 
+;------------------------------------------------------------
+;	sensor_test.c:495: void BMM150_Read_Data(int16_t *mag_x, int16_t *mag_y, int16_t *mag_z)
+;	-----------------------------------------
+;	 function BMM150_Read_Data
+;	-----------------------------------------
+_BMM150_Read_Data:
+	mov	_BMM150_Read_Data_mag_x_1_118,dpl
+	mov	(_BMM150_Read_Data_mag_x_1_118 + 1),dph
+	mov	(_BMM150_Read_Data_mag_x_1_118 + 2),b
+;	sensor_test.c:500: raw_x_lsb = SPI_read(BMM150_DATA_X_LSB);
+	mov	dpl,#0x42
+	lcall	_SPI_read
+	mov	r5,dpl
+;	sensor_test.c:501: raw_x_msb = SPI_read(BMM150_DATA_X_MSB);
+	mov	dpl,#0x43
+	push	ar5
+	lcall	_SPI_read
+	mov	r6,dpl
+;	sensor_test.c:502: raw_y_lsb = SPI_read(BMM150_DATA_Y_LSB);
+	mov	dpl,#0x44
+	push	ar6
+	lcall	_SPI_read
+	mov	_BMM150_Read_Data_raw_y_lsb_1_119,dpl
+;	sensor_test.c:503: raw_y_msb = SPI_read(BMM150_DATA_Y_MSB);
+	mov	dpl,#0x45
+	lcall	_SPI_read
+	mov	_BMM150_Read_Data_raw_y_msb_1_119,dpl
+;	sensor_test.c:504: SPI_read_block(BMM150_DATA_X_LSB, raw_z, 2);
+	mov	_SPI_read_block_PARM_2,#_BMM150_Read_Data_raw_z_1_119
+	mov	(_SPI_read_block_PARM_2 + 1),#0x00
+	mov	(_SPI_read_block_PARM_2 + 2),#0x40
+	mov	_SPI_read_block_PARM_3,#0x02
+	mov	dpl,#0x42
+	lcall	_SPI_read_block
+;	sensor_test.c:507: raw_z_lsb = raw_z[0];
+	mov	_BMM150_Read_Data_raw_z_lsb_1_119,_BMM150_Read_Data_raw_z_1_119
+;	sensor_test.c:508: raw_z_msb = raw_z[1];
+	mov	_BMM150_Read_Data_raw_z_msb_1_119,(_BMM150_Read_Data_raw_z_1_119 + 0x0001)
+;	sensor_test.c:509: raw_rhall_lsb = SPI_read(BMM150_RHALL_LSB); 
+	mov	dpl,#0x48
+	lcall	_SPI_read
+	mov	_BMM150_Read_Data_raw_rhall_lsb_1_119,dpl
+;	sensor_test.c:510: raw_rhall_msb = SPI_read(BMM150_RHALL_MSB);
+	mov	dpl,#0x49
+	lcall	_SPI_read
+	mov	_BMM150_Read_Data_raw_rhall_msb_1_119,dpl
+;	sensor_test.c:511: SPI_read_block(BMM150_DATA_X_LSB, raw_z, 2);
+	mov	_SPI_read_block_PARM_2,#_BMM150_Read_Data_raw_z_1_119
+	mov	(_SPI_read_block_PARM_2 + 1),#0x00
+	mov	(_SPI_read_block_PARM_2 + 2),#0x40
+	mov	_SPI_read_block_PARM_3,#0x02
+	mov	dpl,#0x42
+	lcall	_SPI_read_block
+	pop	ar6
+	pop	ar5
+;	sensor_test.c:516: x_val = ((int16_t)((int8_t)raw_x_msb)) * 32 + ((raw_x_lsb & 0xF8) >> 3);
+	mov	a,r6
+	rlc	a
+	subb	a,acc
+	swap	a
+	rl	a
+	anl	a,#0xe0
+	xch	a,r6
+	swap	a
+	rl	a
+	xch	a,r6
+	xrl	a,r6
+	xch	a,r6
+	anl	a,#0xe0
+	xch	a,r6
+	xrl	a,r6
+	mov	r7,a
+	anl	ar5,#0xF8
+	mov	a,r5
+	swap	a
+	rl	a
+	anl	a,#0x1f
+	mov	r5,a
+	mov	r2,#0x00
+	add	a,r6
+	mov	r3,a
+	mov	a,r2
+	addc	a,r7
+	mov	r2,a
+	mov	_BMM150_Read_Data_x_val_1_119,r3
+	mov	(_BMM150_Read_Data_x_val_1_119 + 1),r2
+;	sensor_test.c:517: if (x_val > 4095){
+	clr	c
+	mov	a,#0xFF
+	subb	a,r3
+	mov	a,#(0x0F ^ 0x80)
+	mov	b,r2
+	xrl	b,#0x80
+	subb	a,b
+	jnc	L015002?
+;	sensor_test.c:518: x_val = x_val - 8192;  // 2's complement sign correction
+	mov	_BMM150_Read_Data_x_val_1_119,r3
+	mov	a,r2
+	add	a,#0xe0
+	mov	(_BMM150_Read_Data_x_val_1_119 + 1),a
+L015002?:
+;	sensor_test.c:521: y_val = ((int16_t)((int8_t)raw_y_msb)) * 32 + ((raw_y_lsb & 0xF8) >> 3);
+	mov	a,_BMM150_Read_Data_raw_y_msb_1_119
 	mov	r2,a
 	rlc	a
 	subb	a,acc
+	swap	a
+	rl	a
+	anl	a,#0xe0
+	xch	a,r2
+	swap	a
+	rl	a
+	xch	a,r2
+	xrl	a,r2
+	xch	a,r2
+	anl	a,#0xe0
+	xch	a,r2
+	xrl	a,r2
 	mov	r3,a
+	mov	a,#0xF8
+	anl	a,_BMM150_Read_Data_raw_y_lsb_1_119
+	swap	a
+	rl	a
+	anl	a,#0x1f
+	mov	r4,a
+	mov	r5,#0x00
+	add	a,r2
+	mov	r2,a
+	mov	a,r5
+	addc	a,r3
+	mov	r3,a
+	mov	_BMM150_Read_Data_y_val_1_119,r2
+	mov	(_BMM150_Read_Data_y_val_1_119 + 1),r3
+;	sensor_test.c:522: if (y_val > 4095) {
+	clr	c
+	mov	a,#0xFF
+	subb	a,r2
+	mov	a,#(0x0F ^ 0x80)
+	mov	b,r3
+	xrl	b,#0x80
+	subb	a,b
+	jnc	L015004?
+;	sensor_test.c:523: y_val = y_val - 8192;  // 2's complement sign correction
+	mov	_BMM150_Read_Data_y_val_1_119,r2
+	mov	a,r3
+	add	a,#0xe0
+	mov	(_BMM150_Read_Data_y_val_1_119 + 1),a
+L015004?:
+;	sensor_test.c:530: z_raw = ((uint16_t)raw_z_msb << 7) | ((raw_z_lsb & 0xFE) >> 1);
+	mov	r7,_BMM150_Read_Data_raw_z_msb_1_119
+	clr	a
+	anl	a,#0x01
+	mov	c,acc.0
+	xch	a,r7
+	rrc	a
+	xch	a,r7
+	rrc	a
+	xch	a,r7
+	mov	r2,a
+	mov	a,#0xFE
+	anl	a,_BMM150_Read_Data_raw_z_lsb_1_119
+	clr	c
+	rrc	a
+	mov	r4,#0x00
+	orl	a,r7
+	mov	r3,a
+	mov	a,r4
+	orl	a,r2
+	mov	r2,a
+;	sensor_test.c:531: if (z_raw > 0x3FFF) z_val = z_raw - 0x8000;
+	clr	c
+	mov	a,#0xFF
+	subb	a,r3
+	mov	a,#0x3F
+	subb	a,r2
+	jnc	L015006?
+	mov	_BMM150_Read_Data_z_val_1_119,r3
+	mov	a,r2
+	add	a,#0x80
+	mov	(_BMM150_Read_Data_z_val_1_119 + 1),a
+	sjmp	L015007?
+L015006?:
+;	sensor_test.c:532: else z_val = z_raw; 
+	mov	_BMM150_Read_Data_z_val_1_119,r3
+	mov	(_BMM150_Read_Data_z_val_1_119 + 1),r2
+L015007?:
+;	sensor_test.c:535: rhall_val = ((uint16_t)raw_rhall_msb) * 64 + (raw_rhall_lsb & 0x3F); 
+	mov	r7,_BMM150_Read_Data_raw_rhall_msb_1_119
+	clr	a
+	anl	a,#0x03
+	mov	c,acc.0
+	xch	a,r7
+	rrc	a
+	xch	a,r7
+	rrc	a
+	mov	c,acc.0
+	xch	a,r7
+	rrc	a
+	xch	a,r7
+	rrc	a
+	xch	a,r7
+	mov	r2,a
+	mov	a,#0x3F
+	anl	a,_BMM150_Read_Data_raw_rhall_lsb_1_119
+	mov	r4,#0x00
+	add	a,r7
+	mov	_BMM150_Read_Data_rhall_val_1_119,a
+	mov	a,r4
+	addc	a,r2
+	mov	(_BMM150_Read_Data_rhall_val_1_119 + 1),a
+;	sensor_test.c:539: *mag_x = BMM150_compensate_x(&x_val, &rhall_val);
+	mov	_BMM150_compensate_x_PARM_2,#_BMM150_Read_Data_rhall_val_1_119
+	mov	(_BMM150_compensate_x_PARM_2 + 1),#0x00
+	mov	(_BMM150_compensate_x_PARM_2 + 2),#0x40
+	mov	dptr,#_BMM150_Read_Data_x_val_1_119
+	mov	b,#0x40
+	lcall	_BMM150_compensate_x
+	mov	r2,dpl
+	mov	r3,dph
+	mov	dpl,_BMM150_Read_Data_mag_x_1_118
+	mov	dph,(_BMM150_Read_Data_mag_x_1_118 + 1)
+	mov	b,(_BMM150_Read_Data_mag_x_1_118 + 2)
+	mov	a,r2
+	lcall	__gptrput
+	inc	dptr
+	mov	a,r3
+	lcall	__gptrput
+;	sensor_test.c:540: *mag_y = BMM150_compensate_y(&y_val, &rhall_val);
+	mov	r2,_BMM150_Read_Data_PARM_2
+	mov	r3,(_BMM150_Read_Data_PARM_2 + 1)
+	mov	r4,(_BMM150_Read_Data_PARM_2 + 2)
+	mov	_BMM150_compensate_y_PARM_2,#_BMM150_Read_Data_rhall_val_1_119
+	mov	(_BMM150_compensate_y_PARM_2 + 1),#0x00
+	mov	(_BMM150_compensate_y_PARM_2 + 2),#0x40
+	mov	dptr,#_BMM150_Read_Data_y_val_1_119
+	mov	b,#0x40
 	push	ar2
 	push	ar3
+	push	ar4
+	lcall	_BMM150_compensate_y
+	mov	r5,dpl
+	mov	r6,dph
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r4
+	mov	a,r5
+	lcall	__gptrput
+	inc	dptr
+	mov	a,r6
+	lcall	__gptrput
+;	sensor_test.c:541: *mag_z = BMM150_compensate_z(&z_val, &rhall_val);
+	mov	r2,_BMM150_Read_Data_PARM_3
+	mov	r3,(_BMM150_Read_Data_PARM_3 + 1)
+	mov	r4,(_BMM150_Read_Data_PARM_3 + 2)
+	mov	_BMM150_compensate_z_PARM_2,#_BMM150_Read_Data_rhall_val_1_119
+	mov	(_BMM150_compensate_z_PARM_2 + 1),#0x00
+	mov	(_BMM150_compensate_z_PARM_2 + 2),#0x40
+	mov	dptr,#_BMM150_Read_Data_z_val_1_119
+	mov	b,#0x40
+	push	ar2
+	push	ar3
+	push	ar4
+	lcall	_BMM150_compensate_z
+	mov	r5,dpl
+	mov	r6,dph
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r4
+	mov	a,r5
+	lcall	__gptrput
+	inc	dptr
+	mov	a,r6
+	ljmp	__gptrput
+;------------------------------------------------------------
+;Allocation info for local variables in function 'main'
+;------------------------------------------------------------
+;i                         Allocated with name '_main_i_1_123'
+;mag_x                     Allocated with name '_main_mag_x_1_123'
+;mag_y                     Allocated with name '_main_mag_y_1_123'
+;mag_z                     Allocated with name '_main_mag_z_1_123'
+;angle                     Allocated to registers r6 r7 r0 r1 
+;declination_angle         Allocated to registers 
+;avg_angle                 Allocated with name '_main_avg_angle_1_123'
+;alpha                     Allocated to registers 
+;------------------------------------------------------------
+;	sensor_test.c:547: void main (void)
+;	-----------------------------------------
+;	 function main
+;	-----------------------------------------
+_main:
+;	sensor_test.c:554: waitms(500);
+	mov	dptr,#0x01F4
+	lcall	_waitms
+;	sensor_test.c:555: printf("\x1b[2J"); // Clear screen using ANSI escape sequence.
 	mov	a,#__str_5
 	push	acc
 	mov	a,#(__str_5 >> 8)
@@ -1245,21 +2896,29 @@ L010003?:
 	mov	a,#0x80
 	push	acc
 	lcall	_printf
-	mov	a,sp
-	add	a,#0xfb
-	mov	sp,a
-;	sensor_test.c:289: break;
-;	sensor_test.c:291: case BMM150_E_INVALID_CONFIG:
-	ret
-L010004?:
-;	sensor_test.c:292: printf("Error [%d] : Invalid sensor configuration.", rslt);
-	mov	a,_bmm150_error_codes_print_result_PARM_2
-	mov	r2,a
-	rlc	a
-	subb	a,acc
-	mov	r3,a
-	push	ar2
-	push	ar3
+	dec	sp
+	dec	sp
+	dec	sp
+;	sensor_test.c:559: __FILE__, __DATE__, __TIME__);
+;	sensor_test.c:558: "Compiled: %s, %s\n\n",
+	mov	a,#__str_9
+	push	acc
+	mov	a,#(__str_9 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	mov	a,#__str_8
+	push	acc
+	mov	a,#(__str_8 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	mov	a,#__str_7
+	push	acc
+	mov	a,#(__str_7 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
 	mov	a,#__str_6
 	push	acc
 	mov	a,#(__str_6 >> 8)
@@ -1268,91 +2927,320 @@ L010004?:
 	push	acc
 	lcall	_printf
 	mov	a,sp
-	add	a,#0xfb
+	add	a,#0xf4
 	mov	sp,a
-;	sensor_test.c:293: printf(" It occurs when there is a mismatch in the requested feature with the available one\r\n");
-	mov	a,#__str_7
-	push	acc
-	mov	a,#(__str_7 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-;	sensor_test.c:294: break;
-;	sensor_test.c:296: default:
-	ret
-L010005?:
-;	sensor_test.c:297: printf("Error [%d] : Unknown error code\r\n", rslt);
-	mov	a,_bmm150_error_codes_print_result_PARM_2
-	mov	r2,a
-	rlc	a
-	subb	a,acc
-	mov	r3,a
-	push	ar2
-	push	ar3
-	mov	a,#__str_8
-	push	acc
-	mov	a,#(__str_8 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
+;	sensor_test.c:561: Set_Pin_Output(0x03); 
+	mov	dpl,#0x03
+	lcall	_Set_Pin_Output
+;	sensor_test.c:562: BMM150_Init();
+	lcall	_BMM150_Init
+;	sensor_test.c:564: avg_angle = 0.0; 
+	mov	_main_avg_angle_1_123,#0x00
+	mov	(_main_avg_angle_1_123 + 1),#0x00
+	mov	(_main_avg_angle_1_123 + 2),#0x00
+	mov	(_main_avg_angle_1_123 + 3),#0x00
+;	sensor_test.c:569: for (i = 0; i < 50; i++){
+L016018?:
+	mov	_main_i_1_123,#0x00
+L016009?:
+	mov	a,#0x100 - 0x32
+	add	a,_main_i_1_123
+	jnc	L016021?
+	ljmp	L016012?
+L016021?:
+;	sensor_test.c:570: BMM150_Read_Data(&mag_x, &mag_y, &mag_z);
+	mov	_BMM150_Read_Data_PARM_2,#_main_mag_y_1_123
+	mov	(_BMM150_Read_Data_PARM_2 + 1),#0x00
+	mov	(_BMM150_Read_Data_PARM_2 + 2),#0x40
+	mov	_BMM150_Read_Data_PARM_3,#_main_mag_z_1_123
+	mov	(_BMM150_Read_Data_PARM_3 + 1),#0x00
+	mov	(_BMM150_Read_Data_PARM_3 + 2),#0x40
+	mov	dptr,#_main_mag_x_1_123
+	mov	b,#0x40
+	lcall	_BMM150_Read_Data
+;	sensor_test.c:571: angle = atan2f((float)mag_y, (float)mag_x) * 180.0 / M_PI;
+	mov	dpl,_main_mag_y_1_123
+	mov	dph,(_main_mag_y_1_123 + 1)
+	lcall	___sint2fs
+	mov	r7,dpl
+	mov	r0,dph
+	mov	r1,b
+	mov	r6,a
+	mov	dpl,_main_mag_x_1_123
+	mov	dph,(_main_mag_x_1_123 + 1)
+	push	ar6
+	push	ar7
+	push	ar0
+	push	ar1
+	lcall	___sint2fs
+	mov	_atan2f_PARM_2,dpl
+	mov	(_atan2f_PARM_2 + 1),dph
+	mov	(_atan2f_PARM_2 + 2),b
+	mov	(_atan2f_PARM_2 + 3),a
+	pop	ar1
+	pop	ar0
+	pop	ar7
+	pop	ar6
+	mov	dpl,r7
+	mov	dph,r0
+	mov	b,r1
+	mov	a,r6
+	lcall	_atan2f
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	push	ar6
+	push	ar7
+	push	ar0
+	push	ar1
+	mov	dptr,#0x0000
+	mov	b,#0x34
+	mov	a,#0x43
+	lcall	___fsmul
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
 	mov	a,sp
-	add	a,#0xfb
+	add	a,#0xfc
 	mov	sp,a
-;	sensor_test.c:299: }
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'bmm150_interface_selection'
-;------------------------------------------------------------
-;intf                      Allocated with name '_bmm150_interface_selection_PARM_2'
-;dev                       Allocated to registers r2 r3 
-;rslt                      Allocated with name '_bmm150_interface_selection_rslt_1_84'
-;------------------------------------------------------------
-;	sensor_test.c:306: xdata int8_t bmm150_interface_selection(xdata struct bmm150_dev *dev, uint8_t intf)
-;	-----------------------------------------
-;	 function bmm150_interface_selection
-;	-----------------------------------------
-_bmm150_interface_selection:
+	mov	a,#0xDB
+	push	acc
+	mov	a,#0x0F
+	push	acc
+	mov	a,#0x49
+	push	acc
+	mov	a,#0x40
+	push	acc
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	___fsdiv
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+;	sensor_test.c:572: angle += declination_angle; 
+	mov	a,#0x11
+	push	acc
+	push	acc
+	mov	a,#0x79
+	push	acc
+	mov	a,#0x41
+	push	acc
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	___fsadd
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+;	sensor_test.c:573: if (angle < 0) angle += 360.0; 
+	push	ar6
+	push	ar7
+	push	ar0
+	push	ar1
+	clr	a
+	push	acc
+	push	acc
+	push	acc
+	push	acc
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	___fslt
+	mov	r2,dpl
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar1
+	pop	ar0
+	pop	ar7
+	pop	ar6
+	mov	a,r2
+	jz	L016004?
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0xB4
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	___fsadd
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	sjmp	L016005?
+L016004?:
+;	sensor_test.c:574: else if (angle >= 360.0) angle -= 360.0;
+	push	ar6
+	push	ar7
+	push	ar0
+	push	ar1
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0xB4
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	___fslt
+	mov	r2,dpl
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar1
+	pop	ar0
+	pop	ar7
+	pop	ar6
+	mov	a,r2
+	jnz	L016005?
+	push	acc
+	push	acc
+	mov	a,#0xB4
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	___fssub
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+L016005?:
+;	sensor_test.c:575: avg_angle += angle; 
+	push	ar6
+	push	ar7
+	push	ar0
+	push	ar1
+	mov	dpl,_main_avg_angle_1_123
+	mov	dph,(_main_avg_angle_1_123 + 1)
+	mov	b,(_main_avg_angle_1_123 + 2)
+	mov	a,(_main_avg_angle_1_123 + 3)
+	lcall	___fsadd
+	mov	_main_avg_angle_1_123,dpl
+	mov	(_main_avg_angle_1_123 + 1),dph
+	mov	(_main_avg_angle_1_123 + 2),b
+	mov	(_main_avg_angle_1_123 + 3),a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+;	sensor_test.c:576: waitms(2);
+	mov	dptr,#0x0002
+	lcall	_waitms
+;	sensor_test.c:569: for (i = 0; i < 50; i++){
+	inc	_main_i_1_123
+	ljmp	L016009?
+L016012?:
+;	sensor_test.c:578: avg_angle /= 50;
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0x48
+	push	acc
+	mov	a,#0x42
+	push	acc
+	mov	dpl,_main_avg_angle_1_123
+	mov	dph,(_main_avg_angle_1_123 + 1)
+	mov	b,(_main_avg_angle_1_123 + 2)
+	mov	a,(_main_avg_angle_1_123 + 3)
+	lcall	___fsdiv
+	mov	_main_avg_angle_1_123,dpl
+	mov	(_main_avg_angle_1_123 + 1),dph
+	mov	(_main_avg_angle_1_123 + 2),b
+	mov	(_main_avg_angle_1_123 + 3),a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+;	sensor_test.c:579: avg_angle = alpha * avg_angle + (1-alpha) * avg_angle; 
+	push	_main_avg_angle_1_123
+	push	(_main_avg_angle_1_123 + 1)
+	push	(_main_avg_angle_1_123 + 2)
+	push	(_main_avg_angle_1_123 + 3)
+	mov	dptr,#0xCCCD
+	mov	b,#0xCC
+	mov	a,#0x3D
+	lcall	___fsmul
 	mov	r2,dpl
 	mov	r3,dph
-;	sensor_test.c:308: xdata int8_t rslt = BMM150_OK;
-	mov	dptr,#_bmm150_interface_selection_rslt_1_84
-	clr	a
-	movx	@dptr,a
-;	sensor_test.c:309: printf("Configuring SPI\n"); 
+	mov	r4,b
+	mov	r5,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
 	push	ar2
 	push	ar3
-	mov	a,#__str_9
-	push	acc
-	mov	a,#(__str_9 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
+	push	ar4
+	push	ar5
+	push	_main_avg_angle_1_123
+	push	(_main_avg_angle_1_123 + 1)
+	push	(_main_avg_angle_1_123 + 2)
+	push	(_main_avg_angle_1_123 + 3)
+	mov	dptr,#0x6666
+	mov	b,#0x66
+	mov	a,#0x3F
+	lcall	___fsmul
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar5
+	pop	ar4
 	pop	ar3
 	pop	ar2
-;	sensor_test.c:311: if (dev != NULL)
-	mov	ar4,r2
-	mov	ar5,r3
-	mov	r6,#0x00
-	cjne	r4,#0x00,L011011?
-	cjne	r5,#0x00,L011011?
-	cjne	r6,#0x00,L011011?
-	ljmp	L011005?
-L011011?:
-;	sensor_test.c:313: if (intf == BMM150_SPI_INTF)
-	mov	a,_bmm150_interface_selection_PARM_2
-	jnz	L011002?
-;	sensor_test.c:315: printf("SPI Interface Selected\n");
-	push	ar2
-	push	ar3
+	push	ar6
+	push	ar7
+	push	ar0
+	push	ar1
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r4
+	mov	a,r5
+	lcall	___fsadd
+	mov	_main_avg_angle_1_123,dpl
+	mov	(_main_avg_angle_1_123 + 1),dph
+	mov	(_main_avg_angle_1_123 + 2),b
+	mov	(_main_avg_angle_1_123 + 3),a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+;	sensor_test.c:580: printf("%f          \r", avg_angle);
+	push	_main_avg_angle_1_123
+	push	(_main_avg_angle_1_123 + 1)
+	push	(_main_avg_angle_1_123 + 2)
+	push	(_main_avg_angle_1_123 + 3)
 	mov	a,#__str_10
 	push	acc
 	mov	a,#(__str_10 >> 8)
@@ -1360,499 +3248,49 @@ L011011?:
 	mov	a,#0x80
 	push	acc
 	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-	pop	ar3
-	pop	ar2
-;	sensor_test.c:318: dev->read = bmm150_spi_read;
-	mov	a,#0x06
-	add	a,r2
-	mov	r4,a
-	clr	a
-	addc	a,r3
-	mov	r5,a
-	mov	dpl,r4
-	mov	dph,r5
-	mov	a,#_bmm150_spi_read
-	movx	@dptr,a
-	inc	dptr
-	mov	a,#(_bmm150_spi_read >> 8)
-	movx	@dptr,a
-;	sensor_test.c:319: dev->write = bmm150_spi_write;
-	mov	a,#0x08
-	add	a,r2
-	mov	r4,a
-	clr	a
-	addc	a,r3
-	mov	r5,a
-	mov	dpl,r4
-	mov	dph,r5
-	mov	a,#_bmm150_spi_write
-	movx	@dptr,a
-	inc	dptr
-	mov	a,#(_bmm150_spi_write >> 8)
-	movx	@dptr,a
-;	sensor_test.c:320: dev->intf = BMM150_SPI_INTF;
-	mov	dpl,r2
-	mov	dph,r3
-	inc	dptr
-	clr	a
-	movx	@dptr,a
-;	sensor_test.c:321: dev->intf_ptr = NULL; // We don't need an intf_ptr for direct GPIO control
-	mov	dpl,r2
-	mov	dph,r3
-	inc	dptr
-	inc	dptr
-	clr	a
-	movx	@dptr,a
-	inc	dptr
-	movx	@dptr,a
-	inc	dptr
-	movx	@dptr,a
-;	sensor_test.c:322: dev->delay_us = ptr_delay_us;
-	mov	a,#0x0A
-	add	a,r2
-	mov	r2,a
-	clr	a
-	addc	a,r3
-	mov	r3,a
-	mov	dpl,r2
-	mov	dph,r3
-	mov	a,#_ptr_delay_us
-	movx	@dptr,a
-	inc	dptr
-	mov	a,#(_ptr_delay_us >> 8)
-	movx	@dptr,a
-	sjmp	L011006?
-L011002?:
-;	sensor_test.c:326: printf("Invalid Interface Selection\n");
-	mov	a,#__str_11
-	push	acc
-	mov	a,#(__str_11 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-;	sensor_test.c:327: rslt = BMM150_E_INVALID_CONFIG;
-	mov	dptr,#_bmm150_interface_selection_rslt_1_84
-	mov	a,#0xFD
-	movx	@dptr,a
-	sjmp	L011006?
-L011005?:
-;	sensor_test.c:332: rslt = BMM150_E_NULL_PTR;
-	mov	dptr,#_bmm150_interface_selection_rslt_1_84
-	mov	a,#0xFF
-	movx	@dptr,a
-L011006?:
-;	sensor_test.c:335: return rslt;
-	mov	dptr,#_bmm150_interface_selection_rslt_1_84
-	movx	a,@dptr
-	mov	dpl,a
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'set_config'
-;------------------------------------------------------------
-;dev                       Allocated to registers r2 r3 
-;rslt                      Allocated with name '_set_config_rslt_1_90'
-;settings                  Allocated with name '_set_config_settings_1_90'
-;------------------------------------------------------------
-;	sensor_test.c:338: static int8_t set_config(xdata struct bmm150_dev *dev)
-;	-----------------------------------------
-;	 function set_config
-;	-----------------------------------------
-_set_config:
-	mov	r2,dpl
-	mov	r3,dph
-;	sensor_test.c:346: printf("Configuring Powermode\n"); 
-	push	ar2
-	push	ar3
-	mov	a,#__str_12
-	push	acc
-	mov	a,#(__str_12 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-	pop	ar3
-	pop	ar2
-;	sensor_test.c:347: settings.pwr_mode = BMM150_POWERMODE_NORMAL;
-	mov	dptr,#(_set_config_settings_1_90 + 0x0001)
-	clr	a
-	movx	@dptr,a
-;	sensor_test.c:348: rslt = bmm150_set_op_mode(&settings, dev);
-	mov	_bmm150_set_op_mode_PARM_2,r2
-	mov	(_bmm150_set_op_mode_PARM_2 + 1),r3
-	mov	(_bmm150_set_op_mode_PARM_2 + 2),#0x00
-	mov	dptr,#_set_config_settings_1_90
-	mov	b,#0x00
-	push	ar2
-	push	ar3
-	lcall	_bmm150_set_op_mode
-	mov	r4,dpl
-	mov	dptr,#_set_config_rslt_1_90
-	mov	a,r4
-	movx	@dptr,a
-;	sensor_test.c:349: bmm150_error_codes_print_result("bmm150_set_op_mode", rslt);
-	mov	_bmm150_error_codes_print_result_PARM_2,r4
-	mov	dptr,#__str_13
-	mov	b,#0x80
-	push	ar4
-	lcall	_bmm150_error_codes_print_result
-	pop	ar4
-	pop	ar3
-	pop	ar2
-;	sensor_test.c:351: if (rslt == BMM150_OK)
-	mov	a,r4
-	jnz	L012002?
-;	sensor_test.c:356: printf("Configuring Presetmode\n"); 
-	push	ar2
-	push	ar3
-	mov	a,#__str_14
-	push	acc
-	mov	a,#(__str_14 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-	pop	ar3
-	pop	ar2
-;	sensor_test.c:357: settings.preset_mode = BMM150_PRESETMODE_LOWPOWER;
-	mov	dptr,#(_set_config_settings_1_90 + 0x0004)
-	mov	a,#0x01
-	movx	@dptr,a
-;	sensor_test.c:358: rslt = bmm150_set_presetmode(&settings, dev);
-	mov	_bmm150_set_presetmode_PARM_2,r2
-	mov	(_bmm150_set_presetmode_PARM_2 + 1),r3
-	mov	(_bmm150_set_presetmode_PARM_2 + 2),#0x00
-	mov	dptr,#_set_config_settings_1_90
-	mov	b,#0x00
-	lcall	_bmm150_set_presetmode
-	mov	r2,dpl
-	mov	dptr,#_set_config_rslt_1_90
-	mov	a,r2
-	movx	@dptr,a
-;	sensor_test.c:359: bmm150_error_codes_print_result("bmm150_set_presetmode", rslt);
-	mov	_bmm150_error_codes_print_result_PARM_2,r2
-	mov	dptr,#__str_15
-	mov	b,#0x80
-	lcall	_bmm150_error_codes_print_result
-L012002?:
-;	sensor_test.c:362: return rslt;
-	mov	dptr,#_set_config_rslt_1_90
-	movx	a,@dptr
-	mov	dpl,a
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'get_data'
-;------------------------------------------------------------
-;dev                       Allocated with name '_get_data_dev_1_92'
-;rslt                      Allocated with name '_get_data_rslt_1_93'
-;idx                       Allocated with name '_get_data_idx_1_93'
-;mag_data                  Allocated with name '_get_data_mag_data_1_93'
-;------------------------------------------------------------
-;	sensor_test.c:365: static int8_t get_data(xdata struct bmm150_dev *dev)
-;	-----------------------------------------
-;	 function get_data
-;	-----------------------------------------
-_get_data:
-	mov	_get_data_dev_1_92,dpl
-	mov	(_get_data_dev_1_92 + 1),dph
-;	sensor_test.c:374: rslt = BMM150_OK; 
-	mov	dptr,#_get_data_rslt_1_93
-	clr	a
-	movx	@dptr,a
-;	sensor_test.c:378: for (idx = 0; idx < 50; idx++)
-	mov	r4,#0x00
-L013004?:
-	clr	c
-	mov	a,r4
-	xrl	a,#0x80
-	subb	a,#0xb2
-	jnc	L013003?
-;	sensor_test.c:381: rslt = bmm150_read_mag_data(&mag_data, dev);
-	mov	_bmm150_read_mag_data_PARM_2,_get_data_dev_1_92
-	mov	(_bmm150_read_mag_data_PARM_2 + 1),(_get_data_dev_1_92 + 1)
-	mov	(_bmm150_read_mag_data_PARM_2 + 2),#0x00
-	mov	dptr,#_get_data_mag_data_1_93
-	mov	b,#0x00
-	push	ar4
-	lcall	_bmm150_read_mag_data
-	mov	r5,dpl
-	mov	dptr,#_get_data_rslt_1_93
-	mov	a,r5
-	movx	@dptr,a
-;	sensor_test.c:382: bmm150_error_codes_print_result("bmm150_read_mag_data", rslt);
-	mov	_bmm150_error_codes_print_result_PARM_2,r5
-	mov	dptr,#__str_16
-	mov	b,#0x80
-	lcall	_bmm150_error_codes_print_result
-	pop	ar4
-;	sensor_test.c:385: printf("MAG DATA[%d]  X : %d uT   Y : %d uT \n", idx, mag_data.x, mag_data.y);
-	mov	dptr,#(_get_data_mag_data_1_93 + 0x0002)
-	movx	a,@dptr
-	mov	r5,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r6,a
-	mov	dptr,#_get_data_mag_data_1_93
-	movx	a,@dptr
-	mov	r7,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r0,a
-	mov	a,r4
-	mov	r1,a
-	rlc	a
-	subb	a,acc
-	mov	r2,a
-	push	ar4
-	push	ar5
-	push	ar6
-	push	ar7
-	push	ar0
-	push	ar1
-	push	ar2
-	mov	a,#__str_17
-	push	acc
-	mov	a,#(__str_17 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
 	mov	a,sp
-	add	a,#0xf7
+	add	a,#0xf9
 	mov	sp,a
-	pop	ar4
-;	sensor_test.c:378: for (idx = 0; idx < 50; idx++)
-	inc	r4
-;	sensor_test.c:387: break; 
-	sjmp	L013004?
-L013003?:
-;	sensor_test.c:389: return rslt;
-	mov	dptr,#_get_data_rslt_1_93
-	movx	a,@dptr
-	mov	dpl,a
-	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'main'
-;------------------------------------------------------------
-;rslt                      Allocated with name '_main_rslt_1_97'
-;dev                       Allocated with name '_main_dev_1_97'
-;------------------------------------------------------------
-;	sensor_test.c:393: void main (void)
-;	-----------------------------------------
-;	 function main
-;	-----------------------------------------
-_main:
-;	sensor_test.c:398: waitms(500);
-	mov	dptr,#0x01F4
+;	sensor_test.c:581: avg_angle = 0.0;  
+	mov	_main_avg_angle_1_123,#0x00
+	mov	(_main_avg_angle_1_123 + 1),#0x00
+	mov	(_main_avg_angle_1_123 + 2),#0x00
+	mov	(_main_avg_angle_1_123 + 3),#0x00
+;	sensor_test.c:583: waitms(100);
+	mov	dptr,#0x0064
 	lcall	_waitms
-;	sensor_test.c:399: printf("\x1b[2J"); // Clear screen using ANSI escape sequence.
-	mov	a,#__str_18
-	push	acc
-	mov	a,#(__str_18 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-;	sensor_test.c:404: __FILE__, __DATE__, __TIME__);
-;	sensor_test.c:403: "Compiled: %s, %s\n\n",
-	mov	a,#__str_22
-	push	acc
-	mov	a,#(__str_22 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	mov	a,#__str_21
-	push	acc
-	mov	a,#(__str_21 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	mov	a,#__str_20
-	push	acc
-	mov	a,#(__str_20 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	mov	a,#__str_19
-	push	acc
-	mov	a,#(__str_19 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	mov	a,sp
-	add	a,#0xf4
-	mov	sp,a
-;	sensor_test.c:406: Set_Pin_Output(0x05); 
-	mov	dpl,#0x05
-	lcall	_Set_Pin_Output
-;	sensor_test.c:407: CS = 1; //initialize chip select 
-	setb	_P0_5
-;	sensor_test.c:409: rslt = bmm150_interface_selection(&dev, BMM150_SPI_INTF);
-	mov	_bmm150_interface_selection_PARM_2,#0x00
-	mov	dptr,#_main_dev_1_97
-	lcall	_bmm150_interface_selection
-	mov	r2,dpl
-;	sensor_test.c:410: bmm150_error_codes_print_result("bmm150_interface_selection", rslt);
-	mov	_bmm150_error_codes_print_result_PARM_2,r2
-	mov	dptr,#__str_23
-	mov	b,#0x80
-	push	ar2
-	lcall	_bmm150_error_codes_print_result
-	pop	ar2
-;	sensor_test.c:412: if (rslt == BMM150_OK)
-	mov	a,r2
-;	sensor_test.c:414: rslt = bmm150_init(&dev);
-	jnz	L014007?
-	mov	dptr,#_main_dev_1_97
-	mov	b,a
-	lcall	_bmm150_init
-	mov	r2,dpl
-;	sensor_test.c:415: bmm150_error_codes_print_result("bmm150_init", rslt);
-	mov	_bmm150_error_codes_print_result_PARM_2,r2
-	mov	dptr,#__str_24
-	mov	b,#0x80
-	push	ar2
-	lcall	_bmm150_error_codes_print_result
-	pop	ar2
-;	sensor_test.c:417: if (rslt == BMM150_OK)
-	mov	a,r2
-	jnz	L014007?
-;	sensor_test.c:419: rslt = set_config(&dev); 
-	mov	dptr,#_main_dev_1_97
-	lcall	_set_config
-	mov	r2,dpl
-;	sensor_test.c:420: bmm150_error_codes_print_result("set_config", rslt); 
-	mov	_bmm150_error_codes_print_result_PARM_2,r2
-	mov	dptr,#__str_25
-	mov	b,#0x80
-	push	ar2
-	lcall	_bmm150_error_codes_print_result
-	pop	ar2
-;	sensor_test.c:422: if (rslt == BMM150_OK)
-	mov	a,r2
-	jnz	L014007?
-;	sensor_test.c:424: rslt = get_data(&dev); 
-	mov	dptr,#_main_dev_1_97
-	lcall	_get_data
-	mov	_bmm150_error_codes_print_result_PARM_2,dpl
-;	sensor_test.c:425: bmm150_error_codes_print_result("get_data", rslt); 
-	mov	dptr,#__str_26
-	mov	b,#0x80
-	lcall	_bmm150_error_codes_print_result
-;	sensor_test.c:426: printf("Configuration Complete - Ready to get data"); 
-	mov	a,#__str_27
-	push	acc
-	mov	a,#(__str_27 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-L014007?:
-	ret
+	ljmp	L016018?
 	rseg R_CSEG
 
 	rseg R_XINIT
 
 	rseg R_CONST
 __str_0:
-	db '%s'
-	db 0x09
+	db '%d '
 	db 0x00
 __str_1:
-	db 'Error [%d] : Null pointer error.'
+	db '%d %d %d %d'
+	db 0x0A
 	db 0x00
 __str_2:
-	db 'It occurs when the user tries to assign value (not address) '
-	db 'to a pointer, which has been initialized to NULL.'
+	db 'Error: Could not find BMM150 sensor (Chip ID: 0x%02X)'
 	db 0x0D
 	db 0x0A
 	db 0x00
 __str_3:
-	db 'Error [%d] : Communication failure error.'
+	db 'Press restart to check again!'
+	db 0x0D
 	db 0x00
 __str_4:
-	db 'It occurs due to read/write operation failure and also due t'
-	db 'o power failure during communication'
+	db 'BMM150 initialized successfully! Chip ID: 0x%02X'
 	db 0x0D
 	db 0x0A
 	db 0x00
 __str_5:
-	db 'Error [%d] : Device not found error. It occurs when the devi'
-	db 'ce chip id is incorrectly read'
-	db 0x0D
-	db 0x0A
-	db 0x00
-__str_6:
-	db 'Error [%d] : Invalid sensor configuration.'
-	db 0x00
-__str_7:
-	db ' It occurs when there is a mismatch in the requested feature'
-	db ' with the available one'
-	db 0x0D
-	db 0x0A
-	db 0x00
-__str_8:
-	db 'Error [%d] : Unknown error code'
-	db 0x0D
-	db 0x0A
-	db 0x00
-__str_9:
-	db 'Configuring SPI'
-	db 0x0A
-	db 0x00
-__str_10:
-	db 'SPI Interface Selected'
-	db 0x0A
-	db 0x00
-__str_11:
-	db 'Invalid Interface Selection'
-	db 0x0A
-	db 0x00
-__str_12:
-	db 'Configuring Powermode'
-	db 0x0A
-	db 0x00
-__str_13:
-	db 'bmm150_set_op_mode'
-	db 0x00
-__str_14:
-	db 'Configuring Presetmode'
-	db 0x0A
-	db 0x00
-__str_15:
-	db 'bmm150_set_presetmode'
-	db 0x00
-__str_16:
-	db 'bmm150_read_mag_data'
-	db 0x00
-__str_17:
-	db 'MAG DATA[%d]  X : %d uT   Y : %d uT '
-	db 0x0A
-	db 0x00
-__str_18:
 	db 0x1B
 	db '[2J'
 	db 0x00
-__str_19:
+__str_6:
 	db 'EFM8LB1 SPI/BMM150 test program'
 	db 0x0A
 	db 'File: %s'
@@ -1861,29 +3299,18 @@ __str_19:
 	db 0x0A
 	db 0x0A
 	db 0x00
-__str_20:
+__str_7:
 	db 'sensor_test.c'
 	db 0x00
-__str_21:
-	db 'Mar 22 2025'
+__str_8:
+	db 'Mar 26 2025'
 	db 0x00
-__str_22:
-	db '15:47:02'
+__str_9:
+	db '02:10:34'
 	db 0x00
-__str_23:
-	db 'bmm150_interface_selection'
-	db 0x00
-__str_24:
-	db 'bmm150_init'
-	db 0x00
-__str_25:
-	db 'set_config'
-	db 0x00
-__str_26:
-	db 'get_data'
-	db 0x00
-__str_27:
-	db 'Configuration Complete - Ready to get data'
+__str_10:
+	db '%f          '
+	db 0x0D
 	db 0x00
 
 	CSEG

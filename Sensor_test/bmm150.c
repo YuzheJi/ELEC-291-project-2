@@ -85,7 +85,7 @@
  * @retval >0 -> Warning
  * @retval <0 -> Fail
  */
-xdata static int8_t set_power_control_bit(uint8_t pwrcntrl_bit, struct bmm150_dev *dev);
+xdata int8_t set_power_control_bit(uint8_t pwrcntrl_bit, struct bmm150_dev *dev);
 
 /*!
  * @brief This internal API reads the trim registers of the sensor and stores
@@ -533,9 +533,9 @@ xdata int8_t bmm150_init(struct bmm150_dev *dev)
     xdata uint8_t chip_id;
     chip_id = 0; 
 
+
     /* Power up the sensor from suspend to sleep mode */
     rslt = set_power_control_bit(BMM150_POWER_CNTRL_ENABLE, dev);
-    printf("powering sensor\n");
 
     if (rslt == BMM150_OK)
     {
@@ -898,7 +898,7 @@ xdata int8_t bmm150_read_mag_data(struct bmm150_mag_data *mag_data, struct bmm15
         msb_data = ((int16_t)((int8_t)reg_data[5])) * 128;
 
         /* Raw mag Z axis data */
-        // raw_mag_data.raw_dataz = (int16_t)(msb_data | reg_data[4]);
+        raw_mag_data.raw_dataz = (int16_t)(msb_data | reg_data[4]);
 
         /* Mag R-HALL data */
         reg_data[6] = BMM150_GET_BITS(reg_data[6], BMM150_DATA_RHALL);
@@ -911,7 +911,7 @@ xdata int8_t bmm150_read_mag_data(struct bmm150_mag_data *mag_data, struct bmm15
         mag_data->y = compensate_y(raw_mag_data.raw_datay, raw_mag_data.raw_data_r, dev);
 
         /* Compensated Mag Z data in int16_t format */
-        // mag_data->z = compensate_z(raw_mag_data.raw_dataz, raw_mag_data.raw_data_r, dev);
+        mag_data->z = compensate_z(raw_mag_data.raw_dataz, raw_mag_data.raw_data_r, dev);
     }
 
     return rslt;
@@ -1105,18 +1105,18 @@ xdata static int8_t null_ptr_check(const struct bmm150_dev *dev)
 /*!
  * @brief This internal API sets/resets the power control bit of 0x4B register.
  */
-xdata static int8_t set_power_control_bit(uint8_t pwrcntrl_bit, struct bmm150_dev *dev)
+xdata int8_t set_power_control_bit(uint8_t pwrcntrl_bit, struct bmm150_dev *dev)
 {
     xdata int8_t rslt;
     xdata uint8_t reg_data = 0;
 
     /* Power control register 0x4B is read */
     rslt = bmm150_get_regs(BMM150_REG_POWER_CONTROL, &reg_data, 1, dev);
-    printf("Power control register is read\n");
 
     /* Proceed if everything is fine until now */
     if (rslt == BMM150_OK)
     {
+        printf("Power control register is read\n");
         /* Sets the value of power control bit */
         reg_data = BMM150_SET_BITS_POS_0(reg_data, BMM150_PWR_CNTRL, pwrcntrl_bit);
         rslt = bmm150_set_regs(BMM150_REG_POWER_CONTROL, &reg_data, 1, dev);
@@ -1126,6 +1126,7 @@ xdata static int8_t set_power_control_bit(uint8_t pwrcntrl_bit, struct bmm150_de
             /* Store the power control bit
              * value in dev structure
              */
+            printf("Power control register is set\n");
             dev->pwr_cntrl_bit = pwrcntrl_bit;
         }
     }
@@ -1138,13 +1139,13 @@ xdata static int8_t set_power_control_bit(uint8_t pwrcntrl_bit, struct bmm150_de
  * @brief This internal API reads the trim registers of the sensor and stores
  * the trim values in the "trim_data" of device structure.
  */
-xdata static int8_t read_trim_registers(struct bmm150_dev *dev)
+static int8_t read_trim_registers(struct bmm150_dev *dev)
 {
-    xdata int8_t rslt;
-    xdata uint8_t trim_x1y1[2] = { 0 };
-    xdata uint8_t trim_xyz_data[4] = { 0 };
-    xdata uint8_t trim_xy1xy2[10] = { 0 };
-    xdata uint16_t temp_msb = 0;
+    int8_t rslt;
+    uint8_t trim_x1y1[2] = { 0 };
+    uint8_t trim_xyz_data[4] = { 0 };
+    uint8_t trim_xy1xy2[10] = { 0 };
+    uint16_t temp_msb = 0;
 
     /* Trim register value is read */
     rslt = bmm150_get_regs(BMM150_DIG_X1, trim_x1y1, 2, dev);
@@ -1166,14 +1167,15 @@ xdata static int8_t read_trim_registers(struct bmm150_dev *dev)
                 dev->trim_data.dig_y1 = (int8_t)trim_x1y1[1];
                 dev->trim_data.dig_x2 = (int8_t)trim_xyz_data[2];
                 dev->trim_data.dig_y2 = (int8_t)trim_xyz_data[3];
-                // temp_msb = ((uint16_t)trim_xy1xy2[3]) << 8;
-                // dev->trim_data.dig_z1 = (uint16_t)(temp_msb | trim_xy1xy2[2]);
-                // temp_msb = ((uint16_t)trim_xy1xy2[1]) << 8;
-                // dev->trim_data.dig_z2 = (int16_t)(temp_msb | trim_xy1xy2[0]);
-                // temp_msb = ((uint16_t)trim_xy1xy2[7]) << 8;
-                // dev->trim_data.dig_z3 = (int16_t)(temp_msb | trim_xy1xy2[6]);
-                // temp_msb = ((uint16_t)trim_xyz_data[1]) << 8;
-                // dev->trim_data.dig_z4 = (int16_t)(temp_msb | trim_xyz_data[0]);
+                temp_msb = ((uint16_t)trim_xy1xy2[3]) << 8;
+                dev->trim_data.dig_z1 = (uint16_t)(temp_msb | trim_xy1xy2[2]);
+                temp_msb = ((uint16_t)trim_xy1xy2[1]) << 8;
+                dev->trim_data.dig_z2 = (int16_t)(temp_msb | trim_xy1xy2[0]);
+                temp_msb = ((uint16_t)trim_xy1xy2[7]) << 8;
+                dev->trim_data.dig_z3 = (int16_t)(temp_msb | trim_xy1xy2[6]);
+
+                temp_msb = ((uint16_t)trim_xyz_data[1]) << 8;
+                dev->trim_data.dig_z4 = (int16_t)(temp_msb | trim_xyz_data[0]);
                 dev->trim_data.dig_xy1 = trim_xy1xy2[9];
                 dev->trim_data.dig_xy2 = (int8_t)trim_xy1xy2[8];
                 temp_msb = ((uint16_t)(trim_xy1xy2[5] & 0x7F)) << 8;
@@ -1184,6 +1186,7 @@ xdata static int8_t read_trim_registers(struct bmm150_dev *dev)
 
     return rslt;
 }
+
 
 /*!
  * @brief This internal API writes the op_mode value in the Opmode bits
@@ -1690,58 +1693,58 @@ xdata static int16_t compensate_y(int16_t mag_data_y, uint16_t data_rhall, const
     return retval;
 }
 
-// /*!
-//  * @brief This internal API is used to obtain the compensated
-//  * magnetometer Z axis data(micro-tesla) in int16_t.
-//  */
-// xdata static int16_t compensate_z(int16_t mag_data_z, uint16_t data_rhall, const struct bmm150_dev *dev)
-// {
-//     xdata int32_t retval;
-//     xdata int16_t process_comp_z0;
-//     xdata int32_t process_comp_z1;
-//     xdata int32_t process_comp_z2;
-//     xdata int32_t process_comp_z3;
-//     xdata int16_t process_comp_z4;
+/*!
+ * @brief This internal API is used to obtain the compensated
+ * magnetometer Z axis data(micro-tesla) in int16_t.
+ */
+xdata static int16_t compensate_z(int16_t mag_data_z, uint16_t data_rhall, const struct bmm150_dev *dev)
+{
+    xdata int32_t retval;
+    xdata int16_t process_comp_z0;
+    xdata int32_t process_comp_z1;
+    xdata int32_t process_comp_z2;
+    xdata int32_t process_comp_z3;
+    xdata int16_t process_comp_z4;
 
-//     if (mag_data_z != BMM150_OVERFLOW_ADCVAL_ZAXIS_HALL)
-//     {
-//         if ((dev->trim_data.dig_z2 != 0) && (dev->trim_data.dig_z1 != 0) && (data_rhall != 0) &&
-//             (dev->trim_data.dig_xyz1 != 0))
-//         {
-//             /*Processing compensation equations */
-//             process_comp_z0 = ((int16_t)data_rhall) - ((int16_t) dev->trim_data.dig_xyz1);
-//             process_comp_z1 = (((int32_t)dev->trim_data.dig_z3) * ((int32_t)(process_comp_z0))) / 4;
-//             process_comp_z2 = (((int32_t)(mag_data_z - dev->trim_data.dig_z4)) * 32768);
-//             process_comp_z3 = ((int32_t)dev->trim_data.dig_z1) * (((int16_t)data_rhall) * 2);
-//             process_comp_z4 = (int16_t)((process_comp_z3 + (32768)) / 65536);
-//             retval = ((process_comp_z2 - process_comp_z1) / (dev->trim_data.dig_z2 + process_comp_z4));
+    if (mag_data_z != BMM150_OVERFLOW_ADCVAL_ZAXIS_HALL)
+    {
+        if ((dev->trim_data.dig_z2 != 0) && (dev->trim_data.dig_z1 != 0) && (data_rhall != 0) &&
+            (dev->trim_data.dig_xyz1 != 0))
+        {
+            /*Processing compensation equations */
+            process_comp_z0 = ((int16_t)data_rhall) - ((int16_t) dev->trim_data.dig_xyz1);
+            process_comp_z1 = (((int32_t)dev->trim_data.dig_z3) * ((int32_t)(process_comp_z0))) / 4;
+            process_comp_z2 = (((int32_t)(mag_data_z - dev->trim_data.dig_z4)) * 32768);
+            process_comp_z3 = ((int32_t)dev->trim_data.dig_z1) * (((int16_t)data_rhall) * 2);
+            process_comp_z4 = (int16_t)((process_comp_z3 + (32768)) / 65536);
+            retval = ((process_comp_z2 - process_comp_z1) / (dev->trim_data.dig_z2 + process_comp_z4));
 
-//             /* Saturate result to +/- 2 micro-tesla */
-//             if (retval > BMM150_POSITIVE_SATURATION_Z)
-//             {
-//                 retval = BMM150_POSITIVE_SATURATION_Z;
-//             }
-//             else if (retval < BMM150_NEGATIVE_SATURATION_Z)
-//             {
-//                 retval = BMM150_NEGATIVE_SATURATION_Z;
-//             }
+            /* Saturate result to +/- 2 micro-tesla */
+            if (retval > BMM150_POSITIVE_SATURATION_Z)
+            {
+                retval = BMM150_POSITIVE_SATURATION_Z;
+            }
+            else if (retval < BMM150_NEGATIVE_SATURATION_Z)
+            {
+                retval = BMM150_NEGATIVE_SATURATION_Z;
+            }
 
-//             /* Conversion of LSB to micro-tesla */
-//             retval = retval / 16;
-//         }
-//         else
-//         {
-//             retval = BMM150_OVERFLOW_OUTPUT;
-//         }
-//     }
-//     else
-//     {
-//         /* Overflow condition */
-//         retval = BMM150_OVERFLOW_OUTPUT;
-//     }
+            /* Conversion of LSB to micro-tesla */
+            retval = retval / 16;
+        }
+        else
+        {
+            retval = BMM150_OVERFLOW_OUTPUT;
+        }
+    }
+    else
+    {
+        /* Overflow condition */
+        retval = BMM150_OVERFLOW_OUTPUT;
+    }
 
-//     return (int16_t)retval;
-// }
+    return (int16_t)retval;
+}
 
 
 // /*!

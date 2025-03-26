@@ -3,7 +3,7 @@ CC=c51
 COMPORT = $(shell type COMPORT.inc)
 
 # List of object files
-OBJS=sensor_test.obj bmm150.obj 
+OBJS=sensor_test.obj
 
 # Compile everything
 compile: clean sensor_test.hex LoadFlash
@@ -16,9 +16,6 @@ sensor_test.hex: $(OBJS)
 # Compile individual source files
 sensor_test.obj: sensor_test.c
 	$(CC) -c sensor_test.c
-
-bmm150.obj: bmm150.c
-	$(CC) -c bmm150.c
 
 # Clean up generated files
 clean:
