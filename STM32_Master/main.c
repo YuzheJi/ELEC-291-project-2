@@ -13,7 +13,10 @@
 #define TIMER22_FREQ 1000L
 
 long timer22_counter = 0;
+long button_counter = 0;
 int buzzer_wait = 6000; 		//buzzer wait time in ms
+char buff[80];
+
 
 
 
@@ -29,14 +32,16 @@ int buzzer_wait = 6000; 		//buzzer wait time in ms
 // LCD_D4 PA2 -|8       25|- PA15 TXD-radio
 // LCD_D5 PA3 -|9       24|- PA14 RXD-radio
 // LCD_D6 PA4 -|10      23|- PA13 SET-radio
-// LCD_D7 PA5 -|11      22|- PA12
-//        PA6 -|12      21|- PA11 
+// LCD_D7 PA5 -|11      22|- PA12 pushbutton 1
+//        PA6 -|12      21|- PA11 pushbutton 2
 //        PA7 -|13      20|- PA10 (Reserved for RXD)
 // vy     PB0 -|14      19|- PA9  (Reserved for TXD)
 // vx     PB1 -|15      18|- PA8  joystick button
 // GND    VSS -|16      17|- VDD  3.3v
 //              ----------
 #define JOYBUT (GPIOA->IDR&BIT8) // PA8
+#define PB1 (GPIOA->IDR&BIT12)
+#define PB2 (GPIOA->IDR&BIT11)
 
 // mode: 0 - 00 no pull, 1 - 01 pull up, 2 - 10 pull down
 void Set_Pin_Input(int pin, int pmode){
@@ -94,8 +99,9 @@ void Configure_Pins (void)
 	Set_Pin_Output(0,4,0);
 	Set_Pin_Output(0,5,0);
 	Set_Pin_Output(1,7,0);
-
-	Set_Pin_Output(0,8,1);
+	Set_Pin_Input(8,1);
+	Set_Pin_Input(11,1);
+	Set_Pin_Input(12,1);
 
 	GPIOA->OSPEEDR=0xffff0000; // All pins of port A configured for very high speed! Page 201 of RM0451
 
@@ -151,15 +157,14 @@ void Buzzer(char mode){
 
 void buzzer_ctrl(int freq100){
 
-	if (freq100 < 5263){
-		Setbuzzer_freq(300L);
+	if (freq100 < 5260){
+		Setbuzzer_freq(100L);
 		buzzer_wait = 3000;
 	} 
 	else{
-		Setbuzzer_freq(300+30*(freq100-5263));
-		buzzer_wait = 3000 - 20*(freq100-5263);
+		Setbuzzer_freq(300+30*(freq100-5260));
+		buzzer_wait = 3000 - 20*(freq100-5260);
 	}
-
 }
 
 void SendATCommand (char * s)
@@ -197,7 +202,12 @@ void LCD_Custom_Char(unsigned char loc, unsigned char *charmap)
         }
     }
 }
-
+void Auto_enter(){
+	LCDprint("Automode:",1,1);
+	waitms(500);
+	LCDprint("  Activatived!",2,1);
+	waitms(1000);
+} 
 // timer21 ISR
 void TIM21_Handler(void) 
 {
@@ -210,6 +220,7 @@ void TIM22_Handler(void)
 {	
 	TIM22->SR &= ~BIT0; // clear update interrupt flag
 	timer22_counter++; 
+	button_counter++;
 	if(timer22_counter < 101) Buzzer(1);
 	else if (timer22_counter < buzzer_wait) Buzzer(0);
 	else{
@@ -217,19 +228,92 @@ void TIM22_Handler(void)
 	} 
 }
 
+void Auto_mode(){
+
+	int timeout_cnt;
+	int exit = 0;
+	long no_res_count = 0;
+
+	while(no_res_count>0){
+		sprintf(buff, "000,000,0,1\n"); // Construct a test message
+		printf("%s\r\n",buff);
+		eputc2('!'); // Send a message to the slave. First send the 'attention' character which is '!'
+		// Wait a bit so the slave has a chance to get ready
+		waitms(15); // This may need adjustment depending on how busy is the slave
+		eputs2(buff); // Send the test message
+		eputc2('@'); // Request a message from the slave		
+		timeout_cnt=0;
+		while(1){
+			if(ReceivedBytes2()>1) break; // Something has arrived
+			if(++timeout_cnt>250) break; // Wait up to 25ms for the repply
+			Delay_us(100); // 100us*250=25ms
+		}
+		if(ReceivedBytes2()>1);
+		else {
+			while (ReceivedBytes2()) egetc2(); 
+			printf("NO RESPONSE\r\n");
+		}
+		waitms(50);
+		no_res_count++;
+		if(no_res_count>1000L){
+			no_res_count = -1;
+			exit=1;
+			LCDprint("No response",1,1);
+			LCDprint("Exiting... ",2,1);
+		}
+	}
+
+	while(!exit){
+
+		if(!JOYBUT){
+			button_counter = 0;
+			while(!JOYBUT);
+			if (button_counter<1500L);
+			else {
+				exit = 1;
+				printf("auto exit... \r\n");
+			}
+		}
+
+		eputc2('@'); // Request a message from the slave		
+		timeout_cnt=0;
+		while(1){
+			if(ReceivedBytes2()>1) break; // Something has arrived
+			if(++timeout_cnt>250) break; // Wait up to 25ms for the repply
+			Delay_us(100); // 100us*250=25ms
+		}
+			
+		if(ReceivedBytes2()>1) {
+			egets2(buff, sizeof(buff)-1);
+			if(strlen(buff)==5){
+				printf("Slave says: %s\r", buff);
+			}
+			else{
+				while (ReceivedBytes2()) egetc2(); 
+				printf("*** BAD MESSAGE ***: %s\r", buff);
+			}
+		}
+		else {
+			while (ReceivedBytes2()) egetc2(); 
+			printf("NO RESPONSE\r\n");
+		}
+		waitms(50); 
+	}
+	return;
+}
+
 void main(void)
 {  
-	char buff[80];
 	char lb[17];
     int timeout_cnt=0;
 	int nadc;
 	int pick_order = 0;
+	int auto_state = 0;
 
 	// note: x,y here are not the same as the x,y printed on joystick
 	int vx100;
 	int vy100;
 	int vctrl100;
-
 	int metal_freq = 0;
 		
 	uint8_t charge[8] = {
@@ -272,6 +356,8 @@ void main(void)
 	
 	SendATCommand("AT+DVIDEFEF\r\n");
 
+	
+
 	while(1)
 	{
 
@@ -306,7 +392,7 @@ void main(void)
 		sprintf(lb,"Vy=%.2f", vy100/100.0);
 		LCDprint(lb,2,1);
 
-		sprintf(buff, "%03d,%03d,%01d\n", vx100, vy100, pick_order); // Construct a test message
+		sprintf(buff, "%03d,%03d,%01d,%01d\n", vx100, vy100, pick_order, auto_state); // Construct a test message
 		printf("%s\r\n",buff);
 		eputc2('!'); // Send a message to the slave. First send the 'attention' character which is '!'
 		// Wait a bit so the slave has a chance to get ready
@@ -326,13 +412,13 @@ void main(void)
 			Delay_us(100); // 100us*250=25ms
 		}
 		
-		if(ReceivedBytes2()>6) // Something has arrived from the slave
+		if(ReceivedBytes2()>4) // Something has arrived from the slave
 		{
 			egets2(buff, sizeof(buff)-1);
-			if(strlen(buff)==7) // Check for valid message size (5 characters + new line '\n')
+			if(strlen(buff)==5) // Check for valid message size (5 characters + new line '\n')
 			{
 				printf("Slave says: %s\r", buff);
-				sscanf(buff, "%01d,%04d",&pick_order,&metal_freq);
+				sscanf(buff, "%04d",&metal_freq);
 			}
 			else
 			{
@@ -348,13 +434,28 @@ void main(void)
 		}
 
 		if(!JOYBUT){
+			button_counter = 0;
 			while(!JOYBUT);
-			pick_order = 1;
+			if (button_counter<1500L) pick_order = 1;
+			else {
+				auto_state = 1;
+				Auto_enter();
+				printf("auto \r\n");
+				Auto_mode();
+			}
+		}
+
+		if(!PB1){
+			while(!PB1);
+			printf("1 pressed!\r\n");
+		}
+
+		if(!PB2){
+			while(!PB2);
+			printf("2 pressed!\r\n");
 		}
 
 		buzzer_ctrl(metal_freq);
-
-		buzzer_wait = 3000 - 9*vy100; 
 
 		TIM22->CR1 |= BIT0; 
 		waitms(50);  // Set the information interchange pace: communicate about every 50ms
