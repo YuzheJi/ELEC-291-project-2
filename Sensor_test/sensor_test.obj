@@ -6,27 +6,32 @@ sensor_test
 --model-small
 </OPTC51>
 
+<PRINTF_FLOAT>
+printf_float
+</PRINTF_FLOAT>
+
 <SEGMENTS>
 R_GSINIT,code,0000,NO
 R_BSEG,bit,0000,NO
-R_XSEG,xdata,0022,NO
+R_XSEG,xdata,0036,NO
 BIT_BANK,data,0000,OV
-R_CONST,code,00F6,NO
+R_CONST,code,00F9,NO
 rbank0,data,0000,OV
 R_PSEG,xdata,0000,NO
 R_DINIT,code,0000,NO
-R_DSEG,data,0044,NO
+R_DSEG,data,0049,NO
 R_OSEG,data,0000,OV
 R_IXSEG,xdata,0000,NO
 R_ISEG,idata,0000,NO
 R_HOME,code,0000,NO
 R_XINIT,code,0000,NO
-R_CSEG,code,0D02,NO
+R_CSEG,code,1168,NO
 </SEGMENTS>
 
 <LOCALS>
 L002004?,R_CSEG,0029,0000
 L002001?,R_CSEG,001E,0000
+_main_sloc0_1_0,R_DSEG,0044,0001
 _BMM150_Read_Data_mag_x_1_118,R_DSEG,0031,0003
 L015007?,R_CSEG,0B58,0000
 L015006?,R_CSEG,0B54,0000
@@ -41,8 +46,11 @@ _BMM150_compensate_y_process_comp_y0_1_102,R_XSEG,0016,0002
 L003002?,R_CSEG,0090,0000
 L003001?,R_CSEG,008C,0000
 _BMM150_Read_Trim_Registers_trim_xy1xy2_1_84,R_XSEG,0006,000A
+_main_sloc1_1_0,R_DSEG,0045,0004
 L010012?,R_CSEG,024B,0000
-L016002?,R_CSEG,0C6B,0000
+L016007?,R_CSEG,101E,0000
+L016005?,R_CSEG,0E1F,0000
+L016004?,R_CSEG,0DBB,0000
 _main_mag_y_1_123,R_XSEG,001E,0002
 L004007?,R_CSEG,00C2,0000
 L010028?,R_CSEG,0222,0000
@@ -50,6 +58,7 @@ L004004?,R_CSEG,00B2,0000
 L010026?,R_CSEG,01F4,0000
 L004001?,R_CSEG,00B7,0000
 L010024?,R_CSEG,01C6,0000
+_main_angle_1_123,R_XSEG,0022,0004
 L011010?,R_CSEG,030C,0000
 _BMM150_Read_Data_raw_z_lsb_1_119,R_DSEG,0036,0001
 L005009?,R_CSEG,0100,0000
@@ -94,6 +103,7 @@ __str_6,R_CONST,00D9,0000
 __str_7,R_CONST,00E5,0000
 __str_8,R_CONST,00EE,0000
 L011005?,R_CSEG,0340,0000
+_main_sum_x_1_123,R_XSEG,0026,0004
 L011002?,R_CSEG,0329,0000
 L014028?,R_CSEG,085A,0000
 L008004?,R_CSEG,0165,0000
@@ -107,20 +117,27 @@ _BMM150_Read_Data_y_val_1_119,R_DSEG,003E,0002
 _BMM150_compensate_x_process_comp_x0_1_93,R_XSEG,0012,0002
 L012008?,R_CSEG,05A9,0000
 L012006?,R_CSEG,03CA,0000
+_main_avg_angle_1_123,R_XSEG,002E,0004
 L012005?,R_CSEG,03B0,0000
 L003013?,R_CSEG,0080,0000
 L003011?,R_CSEG,006C,0000
+_main_sum_y_1_123,R_XSEG,002A,0004
 L012002?,R_CSEG,03C3,0000
+_main_smoothed_angle_1_123,R_XSEG,0032,0004
 _BMM150_compensate_z_sloc2_1_0,R_DSEG,0027,0004
 _BMM150_compensate_x_sloc0_1_0,R_DSEG,0013,0004
+L016014?,R_CSEG,0F24,0000
+L016011?,R_CSEG,0C8F,0000
 L013008?,R_CSEG,07F6,0000
 _BMM150_compensate_z_retval_1_111,R_XSEG,0018,0004
 L013006?,R_CSEG,0619,0000
 _BMM150_compensate_y_retval_1_102,R_XSEG,0014,0002
 L013005?,R_CSEG,05FF,0000
 L013002?,R_CSEG,0612,0000
+L016024?,R_CSEG,0C98,0000
 _BMM150_compensate_z_sloc1_1_0,R_DSEG,0023,0004
 _BMM150_compensate_y_sloc0_1_0,R_DSEG,001A,0004
+L016020?,R_CSEG,0C8C,0000
 L005018?,R_CSEG,00DA,0000
 L014007?,R_CSEG,0A0C,0000
 L014005?,R_CSEG,09D3,0000
@@ -170,15 +187,23 @@ _BMM150_Read_Trim_Registers,R_CSEG,017D,0000
 __gptrget,any,0000,0000
 __mullong,any,0000,0000
 __divslong_PARM_2,any,0000,0000
+___fsgt,any,0000,0000
+___fslt,any,0000,0000
+___fsmul,any,0000,0000
 __mullong_PARM_2,any,0000,0000
 __divslong,any,0000,0000
+___fsadd,any,0000,0000
 _printf,any,0000,0000
 _atan2f,any,0000,0000
+_sinf,any,0000,0000
 __gptrput,any,0000,0000
 __divsint,any,0000,0000
+_cosf,any,0000,0000
+___fssub,any,0000,0000
 _crt0,any,0000,0000
 _atan2f_PARM_2,any,0000,0000
 ___sint2fs,any,0000,0000
+___fsdiv,any,0000,0000
 __divsint_PARM_2,any,0000,0000
 </EXTERNALS>
 
@@ -1898,6 +1923,33 @@ ED
 A3
 EE
 02 addr16(__gptrput;)  
+90 data16(_main_sum_x_1_123;)  
+E4
+F0
+A3
+F0
+A3
+F0
+A3
+F0
+90 data16(_main_sum_y_1_123;)  
+F0
+A3
+E4
+F0
+A3
+F0
+A3
+F0
+90 data16(_main_smoothed_angle_1_123;)  
+F0
+A3
+E4
+F0
+A3
+F0
+A3
+F0
 75 82 03
 12 addr16(_Set_Pin_Output;)  
 12 addr16(_BMM150_Init;)  
@@ -1941,6 +1993,11 @@ C0 E0
 E5 81
 24 F4
 F5 81
+75 data8(_main_sloc0_1_0;) 00
+74 9C
+25 data8(_main_sloc0_1_0;)
+50 rel2(L016024?;)
+02 addr16(L016014?;)  
 75 data8(_BMM150_Read_Data_PARM_2;) data8(_main_mag_y_1_123;)
 75 data8(_BMM150_Read_Data_PARM_2;0x0001;+;) data8(_main_mag_y_1_123;0x0008;>>;)
 75 data8(_BMM150_Read_Data_PARM_2;0x0002;+;) 00
@@ -1952,34 +2009,425 @@ F5 81
 12 addr16(_BMM150_Read_Data;)  
 90 data16(_main_mag_y_1_123;)  
 E0
-FA
+FB
 A3
 E0
-FB
-8A 82
-8B 83
+FC
+8B 82
+8C 83
 12 addr16(___sint2fs;)  
-AA 82
-AB 83
-AC F0
-FD
+AB 82
+AC 83
+AD F0
+FE
 90 data16(_main_mag_x_1_123;)  
 E0
-FE
+FF
 A3
 E0
-FF
-8E 82
-8F 83
-C0 02
+F8
+8F 82
+88 83
 C0 03
 C0 04
 C0 05
+C0 06
 12 addr16(___sint2fs;)  
 85 82 data8(_atan2f_PARM_2;)
 85 83 data8(_atan2f_PARM_2;0x0001;+;)
 85 F0 data8(_atan2f_PARM_2;0x0002;+;)
 F5 data8(_atan2f_PARM_2;0x0003;+;)
+D0 06
+D0 05
+D0 04
+D0 03
+8B 82
+8C 83
+8D F0
+EE
+12 addr16(_atan2f;)  
+AB 82
+AC 83
+AD F0
+FE
+C0 03
+C0 04
+C0 05
+C0 06
+90 00 00
+75 F0 34
+74 43
+12 addr16(___fsmul;)  
+AB 82
+AC 83
+AD F0
+FE
+E5 81
+24 FC
+F5 81
+74 DB
+C0 E0
+74 0F
+C0 E0
+74 49
+C0 E0
+74 40
+C0 E0
+8B 82
+8C 83
+8D F0
+EE
+12 addr16(___fsdiv;)  
+AB 82
+AC 83
+AD F0
+FE
+E5 81
+24 FC
+F5 81
+90 data16(_main_angle_1_123;)  
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
+A3
+EE
+F0
+C0 03
+C0 04
+C0 05
+C0 06
+E4
+C0 E0
+C0 E0
+C0 E0
+C0 E0
+8B 82
+8C 83
+8D F0
+EE
+12 addr16(___fslt;)  
+AF 82
+E5 81
+24 FC
+F5 81
+D0 06
+D0 05
+D0 04
+D0 03
+EF
+60 rel2(L016004?;)
+E4
+C0 E0
+C0 E0
+74 B4
+C0 E0
+74 43
+C0 E0
+8B 82
+8C 83
+8D F0
+EE
+12 addr16(___fsadd;)  
+AF 82
+A8 83
+A9 F0
+FA
+E5 81
+24 FC
+F5 81
+90 data16(_main_angle_1_123;)  
+EF
+F0
+A3
+E8
+F0
+A3
+E9
+F0
+A3
+EA
+F0
+80 rel2(L016005?;)
+C0 03
+C0 04
+C0 05
+C0 06
+E4
+C0 E0
+C0 E0
+74 B4
+C0 E0
+74 43
+C0 E0
+8B 82
+8C 83
+8D F0
+EE
+12 addr16(___fsgt;)  
+AF 82
+E5 81
+24 FC
+F5 81
+D0 06
+D0 05
+D0 04
+D0 03
+EF
+60 rel2(L016005?;)
+E4
+C0 E0
+C0 E0
+74 B4
+C0 E0
+74 43
+C0 E0
+8B 82
+8C 83
+8D F0
+EE
+12 addr16(___fssub;)  
+AB 82
+AC 83
+AD F0
+FE
+E5 81
+24 FC
+F5 81
+90 data16(_main_angle_1_123;)  
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
+A3
+EE
+F0
+90 data16(_main_angle_1_123;)  
+E0
+C0 E0
+A3
+E0
+C0 E0
+A3
+E0
+C0 E0
+A3
+E0
+C0 E0
+90 0F DB
+75 F0 49
+74 40
+12 addr16(___fsmul;)  
+AB 82
+AC 83
+AD F0
+FE
+E5 81
+24 FC
+F5 81
+E4
+C0 E0
+C0 E0
+74 34
+C0 E0
+74 43
+C0 E0
+8B 82
+8C 83
+8D F0
+EE
+12 addr16(___fsdiv;)  
+AB 82
+AC 83
+AD F0
+FE
+E5 81
+24 FC
+F5 81
+8B 82
+8C 83
+8D F0
+EE
+C0 03
+C0 04
+C0 05
+C0 06
+12 addr16(_cosf;)  
+85 82 data8(_main_sloc1_1_0;)
+85 83 data8(_main_sloc1_1_0;0x0001;+;)
+85 F0 data8(_main_sloc1_1_0;0x0002;+;)
+F5 data8(_main_sloc1_1_0;0x0003;+;)
+90 data16(_main_sum_x_1_123;)  
+E0
+FA
+A3
+E0
+FF
+A3
+E0
+F8
+A3
+E0
+F9
+C0 data8(_main_sloc1_1_0;)
+C0 data8(_main_sloc1_1_0;0x0001;+;)
+C0 data8(_main_sloc1_1_0;0x0002;+;)
+C0 data8(_main_sloc1_1_0;0x0003;+;)
+8A 82
+8F 83
+88 F0
+E9
+12 addr16(___fsadd;)  
+AA 82
+AF 83
+A8 F0
+F9
+E5 81
+24 FC
+F5 81
+D0 06
+D0 05
+D0 04
+D0 03
+90 data16(_main_sum_x_1_123;)  
+EA
+F0
+A3
+EF
+F0
+A3
+E8
+F0
+A3
+E9
+F0
+8B 82
+8C 83
+8D F0
+EE
+12 addr16(_sinf;)  
+AA 82
+AB 83
+AC F0
+FD
+90 data16(_main_sum_y_1_123;)  
+E0
+FE
+A3
+E0
+FF
+A3
+E0
+F8
+A3
+E0
+F9
+C0 02
+C0 03
+C0 04
+C0 05
+8E 82
+8F 83
+88 F0
+E9
+12 addr16(___fsadd;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+90 data16(_main_sum_y_1_123;)  
+EA
+F0
+A3
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
+90 00 01
+12 addr16(_waitms;)  
+05 data8(_main_sloc0_1_0;)
+02 addr16(L016011?;)  
+90 data16(_main_sum_y_1_123;)  
+E0
+FA
+A3
+E0
+FB
+A3
+E0
+FC
+A3
+E0
+FD
+E4
+C0 E0
+C0 E0
+74 C8
+C0 E0
+74 42
+C0 E0
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(___fsdiv;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+90 data16(_main_sum_x_1_123;)  
+E0
+FE
+A3
+E0
+FF
+A3
+E0
+F8
+A3
+E0
+F9
+C0 02
+C0 03
+C0 04
+C0 05
+E4
+C0 E0
+C0 E0
+74 C8
+C0 E0
+74 42
+C0 E0
+8E 82
+8F 83
+88 F0
+E9
+12 addr16(___fsdiv;)  
+85 82 data8(_atan2f_PARM_2;)
+85 83 data8(_atan2f_PARM_2;0x0001;+;)
+85 F0 data8(_atan2f_PARM_2;0x0002;+;)
+F5 data8(_atan2f_PARM_2;0x0003;+;)
+E5 81
+24 FC
+F5 81
 D0 05
 D0 04
 D0 03
@@ -1989,6 +2437,227 @@ D0 02
 8C F0
 ED
 12 addr16(_atan2f;)  
+AA 82
+AB 83
+AC F0
+FD
+90 data16(_main_avg_angle_1_123;)  
+EA
+F0
+A3
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
+C0 02
+C0 03
+C0 04
+C0 05
+E4
+C0 E0
+C0 E0
+C0 E0
+C0 E0
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(___fslt;)  
+AE 82
+E5 81
+24 FC
+F5 81
+D0 05
+D0 04
+D0 03
+D0 02
+EE
+60 rel2(L016007?;)
+74 DB
+C0 E0
+74 0F
+C0 E0
+74 C9
+C0 E0
+74 40
+C0 E0
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(___fsadd;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+90 data16(_main_avg_angle_1_123;)  
+EA
+F0
+A3
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
+90 data16(_main_avg_angle_1_123;)  
+E0
+C0 E0
+A3
+E0
+C0 E0
+A3
+E0
+C0 E0
+A3
+E0
+C0 E0
+90 00 00
+75 F0 34
+74 43
+12 addr16(___fsmul;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+74 DB
+C0 E0
+74 0F
+C0 E0
+74 49
+C0 E0
+74 40
+C0 E0
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(___fsdiv;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+90 data16(_main_avg_angle_1_123;)  
+EA
+F0
+A3
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
+90 data16(_main_avg_angle_1_123;)  
+E0
+C0 E0
+A3
+E0
+C0 E0
+A3
+E0
+C0 E0
+A3
+E0
+C0 E0
+90 CC CD
+75 F0 4C
+74 3E
+12 addr16(___fsmul;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+C0 02
+C0 03
+C0 04
+C0 05
+90 data16(_main_smoothed_angle_1_123;)  
+E0
+C0 E0
+A3
+E0
+C0 E0
+A3
+E0
+C0 E0
+A3
+E0
+C0 E0
+90 CC CD
+75 F0 4C
+74 3F
+12 addr16(___fsmul;)  
+AE 82
+AF 83
+A8 F0
+F9
+E5 81
+24 FC
+F5 81
+D0 05
+D0 04
+D0 03
+D0 02
+C0 06
+C0 07
+C0 00
+C0 01
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(___fsadd;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+90 data16(_main_smoothed_angle_1_123;)  
+EA
+F0
+A3
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
+90 data16(_main_smoothed_angle_1_123;)  
+E0
+C0 E0
+A3
+E0
+C0 E0
+A3
+E0
+C0 E0
+A3
+E0
+C0 E0
 90 data16(_main_mag_y_1_123;)  
 E0
 C0 E0
@@ -2009,11 +2678,29 @@ C0 E0
 C0 E0
 12 addr16(_printf;)  
 E5 81
-24 F9
+24 F5
 F5 81
+90 data16(_main_sum_x_1_123;)  
+E4
+F0
+A3
+F0
+A3
+F0
+A3
+F0
+90 data16(_main_sum_y_1_123;)  
+F0
+A3
+E4
+F0
+A3
+F0
+A3
+F0
 90 00 64
 12 addr16(_waitms;)  
-02 addr16(L016002?;)  
+02 addr16(L016020?;)  
 </CODE>
 
 <CODE R_CSEG>
@@ -2056,9 +2743,9 @@ F5 81
 00
 4D 61 72 20 32 36 20 32 30 32 35 
 00
-31 33 3A 30 30 3A 34 33 
+31 33 3A 32 34 3A 35 33 
 00
-25 64 2C 25 64 
+25 64 2C 25 64 2C 25 66 
 0D
 0A
 00

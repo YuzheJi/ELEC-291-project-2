@@ -545,7 +545,7 @@ void BMM150_Read_Data(int16_t *mag_x, int16_t *mag_y, int16_t *mag_z)
 
 void main (void)
 {
-	// xdata uint8_t i; 
+	xdata uint8_t i; 
 	xdata int16_t mag_x, mag_y, mag_z; 
 	xdata float angle;
 	xdata float sum_x, sum_y, alpha, avg_angle, smoothed_angle; 
