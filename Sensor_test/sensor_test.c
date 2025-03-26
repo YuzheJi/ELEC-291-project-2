@@ -1,19 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <math.h>
 #include <EFM8LB1.h>
-#include "bmm150.h"
 
 #define SYSCLK 72000000L    // Internal oscillator frequency in Hz
 #define BAUDRATE 115200L
-#define F_SCK_MAX 1000000L  // Max SCK freq (Hz)
+#define F_SCK_MAX 2000000L   // Max SCK freq (Hz)
 
-#define CS P0_5 
-// Pins used by the SPI interface:
-// 	P0.0: SCK
-// 	P0.1: MISO, SDO
-// 	P0.2: MOSI, SDI
-// 	P0.3: SS*, chip select 
+#define CS P0_3
+#define M_PI 3.14159265358979323846
 
 //                                    ----------  
 // RF_RXD               P0.0      1  |          |  32      P0.1     RF_TXD
@@ -34,6 +30,46 @@
 // L_bridge_1           P2.1     16  |          |  17      P2.0     RF_SET
 //         
 
+
+
+// BMM150 Registers --> see the datasheet Page 23 from 5.3 chip ID
+#define BMM150_CHIP_ID          			0x40 // the chip identification number 0x32 -> read only if 0x4B bit enabled
+#define BMM150_DATA_X_LSB       			0x42 // X axis
+#define BMM150_DATA_X_MSB       			0x43
+#define BMM150_DATA_Y_LSB       			0x44 // Y axis
+#define BMM150_DATA_Y_MSB       			0x45
+#define BMM150_DATA_Z_LSB       			0x46 // Z axis
+#define BMM150_DATA_Z_MSB       			0x47
+#define BMM150_RHALL_LSB        			0x48 // hall resistance and Data Ready (DRDT) status bit
+#define BMM150_RHALL_MSB        			0x49 // hall resistance 
+#define BMM150_STATUS_REGISTER  			0x4A 
+#define BMM150_POWER_CONTROL    			0x4B 
+#define BMM150_OP_MODE          			0x4C
+#define BMM150_INTERRUPT        			0x4D
+#define BMM150_REP_XY           			0x51
+#define BMM150_REP_Z            			0x52
+#define BMM150_DIG_X1						0x5D
+#define BMM150_DIG_Z4_LSB					0x62
+#define BMM150_DIG_Z2_LSB					0x68
+
+// BMM150 Constants
+#define BMM150_CHIP_ID_VALUE    			0x32
+#define BMM150_POWER_ON         			0x01
+#define BMM150_NORMAL_MODE      			0x00
+#define BMM150_ODR_10HZ         			0x00  // Output data rate 10Hz
+#define BMM150_DATA_READY       			0x01
+#define BMM150_OVERFLOW_OUTPUT				-32768
+#define BMM150_OVERFLOW_ADCVAL_XYAXES_FLIP	INT16_C(-4096)
+#define BMM150_OVERFLOW_ADCVAL_ZAXIS_HALL 	INT16_C(-16384)
+#define BMM150_POSITIVE_SATURATION_Z 		INT16_C(32767)
+#define BMM150_NEGATIVE_SATURATION_Z 		INT16_C(-32767)
+
+
+//BMM150 Global Variables
+int8_t dig_x1, dig_x2, dig_y1, dig_y2, dig_z1, dig_z2, dig_z3, dig_z4; 
+int8_t dig_xy1, dig_xy2, dig_xyz1; 
+
+    
 
 char _c51_external_startup (void)
 {
@@ -83,11 +119,12 @@ char _c51_external_startup (void)
 		#error SYSCLK must be either 12250000L, 24500000L, 48000000L, or 72000000L
 	#endif
 
-	P0MDOUT |= 0xE0;
-	P1MDOUT |= 0x01; 
-	XBR0=0b_0000_0011; //SPI0E=1, URT0E=1
-	XBR1=0b_0000_0000;
-	XBR2=0b_0100_0000; // Enable crossbar and weak pull-ups
+    // Configure I/O ports for SPI and UART
+    P0MDOUT = 0b_0000_1101; // SCK, MOSI, and P0.3 are push-pull, others open-drain
+    P1MDOUT = 0b_0000_0000; // P1 all open-drain
+    XBR0 = 0b_0000_0011;    // SPI0E=1, URT0E=1
+    XBR1 = 0b_0000_0000;
+    XBR2 = 0b_0100_0000;    // Enable crossbar and weak pull-ups
 
 	#if ( ((SYSCLK/BAUDRATE)/(12L*2L)) > 0x100)
 		#error Can not configure baudrate using timer 1 
@@ -101,15 +138,10 @@ char _c51_external_startup (void)
 	TR1 = 1; // START Timer1
 	TI = 1;  // Indicate TX0 ready
 
-	// SPI inititialization
-	SPI0CKR = (SYSCLK/(2*F_SCK_MAX))-1;
-	SPI0CFG = 0b_0100_0000; //SPI in master mode
-	SPI0CN0 = 0b_0000_0001; //SPI enabled and in three wire mode
-
-	// configure P0.4 as input (drdy interrupt)
-	P0MDOUT &= ~(1<<4); // set P0.4 as open drain input 
-	P0 |= (1<<4); //enable pull up resistor on P0.4 
-	EIE2 |= 0x02; 
+	// Configure SPI: Notice, you might need to adjust it according to data sheet
+    SPI0CKR = (SYSCLK/(2*F_SCK_MAX))-1;
+    SPI0CFG = 0b_1110_0000; // this is mode 3, you need to determine the sampling etc. in datasheet
+    SPI0CN0 = 0b_0000_0001; // SPI enabled and in three wire mode
 	
 	return 0;
 }
@@ -148,16 +180,6 @@ void Timer3us(unsigned char us)
 	TMR3CN0 = 0 ;                   // Stop Timer3 and clear overflow flag
 }
 
-// need another delay for the function pointer 
-void ptr_delay_us (uint32_t period, void *intf_ptr) reentrant
-{
-	(void)intf_ptr; 
-	while (period--)
-	{
-		Timer3us(1);
-	}
-}
-
 void waitms (unsigned int ms)
 {
 	xdata unsigned int j;
@@ -166,266 +188,400 @@ void waitms (unsigned int ms)
 		for (k=0; k<4; k++) Timer3us(250);
 }
 
-
-uint8_t spi_transfer(uint8_t x) // instead of data we used x
+unsigned char SPI_transfer(unsigned char tx_data)
 {
-    SPI0DAT = x;            // Load data into SPI buffer
-    while (!(SPI0CN0 & 0x80)); // Wait for transmission to complete (SPIF flag)
-    SPI0CN0 &= ~0x80;          // Clear the flag
-    return SPI0DAT;            // Return received byte
+    SPI0DAT = tx_data;  // Send data
+    while (!SPIF);      // Wait for transfer to complete
+    SPIF = 0;           // Clear SPI interrupt flag
+    return SPI0DAT;     // Return received data
 }
 
-
-//  /*!
-//   *  @brief Function for reading the sensor's registers through SPI bus.
-//   *
-//   *  @param[in] cs         : Chip select to enable the sensor.
-//   *  @param[in] reg_addr   : Register address.
-//   *  @param[out] reg_data  : Pointer to the data buffer to store the read data.
-//   *  @param[in] length     : No of bytes to read.
-//   *  @param[in] intf_ptr   : Interface pointer
-//   *
-//   *  @return Status of execution
-//   *
-//   *  @retval BMM150_INTF_RET_SUCCESS -> Success.
-//   *  @retval != BMM150_INTF_RET_SUCCESS -> Failure.
-//   *
-//   */
-int8_t bmm150_spi_read(uint8_t reg_addr, uint8_t *reg_data, uint32_t length, void *intf_ptr) __reentrant
+unsigned char SPI_read(unsigned char reg_addr)
 {
-    uint32_t i;
-    (void)intf_ptr; // unused in this implementation
+    unsigned char value;
+    
+    // For SPI read operation, set MSB of address to 1
+    reg_addr = reg_addr | 0x80;
+    
+    CS = 0;                // Select the device
+    SPI_transfer(reg_addr);     // Send register address
+    value = SPI_transfer(0x00); // Read value (send dummy byte) dummy byte is a placeholder byte sent by the master when it wants to receive data
+    CS = 1;                // Deselect the device
+    
+    return value;
+}
 
-    // Set MSB to 1 for read operation
-    reg_addr |= 0x80;
+void SPI_read_block(unsigned char start_addr, uint8_t *buffer, uint8_t len)
+{
+	uint8_t i; 
+    start_addr |= 0x80; // Set MSB for read
     CS = 0;
-
-    // Send register address
-    if (spi_transfer(reg_addr) == 0xFF)
-    {
-        CS = 1; // End SPI 
-        return BMM150_E_COM_FAIL;
+    SPI_transfer(start_addr);
+    for (i = 0; i < len; i++) {
+        buffer[i] = SPI_transfer(0x00); // Dummy writes
     }
-    // Read response bytes
-    for (i = 0; i < length; i++)
-    {
-        reg_data[i] = spi_transfer(0x00);
-    }
-
     CS = 1;
-    return BMM150_OK;
 }
 
 
-// /*!
-//   *  @brief Function for writing the sensor's registers through SPI bus.
-//   *
-//   *  @param[in] cs         : Chip select to enable the sensor.
-//   *  @param[in] reg_addr   : Register address.
-//   *  @param[in] reg_data   : Pointer to the data buffer whose data has to be written.
-//   *  @param[in] length     : No of bytes to write.
-//   *  @param[in] intf_ptr   : Interface pointer
-//   *
-//   *  @return Status of execution
-//   *
-//   *  @retval BMM150_INTF_RET_SUCCESS -> Success.
-//   *  @retval  != BMM150_INTF_RET_SUCCESS -> Failure.
-//   *
-//   */
-int8_t bmm150_spi_write(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length, void *intf_ptr) __reentrant
+void SPI_write(unsigned char reg_addr, unsigned char reg_value)
 {
-	uint32_t i; 
-	(void)intf_ptr; // Avoid compiler warning if not used
+    // For SPI write operation, MSB should be 0
+    reg_addr = reg_addr & 0x7F;
+    
+    CS = 0;                // Select device
+    SPI_transfer(reg_addr);     // Send register address
+    SPI_transfer(reg_value);    // Send value
+    CS = 1;                // Deselect device
+}
 
-	CS = 0; // Pull CS low to start communication
-
-	// Send register address with Write flag (MSB = 0)
-	if (spi_transfer(reg_addr & 0x7F) == 0xFF) // Check if transfer failed
-	{
-		CS = 1; // Pull CS high
-		return BMM150_E_COM_FAIL; // Return communication failure
+void BMM150_Read_Trim_Registers(void)
+{
+	xdata uint8_t i; 
+	xdata uint16_t temp_msb; 
+	xdata uint8_t trim_x1y1[2] = {0};
+	xdata uint8_t trim_xyz_data[4] = {0};
+	xdata uint8_t trim_xy1xy2[10] = {0};
+	temp_msb = 0; 
+	// Reading trim_x1y1 at 0x5D
+	for (i=0;i<2;i++){
+		trim_x1y1[i] = SPI_read(BMM150_DIG_X1+i); 
 	}
+	for (i=0;i<4;i++){
+		trim_xyz_data[i] = SPI_read(BMM150_DIG_Z4_LSB+i);
+	}
+	for (i=0;i<10;i++){
+		trim_xy1xy2[i] = SPI_read(BMM150_DIG_Z2_LSB+i);
+		printf("%d ", trim_xy1xy2[i]);
+	}
+	// Update trim data 
+	dig_x1 = (int8_t) trim_x1y1[0]; 
+	dig_y1 = (int8_t) trim_x1y1[1]; 
+	dig_x2 = (int8_t) trim_xyz_data[2]; 
+	dig_y2 = (int8_t) trim_xyz_data[3]; 
 
-	// Send all bytes of data
-	for (i = 0; i < length; i++)
-	{
-		if (spi_transfer(reg_data[i]) == 0xFF) // Check if transfer failed
+	temp_msb = ((uint16_t)trim_xy1xy2[3]) << 8;
+	dig_z1 = (uint16_t)(temp_msb | trim_xy1xy2[2]);
+
+	temp_msb = ((uint16_t)trim_xy1xy2[1]) << 8;
+	dig_z2 = (int16_t)(temp_msb | trim_xy1xy2[0]);
+
+	temp_msb = ((uint16_t)trim_xy1xy2[7]) << 8;
+	dig_z3 = (int16_t)(temp_msb | trim_xy1xy2[6]);
+
+	temp_msb = ((uint16_t)trim_xyz_data[1]) << 8;
+	dig_z4 = (int16_t)(temp_msb | trim_xyz_data[0]);
+
+	dig_xy1 = trim_xy1xy2[9];
+	dig_xy2 = (int8_t)trim_xy1xy2[8];
+
+	temp_msb = ((uint16_t)(trim_xy1xy2[5] & 0x7F)) << 8;
+	dig_xyz1 = (uint16_t)(temp_msb | trim_xy1xy2[4]);
+
+	printf("%d %d %d %d\n", dig_z1, dig_z2, dig_z3, dig_z4);
+}
+
+void BMM150_Init(void)
+{
+    unsigned char chip_id;
+    
+    // Set all required pins
+    CS = 1;         // Deselect BMM150
+    
+    // Wait for sensor startup
+    waitms(10);
+    
+    // Software reset by setting bit 7 and bit 1 in register 0x4B
+    SPI_write(BMM150_POWER_CONTROL, 0x82);
+    waitms(10);  // Wait for reset to complete
+    
+    // Power on the sensor (set power control bit)
+    SPI_write(BMM150_POWER_CONTROL, BMM150_POWER_ON);
+    waitms(5);
+    
+    // Read and verify chip ID
+    chip_id = SPI_read(BMM150_CHIP_ID);
+    if (chip_id != BMM150_CHIP_ID_VALUE)
+    {
+        printf("Error: Could not find BMM150 sensor (Chip ID: 0x%02X)\r\n", chip_id);
+        while (1) {
+            printf("Press restart to check again!\r");
+        }; // Halt if sensor not found
+    }
+    
+    // Set operation mode to normal and data rate to 10Hz
+    SPI_write(BMM150_OP_MODE, BMM150_NORMAL_MODE | (BMM150_ODR_10HZ * 8));
+    
+    // Set repetitions for XY and Z axes for regular preset
+    SPI_write(BMM150_REP_XY, 0x04); // XY-repetitions = 9
+    SPI_write(BMM150_REP_Z, 0x0E);  // Z-repetitions = 15
+
+	BMM150_Read_Trim_Registers();
+    
+    printf("BMM150 initialized successfully! Chip ID: 0x%02X\r\n", chip_id);
+}
+
+int16_t BMM150_compensate_x(int16_t *mag_data_x, int16_t *data_rhall)
+{
+	xdata int16_t retval;
+    xdata uint16_t process_comp_x0;
+    xdata int32_t process_comp_x1;
+    xdata uint16_t process_comp_x2;
+    xdata int32_t process_comp_x3;
+    xdata int32_t process_comp_x4;
+    xdata int32_t process_comp_x5;
+    xdata int32_t process_comp_x6;
+    xdata int32_t process_comp_x7;
+    xdata int32_t process_comp_x8;
+    xdata int32_t process_comp_x9;
+    xdata int32_t process_comp_x10;
+
+	//initialize value
+	process_comp_x0 = 0; 
+
+	if (*mag_data_x != BMM150_OVERFLOW_ADCVAL_XYAXES_FLIP){
+		if (*data_rhall != 0)
 		{
-			CS = 1; // Pull CS high
-			return BMM150_E_COM_FAIL; // Return communication failure
+			/* Availability of valid data */
+			process_comp_x0 = *data_rhall;
+		}
+		else if (dig_xyz1 != 0)
+		{
+			process_comp_x0 = dig_xyz1;
+		}
+		else
+		{
+			process_comp_x0 = 0;
+		}
+		if (process_comp_x0 != 0)
+		{
+			/* Processing compensation equations */
+			process_comp_x1 = ((int32_t)dig_xyz1) * 16384;
+			process_comp_x2 = ((uint16_t)(process_comp_x1 / process_comp_x0)) - ((uint16_t)0x4000);
+			retval = ((int16_t)process_comp_x2);
+			process_comp_x3 = (((int32_t)retval) * ((int32_t)retval));
+			process_comp_x4 = (((int32_t)dig_xy2) * (process_comp_x3 / 128));
+			process_comp_x5 = (int32_t)(((int16_t)dig_xy1) * 128);
+			process_comp_x6 = ((int32_t)retval) * process_comp_x5;
+			process_comp_x7 = (((process_comp_x4 + process_comp_x6) / 512) + ((int32_t)0x100000));
+			process_comp_x8 = ((int32_t)(((int16_t)dig_x2) + ((int16_t)0xA0)));
+			process_comp_x9 = ((process_comp_x7 * process_comp_x8) / 4096);
+			process_comp_x10 = ((int32_t)*mag_data_x) * process_comp_x9;
+			retval = ((int16_t)(process_comp_x10 / 8192));
+			retval = (retval + (((int16_t)dig_x1) * 8)) / 16;
+		}
+		else {
+			retval = BMM150_OVERFLOW_OUTPUT; 
 		}
 	}
-
-	CS = 1; // Pull CS high to end communication
-
-	return BMM150_OK; // If all transfers succeeded, return success
+	else{
+		retval = BMM150_OVERFLOW_OUTPUT; 
+	}
+	return retval; 
 }
 
- /*!
-  *  @brief Prints the execution status of the APIs.
-  */
- void bmm150_error_codes_print_result(const char api_name[], int8_t rslt)
- {
-    if (rslt != BMM150_OK)
-    {
-        printf("%s\t", api_name);
- 
-        switch (rslt)
-        {
-            case BMM150_E_NULL_PTR:
-                printf("Error [%d] : Null pointer error.", rslt);
-                printf(
-                    "It occurs when the user tries to assign value (not address) to a pointer, which has been initialized to NULL.\r\n");
-                break;
- 
-            case BMM150_E_COM_FAIL:
-                printf("Error [%d] : Communication failure error.", rslt);
-                printf(
-            	    "It occurs due to read/write operation failure and also due to power failure during communication\r\n");
-                break;
- 
-            case BMM150_E_DEV_NOT_FOUND:
-                printf("Error [%d] : Device not found error. It occurs when the device chip id is incorrectly read\r\n", rslt);
-                break;
- 
-            case BMM150_E_INVALID_CONFIG:
-                printf("Error [%d] : Invalid sensor configuration.", rslt);
-                printf(" It occurs when there is a mismatch in the requested feature with the available one\r\n");
-                break;
- 
-            default:
-                printf("Error [%d] : Unknown error code\r\n", rslt);
-                break;
-        }
-    }
-}
-
-  /*!
-  *  @brief Function to select the interface between SPI and I2C.
-  */
-xdata int8_t bmm150_interface_selection(xdata struct bmm150_dev *dev, uint8_t intf)
+int16_t BMM150_compensate_y (int16_t *mag_data_y, int16_t *data_rhall)
 {
-    xdata int8_t rslt = BMM150_OK;
-	printf("Configuring SPI\n"); 
+	xdata int16_t retval;
+    xdata uint16_t process_comp_y0;
+    xdata int32_t process_comp_y1;
+    xdata uint16_t process_comp_y2;
+    xdata int32_t process_comp_y3;
+    xdata int32_t process_comp_y4;
+    xdata int32_t process_comp_y5;
+    xdata int32_t process_comp_y6;
+    xdata int32_t process_comp_y7;
+    xdata int32_t process_comp_y8;
+    xdata int32_t process_comp_y9;
 
-    if (dev != NULL)
+	//initialize variable
+	process_comp_y0 = 0; 
+
+    /* Overflow condition check */
+    if (*mag_data_y != BMM150_OVERFLOW_ADCVAL_XYAXES_FLIP)
     {
-        if (intf == BMM150_SPI_INTF)
+        if (*data_rhall != 0)
         {
-            printf("SPI Interface Selected\n");
-
-            // Assign SPI communication functions
-            dev->read = bmm150_spi_read;
-            dev->write = bmm150_spi_write;
-            dev->intf = BMM150_SPI_INTF;
-            dev->intf_ptr = NULL; // We don't need an intf_ptr for direct GPIO control
-            dev->delay_us = ptr_delay_us;
+            /* Availability of valid data */
+            process_comp_y0 = *data_rhall;
+        }
+        else if (dig_xyz1 != 0)
+        {
+            process_comp_y0 = dig_xyz1;
         }
         else
         {
-            printf("Invalid Interface Selection\n");
-            rslt = BMM150_E_INVALID_CONFIG;
+            process_comp_y0 = 0;
+        }
+
+        if (process_comp_y0 != 0)
+        {
+            /* Processing compensation equations */
+            process_comp_y1 = (((int32_t)dig_xyz1) * 16384) / process_comp_y0;
+            process_comp_y2 = ((uint16_t)process_comp_y1) - ((uint16_t)0x4000);
+            retval = ((int16_t)process_comp_y2);
+            process_comp_y3 = ((int32_t) retval) * ((int32_t)retval);
+            process_comp_y4 = ((int32_t)dig_xy2) * (process_comp_y3 / 128);
+            process_comp_y5 = ((int32_t)(((int16_t)dig_xy1) * 128));
+            process_comp_y6 = ((process_comp_y4 + (((int32_t)retval) * process_comp_y5)) / 512);
+            process_comp_y7 = ((int32_t)(((int16_t)dig_y2) + ((int16_t)0xA0)));
+            process_comp_y8 = (((process_comp_y6 + ((int32_t)0x100000)) * process_comp_y7) / 4096);
+            process_comp_y9 = (((int32_t)*mag_data_y) * process_comp_y8);
+            retval = (int16_t)(process_comp_y9 / 8192);
+            retval = (retval + (((int16_t)dig_y1) * 8)) / 16;
+        }
+        else
+        {
+            retval = BMM150_OVERFLOW_OUTPUT;
         }
     }
     else
     {
-        rslt = BMM150_E_NULL_PTR;
+        /* Overflow condition */
+        retval = BMM150_OVERFLOW_OUTPUT;
     }
 
-    return rslt;
+    return retval;
 }
 
-static int8_t set_config(xdata struct bmm150_dev *dev)
-{
-    /* Status of api are returned to this variable. */
-    xdata int8_t rslt;
+int16_t BMM150_compensate_z (int16_t *mag_data_z, int16_t *data_rhall){
+	xdata int32_t retval;
+    xdata int16_t process_comp_z0;
+    xdata int32_t process_comp_z1;
+    xdata int32_t process_comp_z2;
+    xdata int32_t process_comp_z3;
+    xdata int16_t process_comp_z4;
 
-    xdata struct bmm150_settings settings;
-
-    /* Set powermode as normal mode */
-	printf("Configuring Powermode\n"); 
-    settings.pwr_mode = BMM150_POWERMODE_NORMAL;
-    rslt = bmm150_set_op_mode(&settings, dev);
-    bmm150_error_codes_print_result("bmm150_set_op_mode", rslt);
-
-    if (rslt == BMM150_OK)
+    if (*mag_data_z != BMM150_OVERFLOW_ADCVAL_ZAXIS_HALL)
     {
-        /* Setting the preset mode as Low power mode
-         * i.e. data rate = 10Hz, XY-rep = 1, Z-rep = 2
-         */
-		printf("Configuring Presetmode\n"); 
-        settings.preset_mode = BMM150_PRESETMODE_LOWPOWER;
-        rslt = bmm150_set_presetmode(&settings, dev);
-        bmm150_error_codes_print_result("bmm150_set_presetmode", rslt);
-    }
-
-    return rslt;
-}
-
-static int8_t get_data(xdata struct bmm150_dev *dev)
-{
-	/* Status of api are returned to this variable. */
-    xdata int8_t rslt; 
-
-    xdata int8_t idx;
-
-    xdata struct bmm150_mag_data mag_data;
-
-	rslt = BMM150_OK; 
-    /* Reading the mag data */
-    while (1)
-    {
-		for (idx = 0; idx < 50; idx++)
+        if ((dig_z2 != 0) && (dig_z1 != 0) && (*data_rhall != 0) &&
+            (dig_xyz1 != 0))
         {
-            /* Read mag data */
-            rslt = bmm150_read_mag_data(&mag_data, dev);
-            bmm150_error_codes_print_result("bmm150_read_mag_data", rslt);
+            /*Processing compensation equations */
+            process_comp_z0 = ((int16_t)*data_rhall) - ((int16_t)dig_xyz1);
+            process_comp_z1 = (((int32_t)dig_z3) * ((int32_t)(process_comp_z0))) / 4;
+            process_comp_z2 = (((int32_t)(*mag_data_z - dig_z4)) * 32768);
+            process_comp_z3 = ((int32_t)dig_z1) * (((int16_t)*data_rhall) * 2);
+            process_comp_z4 = (int16_t)((process_comp_z3 + (32768)) / 65536);
+            retval = ((process_comp_z2 - process_comp_z1) / (dig_z2 + process_comp_z4));
 
-            /* Unit for magnetometer data is microtesla(uT) */
-            printf("MAG DATA[%d]  X : %d uT   Y : %d uT \n", idx, mag_data.x, mag_data.y);
+            /* Saturate result to +/- 2 micro-tesla */
+            if (retval > BMM150_POSITIVE_SATURATION_Z)
+            {
+                retval = BMM150_POSITIVE_SATURATION_Z;
+            }
+            else if (retval < BMM150_NEGATIVE_SATURATION_Z)
+            {
+                retval = BMM150_NEGATIVE_SATURATION_Z;
+            }
+
+            /* Conversion of LSB to micro-tesla */
+            retval = retval / 16;
         }
-		break; 
+        else
+        {
+            retval = BMM150_OVERFLOW_OUTPUT;
+        }
     }
-    return rslt;
+    else
+    {
+        /* Overflow condition */
+        retval = BMM150_OVERFLOW_OUTPUT;
+    }
+
+    return (int16_t)retval;
 }
+
+void BMM150_Read_Data(int16_t *mag_x, int16_t *mag_y, int16_t *mag_z)
+{
+	uint8_t raw_x_lsb, raw_x_msb, raw_y_lsb, raw_y_msb, raw_z_lsb, raw_z_msb, raw_rhall_lsb, raw_rhall_msb, raw_z[2]; 
+	int16_t x_val, y_val, z_val, rhall_val; 
+	uint16_t z_raw; 
+	raw_x_lsb = SPI_read(BMM150_DATA_X_LSB);
+	raw_x_msb = SPI_read(BMM150_DATA_X_MSB);
+	raw_y_lsb = SPI_read(BMM150_DATA_Y_LSB);
+	raw_y_msb = SPI_read(BMM150_DATA_Y_MSB);
+	SPI_read_block(BMM150_DATA_X_LSB, raw_z, 2);
+	// raw_z_lsb = SPI_read(BMM150_DATA_Z_LSB);
+	// raw_z_msb = SPI_read(BMM150_DATA_Z_MSB);
+	raw_z_lsb = raw_z[0];
+	raw_z_msb = raw_z[1];
+	raw_rhall_lsb = SPI_read(BMM150_RHALL_LSB); 
+	raw_rhall_msb = SPI_read(BMM150_RHALL_MSB);
+	SPI_read_block(BMM150_DATA_X_LSB, raw_z, 2);
+
+
+	// Extract X data (13-bit, 2's complement)
+    // Instead of using shift operators, use multiplication/division
+    x_val = ((int16_t)((int8_t)raw_x_msb)) * 32 + ((raw_x_lsb & 0xF8) >> 3);
+    if (x_val > 4095){
+		x_val = x_val - 8192;  // 2's complement sign correction
+	}
+	// Extract Y data (13-bit, 2's complement)
+    y_val = ((int16_t)((int8_t)raw_y_msb)) * 32 + ((raw_y_lsb & 0xF8) >> 3);
+    if (y_val > 4095) {
+		y_val = y_val - 8192;  // 2's complement sign correction
+	}
+	// Extract Z data (15-bit, 2's complement)
+    // z_val = ((int16_t)((int8_t)raw_z_msb)) * 128 + ((raw_z_lsb & 0xFE) >> 1);
+    // if (z_val > 16383) {
+	// 	z_val = z_val - 32768;  // 2's complement sign correction
+	// }
+	z_raw = ((uint16_t)raw_z_msb << 7) | ((raw_z_lsb & 0xFE) >> 1);
+	if (z_raw > 0x3FFF) z_val = z_raw - 0x8000;
+	else z_val = z_raw; 
+
+	//Extract R-HALL data (14-bit, 2's complement)
+	rhall_val = ((uint16_t)raw_rhall_msb) * 64 + (raw_rhall_lsb & 0x3F); 
+
+	// printf("%d %d       \r", raw_z_lsb, raw_z_msb);
+
+	*mag_x = BMM150_compensate_x(&x_val, &rhall_val);
+	*mag_y = BMM150_compensate_y(&y_val, &rhall_val);
+	*mag_z = BMM150_compensate_z(&z_val, &rhall_val);
+
+}
+
 
 
 void main (void)
 {
-	xdata int8_t rslt; 
-	xdata struct bmm150_dev dev; 
-
+	uint8_t i; 
+	int16_t mag_x, mag_y, mag_z; 
+	float angle, declination_angle, avg_angle; 
+	//need to apply a low pass filter
+	float alpha; 
 	waitms(500);
 	printf("\x1b[2J"); // Clear screen using ANSI escape sequence.
-	
 	printf ("EFM8LB1 SPI/BMM150 test program\n"
 	        "File: %s\n"
 	        "Compiled: %s, %s\n\n",
 	        __FILE__, __DATE__, __TIME__);
 
-	Set_Pin_Output(0x05); 
-	CS = 1; //initialize chip select 
+	Set_Pin_Output(0x03); 
+	BMM150_Init();
+	declination_angle = 15.0 + 34.0/60.0; 
+	avg_angle = 0.0; 
+	alpha = 0.1; // for tuning 
 
-	rslt = bmm150_interface_selection(&dev, BMM150_SPI_INTF);
-	bmm150_error_codes_print_result("bmm150_interface_selection", rslt);
-
-	if (rslt == BMM150_OK)
+	while(1)
 	{
-		rslt = bmm150_init(&dev);
-		bmm150_error_codes_print_result("bmm150_init", rslt);
-
-		if (rslt == BMM150_OK)
-		{
-			rslt = set_config(&dev); 
-			bmm150_error_codes_print_result("set_config", rslt); 
-			
-			if (rslt == BMM150_OK)
-			{
-				rslt = get_data(&dev); 
-				bmm150_error_codes_print_result("get_data", rslt); 
-				printf("Configuration Complete - Ready to get data"); 
-			}
-		}
+		for (i = 0; i < 50; i++){
+			BMM150_Read_Data(&mag_x, &mag_y, &mag_z);
+			angle = atan2f((float)mag_y, (float)mag_x) * 180.0 / M_PI;
+			angle += declination_angle; 
+			if (angle < 0) angle += 360.0; 
+			else if (angle >= 360.0) angle -= 360.0;
+			avg_angle += angle; 
+			waitms(2);
+		} 
+		avg_angle /= 50;
+		avg_angle = alpha * avg_angle + (1-alpha) * avg_angle; 
+		printf("%f          \r", avg_angle);
+		avg_angle = 0.0;  
+		// printf("Raw: x=%d, y=%d, z=%d      \r", mag_x, mag_y, mag_z);
+		waitms(100);
 	}
+
 }
 
