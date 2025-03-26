@@ -158,11 +158,11 @@
 #define BMM150_POWER_CNTRL_DISABLE                UINT8_C(0x00)
 #define BMM150_POWER_CNTRL_ENABLE                 UINT8_C(0x01)
 
-/*! @name I2C ADDRESS       */
-#define BMM150_DEFAULT_I2C_ADDRESS                UINT8_C(0x10)
-#define BMM150_I2C_ADDRESS_CSB_LOW_SDO_HIGH       UINT8_C(0x11)
-#define BMM150_I2C_ADDRESS_CSB_HIGH_SDO_LOW       UINT8_C(0x12)
-#define BMM150_I2C_ADDRESS_CSB_HIGH_SDO_HIGH      UINT8_C(0x13)
+// /*! @name I2C ADDRESS       */
+// #define BMM150_DEFAULT_I2C_ADDRESS                UINT8_C(0x10)
+// #define BMM150_I2C_ADDRESS_CSB_LOW_SDO_HIGH       UINT8_C(0x11)
+// #define BMM150_I2C_ADDRESS_CSB_HIGH_SDO_LOW       UINT8_C(0x12)
+// #define BMM150_I2C_ADDRESS_CSB_HIGH_SDO_HIGH      UINT8_C(0x13)
 
 /*! @name Sensor delay time settings  */
 #define BMM150_DELAY_SOFT_RESET                   UINT8_C(1000)
@@ -393,8 +393,8 @@
 enum bmm150_intf {
     /*! SPI interface */
     BMM150_SPI_INTF,
-    /*! I2C interface */
-    BMM150_I2C_INTF
+    // /*! I2C interface */
+    // BMM150_I2C_INTF
 };
 
 /******************************************************************************/
@@ -421,7 +421,7 @@ enum bmm150_intf {
  * @retval Non-zero for Failure
  */
 typedef BMM150_INTF_RET_TYPE (*bmm150_read_fptr_t)(uint8_t reg_addr, uint8_t *reg_data, uint32_t length,
-                                                   void *intf_ptr);
+                                                   void *intf_ptr) __reentrant; 
 
 /*!
  * @brief Bus communication function pointer which should be mapped to
@@ -437,7 +437,7 @@ typedef BMM150_INTF_RET_TYPE (*bmm150_read_fptr_t)(uint8_t reg_addr, uint8_t *re
  *
  */
 typedef BMM150_INTF_RET_TYPE (*bmm150_write_fptr_t)(uint8_t reg_addr, const uint8_t *reg_data, uint32_t length,
-                                                    void *intf_ptr);
+                                                    void *intf_ptr) __reentrant;
 
 /*!
  * @brief Delay function pointer which should be mapped to
@@ -447,7 +447,7 @@ typedef BMM150_INTF_RET_TYPE (*bmm150_write_fptr_t)(uint8_t reg_addr, const uint
  * @param[in,out] intf_ptr : Void pointer that can enable the linking of descriptors
  *                           for interface related callbacks
  */
-typedef void (*bmm150_delay_us_fptr_t)(uint32_t period, void *intf_ptr);
+typedef void (*bmm150_delay_us_fptr_t)(uint32_t period, void *intf_ptr) __reentrant;
 
 /******************************************************************************/
 /*!  @name         Structure Declarations                             */
@@ -456,7 +456,7 @@ typedef void (*bmm150_delay_us_fptr_t)(uint32_t period, void *intf_ptr);
 /*!
  * @brief bmm150 trim data structure
  */
-struct bmm150_trim_registers
+xdata struct bmm150_trim_registers
 {
     /*! trim x1 data */
     int8_t dig_x1;
@@ -471,16 +471,16 @@ struct bmm150_trim_registers
     int8_t dig_y2;
 
     /*! trim z1 data */
-    uint16_t dig_z1;
+    // uint16_t dig_z1;
 
     /*! trim z2 data */
-    int16_t dig_z2;
+    // int16_t dig_z2;
 
     /*! trim z3 data */
-    int16_t dig_z3;
+    // int16_t dig_z3;
 
     /*! trim z4 data */
-    int16_t dig_z4;
+    // int16_t dig_z4;
 
     /*! trim xy1 data */
     uint8_t dig_xy1;
@@ -492,49 +492,49 @@ struct bmm150_trim_registers
     uint16_t dig_xyz1;
 };
 
-/*!
- * @brief bmm150 interrupt pin settings
- */
-struct bmm150_int_ctrl_settings
-{
-    /*! Data ready interrupt enable */
-    uint8_t drdy_pin_en;
+// /*!
+//  * @brief bmm150 interrupt pin settings
+//  */
+// xdata struct bmm150_int_ctrl_settings
+// {
+//     /*! Data ready interrupt enable */
+//     uint8_t drdy_pin_en;
 
-    /*! Threshold and overflow interrupts enable */
-    uint8_t int_pin_en;
+//     /*! Threshold and overflow interrupts enable */
+//     uint8_t int_pin_en;
 
-    /*! Data ready interrupt polarity Active high/low */
-    uint8_t drdy_polarity;
+//     /*! Data ready interrupt polarity Active high/low */
+//     uint8_t drdy_polarity;
 
-    /*! Interrupt pin - Latched or Non-latched */
-    uint8_t int_latch;
+//     /*! Interrupt pin - Latched or Non-latched */
+//     uint8_t int_latch;
 
-    /*! Interrupt polarity Active high/low */
-    uint8_t int_polarity;
+//     /*! Interrupt polarity Active high/low */
+//     uint8_t int_polarity;
 
-    /*! Data overrun interrupt enable */
-    uint8_t data_overrun_en;
+//     /*! Data overrun interrupt enable */
+//     uint8_t data_overrun_en;
 
-    /*! Overflow interrupt enable */
-    uint8_t overflow_int_en;
+//     /*! Overflow interrupt enable */
+//     uint8_t overflow_int_en;
 
-    /*! high interrupt enable/disable axis selection */
-    uint8_t high_int_en;
+//     /*! high interrupt enable/disable axis selection */
+//     uint8_t high_int_en;
 
-    /*! low interrupt enable/disable axis selection */
-    uint8_t low_int_en;
+//     /*! low interrupt enable/disable axis selection */
+//     uint8_t low_int_en;
 
-    /*! low threshold limit */
-    uint8_t low_threshold;
+//     /*! low threshold limit */
+//     uint8_t low_threshold;
 
-    /*! high threshold limit */
-    uint8_t high_threshold;
-};
+//     /*! high threshold limit */
+//     uint8_t high_threshold;
+// };
 
 /*!
  * @brief bmm150 sensor settings
  */
-struct bmm150_settings
+xdata struct bmm150_settings
 {
     /*! Control measurement of XYZ axes */
     uint8_t xyz_axes_control;
@@ -549,19 +549,19 @@ struct bmm150_settings
     uint8_t xy_rep;
 
     /*! Z Repetitions */
-    uint8_t z_rep;
+    // uint8_t z_rep;
 
     /*! Preset mode of sensor */
     uint8_t preset_mode;
 
-    /*! Interrupt configuration settings */
-    struct bmm150_int_ctrl_settings int_settings;
+    // /*! Interrupt configuration settings */
+    // struct bmm150_int_ctrl_settings int_settings;
 };
 
 /*!
  * @brief bmm150 un-compensated (raw) magnetometer data
  */
-struct bmm150_raw_mag_data
+xdata struct bmm150_raw_mag_data
 {
     /*! Raw mag X data */
     int16_t raw_datax;
@@ -570,35 +570,17 @@ struct bmm150_raw_mag_data
     int16_t raw_datay;
 
     /*! Raw mag Z data */
-    int16_t raw_dataz;
+    // int16_t raw_dataz;
 
     /*! Raw mag resistance value */
     uint16_t raw_data_r;
 };
 
-#ifdef BMM150_USE_FLOATING_POINT
-
-/*!
- * @brief bmm150 compensated magnetometer data in float
- */
-struct bmm150_mag_data
-{
-    /*! compensated mag X data */
-    float x;
-
-    /*! compensated mag Y data */
-    float y;
-
-    /*! compensated mag Z data */
-    float z;
-};
-
-#else
 
 /*!
  * @brief bmm150 compensated magnetometer data in int16_t format
  */
-struct bmm150_mag_data
+xdata struct bmm150_mag_data
 {
     /*! compensated mag X data */
     int16_t x;
@@ -607,15 +589,14 @@ struct bmm150_mag_data
     int16_t y;
 
     /*! compensated mag Z data */
-    int16_t z;
+    // int16_t z;
 };
 
-#endif
 
 /*!
  * @brief bmm150 device structure
  */
-struct bmm150_dev
+xdata struct bmm150_dev
 {
     /*! Chip Id */
     uint8_t chip_id;
@@ -647,7 +628,7 @@ struct bmm150_dev
     struct bmm150_trim_registers trim_data;
 
     /*! Interrupt status */
-    uint16_t int_status;
+    // uint16_t int_status;
 
     /*! Power control bit value */
     uint8_t pwr_cntrl_bit;
