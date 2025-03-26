@@ -252,7 +252,6 @@ void BMM150_Read_Trim_Registers(void)
 	}
 	for (i=0;i<10;i++){
 		trim_xy1xy2[i] = SPI_read(BMM150_DIG_Z2_LSB+i);
-		printf("%d ", trim_xy1xy2[i]);
 	}
 	// Update trim data 
 	dig_x1 = (int8_t) trim_x1y1[0]; 
@@ -278,7 +277,7 @@ void BMM150_Read_Trim_Registers(void)
 	temp_msb = ((uint16_t)(trim_xy1xy2[5] & 0x7F)) << 8;
 	dig_xyz1 = (uint16_t)(temp_msb | trim_xy1xy2[4]);
 
-	printf("%d %d %d %d\n", dig_z1, dig_z2, dig_z3, dig_z4);
+	// printf("%d %d %d %d\n", dig_z1, dig_z2, dig_z3, dig_z4);
 }
 
 void BMM150_Init(void)
@@ -313,7 +312,7 @@ void BMM150_Init(void)
     SPI_write(BMM150_OP_MODE, BMM150_NORMAL_MODE | (BMM150_ODR_10HZ * 8));
     
     // Set repetitions for XY and Z axes for regular preset
-    SPI_write(BMM150_REP_XY, 0x04); // XY-repetitions = 9
+    SPI_write(BMM150_REP_XY, 0x7F); // XY-repetitions = 9
     SPI_write(BMM150_REP_Z, 0x0E);  // Z-repetitions = 15
 
 	BMM150_Read_Trim_Registers();
@@ -546,11 +545,23 @@ void BMM150_Read_Data(int16_t *mag_x, int16_t *mag_y, int16_t *mag_z)
 
 void main (void)
 {
-	uint8_t i; 
-	int16_t mag_x, mag_y, mag_z; 
-	float angle, declination_angle, avg_angle; 
-	//need to apply a low pass filter
-	float alpha; 
+	// xdata uint8_t i; 
+	xdata int16_t mag_x, mag_y, mag_z; 
+	xdata float angle;
+	xdata float sum_x, sum_y, alpha, avg_angle, smoothed_angle; 
+	// xdata float declination_angle; 
+	
+	// Initialize variables
+	// declination_angle = 15.0 + 34.0/60.0; 
+	avg_angle = 0.0; 
+	sum_x = 0.0; 
+	sum_y = 0.0; 
+	alpha = 0.2; // for tuning 
+	smoothed_angle = 0.0; 
+
+	Set_Pin_Output(0x03); 
+	BMM150_Init();
+
 	waitms(500);
 	printf("\x1b[2J"); // Clear screen using ANSI escape sequence.
 	printf ("EFM8LB1 SPI/BMM150 test program\n"
@@ -558,28 +569,34 @@ void main (void)
 	        "Compiled: %s, %s\n\n",
 	        __FILE__, __DATE__, __TIME__);
 
-	Set_Pin_Output(0x03); 
-	BMM150_Init();
-	declination_angle = 15.0 + 34.0/60.0; 
-	avg_angle = 0.0; 
-	alpha = 0.1; // for tuning 
-
 	while(1)
 	{
-		for (i = 0; i < 50; i++){
-			BMM150_Read_Data(&mag_x, &mag_y, &mag_z);
-			angle = atan2f((float)mag_y, (float)mag_x) * 180.0 / M_PI;
-			angle += declination_angle; 
-			if (angle < 0) angle += 360.0; 
-			else if (angle >= 360.0) angle -= 360.0;
-			avg_angle += angle; 
-			waitms(2);
-		} 
-		avg_angle /= 50;
-		avg_angle = alpha * avg_angle + (1-alpha) * avg_angle; 
-		printf("%f          \r", avg_angle);
-		avg_angle = 0.0;  
-		// printf("Raw: x=%d, y=%d, z=%d      \r", mag_x, mag_y, mag_z);
+		// for (i = 0; i < 100; i++){
+		// 	BMM150_Read_Data(&mag_x, &mag_y, &mag_z);
+		// 	angle = atan2f((float)mag_y, (float)mag_x) * 180.0 / M_PI;
+		// 	// angle += declination_angle; 
+
+		// 	if (angle < 0.0) angle += 360.0; 
+		// 	else if (angle > 360.0) angle -= 360.0;
+
+		// 	sum_x += cosf(angle * M_PI / 180.0); 
+		// 	sum_y += sinf(angle * M_PI / 180.0); 
+		// 	waitms(1);
+		// }
+		// avg_angle = atan2f(sum_y/100.0, sum_x/100.0); 
+		// if (avg_angle < 0.0) avg_angle += 2 * M_PI; 
+		// avg_angle = avg_angle * 180.0/M_PI; 
+		// smoothed_angle = alpha * avg_angle + (1-alpha) * smoothed_angle; 
+		// printf("%f          \r", avg_angle);
+		// avg_angle = 0.0; 
+		// sum_x = 0.0; 
+		// sum_y = 0.0;  
+
+		BMM150_Read_Data(&mag_x, &mag_y, &mag_z);
+		angle = atan2f((float)mag_y, (float)mag_x) * 180.0 / M_PI;
+		// printf("%f     ", angle);
+		printf("%d,%d\r\n", mag_x, mag_y);
+
 		waitms(100);
 	}
 

@@ -6,39 +6,34 @@ sensor_test
 --model-small
 </OPTC51>
 
-<PRINTF_FLOAT>
-printf_float
-</PRINTF_FLOAT>
-
 <SEGMENTS>
 R_GSINIT,code,0000,NO
 R_BSEG,bit,0000,NO
-R_XSEG,xdata,001C,NO
+R_XSEG,xdata,0022,NO
 BIT_BANK,data,0000,OV
-R_CONST,code,010D,NO
+R_CONST,code,00F6,NO
 rbank0,data,0000,OV
 R_PSEG,xdata,0000,NO
 R_DINIT,code,0000,NO
-R_DSEG,data,004F,NO
+R_DSEG,data,0044,NO
 R_OSEG,data,0000,OV
 R_IXSEG,xdata,0000,NO
 R_ISEG,idata,0000,NO
 R_HOME,code,0000,NO
 R_XINIT,code,0000,NO
-R_CSEG,code,0F57,NO
+R_CSEG,code,0D02,NO
 </SEGMENTS>
 
 <LOCALS>
 L002004?,R_CSEG,0029,0000
 L002001?,R_CSEG,001E,0000
 _BMM150_Read_Data_mag_x_1_118,R_DSEG,0031,0003
-L015007?,R_CSEG,0BB4,0000
-L015006?,R_CSEG,0BB0,0000
-_main_i_1_123,R_DSEG,0044,0001
-L015004?,R_CSEG,0B84,0000
-L015002?,R_CSEG,0B45,0000
+L015007?,R_CSEG,0B58,0000
+L015006?,R_CSEG,0B54,0000
+L015004?,R_CSEG,0B28,0000
+L015002?,R_CSEG,0AE9,0000
 L003009?,R_CSEG,006A,0000
-_main_mag_x_1_123,R_DSEG,0045,0002
+_main_mag_x_1_123,R_XSEG,001C,0002
 L003006?,R_CSEG,009B,0000
 L003004?,R_CSEG,0098,0000
 L003003?,R_CSEG,0094,0000
@@ -46,98 +41,90 @@ _BMM150_compensate_y_process_comp_y0_1_102,R_XSEG,0016,0002
 L003002?,R_CSEG,0090,0000
 L003001?,R_CSEG,008C,0000
 _BMM150_Read_Trim_Registers_trim_xy1xy2_1_84,R_XSEG,0006,000A
-L016009?,R_CSEG,0CD6,0000
-L010012?,R_CSEG,0266,0000
-L016005?,R_CSEG,0E54,0000
-L016004?,R_CSEG,0DFF,0000
-_main_mag_y_1_123,R_DSEG,0047,0002
+L010012?,R_CSEG,024B,0000
+L016002?,R_CSEG,0C6B,0000
+_main_mag_y_1_123,R_XSEG,001E,0002
 L004007?,R_CSEG,00C2,0000
 L010028?,R_CSEG,0222,0000
 L004004?,R_CSEG,00B2,0000
-__str_10,R_CONST,00FF,0000
 L010026?,R_CSEG,01F4,0000
 L004001?,R_CSEG,00B7,0000
 L010024?,R_CSEG,01C6,0000
-L011010?,R_CSEG,0368,0000
+L011010?,R_CSEG,030C,0000
 _BMM150_Read_Data_raw_z_lsb_1_119,R_DSEG,0036,0001
 L005009?,R_CSEG,0100,0000
 L005007?,R_CSEG,00F9,0000
-_main_mag_z_1_123,R_DSEG,0049,0002
+_main_mag_z_1_123,R_XSEG,0020,0002
 L005005?,R_CSEG,00CE,0000
 _BMM150_Read_Data_raw_rhall_lsb_1_119,R_DSEG,0038,0001
 L005001?,R_CSEG,00D7,0000
 _BMM150_Read_Data_raw_z_msb_1_119,R_DSEG,0037,0001
 _BMM150_Read_Data_z_val_1_119,R_DSEG,0040,0002
-L012019?,R_CSEG,03EA,0000
-L012012?,R_CSEG,0619,0000
-L012011?,R_CSEG,0610,0000
+L012019?,R_CSEG,038E,0000
+L012012?,R_CSEG,05BD,0000
+L012011?,R_CSEG,05B4,0000
 L006008?,R_CSEG,0109,0000
 L006001?,R_CSEG,0104,0000
-L012022?,R_CSEG,0434,0000
+L012022?,R_CSEG,03D8,0000
 _BMM150_Read_Data_raw_z_1_119,R_DSEG,003A,0002
-L013019?,R_CSEG,0639,0000
+L013019?,R_CSEG,05DD,0000
 _BMM150_Read_Data_rhall_val_1_119,R_DSEG,0042,0002
-L013012?,R_CSEG,0866,0000
-L013011?,R_CSEG,085D,0000
+L013012?,R_CSEG,080A,0000
+L013011?,R_CSEG,0801,0000
 L010009?,R_CSEG,021F,0000
 L010008?,R_CSEG,021D,0000
 L010005?,R_CSEG,01F1,0000
 L010004?,R_CSEG,01EF,0000
 L010001?,R_CSEG,01C3,0000
 _BMM150_compensate_x_retval_1_93,R_XSEG,0010,0002
-L013022?,R_CSEG,0683,0000
+L013022?,R_CSEG,0627,0000
 _BMM150_compensate_z_sloc0_1_0,R_DSEG,0021,0002
 _BMM150_Read_Data_raw_rhall_msb_1_119,R_DSEG,0039,0001
 _BMM150_Read_Data_x_val_1_119,R_DSEG,003C,0002
-L014014?,R_CSEG,0A88,0000
-L014013?,R_CSEG,0A79,0000
+L014014?,R_CSEG,0A2C,0000
+L014013?,R_CSEG,0A1D,0000
 _BMM150_Read_Data_raw_y_lsb_1_119,R_DSEG,0034,0001
 __str_0,R_CONST,0000,0000
-__str_1,R_CONST,0004,0000
-__str_2,R_CONST,0011,0000
-__str_3,R_CONST,0049,0000
-__str_4,R_CONST,0068,0000
-__str_5,R_CONST,009B,0000
-__str_6,R_CONST,00A0,0000
-__str_7,R_CONST,00DC,0000
-__str_8,R_CONST,00EA,0000
-__str_9,R_CONST,00F6,0000
-L011005?,R_CSEG,039C,0000
-L011002?,R_CSEG,0385,0000
-L014028?,R_CSEG,08B6,0000
+__str_1,R_CONST,0038,0000
+__str_2,R_CONST,0057,0000
+__str_3,R_CONST,008A,0000
+__str_4,R_CONST,008F,0000
+__str_5,R_CONST,00CB,0000
+__str_6,R_CONST,00D9,0000
+__str_7,R_CONST,00E5,0000
+__str_8,R_CONST,00EE,0000
+L011005?,R_CSEG,0340,0000
+L011002?,R_CSEG,0329,0000
+L014028?,R_CSEG,085A,0000
 L008004?,R_CSEG,0165,0000
-L014027?,R_CSEG,08AF,0000
-L014026?,R_CSEG,0894,0000
-L014025?,R_CSEG,088D,0000
+L014027?,R_CSEG,0853,0000
+L014026?,R_CSEG,0838,0000
+L014025?,R_CSEG,0831,0000
 L008001?,R_CSEG,0130,0000
-L014024?,R_CSEG,0886,0000
+L014024?,R_CSEG,082A,0000
 _BMM150_Read_Data_raw_y_msb_1_119,R_DSEG,0035,0001
 _BMM150_Read_Data_y_val_1_119,R_DSEG,003E,0002
 _BMM150_compensate_x_process_comp_x0_1_93,R_XSEG,0012,0002
-L012008?,R_CSEG,0605,0000
-L012006?,R_CSEG,0426,0000
-_main_avg_angle_1_123,R_DSEG,004B,0004
-L012005?,R_CSEG,040C,0000
+L012008?,R_CSEG,05A9,0000
+L012006?,R_CSEG,03CA,0000
+L012005?,R_CSEG,03B0,0000
 L003013?,R_CSEG,0080,0000
 L003011?,R_CSEG,006C,0000
-L012002?,R_CSEG,041F,0000
+L012002?,R_CSEG,03C3,0000
 _BMM150_compensate_z_sloc2_1_0,R_DSEG,0027,0004
 _BMM150_compensate_x_sloc0_1_0,R_DSEG,0013,0004
-L016018?,R_CSEG,0CD3,0000
-L016012?,R_CSEG,0E86,0000
-L013008?,R_CSEG,0852,0000
+L013008?,R_CSEG,07F6,0000
 _BMM150_compensate_z_retval_1_111,R_XSEG,0018,0004
-L013006?,R_CSEG,0675,0000
+L013006?,R_CSEG,0619,0000
 _BMM150_compensate_y_retval_1_102,R_XSEG,0014,0002
-L013005?,R_CSEG,065B,0000
-L013002?,R_CSEG,066E,0000
-L016021?,R_CSEG,0CDF,0000
+L013005?,R_CSEG,05FF,0000
+L013002?,R_CSEG,0612,0000
 _BMM150_compensate_z_sloc1_1_0,R_DSEG,0023,0004
 _BMM150_compensate_y_sloc0_1_0,R_DSEG,001A,0004
 L005018?,R_CSEG,00DA,0000
-L014007?,R_CSEG,0A68,0000
-L014005?,R_CSEG,0A2F,0000
-L014004?,R_CSEG,0A0E,0000
+L014007?,R_CSEG,0A0C,0000
+L014005?,R_CSEG,09D3,0000
+L014004?,R_CSEG,09B2,0000
 _BMM150_Read_Trim_Registers_trim_xyz_data_1_84,R_XSEG,0002,0004
 _BMM150_Read_Trim_Registers_trim_x1y1_1_84,R_XSEG,0000,0002
 </LOCALS>
@@ -145,13 +132,13 @@ _BMM150_Read_Trim_Registers_trim_x1y1_1_84,R_XSEG,0000,0002
 <PUBLICS>
 _SPI_read_block,R_CSEG,0122,0000
 _SPI_transfer,R_CSEG,0101,0000
-_main,R_CSEG,0C6A,0000
-_BMM150_Init,R_CSEG,0335,0000
+_main,R_CSEG,0C0E,0000
+_BMM150_Init,R_CSEG,02D9,0000
 _SPI_read_block_PARM_2,R_DSEG,000B,0003
 _SPI_read_block_PARM_3,R_DSEG,000E,0001
 __c51_external_startup,R_CSEG,0000,0000
 _SPI_write,R_CSEG,0168,0000
-_BMM150_Read_Data,R_CSEG,0A99,0000
+_BMM150_Read_Data,R_CSEG,0A3D,0000
 _BMM150_Read_Data_PARM_2,R_DSEG,002B,0003
 _dig_xy1,R_DSEG,0008,0001
 _BMM150_Read_Data_PARM_3,R_DSEG,002E,0003
@@ -160,9 +147,9 @@ _BMM150_compensate_y_PARM_2,R_DSEG,0017,0003
 _BMM150_compensate_x_PARM_2,R_DSEG,0010,0003
 _BMM150_compensate_z_PARM_2,R_DSEG,001E,0003
 _SPI_write_PARM_2,R_DSEG,000F,0001
-_BMM150_compensate_x,R_CSEG,03D6,0000
-_BMM150_compensate_y,R_CSEG,0625,0000
-_BMM150_compensate_z,R_CSEG,0872,0000
+_BMM150_compensate_x,R_CSEG,037A,0000
+_BMM150_compensate_y,R_CSEG,05C9,0000
+_BMM150_compensate_z,R_CSEG,0816,0000
 _Set_Pin_Output,R_CSEG,005D,0000
 _dig_xyz1,R_DSEG,000A,0001
 _SPI_read,R_CSEG,010D,0000
@@ -183,20 +170,15 @@ _BMM150_Read_Trim_Registers,R_CSEG,017D,0000
 __gptrget,any,0000,0000
 __mullong,any,0000,0000
 __divslong_PARM_2,any,0000,0000
-___fslt,any,0000,0000
-___fsmul,any,0000,0000
 __mullong_PARM_2,any,0000,0000
 __divslong,any,0000,0000
-___fsadd,any,0000,0000
 _printf,any,0000,0000
 _atan2f,any,0000,0000
 __gptrput,any,0000,0000
 __divsint,any,0000,0000
-___fssub,any,0000,0000
 _crt0,any,0000,0000
 _atan2f_PARM_2,any,0000,0000
 ___sint2fs,any,0000,0000
-___fsdiv,any,0000,0000
 __divsint_PARM_2,any,0000,0000
 </EXTERNALS>
 
@@ -517,24 +499,11 @@ C0 04
 AD 82
 D0 04
 D0 03
+D0 02
 8B 82
 8C 83
 ED
 F0
-7B 00
-C0 05
-C0 03
-74 data8(__str_0;)
-C0 E0
-74 data8(__str_0;0x0008;>>;)
-C0 E0
-74 80
-C0 E0
-12 addr16(_printf;)  
-E5 81
-24 FB
-F5 81
-D0 02
 0A
 80 rel2(L010009?;)
 90 data16(_BMM150_Read_Trim_Registers_trim_x1y1_1_84;)  
@@ -612,44 +581,6 @@ E0
 ED
 42 03
 8A data8(_dig_xyz1;)
-E5 data8(_dig_z4;)
-FA
-33
-95 E0
-FB
-E5 data8(_dig_z3;)
-FC
-33
-95 E0
-FD
-E5 data8(_dig_z2;)
-FE
-33
-95 E0
-FF
-E5 data8(_dig_z1;)
-F8
-33
-95 E0
-F9
-C0 02
-C0 03
-C0 04
-C0 05
-C0 06
-C0 07
-C0 00
-C0 01
-74 data8(__str_1;)
-C0 E0
-74 data8(__str_1;0x0008;>>;)
-C0 E0
-74 80
-C0 E0
-12 addr16(_printf;)  
-E5 81
-24 F5
-F5 81
 22
 D2 83
 90 00 0A
@@ -673,9 +604,9 @@ BA 32 rel3(L011010?;)
 7C 00
 C0 03
 C0 04
-74 data8(__str_2;)
+74 data8(__str_0;)
 C0 E0
-74 data8(__str_2;0x0008;>>;)
+74 data8(__str_0;0x0008;>>;)
 C0 E0
 74 80
 C0 E0
@@ -683,9 +614,9 @@ C0 E0
 E5 81
 24 FB
 F5 81
-74 data8(__str_3;)
+74 data8(__str_1;)
 C0 E0
-74 data8(__str_3;0x0008;>>;)
+74 data8(__str_1;0x0008;>>;)
 C0 E0
 74 80
 C0 E0
@@ -698,7 +629,7 @@ C0 E0
 75 82 4C
 C0 02
 12 addr16(_SPI_write;)  
-75 data8(_SPI_write_PARM_2;) 04
+75 data8(_SPI_write_PARM_2;) 7F
 75 82 51
 12 addr16(_SPI_write;)  
 75 data8(_SPI_write_PARM_2;) 0E
@@ -707,9 +638,9 @@ C0 02
 12 addr16(_BMM150_Read_Trim_Registers;)  
 7B 00
 C0 03
-74 data8(__str_4;)
+74 data8(__str_2;)
 C0 E0
-74 data8(__str_4;0x0008;>>;)
+74 data8(__str_2;0x0008;>>;)
 C0 E0
 74 80
 C0 E0
@@ -1967,11 +1898,14 @@ ED
 A3
 EE
 02 addr16(__gptrput;)  
+75 82 03
+12 addr16(_Set_Pin_Output;)  
+12 addr16(_BMM150_Init;)  
 90 01 F4
 12 addr16(_waitms;)  
-74 data8(__str_5;)
+74 data8(__str_3;)
 C0 E0
-74 data8(__str_5;0x0008;>>;)
+74 data8(__str_3;0x0008;>>;)
 C0 E0
 74 80
 C0 E0
@@ -1979,18 +1913,6 @@ C0 E0
 15 81
 15 81
 15 81
-74 data8(__str_9;)
-C0 E0
-74 data8(__str_9;0x0008;>>;)
-C0 E0
-74 80
-C0 E0
-74 data8(__str_8;)
-C0 E0
-74 data8(__str_8;0x0008;>>;)
-C0 E0
-74 80
-C0 E0
 74 data8(__str_7;)
 C0 E0
 74 data8(__str_7;0x0008;>>;)
@@ -2003,304 +1925,85 @@ C0 E0
 C0 E0
 74 80
 C0 E0
+74 data8(__str_5;)
+C0 E0
+74 data8(__str_5;0x0008;>>;)
+C0 E0
+74 80
+C0 E0
+74 data8(__str_4;)
+C0 E0
+74 data8(__str_4;0x0008;>>;)
+C0 E0
+74 80
+C0 E0
 12 addr16(_printf;)  
 E5 81
 24 F4
 F5 81
-75 82 03
-12 addr16(_Set_Pin_Output;)  
-12 addr16(_BMM150_Init;)  
-75 data8(_main_avg_angle_1_123;) 00
-75 data8(_main_avg_angle_1_123;0x0001;+;) 00
-75 data8(_main_avg_angle_1_123;0x0002;+;) 00
-75 data8(_main_avg_angle_1_123;0x0003;+;) 00
-75 data8(_main_i_1_123;) 00
-74 CE
-25 data8(_main_i_1_123;)
-50 rel2(L016021?;)
-02 addr16(L016012?;)  
 75 data8(_BMM150_Read_Data_PARM_2;) data8(_main_mag_y_1_123;)
-75 data8(_BMM150_Read_Data_PARM_2;0x0001;+;) 00
-75 data8(_BMM150_Read_Data_PARM_2;0x0002;+;) 40
+75 data8(_BMM150_Read_Data_PARM_2;0x0001;+;) data8(_main_mag_y_1_123;0x0008;>>;)
+75 data8(_BMM150_Read_Data_PARM_2;0x0002;+;) 00
 75 data8(_BMM150_Read_Data_PARM_3;) data8(_main_mag_z_1_123;)
-75 data8(_BMM150_Read_Data_PARM_3;0x0001;+;) 00
-75 data8(_BMM150_Read_Data_PARM_3;0x0002;+;) 40
+75 data8(_BMM150_Read_Data_PARM_3;0x0001;+;) data8(_main_mag_z_1_123;0x0008;>>;)
+75 data8(_BMM150_Read_Data_PARM_3;0x0002;+;) 00
 90 data16(_main_mag_x_1_123;)  
-75 F0 40
+75 F0 00
 12 addr16(_BMM150_Read_Data;)  
-85 data8(_main_mag_y_1_123;) 82
-85 data8(_main_mag_y_1_123;0x0001;+;) 83
+90 data16(_main_mag_y_1_123;)  
+E0
+FA
+A3
+E0
+FB
+8A 82
+8B 83
 12 addr16(___sint2fs;)  
-AF 82
-A8 83
-A9 F0
+AA 82
+AB 83
+AC F0
+FD
+90 data16(_main_mag_x_1_123;)  
+E0
 FE
-85 data8(_main_mag_x_1_123;) 82
-85 data8(_main_mag_x_1_123;0x0001;+;) 83
-C0 06
-C0 07
-C0 00
-C0 01
+A3
+E0
+FF
+8E 82
+8F 83
+C0 02
+C0 03
+C0 04
+C0 05
 12 addr16(___sint2fs;)  
 85 82 data8(_atan2f_PARM_2;)
 85 83 data8(_atan2f_PARM_2;0x0001;+;)
 85 F0 data8(_atan2f_PARM_2;0x0002;+;)
 F5 data8(_atan2f_PARM_2;0x0003;+;)
-D0 01
-D0 00
-D0 07
-D0 06
-8F 82
-88 83
-89 F0
-EE
-12 addr16(_atan2f;)  
-AE 82
-AF 83
-A8 F0
-F9
-C0 06
-C0 07
-C0 00
-C0 01
-90 00 00
-75 F0 34
-74 43
-12 addr16(___fsmul;)  
-AE 82
-AF 83
-A8 F0
-F9
-E5 81
-24 FC
-F5 81
-74 DB
-C0 E0
-74 0F
-C0 E0
-74 49
-C0 E0
-74 40
-C0 E0
-8E 82
-8F 83
-88 F0
-E9
-12 addr16(___fsdiv;)  
-AE 82
-AF 83
-A8 F0
-F9
-E5 81
-24 FC
-F5 81
-74 11
-C0 E0
-C0 E0
-74 79
-C0 E0
-74 41
-C0 E0
-8E 82
-8F 83
-88 F0
-E9
-12 addr16(___fsadd;)  
-AE 82
-AF 83
-A8 F0
-F9
-E5 81
-24 FC
-F5 81
-C0 06
-C0 07
-C0 00
-C0 01
-E4
-C0 E0
-C0 E0
-C0 E0
-C0 E0
-8E 82
-8F 83
-88 F0
-E9
-12 addr16(___fslt;)  
-AA 82
-E5 81
-24 FC
-F5 81
-D0 01
-D0 00
-D0 07
-D0 06
-EA
-60 rel2(L016004?;)
-E4
-C0 E0
-C0 E0
-74 B4
-C0 E0
-74 43
-C0 E0
-8E 82
-8F 83
-88 F0
-E9
-12 addr16(___fsadd;)  
-AE 82
-AF 83
-A8 F0
-F9
-E5 81
-24 FC
-F5 81
-80 rel2(L016005?;)
-C0 06
-C0 07
-C0 00
-C0 01
-E4
-C0 E0
-C0 E0
-74 B4
-C0 E0
-74 43
-C0 E0
-8E 82
-8F 83
-88 F0
-E9
-12 addr16(___fslt;)  
-AA 82
-E5 81
-24 FC
-F5 81
-D0 01
-D0 00
-D0 07
-D0 06
-EA
-70 rel2(L016005?;)
-C0 E0
-C0 E0
-74 B4
-C0 E0
-74 43
-C0 E0
-8E 82
-8F 83
-88 F0
-E9
-12 addr16(___fssub;)  
-AE 82
-AF 83
-A8 F0
-F9
-E5 81
-24 FC
-F5 81
-C0 06
-C0 07
-C0 00
-C0 01
-85 data8(_main_avg_angle_1_123;) 82
-85 data8(_main_avg_angle_1_123;0x0001;+;) 83
-85 data8(_main_avg_angle_1_123;0x0002;+;) F0
-E5 data8(_main_avg_angle_1_123;0x0003;+;)
-12 addr16(___fsadd;)  
-85 82 data8(_main_avg_angle_1_123;)
-85 83 data8(_main_avg_angle_1_123;0x0001;+;)
-85 F0 data8(_main_avg_angle_1_123;0x0002;+;)
-F5 data8(_main_avg_angle_1_123;0x0003;+;)
-E5 81
-24 FC
-F5 81
-90 00 02
-12 addr16(_waitms;)  
-05 data8(_main_i_1_123;)
-02 addr16(L016009?;)  
-E4
-C0 E0
-C0 E0
-74 48
-C0 E0
-74 42
-C0 E0
-85 data8(_main_avg_angle_1_123;) 82
-85 data8(_main_avg_angle_1_123;0x0001;+;) 83
-85 data8(_main_avg_angle_1_123;0x0002;+;) F0
-E5 data8(_main_avg_angle_1_123;0x0003;+;)
-12 addr16(___fsdiv;)  
-85 82 data8(_main_avg_angle_1_123;)
-85 83 data8(_main_avg_angle_1_123;0x0001;+;)
-85 F0 data8(_main_avg_angle_1_123;0x0002;+;)
-F5 data8(_main_avg_angle_1_123;0x0003;+;)
-E5 81
-24 FC
-F5 81
-C0 data8(_main_avg_angle_1_123;)
-C0 data8(_main_avg_angle_1_123;0x0001;+;)
-C0 data8(_main_avg_angle_1_123;0x0002;+;)
-C0 data8(_main_avg_angle_1_123;0x0003;+;)
-90 CC CD
-75 F0 CC
-74 3D
-12 addr16(___fsmul;)  
-AA 82
-AB 83
-AC F0
-FD
-E5 81
-24 FC
-F5 81
-C0 02
-C0 03
-C0 04
-C0 05
-C0 data8(_main_avg_angle_1_123;)
-C0 data8(_main_avg_angle_1_123;0x0001;+;)
-C0 data8(_main_avg_angle_1_123;0x0002;+;)
-C0 data8(_main_avg_angle_1_123;0x0003;+;)
-90 66 66
-75 F0 66
-74 3F
-12 addr16(___fsmul;)  
-AE 82
-AF 83
-A8 F0
-F9
-E5 81
-24 FC
-F5 81
 D0 05
 D0 04
 D0 03
 D0 02
-C0 06
-C0 07
-C0 00
-C0 01
 8A 82
 8B 83
 8C F0
 ED
-12 addr16(___fsadd;)  
-85 82 data8(_main_avg_angle_1_123;)
-85 83 data8(_main_avg_angle_1_123;0x0001;+;)
-85 F0 data8(_main_avg_angle_1_123;0x0002;+;)
-F5 data8(_main_avg_angle_1_123;0x0003;+;)
-E5 81
-24 FC
-F5 81
-C0 data8(_main_avg_angle_1_123;)
-C0 data8(_main_avg_angle_1_123;0x0001;+;)
-C0 data8(_main_avg_angle_1_123;0x0002;+;)
-C0 data8(_main_avg_angle_1_123;0x0003;+;)
-74 data8(__str_10;)
+12 addr16(_atan2f;)  
+90 data16(_main_mag_y_1_123;)  
+E0
 C0 E0
-74 data8(__str_10;0x0008;>>;)
+A3
+E0
+C0 E0
+90 data16(_main_mag_x_1_123;)  
+E0
+C0 E0
+A3
+E0
+C0 E0
+74 data8(__str_8;)
+C0 E0
+74 data8(__str_8;0x0008;>>;)
 C0 E0
 74 80
 C0 E0
@@ -2308,13 +2011,9 @@ C0 E0
 E5 81
 24 F9
 F5 81
-75 data8(_main_avg_angle_1_123;) 00
-75 data8(_main_avg_angle_1_123;0x0001;+;) 00
-75 data8(_main_avg_angle_1_123;0x0002;+;) 00
-75 data8(_main_avg_angle_1_123;0x0003;+;) 00
 90 00 64
 12 addr16(_waitms;)  
-02 addr16(L016018?;)  
+02 addr16(L016002?;)  
 </CODE>
 
 <CODE R_CSEG>
@@ -2324,11 +2023,6 @@ F5 81
 </CODE>
 
 <CODE R_CONST>
-25 64 20 
-00
-25 64 20 25 64 20 25 64 20 25 64 
-0A
-00
 45 72 72 6F 72 3A 20 43 6F 75 6C 64 20 6E 6F 74 20
 66 69 6E 64 20 42 4D 4D 31 35 30 20 73 65 6E 73
 6F 72 20 28 43 68 69 70 20 49 44 3A 20 30 78 25
@@ -2362,10 +2056,11 @@ F5 81
 00
 4D 61 72 20 32 36 20 32 30 32 35 
 00
-30 32 3A 31 30 3A 33 34 
+31 33 3A 30 30 3A 34 33 
 00
-25 66 20 20 20 20 20 20 20 20 20 20 
+25 64 2C 25 64 
 0D
+0A
 00
 </CODE>
 
