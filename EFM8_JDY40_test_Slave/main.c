@@ -554,7 +554,7 @@ void Auto_mode_slave(){
 			c=getchar1();	
 			if(c=='!'){
 				getstr1(buff, sizeof(buff)-1);
-				if(strlen(buff)==7){
+				if(strlen(buff)==11){
 					printf("Master says: %s\r\n", buff);
 				}
 				else{

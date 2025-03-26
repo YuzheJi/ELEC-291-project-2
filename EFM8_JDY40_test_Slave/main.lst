@@ -1,7 +1,7 @@
 0000              1   ;--------------------------------------------------------
 0000              2   ; File Created by C51
 0000              3   ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-0000              4   ; This file was generated Wed Mar 26 12:48:00 2025
+0000              4   ; This file was generated Wed Mar 26 13:26:18 2025
 0000              5   ;--------------------------------------------------------
                   5   $name main
                   6   $optc51 --model-small
@@ -2051,7 +2051,7 @@
 0668 C002      2051            push    ar2
 066A C003      2052            push    ar3
 066C 120000    2053            lcall   _getstr1
-066F           2054   ;        main.c:557: if(strlen(buff)==7){
+066F           2054   ;        main.c:557: if(strlen(buff)==11){
 066F 904558    2055            mov     dptr,#_buff
 0672 75F040    2056            mov     b,#0x40
 0675 120000    2057            lcall   _strlen
@@ -2059,7 +2059,7 @@
 067A AE83      2059            mov     r6,dph
 067C D003      2060            pop     ar3
 067E D002      2061            pop     ar2
-0680 BD0748    2062            cjne    r5,#0x07,L024002?
+0680 BD0B48    2062            cjne    r5,#0x0B,L024002?
 0683 BE0048    2063            cjne    r6,#0x00,L024002?
 0686           2064   ;        main.c:558: printf("Master says: %s\r\n", buff);
 0686 C002      2065            push    ar2

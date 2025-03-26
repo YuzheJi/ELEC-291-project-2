@@ -4,7 +4,7 @@ import matplotlib.animation as animation
 from collections import deque
 
 # === CONFIGURATION ===
-SERIAL_PORT = 'COM6'   # Change this to your actual port
+SERIAL_PORT = 'COM16'   # Change this to your actual port
 BAUD_RATE = 115200
 MAX_POINTS = 200       # Max number of points to show on plot
 

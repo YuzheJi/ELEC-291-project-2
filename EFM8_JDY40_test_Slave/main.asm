@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-; This file was generated Wed Mar 26 12:48:00 2025
+; This file was generated Wed Mar 26 13:26:18 2025
 ;--------------------------------------------------------
 $name main
 $optc51 --model-small
@@ -2051,7 +2051,7 @@ L024029?:
 	push	ar2
 	push	ar3
 	lcall	_getstr1
-;	main.c:557: if(strlen(buff)==7){
+;	main.c:557: if(strlen(buff)==11){
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_strlen
@@ -2059,7 +2059,7 @@ L024029?:
 	mov	r6,dph
 	pop	ar3
 	pop	ar2
-	cjne	r5,#0x07,L024002?
+	cjne	r5,#0x0B,L024002?
 	cjne	r6,#0x00,L024002?
 ;	main.c:558: printf("Master says: %s\r\n", buff);
 	push	ar2
