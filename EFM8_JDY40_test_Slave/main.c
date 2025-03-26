@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "freq.h"
 
 #define SYSCLK 72000000L // SYSCLK frequency in Hz
 #define BAUDRATE 115200L
@@ -54,6 +55,9 @@ unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
 unsigned char servo_base = 1, servo_arm = 1; 
 int vx_thres = 161, vy_thres = 166; 
 int vx = 0, vy = 0; 
+int freq100;
+unsigned int fre_mea_count = 0;
+int d1, d2;
 
 
 char _c51_external_startup (void)
@@ -421,6 +425,13 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 	TF5H = 0; // Clear Timer5 interrupt flag
 	TMR5RL = RELOAD_10us; // Reload Timer5 for 10us intervals 
 
+	fre_mea_count++;
+	if(fre_mea_count == 1000){
+		fre_mea_count = 0;
+		freq100 = get_freq();
+	}
+
+
     pwm_counter++; 
     if (pwm_counter == 100){
         pwm_counter = 0; 
@@ -504,6 +515,36 @@ void servo_pick(){
 	return;
 }
 
+int check_bound(int d1, int d2){
+	if(d1>14000||d2>14000)	return 1;
+	else return 0;
+}
+
+void Init_all(){
+
+	Set_Pin_Output(0x24);
+    Set_Pin_Output(0x23);
+    Set_Pin_Output(0x22);
+    Set_Pin_Output(0x21);
+	Set_Pin_Output(0x17);
+	Set_Pin_Output(0x16);
+	Set_Pin_Output(0x15);
+	Set_Pin_Input(0x02);
+
+	InitPinADC(1,3);
+	InitPinADC(1,4);
+	InitADC();
+
+	TMOD&=0b_1111_0000; 
+	TMOD|=0b_0000_0001; 
+	TR0=0; 
+
+	Servo_arm=0;
+	Servo_base=0;
+	Magnet = 0;
+	return;
+}
+
 void main (void)
 {
     unsigned int cnt=0;
@@ -514,32 +555,21 @@ void main (void)
 	int motor_pwm = 0; 
 	int pick;
 	char pick_done = 1;
-
-	Set_Pin_Output(0x24);
-    Set_Pin_Output(0x23);
-    Set_Pin_Output(0x22);
-    Set_Pin_Output(0x21);
-	Set_Pin_Output(0x17);
-	Set_Pin_Output(0x16);
-	Set_Pin_Output(0x15);
-
-	Servo_arm=0;
-	Servo_base=0;
-	Magnet = 0;
+	int bound_flag = 0;
 	
+	Init_all();
 	waitms(500);
 	printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
 	UART1_Init(9600);
 	
 	ReceptionOff();
-	//servo_pick();
 
 	// To check configuration
 	SendATCommand("AT+VER\r\n");
 	SendATCommand("AT+BAUD\r\n");
 	SendATCommand("AT+RFID\r\n");
 	SendATCommand("AT+DVID\r\n");
-	SendATCommand("AT+RFC\r\n");
+	SendATCommand("AT+RFC002\r\n");
 	SendATCommand("AT+POWE\r\n");
 	SendATCommand("AT+CLSS\r\n");
 	SendATCommand("AT+DVIDEFEF\r\n");  
@@ -553,6 +583,12 @@ void main (void)
 	cnt=0;
 	while(1)
 	{	
+		// detect the coin
+		d1 = ADC_at_Pin(QFP32_MUX_P1_3);
+		d2 = ADC_at_Pin(QFP32_MUX_P1_4);
+		bound_flag = check_bound(d1,d2);
+	
+		printf("freq: %f, bound_flag: %d\r\n\r", freq100/100.0,bound_flag);
 
 		// The message format: 000,000 --- (vx,vy)
 		if(RXU1()) // Something has arrived
@@ -572,6 +608,7 @@ void main (void)
 
 					if(pick==1){
 						servo_pick();
+						pick = 0;
 					}	
 
 					// Determine of Vx and Vy are within 5% error
@@ -673,7 +710,7 @@ void main (void)
 			}
 			else if(c=='@') // Master wants slave data
 			{
-				sprintf(buff, "%01d,%05u\n", 0, cnt);
+				sprintf(buff, "%01d,%04d\n", 0, freq100);
 				cnt++;
 				waitms(5); // The radio seems to need this delay...
 				sendstr1(buff);

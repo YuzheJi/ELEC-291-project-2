@@ -2,7 +2,7 @@ SHELL=cmd
 CC=c51
 COMPORT = $(shell type COMPORT.inc)
 # OBJS=EFM8_JDY40_test.obj
-OBJS = main.obj 
+OBJS = main.obj freq.obj
 
 compile: clean main.hex LoadFlash
 
@@ -12,6 +12,10 @@ main.hex: $(OBJS)
 
 main.obj: main.c 
 	$(CC) -c main.c
+
+freq.obj: freq.c 
+	$(CC) -c freq.c
+
 
 
 # EFM8_JDY40_test.hex: $(OBJS)
