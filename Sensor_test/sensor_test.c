@@ -493,51 +493,70 @@ int16_t BMM150_compensate_z (int16_t *mag_data_z, int16_t *data_rhall){
 
 void BMM150_Read_Data(int16_t *mag_x, int16_t *mag_y, int16_t *mag_z)
 {
-	uint8_t raw_x_lsb, raw_x_msb, raw_y_lsb, raw_y_msb, raw_z_lsb, raw_z_msb, raw_rhall_lsb, raw_rhall_msb, raw_z[2]; 
+	uint8_t raw_x_lsb, raw_x_msb, raw_y_lsb, raw_y_msb, raw_z_lsb, raw_z_msb, raw_rhall_lsb, raw_rhall_msb; 
 	int16_t x_val, y_val, z_val, rhall_val; 
-	uint16_t z_raw; 
+	// uint16_t z_raw; 
+	int16_t msb_data; 
 	raw_x_lsb = SPI_read(BMM150_DATA_X_LSB);
 	raw_x_msb = SPI_read(BMM150_DATA_X_MSB);
 	raw_y_lsb = SPI_read(BMM150_DATA_Y_LSB);
 	raw_y_msb = SPI_read(BMM150_DATA_Y_MSB);
-	SPI_read_block(BMM150_DATA_X_LSB, raw_z, 2);
-	// raw_z_lsb = SPI_read(BMM150_DATA_Z_LSB);
-	// raw_z_msb = SPI_read(BMM150_DATA_Z_MSB);
-	raw_z_lsb = raw_z[0];
-	raw_z_msb = raw_z[1];
+	// SPI_read_block(BMM150_DATA_Z_LSB, raw_z, 2);
+	raw_z_lsb = SPI_read(BMM150_DATA_Z_LSB);
+	raw_z_msb = SPI_read(BMM150_DATA_Z_MSB);
+	// raw_z_lsb = raw_z[0];
+	// raw_z_msb = raw_z[1];
 	raw_rhall_lsb = SPI_read(BMM150_RHALL_LSB); 
 	raw_rhall_msb = SPI_read(BMM150_RHALL_MSB);
-	SPI_read_block(BMM150_DATA_X_LSB, raw_z, 2);
 
 
 	// Extract X data (13-bit, 2's complement)
     // Instead of using shift operators, use multiplication/division
-    x_val = ((int16_t)((int8_t)raw_x_msb)) * 32 + ((raw_x_lsb & 0xF8) >> 3);
-    if (x_val > 4095){
-		x_val = x_val - 8192;  // 2's complement sign correction
-	}
+    // x_val = ((int16_t)((int8_t)raw_x_msb)) * 32 + ((raw_x_lsb & 0xF8) >> 3);
+    // if (x_val > 4095){
+	// 	x_val = x_val - 8192;  // 2's complement sign correction
+	// }
+	// x_val = ((int16_t)((raw_x_msb << 5) | (raw_x_lsb >> 3)));
+	// if (x_val > 4095) x_val -= 8192; // 13-bit signed range
+	raw_x_lsb = ((raw_x_lsb & 0b_1111_1000)) >> 3;
+	msb_data = ((int16_t)((int8_t)raw_x_msb)) << 5; 
+	x_val = (int16_t)(msb_data | raw_x_lsb);
+
 	// Extract Y data (13-bit, 2's complement)
-    y_val = ((int16_t)((int8_t)raw_y_msb)) * 32 + ((raw_y_lsb & 0xF8) >> 3);
-    if (y_val > 4095) {
-		y_val = y_val - 8192;  // 2's complement sign correction
-	}
+    // y_val = ((int16_t)((int8_t)raw_y_msb)) * 32 + ((raw_y_lsb & 0xF8) >> 3);
+    // if (y_val > 4095) {
+	// 	y_val = y_val - 8192;  // 2's complement sign correction
+	// }
+	// y_val = ((int16_t)((raw_y_msb << 5) | (raw_y_lsb >> 3)));
+	// if (y_val > 4095) y_val -= 8192; // 13-bit signed range
+	raw_y_lsb = ((raw_y_lsb & 0b_1111_1000)) >> 3;
+	msb_data = ((int16_t)((int8_t)raw_y_msb)) << 5; 
+	y_val = (int16_t)(msb_data | raw_y_lsb);
+
 	// Extract Z data (15-bit, 2's complement)
     // z_val = ((int16_t)((int8_t)raw_z_msb)) * 128 + ((raw_z_lsb & 0xFE) >> 1);
     // if (z_val > 16383) {
 	// 	z_val = z_val - 32768;  // 2's complement sign correction
 	// }
-	z_raw = ((uint16_t)raw_z_msb << 7) | ((raw_z_lsb & 0xFE) >> 1);
-	if (z_raw > 0x3FFF) z_val = z_raw - 0x8000;
-	else z_val = z_raw; 
+	// z_raw = ((uint16_t)raw_z_msb << 7) | ((raw_z_lsb & 0xFE) >> 1);
+	// if (z_raw > 0x3FFF) z_val = z_raw - 0x8000;
+	// else z_val = z_raw; 
+	raw_z_lsb = ((raw_z_lsb & 0xFE) >> 1);
+	msb_data = ((int16_t)((int8_t)raw_z_msb)) >> 7; 
+	z_val = (int16_t)(msb_data | raw_z_lsb);
 
 	//Extract R-HALL data (14-bit, 2's complement)
-	rhall_val = ((uint16_t)raw_rhall_msb) * 64 + (raw_rhall_lsb & 0x3F); 
+	// rhall_val = ((uint16_t)raw_rhall_msb) * 64 + (raw_rhall_lsb & 0x3F); 
+	raw_rhall_lsb = ((raw_rhall_lsb & 0xFC) >> 2);
+	rhall_val = (uint16_t)(((uint16_t)raw_rhall_msb << 6) | raw_rhall_lsb);
 
 	// printf("%d %d       \r", raw_z_lsb, raw_z_msb);
 
+	// printf("%d, %d, %d, %d\r\n", x_val, y_val, z_val, rhall_val);
 	*mag_x = BMM150_compensate_x(&x_val, &rhall_val);
 	*mag_y = BMM150_compensate_y(&y_val, &rhall_val);
 	*mag_z = BMM150_compensate_z(&z_val, &rhall_val);
+	// printf("%d, %d, %d\r\n", *mag_x, *mag_y, *mag_z);
 
 }
 
@@ -546,23 +565,20 @@ void main (void)
 {
 	xdata uint8_t i; 
 	xdata int16_t mag_x, mag_y, mag_z; 
-	xdata float angle;
-	xdata float sum_x, sum_y, alpha, avg_angle, smoothed_angle, cal_x, cal_y, delta; 
-	xdata float declination_angle, x_scale, y_scale, x_offset, y_offset, prev_angle, cumulative_angle; 
+	// xdata float angle;
+	xdata float sum_x, sum_y, alpha, avg_angle, smoothed_angle, cal_x, cal_y;  
+	xdata float declination_angle, x_scale, y_scale; 
 	
 	// Initialize variables
-	avg_angle = 0.0; delta = 0.0;  
+	avg_angle = 0.0; cal_x = 0.0; cal_y = 0.0; 
 	sum_x = 0.0; sum_y = 0.0;
 	mag_x = 0; mag_y = 0; mag_z = 0; 
-	prev_angle = 0.0; cumulative_angle = 0.0; 
 	// TUNE THESE 
 	alpha = 0.25;
 	// declination_angle = 45.0; 
 	declination_angle = 0.0; 
 	x_scale = 1.0; 
 	y_scale = 54.0/57.0; 
-	x_offset = (32.0+22.0) / 2.0; 
-	y_offset = (33.0+24.0) / 2.0; 
 	smoothed_angle = 0.0; 
 	
 	Set_Pin_Output(0x03); 
@@ -577,37 +593,30 @@ void main (void)
 
 	while(1)
 	{
-		avg_angle = 0.0; 
 		sum_x = 0.0; 
 		sum_y = 0.0;  
-		for (i = 0; i < 100; i++){
+		for (i = 0; i < 25; i++){
 			BMM150_Read_Data(&mag_x, &mag_y, &mag_z);
-			cal_x = ((float)mag_x - x_offset) * x_scale; 
-			cal_y = ((float)mag_y - y_offset) * y_scale; 
-
-			angle = atan2f(cal_y, cal_x) * 180.0 / M_PI;
-			angle += declination_angle; 
-
-			// if (angle < 0.0) angle += 360.0; 
-			// else if (angle >= 360.0) angle -= 360.0;
-
-			sum_x += cosf(angle * M_PI / 180.0); 
-			sum_y += sinf(angle * M_PI / 180.0); 
+			// cal_x = (float)mag_x * x_scale; 
+			// cal_y = (float)mag_y * y_scale; 
+			sum_x += (float)mag_x; 
+			sum_y += (float)mag_y; 
+			// printf("%d %d\n", mag_x, mag_y);
 		}
-		avg_angle = atan2f(sum_y/100.0, sum_x/100.0); 
+		avg_angle = atan2f(sum_y/25.0, sum_x/25.0); 
 		avg_angle *= 180.0 / M_PI; 
-		delta = avg_angle - prev_angle;
-		if (delta > 180.0) delta -= 360.0;
-		else if (delta < - 180.0) delta += 360.0;
+		// avg_angle += declination_angle; 
+		
+		if (avg_angle < 0.0) avg_angle += 360.0; 
+		if (avg_angle > 360.0) avg_angle -= 360.0; 
+		smoothed_angle = alpha * avg_angle + (1-alpha) * smoothed_angle; 
 
-		cumulative_angle += delta;
-		prev_angle = avg_angle;
-
-		smoothed_angle = alpha * cumulative_angle + (1-alpha) * smoothed_angle; 
-		avg_angle = atan2f((float)mag_y, (float)mag_x) * 180.0 / M_PI - declination_angle;
-		printf("%d,%d,%f\r\n", mag_x, mag_y, avg_angle);
-		// printf("%f          \r", avg_angle);
+		printf("%f, %f, %f\r\n", sum_x/25.0, sum_y/25.0, smoothed_angle);
+		// if (avg_angle > 180.0) angle -= 360.0; 
+		// else if (avg_angle < -180.0) angle += 360.0;
+		// smoothed_angle = alpha * avg_angle + (1-alpha) * smoothed_angle; 
+		// printf("%f,%f,%f\r\n", sum_x/25.0, sum_y/25.0, avg_angle);
+		waitms(10);
 	}
-
 }
 

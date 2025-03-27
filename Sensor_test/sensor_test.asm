@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-; This file was generated Wed Mar 26 22:57:11 2025
+; This file was generated Thu Mar 27 15:20:43 2025
 ;--------------------------------------------------------
 $name sensor_test
 $optc51 --model-small
@@ -556,20 +556,14 @@ _BMM150_Read_Data_PARM_3:
 	ds 3
 _BMM150_Read_Data_mag_x_1_118:
 	ds 3
-_BMM150_Read_Data_raw_y_lsb_1_119:
+_BMM150_Read_Data_raw_x_msb_1_119:
 	ds 1
 _BMM150_Read_Data_raw_y_msb_1_119:
 	ds 1
-_BMM150_Read_Data_raw_z_lsb_1_119:
-	ds 1
 _BMM150_Read_Data_raw_z_msb_1_119:
-	ds 1
-_BMM150_Read_Data_raw_rhall_lsb_1_119:
 	ds 1
 _BMM150_Read_Data_raw_rhall_msb_1_119:
 	ds 1
-_BMM150_Read_Data_raw_z_1_119:
-	ds 2
 _BMM150_Read_Data_x_val_1_119:
 	ds 2
 _BMM150_Read_Data_y_val_1_119:
@@ -581,7 +575,7 @@ _BMM150_Read_Data_rhall_val_1_119:
 _main_sloc0_1_0:
 	ds 4
 _main_sloc1_1_0:
-	ds 1
+	ds 4
 ;--------------------------------------------------------
 ; overlayable items in internal ram 
 ;--------------------------------------------------------
@@ -624,23 +618,19 @@ _BMM150_compensate_y_process_comp_y0_1_102:
 	ds 2
 _BMM150_compensate_z_retval_1_111:
 	ds 4
-_main_mag_x_1_123:
+_main_mag_x_1_121:
 	ds 2
-_main_mag_y_1_123:
+_main_mag_y_1_121:
 	ds 2
-_main_mag_z_1_123:
+_main_mag_z_1_121:
 	ds 2
-_main_sum_x_1_123:
+_main_sum_x_1_121:
 	ds 4
-_main_sum_y_1_123:
+_main_sum_y_1_121:
 	ds 4
-_main_smoothed_angle_1_123:
+_main_avg_angle_1_121:
 	ds 4
-_main_delta_1_123:
-	ds 4
-_main_prev_angle_1_123:
-	ds 4
-_main_cumulative_angle_1_123:
+_main_smoothed_angle_1_121:
 	ds 4
 ;--------------------------------------------------------
 ; absolute external ram data
@@ -2535,19 +2525,18 @@ L014014?:
 ;mag_z                     Allocated with name '_BMM150_Read_Data_PARM_3'
 ;mag_x                     Allocated with name '_BMM150_Read_Data_mag_x_1_118'
 ;raw_x_lsb                 Allocated to registers r5 
-;raw_x_msb                 Allocated to registers r6 
-;raw_y_lsb                 Allocated with name '_BMM150_Read_Data_raw_y_lsb_1_119'
+;raw_x_msb                 Allocated with name '_BMM150_Read_Data_raw_x_msb_1_119'
+;raw_y_lsb                 Allocated to registers r7 
 ;raw_y_msb                 Allocated with name '_BMM150_Read_Data_raw_y_msb_1_119'
-;raw_z_lsb                 Allocated with name '_BMM150_Read_Data_raw_z_lsb_1_119'
+;raw_z_lsb                 Allocated to registers r1 
 ;raw_z_msb                 Allocated with name '_BMM150_Read_Data_raw_z_msb_1_119'
-;raw_rhall_lsb             Allocated with name '_BMM150_Read_Data_raw_rhall_lsb_1_119'
+;raw_rhall_lsb             Allocated to registers r0 
 ;raw_rhall_msb             Allocated with name '_BMM150_Read_Data_raw_rhall_msb_1_119'
-;raw_z                     Allocated with name '_BMM150_Read_Data_raw_z_1_119'
 ;x_val                     Allocated with name '_BMM150_Read_Data_x_val_1_119'
 ;y_val                     Allocated with name '_BMM150_Read_Data_y_val_1_119'
 ;z_val                     Allocated with name '_BMM150_Read_Data_z_val_1_119'
 ;rhall_val                 Allocated with name '_BMM150_Read_Data_rhall_val_1_119'
-;z_raw                     Allocated to registers r3 r2 
+;msb_data                  Allocated to registers r6 r2 
 ;------------------------------------------------------------
 ;	sensor_test.c:494: void BMM150_Read_Data(int16_t *mag_x, int16_t *mag_y, int16_t *mag_z)
 ;	-----------------------------------------
@@ -2557,208 +2546,178 @@ _BMM150_Read_Data:
 	mov	_BMM150_Read_Data_mag_x_1_118,dpl
 	mov	(_BMM150_Read_Data_mag_x_1_118 + 1),dph
 	mov	(_BMM150_Read_Data_mag_x_1_118 + 2),b
-;	sensor_test.c:499: raw_x_lsb = SPI_read(BMM150_DATA_X_LSB);
+;	sensor_test.c:500: raw_x_lsb = SPI_read(BMM150_DATA_X_LSB);
 	mov	dpl,#0x42
 	lcall	_SPI_read
 	mov	r5,dpl
-;	sensor_test.c:500: raw_x_msb = SPI_read(BMM150_DATA_X_MSB);
+;	sensor_test.c:501: raw_x_msb = SPI_read(BMM150_DATA_X_MSB);
 	mov	dpl,#0x43
 	push	ar5
 	lcall	_SPI_read
-	mov	r6,dpl
-;	sensor_test.c:501: raw_y_lsb = SPI_read(BMM150_DATA_Y_LSB);
+	mov	_BMM150_Read_Data_raw_x_msb_1_119,dpl
+;	sensor_test.c:502: raw_y_lsb = SPI_read(BMM150_DATA_Y_LSB);
 	mov	dpl,#0x44
-	push	ar6
 	lcall	_SPI_read
-	mov	_BMM150_Read_Data_raw_y_lsb_1_119,dpl
-;	sensor_test.c:502: raw_y_msb = SPI_read(BMM150_DATA_Y_MSB);
+	mov	r7,dpl
+;	sensor_test.c:503: raw_y_msb = SPI_read(BMM150_DATA_Y_MSB);
 	mov	dpl,#0x45
+	push	ar7
 	lcall	_SPI_read
 	mov	_BMM150_Read_Data_raw_y_msb_1_119,dpl
-;	sensor_test.c:503: SPI_read_block(BMM150_DATA_X_LSB, raw_z, 2);
-	mov	_SPI_read_block_PARM_2,#_BMM150_Read_Data_raw_z_1_119
-	mov	(_SPI_read_block_PARM_2 + 1),#0x00
-	mov	(_SPI_read_block_PARM_2 + 2),#0x40
-	mov	_SPI_read_block_PARM_3,#0x02
-	mov	dpl,#0x42
-	lcall	_SPI_read_block
-;	sensor_test.c:506: raw_z_lsb = raw_z[0];
-	mov	_BMM150_Read_Data_raw_z_lsb_1_119,_BMM150_Read_Data_raw_z_1_119
-;	sensor_test.c:507: raw_z_msb = raw_z[1];
-	mov	_BMM150_Read_Data_raw_z_msb_1_119,(_BMM150_Read_Data_raw_z_1_119 + 0x0001)
-;	sensor_test.c:508: raw_rhall_lsb = SPI_read(BMM150_RHALL_LSB); 
+;	sensor_test.c:505: raw_z_lsb = SPI_read(BMM150_DATA_Z_LSB);
+	mov	dpl,#0x46
+	lcall	_SPI_read
+	mov	r1,dpl
+;	sensor_test.c:506: raw_z_msb = SPI_read(BMM150_DATA_Z_MSB);
+	mov	dpl,#0x47
+	push	ar1
+	lcall	_SPI_read
+	mov	_BMM150_Read_Data_raw_z_msb_1_119,dpl
+;	sensor_test.c:509: raw_rhall_lsb = SPI_read(BMM150_RHALL_LSB); 
 	mov	dpl,#0x48
 	lcall	_SPI_read
-	mov	_BMM150_Read_Data_raw_rhall_lsb_1_119,dpl
-;	sensor_test.c:509: raw_rhall_msb = SPI_read(BMM150_RHALL_MSB);
+	mov	r0,dpl
+	pop	ar1
+;	sensor_test.c:510: raw_rhall_msb = SPI_read(BMM150_RHALL_MSB);
 	mov	dpl,#0x49
+	push	ar0
+	push	ar1
 	lcall	_SPI_read
 	mov	_BMM150_Read_Data_raw_rhall_msb_1_119,dpl
-;	sensor_test.c:510: SPI_read_block(BMM150_DATA_X_LSB, raw_z, 2);
-	mov	_SPI_read_block_PARM_2,#_BMM150_Read_Data_raw_z_1_119
-	mov	(_SPI_read_block_PARM_2 + 1),#0x00
-	mov	(_SPI_read_block_PARM_2 + 2),#0x40
-	mov	_SPI_read_block_PARM_3,#0x02
-	mov	dpl,#0x42
-	lcall	_SPI_read_block
-	pop	ar6
+	pop	ar1
+	pop	ar0
+	pop	ar7
 	pop	ar5
-;	sensor_test.c:515: x_val = ((int16_t)((int8_t)raw_x_msb)) * 32 + ((raw_x_lsb & 0xF8) >> 3);
-	mov	a,r6
-	rlc	a
-	subb	a,acc
-	swap	a
-	rl	a
-	anl	a,#0xe0
-	xch	a,r6
-	swap	a
-	rl	a
-	xch	a,r6
-	xrl	a,r6
-	xch	a,r6
-	anl	a,#0xe0
-	xch	a,r6
-	xrl	a,r6
-	mov	r7,a
-	anl	ar5,#0xF8
-	mov	a,r5
+;	sensor_test.c:521: raw_x_lsb = ((raw_x_lsb & 0b_1111_1000)) >> 3;
+	mov	a,#0xF8
+	anl	a,r5
 	swap	a
 	rl	a
 	anl	a,#0x1f
 	mov	r5,a
-	mov	r2,#0x00
-	add	a,r6
-	mov	r3,a
-	mov	a,r2
-	addc	a,r7
-	mov	r2,a
-	mov	_BMM150_Read_Data_x_val_1_119,r3
-	mov	(_BMM150_Read_Data_x_val_1_119 + 1),r2
-;	sensor_test.c:516: if (x_val > 4095){
-	clr	c
-	mov	a,#0xFF
-	subb	a,r3
-	mov	a,#(0x0F ^ 0x80)
-	mov	b,r2
-	xrl	b,#0x80
-	subb	a,b
-	jnc	L015002?
-;	sensor_test.c:517: x_val = x_val - 8192;  // 2's complement sign correction
-	mov	_BMM150_Read_Data_x_val_1_119,r3
-	mov	a,r2
-	add	a,#0xe0
-	mov	(_BMM150_Read_Data_x_val_1_119 + 1),a
-L015002?:
-;	sensor_test.c:520: y_val = ((int16_t)((int8_t)raw_y_msb)) * 32 + ((raw_y_lsb & 0xF8) >> 3);
-	mov	a,_BMM150_Read_Data_raw_y_msb_1_119
-	mov	r2,a
+;	sensor_test.c:522: msb_data = ((int16_t)((int8_t)raw_x_msb)) << 5; 
+	mov	a,_BMM150_Read_Data_raw_x_msb_1_119
+	mov	r6,a
 	rlc	a
 	subb	a,acc
 	swap	a
 	rl	a
 	anl	a,#0xe0
-	xch	a,r2
+	xch	a,r6
 	swap	a
 	rl	a
-	xch	a,r2
-	xrl	a,r2
-	xch	a,r2
+	xch	a,r6
+	xrl	a,r6
+	xch	a,r6
 	anl	a,#0xe0
-	xch	a,r2
-	xrl	a,r2
-	mov	r3,a
+	xch	a,r6
+	xrl	a,r6
+	mov	r2,a
+;	sensor_test.c:523: x_val = (int16_t)(msb_data | raw_x_lsb);
+	mov	r3,#0x00
+	mov	a,r5
+	orl	a,r6
+	mov	_BMM150_Read_Data_x_val_1_119,a
+	mov	a,r3
+	orl	a,r2
+	mov	(_BMM150_Read_Data_x_val_1_119 + 1),a
+;	sensor_test.c:532: raw_y_lsb = ((raw_y_lsb & 0b_1111_1000)) >> 3;
 	mov	a,#0xF8
-	anl	a,_BMM150_Read_Data_raw_y_lsb_1_119
+	anl	a,r7
 	swap	a
 	rl	a
 	anl	a,#0x1f
-	mov	r4,a
-	mov	r5,#0x00
-	add	a,r2
-	mov	r2,a
-	mov	a,r5
-	addc	a,r3
+	mov	r7,a
+;	sensor_test.c:533: msb_data = ((int16_t)((int8_t)raw_y_msb)) << 5; 
+	mov	a,_BMM150_Read_Data_raw_y_msb_1_119
 	mov	r3,a
-	mov	_BMM150_Read_Data_y_val_1_119,r2
-	mov	(_BMM150_Read_Data_y_val_1_119 + 1),r3
-;	sensor_test.c:521: if (y_val > 4095) {
-	clr	c
-	mov	a,#0xFF
-	subb	a,r2
-	mov	a,#(0x0F ^ 0x80)
-	mov	b,r3
-	xrl	b,#0x80
-	subb	a,b
-	jnc	L015004?
-;	sensor_test.c:522: y_val = y_val - 8192;  // 2's complement sign correction
-	mov	_BMM150_Read_Data_y_val_1_119,r2
+	rlc	a
+	subb	a,acc
+	mov	ar6,r3
+	swap	a
+	rl	a
+	anl	a,#0xe0
+	xch	a,r6
+	swap	a
+	rl	a
+	xch	a,r6
+	xrl	a,r6
+	xch	a,r6
+	anl	a,#0xe0
+	xch	a,r6
+	xrl	a,r6
+	mov	r2,a
+;	sensor_test.c:534: y_val = (int16_t)(msb_data | raw_y_lsb);
+	mov	r3,#0x00
+	mov	a,r7
+	orl	a,r6
+	mov	_BMM150_Read_Data_y_val_1_119,a
 	mov	a,r3
-	add	a,#0xe0
-	mov	(_BMM150_Read_Data_y_val_1_119 + 1),a
-L015004?:
-;	sensor_test.c:529: z_raw = ((uint16_t)raw_z_msb << 7) | ((raw_z_lsb & 0xFE) >> 1);
-	mov	r7,_BMM150_Read_Data_raw_z_msb_1_119
-	clr	a
-	anl	a,#0x01
-	mov	c,acc.0
-	xch	a,r7
-	rrc	a
-	xch	a,r7
-	rrc	a
-	xch	a,r7
-	mov	r2,a
-	mov	a,#0xFE
-	anl	a,_BMM150_Read_Data_raw_z_lsb_1_119
-	clr	c
-	rrc	a
-	mov	r4,#0x00
-	orl	a,r7
-	mov	r3,a
-	mov	a,r4
 	orl	a,r2
-	mov	r2,a
-;	sensor_test.c:530: if (z_raw > 0x3FFF) z_val = z_raw - 0x8000;
+	mov	(_BMM150_Read_Data_y_val_1_119 + 1),a
+;	sensor_test.c:544: raw_z_lsb = ((raw_z_lsb & 0xFE) >> 1);
+	mov	a,#0xFE
+	anl	a,r1
 	clr	c
-	mov	a,#0xFF
-	subb	a,r3
-	mov	a,#0x3F
-	subb	a,r2
-	jnc	L015006?
-	mov	_BMM150_Read_Data_z_val_1_119,r3
-	mov	a,r2
-	add	a,#0x80
+	rrc	a
+	mov	r1,a
+;	sensor_test.c:545: msb_data = ((int16_t)((int8_t)raw_z_msb)) >> 7; 
+	mov	a,_BMM150_Read_Data_raw_z_msb_1_119
+	mov	r3,a
+	rlc	a
+	subb	a,acc
+	mov	r4,a
+	mov	ar6,r3
+	mov	c,acc.7
+	xch	a,r6
+	rlc	a
+	xch	a,r6
+	rlc	a
+	xch	a,r6
+	anl	a,#0x01
+	jnb	acc.0,L015003?
+	orl	a,#0xfe
+L015003?:
+	mov	r2,a
+;	sensor_test.c:546: z_val = (int16_t)(msb_data | raw_z_lsb);
+	mov	r3,#0x00
+	mov	a,r1
+	orl	a,r6
+	mov	_BMM150_Read_Data_z_val_1_119,a
+	mov	a,r3
+	orl	a,r2
 	mov	(_BMM150_Read_Data_z_val_1_119 + 1),a
-	sjmp	L015007?
-L015006?:
-;	sensor_test.c:531: else z_val = z_raw; 
-	mov	_BMM150_Read_Data_z_val_1_119,r3
-	mov	(_BMM150_Read_Data_z_val_1_119 + 1),r2
-L015007?:
-;	sensor_test.c:534: rhall_val = ((uint16_t)raw_rhall_msb) * 64 + (raw_rhall_lsb & 0x3F); 
-	mov	r7,_BMM150_Read_Data_raw_rhall_msb_1_119
+;	sensor_test.c:550: raw_rhall_lsb = ((raw_rhall_lsb & 0xFC) >> 2);
+	mov	a,#0xFC
+	anl	a,r0
+	rr	a
+	rr	a
+	anl	a,#0x3f
+	mov	r0,a
+;	sensor_test.c:551: rhall_val = (uint16_t)(((uint16_t)raw_rhall_msb << 6) | raw_rhall_lsb);
+	mov	r6,_BMM150_Read_Data_raw_rhall_msb_1_119
 	clr	a
 	anl	a,#0x03
 	mov	c,acc.0
-	xch	a,r7
+	xch	a,r6
 	rrc	a
-	xch	a,r7
+	xch	a,r6
 	rrc	a
 	mov	c,acc.0
-	xch	a,r7
+	xch	a,r6
 	rrc	a
-	xch	a,r7
+	xch	a,r6
 	rrc	a
-	xch	a,r7
+	xch	a,r6
 	mov	r2,a
-	mov	a,#0x3F
-	anl	a,_BMM150_Read_Data_raw_rhall_lsb_1_119
-	mov	r4,#0x00
-	add	a,r7
+	mov	r3,#0x00
+	mov	a,r0
+	orl	a,r6
 	mov	_BMM150_Read_Data_rhall_val_1_119,a
-	mov	a,r4
-	addc	a,r2
+	mov	a,r3
+	orl	a,r2
 	mov	(_BMM150_Read_Data_rhall_val_1_119 + 1),a
-;	sensor_test.c:538: *mag_x = BMM150_compensate_x(&x_val, &rhall_val);
+;	sensor_test.c:556: *mag_x = BMM150_compensate_x(&x_val, &rhall_val);
 	mov	_BMM150_compensate_x_PARM_2,#_BMM150_Read_Data_rhall_val_1_119
 	mov	(_BMM150_compensate_x_PARM_2 + 1),#0x00
 	mov	(_BMM150_compensate_x_PARM_2 + 2),#0x40
@@ -2775,7 +2734,7 @@ L015007?:
 	inc	dptr
 	mov	a,r3
 	lcall	__gptrput
-;	sensor_test.c:539: *mag_y = BMM150_compensate_y(&y_val, &rhall_val);
+;	sensor_test.c:557: *mag_y = BMM150_compensate_y(&y_val, &rhall_val);
 	mov	r2,_BMM150_Read_Data_PARM_2
 	mov	r3,(_BMM150_Read_Data_PARM_2 + 1)
 	mov	r4,(_BMM150_Read_Data_PARM_2 + 2)
@@ -2801,7 +2760,7 @@ L015007?:
 	inc	dptr
 	mov	a,r6
 	lcall	__gptrput
-;	sensor_test.c:540: *mag_z = BMM150_compensate_z(&z_val, &rhall_val);
+;	sensor_test.c:558: *mag_z = BMM150_compensate_z(&z_val, &rhall_val);
 	mov	r2,_BMM150_Read_Data_PARM_3
 	mov	r3,(_BMM150_Read_Data_PARM_3 + 1)
 	mov	r4,(_BMM150_Read_Data_PARM_3 + 2)
@@ -2832,86 +2791,61 @@ L015007?:
 ;------------------------------------------------------------
 ;sloc0                     Allocated with name '_main_sloc0_1_0'
 ;sloc1                     Allocated with name '_main_sloc1_1_0'
-;i                         Allocated with name '_main_i_1_123'
-;mag_x                     Allocated with name '_main_mag_x_1_123'
-;mag_y                     Allocated with name '_main_mag_y_1_123'
-;mag_z                     Allocated with name '_main_mag_z_1_123'
-;angle                     Allocated with name '_main_angle_1_123'
-;sum_x                     Allocated with name '_main_sum_x_1_123'
-;sum_y                     Allocated with name '_main_sum_y_1_123'
-;alpha                     Allocated with name '_main_alpha_1_123'
-;avg_angle                 Allocated with name '_main_avg_angle_1_123'
-;smoothed_angle            Allocated with name '_main_smoothed_angle_1_123'
-;cal_x                     Allocated with name '_main_cal_x_1_123'
-;cal_y                     Allocated with name '_main_cal_y_1_123'
-;delta                     Allocated with name '_main_delta_1_123'
-;declination_angle         Allocated with name '_main_declination_angle_1_123'
-;x_scale                   Allocated with name '_main_x_scale_1_123'
-;y_scale                   Allocated with name '_main_y_scale_1_123'
-;x_offset                  Allocated with name '_main_x_offset_1_123'
-;y_offset                  Allocated with name '_main_y_offset_1_123'
-;prev_angle                Allocated with name '_main_prev_angle_1_123'
-;cumulative_angle          Allocated with name '_main_cumulative_angle_1_123'
+;i                         Allocated with name '_main_i_1_121'
+;mag_x                     Allocated with name '_main_mag_x_1_121'
+;mag_y                     Allocated with name '_main_mag_y_1_121'
+;mag_z                     Allocated with name '_main_mag_z_1_121'
+;sum_x                     Allocated with name '_main_sum_x_1_121'
+;sum_y                     Allocated with name '_main_sum_y_1_121'
+;alpha                     Allocated with name '_main_alpha_1_121'
+;avg_angle                 Allocated with name '_main_avg_angle_1_121'
+;smoothed_angle            Allocated with name '_main_smoothed_angle_1_121'
+;cal_x                     Allocated with name '_main_cal_x_1_121'
+;cal_y                     Allocated with name '_main_cal_y_1_121'
+;declination_angle         Allocated with name '_main_declination_angle_1_121'
+;x_scale                   Allocated with name '_main_x_scale_1_121'
+;y_scale                   Allocated with name '_main_y_scale_1_121'
 ;------------------------------------------------------------
-;	sensor_test.c:545: void main (void)
+;	sensor_test.c:564: void main (void)
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
-;	sensor_test.c:556: mag_x = 0; mag_y = 0; mag_z = 0; 
-	mov	dptr,#_main_mag_x_1_123
+;	sensor_test.c:575: mag_x = 0; mag_y = 0; mag_z = 0; 
+	mov	dptr,#_main_mag_x_1_121
 	clr	a
 	movx	@dptr,a
 	inc	dptr
 	movx	@dptr,a
-	mov	dptr,#_main_mag_y_1_123
+	mov	dptr,#_main_mag_y_1_121
 	clr	a
 	movx	@dptr,a
 	inc	dptr
 	movx	@dptr,a
-	mov	dptr,#_main_mag_z_1_123
+	mov	dptr,#_main_mag_z_1_121
 	clr	a
 	movx	@dptr,a
 	inc	dptr
 	movx	@dptr,a
-;	sensor_test.c:557: prev_angle = 0.0; cumulative_angle = 0.0; 
-	mov	dptr,#_main_prev_angle_1_123
-	clr	a
-	movx	@dptr,a
-	inc	dptr
-	movx	@dptr,a
-	inc	dptr
-	movx	@dptr,a
-	inc	dptr
-	movx	@dptr,a
-	mov	dptr,#_main_cumulative_angle_1_123
-	movx	@dptr,a
-	inc	dptr
-;	sensor_test.c:566: smoothed_angle = 0.0; 
+;	sensor_test.c:582: smoothed_angle = 0.0; 
+	mov	dptr,#_main_smoothed_angle_1_121
 	clr	a
 	movx	@dptr,a
 	inc	dptr
 	movx	@dptr,a
 	inc	dptr
 	movx	@dptr,a
-	mov	dptr,#_main_smoothed_angle_1_123
-	movx	@dptr,a
-	inc	dptr
-	clr	a
-	movx	@dptr,a
 	inc	dptr
 	movx	@dptr,a
-	inc	dptr
-	movx	@dptr,a
-;	sensor_test.c:568: Set_Pin_Output(0x03); 
+;	sensor_test.c:584: Set_Pin_Output(0x03); 
 	mov	dpl,#0x03
 	lcall	_Set_Pin_Output
-;	sensor_test.c:569: BMM150_Init();
+;	sensor_test.c:585: BMM150_Init();
 	lcall	_BMM150_Init
-;	sensor_test.c:571: waitms(500);
+;	sensor_test.c:587: waitms(500);
 	mov	dptr,#0x01F4
 	lcall	_waitms
-;	sensor_test.c:572: printf("\x1b[2J"); // Clear screen using ANSI escape sequence.
+;	sensor_test.c:588: printf("\x1b[2J"); // Clear screen using ANSI escape sequence.
 	mov	a,#__str_3
 	push	acc
 	mov	a,#(__str_3 >> 8)
@@ -2922,8 +2856,8 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	sensor_test.c:576: __FILE__, __DATE__, __TIME__);
-;	sensor_test.c:575: "Compiled: %s, %s\n\n",
+;	sensor_test.c:592: __FILE__, __DATE__, __TIME__);
+;	sensor_test.c:591: "Compiled: %s, %s\n\n",
 	mov	a,#__str_7
 	push	acc
 	mov	a,#(__str_7 >> 8)
@@ -2952,11 +2886,11 @@ _main:
 	mov	a,sp
 	add	a,#0xf4
 	mov	sp,a
-;	sensor_test.c:578: while(1)
-L016007?:
-;	sensor_test.c:581: sum_x = 0.0; 
-	mov	dptr,#_main_sum_x_1_123
-;	sensor_test.c:582: sum_y = 0.0;  
+;	sensor_test.c:594: while(1)
+L016006?:
+;	sensor_test.c:596: sum_x = 0.0; 
+	mov	dptr,#_main_sum_x_1_121
+;	sensor_test.c:597: sum_y = 0.0;  
 	clr	a
 	movx	@dptr,a
 	inc	dptr
@@ -2965,7 +2899,7 @@ L016007?:
 	movx	@dptr,a
 	inc	dptr
 	movx	@dptr,a
-	mov	dptr,#_main_sum_y_1_123
+	mov	dptr,#_main_sum_y_1_121
 	movx	@dptr,a
 	inc	dptr
 	clr	a
@@ -2974,26 +2908,27 @@ L016007?:
 	movx	@dptr,a
 	inc	dptr
 	movx	@dptr,a
-;	sensor_test.c:583: for (i = 0; i < 100; i++){
-	mov	_main_sloc1_1_0,#0x00
-L016009?:
-	mov	a,#0x100 - 0x64
-	add	a,_main_sloc1_1_0
-	jnc	L016021?
-	ljmp	L016012?
+;	sensor_test.c:598: for (i = 0; i < 25; i++){
+	mov	r2,#0x00
+L016008?:
+	cjne	r2,#0x19,L016020?
+L016020?:
+	jc	L016021?
+	ljmp	L016011?
 L016021?:
-;	sensor_test.c:584: BMM150_Read_Data(&mag_x, &mag_y, &mag_z);
-	mov	_BMM150_Read_Data_PARM_2,#_main_mag_y_1_123
-	mov	(_BMM150_Read_Data_PARM_2 + 1),#(_main_mag_y_1_123 >> 8)
+;	sensor_test.c:599: BMM150_Read_Data(&mag_x, &mag_y, &mag_z);
+	mov	_BMM150_Read_Data_PARM_2,#_main_mag_y_1_121
+	mov	(_BMM150_Read_Data_PARM_2 + 1),#(_main_mag_y_1_121 >> 8)
 	mov	(_BMM150_Read_Data_PARM_2 + 2),#0x00
-	mov	_BMM150_Read_Data_PARM_3,#_main_mag_z_1_123
-	mov	(_BMM150_Read_Data_PARM_3 + 1),#(_main_mag_z_1_123 >> 8)
+	mov	_BMM150_Read_Data_PARM_3,#_main_mag_z_1_121
+	mov	(_BMM150_Read_Data_PARM_3 + 1),#(_main_mag_z_1_121 >> 8)
 	mov	(_BMM150_Read_Data_PARM_3 + 2),#0x00
-	mov	dptr,#_main_mag_x_1_123
+	mov	dptr,#_main_mag_x_1_121
 	mov	b,#0x00
+	push	ar2
 	lcall	_BMM150_Read_Data
-;	sensor_test.c:585: cal_x = ((float)mag_x - x_offset) * x_scale; 
-	mov	dptr,#_main_mag_x_1_123
+;	sensor_test.c:602: sum_x += (float)mag_x; 
+	mov	dptr,#_main_mag_x_1_121
 	movx	a,@dptr
 	mov	r3,a
 	inc	dptr
@@ -3002,55 +2937,31 @@ L016021?:
 	mov	dpl,r3
 	mov	dph,r4
 	lcall	___sint2fs
-	mov	r3,dpl
-	mov	r4,dph
-	mov	r5,b
-	mov	r6,a
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0xD8
-	push	acc
-	mov	a,#0x41
-	push	acc
-;	sensor_test.c:586: cal_y = ((float)mag_y - y_offset) * y_scale; 
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	mov	a,r6
-	lcall	___fssub
 	mov	_main_sloc0_1_0,dpl
 	mov	(_main_sloc0_1_0 + 1),dph
 	mov	(_main_sloc0_1_0 + 2),b
 	mov	(_main_sloc0_1_0 + 3),a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	mov	dptr,#_main_mag_y_1_123
+	mov	dptr,#_main_sum_x_1_121
 	movx	a,@dptr
 	mov	r7,a
 	inc	dptr
 	movx	a,@dptr
 	mov	r0,a
-	mov	dpl,r7
-	mov	dph,r0
-	lcall	___sint2fs
-	mov	r7,dpl
-	mov	r0,dph
-	mov	r1,b
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	inc	dptr
+	movx	a,@dptr
 	mov	r3,a
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0xE4
-	push	acc
-	mov	a,#0x41
-	push	acc
+	push	_main_sloc0_1_0
+	push	(_main_sloc0_1_0 + 1)
+	push	(_main_sloc0_1_0 + 2)
+	push	(_main_sloc0_1_0 + 3)
 	mov	dpl,r7
 	mov	dph,r0
 	mov	b,r1
 	mov	a,r3
-	lcall	___fssub
+	lcall	___fsadd
 	mov	r3,dpl
 	mov	r4,dph
 	mov	r5,b
@@ -3058,24 +2969,137 @@ L016021?:
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	mov	a,#0xBD
-	push	acc
-	mov	a,#0x86
-	push	acc
-	mov	a,#0x72
-	push	acc
-	mov	a,#0x3F
-	push	acc
-;	sensor_test.c:588: angle = atan2f(cal_y, cal_x) * 180.0 / M_PI;
+	mov	dptr,#_main_sum_x_1_121
+	mov	a,r3
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r4
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r5
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r6
+	movx	@dptr,a
+;	sensor_test.c:603: sum_y += (float)mag_y; 
+	mov	dptr,#_main_mag_y_1_121
+	movx	a,@dptr
+	mov	r3,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r4,a
 	mov	dpl,r3
 	mov	dph,r4
-	mov	b,r5
-	mov	a,r6
-	lcall	___fsmul
+	lcall	___sint2fs
+	mov	_main_sloc0_1_0,dpl
+	mov	(_main_sloc0_1_0 + 1),dph
+	mov	(_main_sloc0_1_0 + 2),b
+	mov	(_main_sloc0_1_0 + 3),a
+	mov	dptr,#_main_sum_y_1_121
+	movx	a,@dptr
+	mov	r7,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r3,a
+	push	_main_sloc0_1_0
+	push	(_main_sloc0_1_0 + 1)
+	push	(_main_sloc0_1_0 + 2)
+	push	(_main_sloc0_1_0 + 3)
+	mov	dpl,r7
+	mov	dph,r0
+	mov	b,r1
+	mov	a,r3
+	lcall	___fsadd
 	mov	r3,dpl
 	mov	r4,dph
 	mov	r5,b
 	mov	r6,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar2
+	mov	dptr,#_main_sum_y_1_121
+	mov	a,r3
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r4
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r5
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r6
+	movx	@dptr,a
+;	sensor_test.c:598: for (i = 0; i < 25; i++){
+	inc	r2
+	ljmp	L016008?
+L016011?:
+;	sensor_test.c:606: avg_angle = atan2f(sum_y/25.0, sum_x/25.0); 
+	mov	dptr,#_main_sum_y_1_121
+	movx	a,@dptr
+	mov	r2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r3,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r5,a
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0xC8
+	push	acc
+	mov	a,#0x41
+	push	acc
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r4
+	mov	a,r5
+	lcall	___fsdiv
+	mov	_main_sloc1_1_0,dpl
+	mov	(_main_sloc1_1_0 + 1),dph
+	mov	(_main_sloc1_1_0 + 2),b
+	mov	(_main_sloc1_1_0 + 3),a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dptr,#_main_sum_x_1_121
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0xC8
+	push	acc
+	mov	a,#0x41
+	push	acc
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	___fsdiv
+	mov	_main_sloc0_1_0,dpl
+	mov	(_main_sloc0_1_0 + 1),dph
+	mov	(_main_sloc0_1_0 + 2),b
+	mov	(_main_sloc0_1_0 + 3),a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
@@ -3083,310 +3107,24 @@ L016021?:
 	mov	(_atan2f_PARM_2 + 1),(_main_sloc0_1_0 + 1)
 	mov	(_atan2f_PARM_2 + 2),(_main_sloc0_1_0 + 2)
 	mov	(_atan2f_PARM_2 + 3),(_main_sloc0_1_0 + 3)
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	mov	a,r6
+	mov	dpl,_main_sloc1_1_0
+	mov	dph,(_main_sloc1_1_0 + 1)
+	mov	b,(_main_sloc1_1_0 + 2)
+	mov	a,(_main_sloc1_1_0 + 3)
 	lcall	_atan2f
-	mov	r3,dpl
-	mov	r4,dph
-	mov	r5,b
-	mov	r6,a
-	push	ar3
-	push	ar4
-	push	ar5
-	push	ar6
-	mov	dptr,#0x0000
-	mov	b,#0x34
-	mov	a,#0x43
-	lcall	___fsmul
-	mov	r3,dpl
-	mov	r4,dph
-	mov	r5,b
-	mov	r6,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	mov	a,#0xDB
-	push	acc
-	mov	a,#0x0F
-	push	acc
-	mov	a,#0x49
-	push	acc
-	mov	a,#0x40
-	push	acc
-;	sensor_test.c:594: sum_x += cosf(angle * M_PI / 180.0); 
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	mov	a,r6
-	lcall	___fsdiv
-	mov	r3,dpl
-	mov	r4,dph
-	mov	r5,b
-	mov	r6,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	push	ar3
-	push	ar4
-	push	ar5
-	push	ar6
-	mov	dptr,#0x0FDB
-	mov	b,#0x49
-	mov	a,#0x40
-	lcall	___fsmul
-	mov	r3,dpl
-	mov	r4,dph
-	mov	r5,b
-	mov	r6,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0x34
-	push	acc
-	mov	a,#0x43
-	push	acc
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	mov	a,r6
-	lcall	___fsdiv
-	mov	r3,dpl
-	mov	r4,dph
-	mov	r5,b
-	mov	r6,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	mov	a,r6
-	push	ar3
-	push	ar4
-	push	ar5
-	push	ar6
-	lcall	_cosf
-	mov	_main_sloc0_1_0,dpl
-	mov	(_main_sloc0_1_0 + 1),dph
-	mov	(_main_sloc0_1_0 + 2),b
-	mov	(_main_sloc0_1_0 + 3),a
-	mov	dptr,#_main_sum_x_1_123
-	movx	a,@dptr
-	mov	r2,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r7,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r0,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r1,a
-	push	_main_sloc0_1_0
-	push	(_main_sloc0_1_0 + 1)
-	push	(_main_sloc0_1_0 + 2)
-	push	(_main_sloc0_1_0 + 3)
-	mov	dpl,r2
-	mov	dph,r7
-	mov	b,r0
-	mov	a,r1
-	lcall	___fsadd
-	mov	r2,dpl
+	mov	r6,dpl
 	mov	r7,dph
 	mov	r0,b
 	mov	r1,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar6
-	pop	ar5
-	pop	ar4
-	pop	ar3
-	mov	dptr,#_main_sum_x_1_123
-	mov	a,r2
-	movx	@dptr,a
-	inc	dptr
-	mov	a,r7
-	movx	@dptr,a
-	inc	dptr
-	mov	a,r0
-	movx	@dptr,a
-	inc	dptr
-	mov	a,r1
-	movx	@dptr,a
-;	sensor_test.c:595: sum_y += sinf(angle * M_PI / 180.0); 
-	mov	dpl,r3
-	mov	dph,r4
-	mov	b,r5
-	mov	a,r6
-	lcall	_sinf
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	dptr,#_main_sum_y_1_123
-	movx	a,@dptr
-	mov	r6,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r7,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r0,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r1,a
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
-	mov	dpl,r6
-	mov	dph,r7
-	mov	b,r0
-	mov	a,r1
-	lcall	___fsadd
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	mov	dptr,#_main_sum_y_1_123
-	mov	a,r2
-	movx	@dptr,a
-	inc	dptr
-	mov	a,r3
-	movx	@dptr,a
-	inc	dptr
-	mov	a,r4
-	movx	@dptr,a
-	inc	dptr
-	mov	a,r5
-	movx	@dptr,a
-;	sensor_test.c:583: for (i = 0; i < 100; i++){
-	inc	_main_sloc1_1_0
-	ljmp	L016009?
-L016012?:
-;	sensor_test.c:597: avg_angle = atan2f(sum_y/100.0, sum_x/100.0); 
-	mov	dptr,#_main_sum_y_1_123
-	movx	a,@dptr
-	mov	r2,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r3,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r4,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r5,a
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0xC8
-	push	acc
-	mov	a,#0x42
-	push	acc
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r4
-	mov	a,r5
-	lcall	___fsdiv
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	mov	dptr,#_main_sum_x_1_123
-	movx	a,@dptr
-	mov	r6,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r7,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r0,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r1,a
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0xC8
-	push	acc
-	mov	a,#0x42
-	push	acc
-	mov	dpl,r6
-	mov	dph,r7
-	mov	b,r0
-	mov	a,r1
-	lcall	___fsdiv
-	mov	_atan2f_PARM_2,dpl
-	mov	(_atan2f_PARM_2 + 1),dph
-	mov	(_atan2f_PARM_2 + 2),b
-	mov	(_atan2f_PARM_2 + 3),a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar5
-	pop	ar4
-	pop	ar3
-	pop	ar2
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r4
-	mov	a,r5
-	lcall	_atan2f
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-;	sensor_test.c:598: avg_angle *= 180.0 / M_PI; 
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
-;	sensor_test.c:599: delta = avg_angle - prev_angle;
+;	sensor_test.c:607: avg_angle *= 180.0 / M_PI; 
+	push	ar6
+	push	ar7
+	push	ar0
+	push	ar1
 	mov	dptr,#0x2EE1
 	mov	b,#0x65
 	mov	a,#0x42
 	lcall	___fsmul
-	mov	_main_sloc0_1_0,dpl
-	mov	(_main_sloc0_1_0 + 1),dph
-	mov	(_main_sloc0_1_0 + 2),b
-	mov	(_main_sloc0_1_0 + 3),a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	mov	dptr,#_main_prev_angle_1_123
-	movx	a,@dptr
-	push	acc
-	inc	dptr
-	movx	a,@dptr
-	push	acc
-	inc	dptr
-	movx	a,@dptr
-	push	acc
-	inc	dptr
-	movx	a,@dptr
-	push	acc
-	mov	dpl,_main_sloc0_1_0
-	mov	dph,(_main_sloc0_1_0 + 1)
-	mov	b,(_main_sloc0_1_0 + 2)
-	mov	a,(_main_sloc0_1_0 + 3)
-	lcall	___fssub
 	mov	r6,dpl
 	mov	r7,dph
 	mov	r0,b
@@ -3394,7 +3132,7 @@ L016012?:
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	mov	dptr,#_main_delta_1_123
+	mov	dptr,#_main_avg_angle_1_121
 	mov	a,r6
 	movx	@dptr,a
 	inc	dptr
@@ -3406,7 +3144,7 @@ L016012?:
 	inc	dptr
 	mov	a,r1
 	movx	@dptr,a
-;	sensor_test.c:600: if (delta > 180.0) delta -= 360.0;
+;	sensor_test.c:610: if (avg_angle < 0.0) avg_angle += 360.0; 
 	push	ar6
 	push	ar7
 	push	ar0
@@ -3414,69 +3152,7 @@ L016012?:
 	clr	a
 	push	acc
 	push	acc
-	mov	a,#0x34
 	push	acc
-	mov	a,#0x43
-	push	acc
-	mov	dpl,r6
-	mov	dph,r7
-	mov	b,r0
-	mov	a,r1
-	lcall	___fsgt
-	mov	r2,dpl
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar1
-	pop	ar0
-	pop	ar7
-	pop	ar6
-	mov	a,r2
-	jz	L016004?
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0xB4
-	push	acc
-	mov	a,#0x43
-	push	acc
-	mov	dpl,r6
-	mov	dph,r7
-	mov	b,r0
-	mov	a,r1
-	lcall	___fssub
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	mov	dptr,#_main_delta_1_123
-	mov	a,r2
-	movx	@dptr,a
-	inc	dptr
-	mov	a,r3
-	movx	@dptr,a
-	inc	dptr
-	mov	a,r4
-	movx	@dptr,a
-	inc	dptr
-	mov	a,r5
-	movx	@dptr,a
-	sjmp	L016005?
-L016004?:
-;	sensor_test.c:601: else if (delta < - 180.0) delta += 360.0;
-	push	ar6
-	push	ar7
-	push	ar0
-	push	ar1
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0x34
-	push	acc
-	mov	a,#0xC3
 	push	acc
 	mov	dpl,r6
 	mov	dph,r7
@@ -3492,7 +3168,7 @@ L016004?:
 	pop	ar7
 	pop	ar6
 	mov	a,r2
-	jz	L016005?
+	jz	L016002?
 	clr	a
 	push	acc
 	push	acc
@@ -3512,7 +3188,7 @@ L016004?:
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	mov	dptr,#_main_delta_1_123
+	mov	dptr,#_main_avg_angle_1_121
 	mov	a,r2
 	movx	@dptr,a
 	inc	dptr
@@ -3524,9 +3200,9 @@ L016004?:
 	inc	dptr
 	mov	a,r5
 	movx	@dptr,a
-L016005?:
-;	sensor_test.c:603: cumulative_angle += delta;
-	mov	dptr,#_main_cumulative_angle_1_123
+L016002?:
+;	sensor_test.c:611: if (avg_angle > 360.0) avg_angle -= 360.0; 
+	mov	dptr,#_main_avg_angle_1_121
 	movx	a,@dptr
 	mov	r2,a
 	inc	dptr
@@ -3538,23 +3214,44 @@ L016005?:
 	inc	dptr
 	movx	a,@dptr
 	mov	r5,a
-	mov	dptr,#_main_delta_1_123
-	movx	a,@dptr
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	clr	a
 	push	acc
-	inc	dptr
-	movx	a,@dptr
 	push	acc
-	inc	dptr
-	movx	a,@dptr
+	mov	a,#0xB4
 	push	acc
-	inc	dptr
-	movx	a,@dptr
+	mov	a,#0x43
 	push	acc
 	mov	dpl,r2
 	mov	dph,r3
 	mov	b,r4
 	mov	a,r5
-	lcall	___fsadd
+	lcall	___fsgt
+	mov	r6,dpl
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	a,r6
+	jz	L016004?
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0xB4
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r4
+	mov	a,r5
+	lcall	___fssub
 	mov	r2,dpl
 	mov	r3,dph
 	mov	r4,b
@@ -3562,7 +3259,7 @@ L016005?:
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	mov	dptr,#_main_cumulative_angle_1_123
+	mov	dptr,#_main_avg_angle_1_121
 	mov	a,r2
 	movx	@dptr,a
 	inc	dptr
@@ -3574,21 +3271,9 @@ L016005?:
 	inc	dptr
 	mov	a,r5
 	movx	@dptr,a
-;	sensor_test.c:604: prev_angle = avg_angle;
-	mov	dptr,#_main_prev_angle_1_123
-	mov	a,_main_sloc0_1_0
-	movx	@dptr,a
-	inc	dptr
-	mov	a,(_main_sloc0_1_0 + 1)
-	movx	@dptr,a
-	inc	dptr
-	mov	a,(_main_sloc0_1_0 + 2)
-	movx	@dptr,a
-	inc	dptr
-	mov	a,(_main_sloc0_1_0 + 3)
-	movx	@dptr,a
-;	sensor_test.c:606: smoothed_angle = alpha * cumulative_angle + (1-alpha) * smoothed_angle; 
-	mov	dptr,#_main_cumulative_angle_1_123
+L016004?:
+;	sensor_test.c:612: smoothed_angle = alpha * avg_angle + (1-alpha) * smoothed_angle; 
+	mov	dptr,#_main_avg_angle_1_121
 	movx	a,@dptr
 	push	acc
 	inc	dptr
@@ -3615,7 +3300,7 @@ L016005?:
 	push	ar3
 	push	ar4
 	push	ar5
-	mov	dptr,#_main_smoothed_angle_1_123
+	mov	dptr,#_main_smoothed_angle_1_121
 	movx	a,@dptr
 	push	acc
 	inc	dptr
@@ -3658,7 +3343,7 @@ L016005?:
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	mov	dptr,#_main_smoothed_angle_1_123
+	mov	dptr,#_main_smoothed_angle_1_121
 	mov	a,r2
 	movx	@dptr,a
 	inc	dptr
@@ -3670,102 +3355,27 @@ L016005?:
 	inc	dptr
 	mov	a,r5
 	movx	@dptr,a
-;	sensor_test.c:607: avg_angle = atan2f((float)mag_y, (float)mag_x) * 180.0 / M_PI - declination_angle;
-	mov	dptr,#_main_mag_y_1_123
-	movx	a,@dptr
-	mov	r2,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r3,a
-	mov	dpl,r2
-	mov	dph,r3
-	lcall	___sint2fs
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	dptr,#_main_mag_x_1_123
-	movx	a,@dptr
-	mov	r6,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r7,a
-	mov	dpl,r6
-	mov	dph,r7
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
-	lcall	___sint2fs
-	mov	_atan2f_PARM_2,dpl
-	mov	(_atan2f_PARM_2 + 1),dph
-	mov	(_atan2f_PARM_2 + 2),b
-	mov	(_atan2f_PARM_2 + 3),a
-	pop	ar5
-	pop	ar4
-	pop	ar3
-	pop	ar2
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r4
-	mov	a,r5
-	lcall	_atan2f
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
-	mov	dptr,#0x0000
-	mov	b,#0x34
-	mov	a,#0x43
-	lcall	___fsmul
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	mov	a,#0xDB
-	push	acc
-	mov	a,#0x0F
-	push	acc
-	mov	a,#0x49
-	push	acc
-	mov	a,#0x40
-	push	acc
-;	sensor_test.c:608: printf("%d,%d,%f\r\n", mag_x, mag_y, avg_angle);
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r4
-	mov	a,r5
-	lcall	___fsdiv
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
-	mov	dptr,#_main_mag_y_1_123
+;	sensor_test.c:614: printf("%f, %f, %f\r\n", sum_x/25.0, sum_y/25.0, smoothed_angle);
+	mov	dptr,#_main_smoothed_angle_1_121
 	movx	a,@dptr
 	push	acc
 	inc	dptr
 	movx	a,@dptr
 	push	acc
-	mov	dptr,#_main_mag_x_1_123
+	inc	dptr
 	movx	a,@dptr
 	push	acc
 	inc	dptr
 	movx	a,@dptr
 	push	acc
+	push	_main_sloc1_1_0
+	push	(_main_sloc1_1_0 + 1)
+	push	(_main_sloc1_1_0 + 2)
+	push	(_main_sloc1_1_0 + 3)
+	push	_main_sloc0_1_0
+	push	(_main_sloc0_1_0 + 1)
+	push	(_main_sloc0_1_0 + 2)
+	push	(_main_sloc0_1_0 + 3)
 	mov	a,#__str_8
 	push	acc
 	mov	a,#(__str_8 >> 8)
@@ -3774,9 +3384,12 @@ L016005?:
 	push	acc
 	lcall	_printf
 	mov	a,sp
-	add	a,#0xf5
+	add	a,#0xf1
 	mov	sp,a
-	ljmp	L016007?
+;	sensor_test.c:619: waitms(10);
+	mov	dptr,#0x000A
+	lcall	_waitms
+	ljmp	L016006?
 	rseg R_CSEG
 
 	rseg R_XINIT
@@ -3813,13 +3426,13 @@ __str_5:
 	db 'sensor_test.c'
 	db 0x00
 __str_6:
-	db 'Mar 26 2025'
+	db 'Mar 27 2025'
 	db 0x00
 __str_7:
-	db '22:57:10'
+	db '15:20:42'
 	db 0x00
 __str_8:
-	db '%d,%d,%f'
+	db '%f, %f, %f'
 	db 0x0D
 	db 0x0A
 	db 0x00
