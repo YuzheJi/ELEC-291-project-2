@@ -19,7 +19,7 @@ t = 0
 # === INIT PLOT ===
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
 
-# X and Y
+# --- X and Y plot ---
 line1, = ax1.plot([], [], label="X")
 line2, = ax1.plot([], [], label="Y")
 ax1.set_ylim(-100, 100)
@@ -28,7 +28,7 @@ ax1.set_title("X, Y and Angle vs Time")
 ax1.legend()
 ax1.grid(True)
 
-# Angle
+# --- Angle plot ---
 line3, = ax2.plot([], [], label="Angle", color='orange')
 ax2.set_ylim(0, 360)
 ax2.set_xlabel("Time (frames)")
@@ -36,6 +36,11 @@ ax2.set_ylabel("Angle (°)")
 ax2.legend()
 ax2.grid(True)
 
+# --- Angle display text ---
+angle_text = ax2.text(0.02, 0.95, '', transform=ax2.transAxes, fontsize=12,
+                      verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
+
+# === UPDATE FUNCTION ===
 def update(frame):
     global t
     try:
@@ -56,13 +61,17 @@ def update(frame):
                 line2.set_data(t_data, y_data)
                 line3.set_data(t_data, angle_data)
 
+                angle_text.set_text(f"Current angle: {angle:.2f}°")
+
+
                 ax1.set_xlim(max(0, t - MAX_POINTS), t)
                 ax2.set_xlim(max(0, t - MAX_POINTS), t)
     except:
         pass  # Skip malformed lines
 
-    return line1, line2, line3
+    return line1, line2, line3, angle_text
 
+# === RUN LIVE PLOT ===
 ani = animation.FuncAnimation(fig, update, interval=50)
 plt.tight_layout()
 plt.show()
