@@ -231,50 +231,62 @@ void TIM22_Handler(void)
 void Auto_mode(){
 
 	int timeout_cnt;
-	int exit = 0;
-	long no_res_count = 0;
+	int no_res_count = 0;
+	int command = 0;
+	int state_res;
+	int count;
 
-	while(no_res_count>0){
-		sprintf(buff, "000,000,0,1\n"); // Construct a test message
+	while(no_res_count > -1){
+		sprintf(buff, "000,000,0,1\n"); 
 		printf("%s\r\n",buff);
-		eputc2('!'); // Send a message to the slave. First send the 'attention' character which is '!'
-		// Wait a bit so the slave has a chance to get ready
-		waitms(15); // This may need adjustment depending on how busy is the slave
-		eputs2(buff); // Send the test message
-		eputc2('@'); // Request a message from the slave		
+		eputc2('!'); 
+		waitms(15); 
+		eputs2(buff); 
+		eputc2('@'); 	
 		timeout_cnt=0;
 		while(1){
-			if(ReceivedBytes2()>1) break; // Something has arrived
+			if(ReceivedBytes2()>4) break; // Something has arrived
 			if(++timeout_cnt>250) break; // Wait up to 25ms for the repply
-			Delay_us(100); // 100us*250=25ms
+			Delay_us(100); 
 		}
-		if(ReceivedBytes2()>1);
+		if(ReceivedBytes2()>4){
+			egets2(buff, sizeof(buff)-1);
+			if(strlen(buff)==5){
+				sscanf(buff,"%d,%02d",&state_res, &count);
+				if(state_res == 1) no_res_count = -1;
+			}
+		}
 		else {
 			while (ReceivedBytes2()) egetc2(); 
-			printf("NO RESPONSE\r\n");
+			printf("no response auto_mode_setting %d\r\n",no_res_count);
+			no_res_count++;
 		}
 		waitms(50);
-		no_res_count++;
-		if(no_res_count>1000L){
+		if(no_res_count>100){
 			no_res_count = -1;
-			exit=1;
+			state_res = 0;
 			LCDprint("No response",1,1);
 			LCDprint("Exiting... ",2,1);
+			waitms(1000);
 		}
 	}
 
-	while(!exit){
-
+	while(state_res){
 		if(!JOYBUT){
 			button_counter = 0;
 			while(!JOYBUT);
 			if (button_counter<1500L);
 			else {
-				exit = 1;
+				command = 0;
 				printf("auto exit... \r\n");
 			}
 		}
 
+		sprintf(buff, "000,000,0,%d\n",command); 
+		printf("%s\r\n",buff);
+		eputc2('!'); 
+		waitms(15); 
+		eputs2(buff); 
 		eputc2('@'); // Request a message from the slave		
 		timeout_cnt=0;
 		while(1){
@@ -285,8 +297,9 @@ void Auto_mode(){
 			
 		if(ReceivedBytes2()>1) {
 			egets2(buff, sizeof(buff)-1);
-			if(strlen(buff)==5){
+			if(strlen(buff)==1){
 				printf("Slave says: %s\r", buff);
+				sscanf(buff,"%01d,%02d",&state_res, &count);
 			}
 			else{
 				while (ReceivedBytes2()) egetc2(); 
@@ -338,12 +351,9 @@ void main(void)
 	LCDprint("       Project2 ", 2, 1);
 
 	waitms(1000);
-
 	LCDprint("Coin-Picking    ", 1, 1);
 	LCDprint("          Robot ", 2, 1);
-
 	waitms(1000);
-
 	ReceptionOff();
 
 	SendATCommand("AT+VER\r\n");
@@ -353,10 +363,7 @@ void main(void)
 	SendATCommand("AT+RFC002\r\n");
 	SendATCommand("AT+POWE\r\n");
 	SendATCommand("AT+CLSS\r\n");
-	
 	SendATCommand("AT+DVIDEFEF\r\n");
-
-	
 
 	while(1)
 	{
@@ -394,40 +401,30 @@ void main(void)
 
 		sprintf(buff, "%03d,%03d,%01d,%01d\n", vx100, vy100, pick_order, auto_state); // Construct a test message
 		printf("%s\r\n",buff);
-		eputc2('!'); // Send a message to the slave. First send the 'attention' character which is '!'
-		// Wait a bit so the slave has a chance to get ready
+		eputc2('!'); 
 		waitms(15); // This may need adjustment depending on how busy is the slave
 		eputs2(buff); // Send the test message
-		
-		
 		waitms(15); // This may need adjustment depending on how busy is the slave
-
 		eputc2('@'); // Request a message from the slave
 		
 		timeout_cnt=0;
-		while(1)
-		{
-			if(ReceivedBytes2()>6) break; // Something has arrived
+		while(1){
+			if(ReceivedBytes2()>4) break; // Something has arrived
 			if(++timeout_cnt>250) break; // Wait up to 25ms for the repply
 			Delay_us(100); // 100us*250=25ms
-		}
-		
-		if(ReceivedBytes2()>4) // Something has arrived from the slave
-		{
+		}		
+		if(ReceivedBytes2()>4){
 			egets2(buff, sizeof(buff)-1);
-			if(strlen(buff)==5) // Check for valid message size (5 characters + new line '\n')
-			{
+			if(strlen(buff)==5){
 				printf("Slave says: %s\r", buff);
 				sscanf(buff, "%04d",&metal_freq);
 			}
-			else
-			{
+			else{
 				while (ReceivedBytes2()) egetc2(); 
 				printf("*** BAD MESSAGE ***: %s\r", buff);
 			}
 		}
-		else // Timed out waiting for reply
-		{
+		else{
 			while (ReceivedBytes2()) egetc2(); 
 			printf("NO RESPONSE\r\n");
 			pick_order = 0;
@@ -442,6 +439,7 @@ void main(void)
 				Auto_enter();
 				printf("auto \r\n");
 				Auto_mode();
+				auto_state = 0;
 			}
 		}
 

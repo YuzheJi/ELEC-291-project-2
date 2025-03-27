@@ -545,33 +545,80 @@ void Init_all(){
 	return;
 }
 
+void Move_back_ms(int ms){
+
+	L_motor_dir = 0;
+	R_motor_dir = 0;
+
+	pwm_left = 100;
+	pwm_right = 100;
+
+	waitms(ms);
+
+	L_motor_dir = 1;
+	R_motor_dir = 1;
+	pwm_left = 0;
+	pwm_right = 0;
+	return;
+}
+
+void Move_forward(){
+
+	L_motor_dir = 1;
+	R_motor_dir = 1;
+	pwm_left = 100;
+	pwm_right = 100;
+	return;
+}
+
 void Auto_mode_slave(){
 	int count = 0;
+	int command;
+	int state_res = 1;
+	int bound = 0;
 	char c;
 
-	while(count < 20){
+	Move_forward();
+
+	while(count < 20 && state_res){
 		if(RXU1()){
 			c=getchar1();	
 			if(c=='!'){
 				getstr1(buff, sizeof(buff)-1);
-				if(strlen(buff)==7){
-					printf("Master says: %s\r\n", buff);
+				if(strlen(buff)==11){
+					printf("master_messgae_auto_mode: %s\r\n", buff);
+					sscanf(buff,"000,000,0,%d",&command);
+					if(command) state_res = 1;
+					else state_res = 0;
 				}
 				else{
-					printf("*** BAD MESSAGE ***(%d): %s\r\n", buff,strlen(buff));
+					printf("bad_message_auto_mode: %s\r\n", buff);
 				}				
 			}
 			else if(c=='@'){
-				sprintf(buff, "%02d\n", count);
-				waitms(5); // The radio seems to need this delay...
+				sprintf(buff, "%01d,%02d\n", state_res, count);
+				waitms(5); 
 				sendstr1(buff);
 			}
+			else{
+				printf("no message\r\n");
+			}
 		}
-		if (freq100>5400){
+
+		// detect the coin
+		d1 = ADC_at_Pin(QFP32_MUX_P1_3);
+		d2 = ADC_at_Pin(QFP32_MUX_P1_4);
+		bound_flag = check_bound(d1,d2);
+		printf("automode freq: %f, bound_dectect: %d\r\n",freq100/100.0,bound);
+
+		if (freq100>5350){
+			Move_back_ms(300);
 			servo_pick();
 			count++;
+			Move_forward();
 		}
 	}
+	printf("Auto mode finished!\r\n");
 }
 
 void main (void)
@@ -581,10 +628,9 @@ void main (void)
     int vx = 0, vy = 0; 
     float threshold = 161;
 	int motor_pwm = 0; 
-	int pick;
-	int auto_mode;
+	int pick = 0;
+	int auto_mode = 1;
 	char pick_done = 1;
-	int bound_flag = 0;
 	
 	Init_all();
 	waitms(500);
@@ -611,12 +657,15 @@ void main (void)
 	
 	while(1)
 	{	
-		// detect the coin
-		d1 = ADC_at_Pin(QFP32_MUX_P1_3);
-		d2 = ADC_at_Pin(QFP32_MUX_P1_4);
-		bound_flag = check_bound(d1,d2);
-	
 		//printf("freq: %f, bound_flag: %d\r\n\r", freq100/100.0,bound_flag);
+		if(pick==1){
+			servo_pick();
+			pick = 0;
+		}
+		
+		if(auto_mode){
+			Auto_mode_slave();
+		}
 
 		// The message format: 000,000 --- (vx,vy)
 		if(RXU1()) // Something has arrived
@@ -631,15 +680,6 @@ void main (void)
 					printf("Master says: %s\r\n", buff);
 					sscanf(buff, "%03d,%03d,%01d,%d01", &vx, &vy, &pick, &auto_mode);
                 	printf("Joystick Received: Vx = %03d, Vy = %03d, Order = %01d, Auto = %01d\r\n", vx, vy, pick, auto_mode);
-
-					if(pick==1){
-						servo_pick();
-						pick = 0;
-					}
-					
-					if(auto_mode){
-						Auto_mode_slave();
-					}
 
 					// Determine of Vx and Vy are within 5% error
 					vx_error = abs(vx-vx_thres)*100/vx_thres; 
