@@ -12,7 +12,7 @@
 
 //                                    ----------  
 // RF_RXD               P0.0      1  |          |  32      P0.1     RF_TXD
-//                      GND       2  |          |  31      P0.2  	
+//                      GND       2  |          |  31      P0.2  	Coin detector
 //                      5V        3  |          |  30      P0.3  	
 //                      5V        4  |          |  29      P0.4  
 //                      RST       5  |          |  28      P0.5  
@@ -21,8 +21,8 @@
 //                      P3.2      8  |          |  25      P1.0  
 //                      P3.1      9  |          |  24      P1.1  
 //                      P3.0     10  |          |  23      P1.2  
-//                      P2.6     11  |          |  22      P1.3  
-//                      P2.5     12  |          |  21      P1.4  
+//                      P2.6     11  |          |  22      P1.3     Boundary1
+//                      P2.5     12  |          |  21      P1.4  	Boundary2
 // R_bridge_2           P2.4     13  |          |  20      P1.5  	Magnet
 // R_bridge_1           P2.3     14  |          |  19      P1.6  	Servo_arm
 // L_bridge_2           P2.2     15  |          |  18      P1.7  	Servo_base
@@ -45,8 +45,6 @@
 #define Magnet 	   P1_5
 
 
-
-
 idata char buff[20];
 unsigned int pwm_counter = 0; 
 unsigned int servo_counter = 0; 
@@ -59,6 +57,7 @@ long freq100;
 unsigned int fre_mea_count = 0;
 int d1, d2;
 unsigned int seed = 12345;
+float pwm_corr = 0.95;
 
 
 char _c51_external_startup (void)
@@ -568,7 +567,7 @@ void Right_angle(int angle){
 	L_motor_dir = 1;
 	R_motor_dir = 0;
 	pwm_left = 80;
-	pwm_right = 80;
+	pwm_right = 80 * pwm_corr;
 
 	waitms(angle);
 
@@ -583,8 +582,8 @@ void Move_forward(){
 
 	L_motor_dir = 0;
 	R_motor_dir = 0;
-	pwm_left = 80;
-	pwm_right = 80;
+	pwm_left = 90;
+	pwm_right = 90 * pwm_corr;
 	return;
 }
 
@@ -623,7 +622,7 @@ void Auto_mode_slave(){
 				// }				
 			}
 			else if(c=='@'){
-				sprintf(buff, "%01d,%02d,0000\n", state_res, count);
+				sprintf(buff, "%01d,%02d,%ld\n", state_res, count,freq100);
 				waitms(5); 
 				sendstr1(buff);
 			}
@@ -726,7 +725,7 @@ void main (void)
 					// if vx moved but vy didn't move => move forward 
 					if ((vy_error>5) && (vx_error<5)){
 						pwm_left = vy_error; 
-						pwm_right = vy_error; 
+						pwm_right = vy_error * pwm_corr; 
 						if (vy_err > 0){ //move forward
 							L_motor_dir = 0; 
 							R_motor_dir = 0; 
@@ -734,11 +733,12 @@ void main (void)
 						else { //move backward 
 							L_motor_dir = 1; 
 							R_motor_dir = 1; 
+							pwm_right *= 1.07;
 						}
 					}
 					if ((vx_error>5)&&(vy_error<5)){
 						pwm_left = vx_error; 
-						pwm_right = vx_error; 
+						pwm_right = vx_error * pwm_corr; 
 						if (vx_err > 0){ //turn right
 							L_motor_dir = 1; 
 							R_motor_dir = 0; 
@@ -757,22 +757,22 @@ void main (void)
 							if (vx_err>0){
 								if (vy*100<=vy_thres*100/2){
 									pwm_left = vy_error; 
-									pwm_right = vy_error*100/(vx_error+vy_error);
+									pwm_right = pwm_corr*vy_error*100/(vx_error+vy_error);
 								}
 								else {
 									pwm_left = vx_error; 
-									pwm_right = vx_error*100/(vx_error+vy_error);
+									pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
 								}
 							}
 							// Region 2
 							else {
 								if (vy*100<=vy_thres*100/2){
 									pwm_left = vy_error*100/(vx_error+vy_error);
-									pwm_right = vy_error; 
+									pwm_right = vy_error*pwm_corr; 
 								}
 								else {
 									pwm_left = vx_error*100/(vx_error+vy_error);
-									pwm_right = vx_error; 
+									pwm_right = vx_error*pwm_corr; 
 								}
 							}
 						}
@@ -784,22 +784,22 @@ void main (void)
 							if (vx_err>0){
 								if (vy*100<=vy_thres*100/2){
 									pwm_left = vy_error; 
-									pwm_right = vy_error*100/(vx_error+vy_error);
+									pwm_right = pwm_corr*vy_error*100/(vx_error+vy_error);
 								}
 								else {
 									pwm_left = vx_error; 
-									pwm_right = vx_error*100/(vx_error+vy_error);
+									pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
 								}
 							}
 							// Region 3
 							else {
 								if (vy*100<=vy_thres*100/2){
 									pwm_left = vy_error*100/(vx_error+vy_error);
-									pwm_right = vy_error; 
+									pwm_right =pwm_corr*vy_error; 
 								}
 								else {
 									pwm_left = vx_error*100/(vx_error+vy_error);
-									pwm_right = vx_error; 
+									pwm_right = pwm_corr*vx_error; 
 								}
 							}
 						}
