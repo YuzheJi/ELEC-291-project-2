@@ -8,7 +8,7 @@ int get_freq(){
 	unsigned char overflow_count=0;
 	int i;
 
-	for(i=0; i<20; i++){
+	for(i=0; i<5; i++){
 		TL0=0; 
 		TH0=0;
 		TF0=0;
@@ -37,6 +37,6 @@ int get_freq(){
 		overflow_count = 0;
 		freq100 += 1.0/(period*10);
 	}
-	freq100 /= 20.0;
+	freq100 /= 5.0;
     return freq100;
 }

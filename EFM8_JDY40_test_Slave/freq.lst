@@ -1,7 +1,7 @@
 0000              1   ;--------------------------------------------------------
 0000              2   ; File Created by C51
 0000              3   ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-0000              4   ; This file was generated Wed Mar 26 14:40:00 2025
+0000              4   ; This file was generated Thu Mar 27 02:40:10 2025
 0000              5   ;--------------------------------------------------------
                   5   $name freq
                   6   $optc51 --model-small
@@ -550,7 +550,7 @@
 0000            550            using   0
 0000            551   ;        freq.c:6: long freq100 = 0;
 0000            552   ;        freq.c:8: unsigned char overflow_count=0;
-0000            553   ;        freq.c:11: for(i=0; i<20; i++){
+0000            553   ;        freq.c:11: for(i=0; i<5; i++){
 0000 E4         554            clr     a
 0001 F5A0       555            mov     _get_freq_freq100_1_23,a
 0003 F5A1       556            mov     (_get_freq_freq100_1_23 + 1),a
@@ -562,7 +562,7 @@
 000F            562   L002017?:
 000F C3         563            clr     c
 0010 E540       564            mov     a,_get_freq_i_1_23
-0012 9414       565            subb    a,#0x14
+0012 9405       565            subb    a,#0x05
 0014 E541       566            mov     a,(_get_freq_i_1_23 + 1)
 0016 6480       567            xrl     a,#0x80
 0018 9480       568            subb    a,#0x80
@@ -768,7 +768,7 @@
 0198 8583A1     768            mov     (_get_freq_freq100_1_23 + 1),dph
 019B 85F0A2     769            mov     (_get_freq_freq100_1_23 + 2),b
 019E F5A3       770            mov     (_get_freq_freq100_1_23 + 3),a
-01A0            771   ;        freq.c:11: for(i=0; i<20; i++){
+01A0            771   ;        freq.c:11: for(i=0; i<5; i++){
 01A0 0540       772            inc     _get_freq_i_1_23
 01A2 E4         773            clr     a
 01A3 B54050     774            cjne    a,_get_freq_i_1_23,L002044?
@@ -776,7 +776,7 @@
 01A8            776   L002044?:
 01A8 020000     777            ljmp    L002017?
 01AB            778   L002020?:
-01AB            779   ;        freq.c:40: freq100 /= 20.0;
+01AB            779   ;        freq.c:40: freq100 /= 5.0;
 01AB 85A082     780            mov     dpl,_get_freq_freq100_1_23
 01AE 85A183     781            mov     dph,(_get_freq_freq100_1_23 + 1)
 01B1 85A2F0     782            mov     b,(_get_freq_freq100_1_23 + 2)
@@ -791,7 +791,7 @@
 01C3 C0E0       791            push    acc
 01C5 74A0       792            mov     a,#0xA0
 01C7 C0E0       793            push    acc
-01C9 7441       794            mov     a,#0x41
+01C9 7440       794            mov     a,#0x40
 01CB C0E0       795            push    acc
 01CD 8A82       796            mov     dpl,r2
 01CF 8B83       797            mov     dph,r3

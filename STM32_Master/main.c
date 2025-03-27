@@ -16,6 +16,7 @@ long timer22_counter = 0;
 long button_counter = 0;
 int buzzer_wait = 6000; 		//buzzer wait time in ms
 char buff[80];
+int dummy;
 
 
 
@@ -232,7 +233,7 @@ void Auto_mode(){
 
 	int timeout_cnt;
 	int no_res_count = 0;
-	int command = 0;
+	int command = 1;
 	int state_res;
 	int count;
 
@@ -251,8 +252,9 @@ void Auto_mode(){
 		}
 		if(ReceivedBytes2()>4){
 			egets2(buff, sizeof(buff)-1);
-			if(strlen(buff)==5){
-				sscanf(buff,"%d,%02d",&state_res, &count);
+			if(strlen(buff)==10){
+				sscanf(buff,"%d,%02d,%04d",&state_res, &count, &dummy);
+				printf("%d, %s\r\n",state_res,buff);
 				if(state_res == 1) no_res_count = -1;
 			}
 		}
@@ -275,7 +277,7 @@ void Auto_mode(){
 		if(!JOYBUT){
 			button_counter = 0;
 			while(!JOYBUT);
-			if (button_counter<1500L);
+			if (button_counter<1000L);
 			else {
 				command = 0;
 				printf("auto exit... \r\n");
@@ -297,9 +299,9 @@ void Auto_mode(){
 			
 		if(ReceivedBytes2()>1) {
 			egets2(buff, sizeof(buff)-1);
-			if(strlen(buff)==1){
+			if(strlen(buff)==10){
 				printf("Slave says: %s\r", buff);
-				sscanf(buff,"%01d,%02d",&state_res, &count);
+				sscanf(buff,"%01d,%02d,%04d",&state_res, &count,dummy);
 			}
 			else{
 				while (ReceivedBytes2()) egetc2(); 
@@ -363,7 +365,7 @@ void main(void)
 	SendATCommand("AT+RFC002\r\n");
 	SendATCommand("AT+POWE\r\n");
 	SendATCommand("AT+CLSS\r\n");
-	SendATCommand("AT+DVIDEFEF\r\n");
+	SendATCommand("AT+DVIDEF11\r\n");
 
 	while(1)
 	{
@@ -402,22 +404,21 @@ void main(void)
 		sprintf(buff, "%03d,%03d,%01d,%01d\n", vx100, vy100, pick_order, auto_state); // Construct a test message
 		printf("%s\r\n",buff);
 		eputc2('!'); 
-		waitms(15); // This may need adjustment depending on how busy is the slave
+		waitms(5); // This may need adjustment depending on how busy is the slave
 		eputs2(buff); // Send the test message
-		waitms(15); // This may need adjustment depending on how busy is the slave
 		eputc2('@'); // Request a message from the slave
 		
 		timeout_cnt=0;
 		while(1){
-			if(ReceivedBytes2()>4) break; // Something has arrived
+			if(ReceivedBytes2()>9) break; // Something has arrived
 			if(++timeout_cnt>250) break; // Wait up to 25ms for the repply
 			Delay_us(100); // 100us*250=25ms
 		}		
-		if(ReceivedBytes2()>4){
+		if(ReceivedBytes2()>9){
 			egets2(buff, sizeof(buff)-1);
-			if(strlen(buff)==5){
+			if(strlen(buff)==10){
 				printf("Slave says: %s\r", buff);
-				sscanf(buff, "%04d",&metal_freq);
+				sscanf(buff, "%01d,%02d,%04d",&dummy,&dummy,&metal_freq);
 			}
 			else{
 				while (ReceivedBytes2()) egetc2(); 
@@ -433,7 +434,7 @@ void main(void)
 		if(!JOYBUT){
 			button_counter = 0;
 			while(!JOYBUT);
-			if (button_counter<1500L) pick_order = 1;
+			if (button_counter<1000L) pick_order = 1;
 			else {
 				auto_state = 1;
 				Auto_enter();
@@ -456,7 +457,7 @@ void main(void)
 		buzzer_ctrl(metal_freq);
 
 		TIM22->CR1 |= BIT0; 
-		waitms(50);  // Set the information interchange pace: communicate about every 50ms
+		waitms(20);  // Set the information interchange pace: communicate about every 50ms
 	}
 	
 }
