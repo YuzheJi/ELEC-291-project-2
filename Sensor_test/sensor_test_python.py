@@ -30,7 +30,7 @@ ax1.grid(True)
 
 # --- Angle plot ---
 line3, = ax2.plot([], [], label="Angle", color='orange')
-ax2.set_ylim(0, 360)
+ax2.set_ylim(-360, 360)
 ax2.set_xlabel("Time (frames)")
 ax2.set_ylabel("Angle (°)")
 ax2.legend()

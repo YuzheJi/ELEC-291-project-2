@@ -13,47 +13,44 @@ printf_float
 <SEGMENTS>
 R_GSINIT,code,0000,NO
 R_BSEG,bit,0000,NO
-R_XSEG,xdata,003A,NO
+R_XSEG,xdata,0032,NO
 BIT_BANK,data,0000,OV
-R_CONST,code,00F9,NO
+R_CONST,code,00FB,NO
 rbank0,data,0000,OV
 R_PSEG,xdata,0000,NO
 R_DINIT,code,0000,NO
-R_DSEG,data,0049,NO
+R_DSEG,data,0048,NO
 R_OSEG,data,0000,OV
 R_IXSEG,xdata,0000,NO
 R_ISEG,idata,0000,NO
 R_HOME,code,0000,NO
 R_XINIT,code,0000,NO
-R_CSEG,code,123C,NO
+R_CSEG,code,0F99,NO
 </SEGMENTS>
 
 <LOCALS>
 L002004?,R_CSEG,0029,0000
 L002001?,R_CSEG,001E,0000
-_main_sloc0_1_0,R_DSEG,0044,0004
+_main_sloc0_1_0,R_DSEG,0040,0004
 _BMM150_Read_Data_mag_x_1_118,R_DSEG,0031,0003
-L015007?,R_CSEG,0B58,0000
-L015006?,R_CSEG,0B54,0000
-L015004?,R_CSEG,0B28,0000
-L015002?,R_CSEG,0AE9,0000
+L015003?,R_CSEG,0B0B,0000
 L003009?,R_CSEG,006A,0000
-_main_mag_x_1_123,R_XSEG,001C,0002
+_main_mag_x_1_121,R_XSEG,001C,0002
 L003006?,R_CSEG,009B,0000
 L003004?,R_CSEG,0098,0000
 L003003?,R_CSEG,0094,0000
 _BMM150_compensate_y_process_comp_y0_1_102,R_XSEG,0016,0002
 L003002?,R_CSEG,0090,0000
 L003001?,R_CSEG,008C,0000
-_main_delta_1_123,R_XSEG,002E,0004
+_BMM150_Read_Data_raw_x_msb_1_119,R_DSEG,0034,0001
 _BMM150_Read_Trim_Registers_trim_xy1xy2_1_84,R_XSEG,0006,000A
-_main_sloc1_1_0,R_DSEG,0048,0001
-L016009?,R_CSEG,0CBA,0000
+_main_sloc1_1_0,R_DSEG,0044,0004
+L016008?,R_CSEG,0C66,0000
 L010012?,R_CSEG,024B,0000
-L016007?,R_CSEG,0CA1,0000
-L016005?,R_CSEG,1088,0000
-L016004?,R_CSEG,1024,0000
-_main_mag_y_1_123,R_XSEG,001E,0002
+L016006?,R_CSEG,0C4E,0000
+L016004?,R_CSEG,0EC8,0000
+L016002?,R_CSEG,0E56,0000
+_main_mag_y_1_121,R_XSEG,001E,0002
 L004007?,R_CSEG,00C2,0000
 L010028?,R_CSEG,0222,0000
 L004004?,R_CSEG,00B2,0000
@@ -61,24 +58,21 @@ L010026?,R_CSEG,01F4,0000
 L004001?,R_CSEG,00B7,0000
 L010024?,R_CSEG,01C6,0000
 L011010?,R_CSEG,030C,0000
-_BMM150_Read_Data_raw_z_lsb_1_119,R_DSEG,0036,0001
 L005009?,R_CSEG,0100,0000
 L005007?,R_CSEG,00F9,0000
-_main_mag_z_1_123,R_XSEG,0020,0002
+_main_mag_z_1_121,R_XSEG,0020,0002
 L005005?,R_CSEG,00CE,0000
-_BMM150_Read_Data_raw_rhall_lsb_1_119,R_DSEG,0038,0001
 L005001?,R_CSEG,00D7,0000
-_BMM150_Read_Data_raw_z_msb_1_119,R_DSEG,0037,0001
-_BMM150_Read_Data_z_val_1_119,R_DSEG,0040,0002
+_BMM150_Read_Data_raw_z_msb_1_119,R_DSEG,0036,0001
+_BMM150_Read_Data_z_val_1_119,R_DSEG,003C,0002
 L012019?,R_CSEG,038E,0000
 L012012?,R_CSEG,05BD,0000
 L012011?,R_CSEG,05B4,0000
 L006008?,R_CSEG,0109,0000
 L006001?,R_CSEG,0104,0000
 L012022?,R_CSEG,03D8,0000
-_BMM150_Read_Data_raw_z_1_119,R_DSEG,003A,0002
 L013019?,R_CSEG,05DD,0000
-_BMM150_Read_Data_rhall_val_1_119,R_DSEG,0042,0002
+_BMM150_Read_Data_rhall_val_1_119,R_DSEG,003E,0002
 L013012?,R_CSEG,080A,0000
 L013011?,R_CSEG,0801,0000
 L010009?,R_CSEG,021F,0000
@@ -87,15 +81,12 @@ L010005?,R_CSEG,01F1,0000
 L010004?,R_CSEG,01EF,0000
 L010001?,R_CSEG,01C3,0000
 _BMM150_compensate_x_retval_1_93,R_XSEG,0010,0002
-_main_cumulative_angle_1_123,R_XSEG,0036,0004
 L013022?,R_CSEG,0627,0000
 _BMM150_compensate_z_sloc0_1_0,R_DSEG,0021,0002
-_BMM150_Read_Data_raw_rhall_msb_1_119,R_DSEG,0039,0001
-_BMM150_Read_Data_x_val_1_119,R_DSEG,003C,0002
-_main_prev_angle_1_123,R_XSEG,0032,0004
+_BMM150_Read_Data_raw_rhall_msb_1_119,R_DSEG,0037,0001
+_BMM150_Read_Data_x_val_1_119,R_DSEG,0038,0002
 L014014?,R_CSEG,0A2C,0000
 L014013?,R_CSEG,0A1D,0000
-_BMM150_Read_Data_raw_y_lsb_1_119,R_DSEG,0034,0001
 __str_0,R_CONST,0000,0000
 __str_1,R_CONST,0038,0000
 __str_2,R_CONST,0057,0000
@@ -106,7 +97,7 @@ __str_6,R_CONST,00D9,0000
 __str_7,R_CONST,00E5,0000
 __str_8,R_CONST,00EE,0000
 L011005?,R_CSEG,0340,0000
-_main_sum_x_1_123,R_XSEG,0022,0004
+_main_sum_x_1_121,R_XSEG,0022,0004
 L011002?,R_CSEG,0329,0000
 L014028?,R_CSEG,085A,0000
 L008004?,R_CSEG,0165,0000
@@ -116,28 +107,30 @@ L014025?,R_CSEG,0831,0000
 L008001?,R_CSEG,0130,0000
 L014024?,R_CSEG,082A,0000
 _BMM150_Read_Data_raw_y_msb_1_119,R_DSEG,0035,0001
-_BMM150_Read_Data_y_val_1_119,R_DSEG,003E,0002
+_BMM150_Read_Data_y_val_1_119,R_DSEG,003A,0002
 _BMM150_compensate_x_process_comp_x0_1_93,R_XSEG,0012,0002
 L012008?,R_CSEG,05A9,0000
 L012006?,R_CSEG,03CA,0000
+_main_avg_angle_1_121,R_XSEG,002A,0004
 L012005?,R_CSEG,03B0,0000
 L003013?,R_CSEG,0080,0000
 L003011?,R_CSEG,006C,0000
-_main_sum_y_1_123,R_XSEG,0026,0004
+_main_sum_y_1_121,R_XSEG,0026,0004
 L012002?,R_CSEG,03C3,0000
-_main_smoothed_angle_1_123,R_XSEG,002A,0004
+_main_smoothed_angle_1_121,R_XSEG,002E,0004
 _BMM150_compensate_z_sloc2_1_0,R_DSEG,0027,0004
 _BMM150_compensate_x_sloc0_1_0,R_DSEG,0013,0004
-L016012?,R_CSEG,0ED6,0000
+L016011?,R_CSEG,0D3B,0000
 L013008?,R_CSEG,07F6,0000
 _BMM150_compensate_z_retval_1_111,R_XSEG,0018,0004
 L013006?,R_CSEG,0619,0000
 _BMM150_compensate_y_retval_1_102,R_XSEG,0014,0002
 L013005?,R_CSEG,05FF,0000
 L013002?,R_CSEG,0612,0000
-L016021?,R_CSEG,0CC3,0000
+L016021?,R_CSEG,0C6E,0000
 _BMM150_compensate_z_sloc1_1_0,R_DSEG,0023,0004
 _BMM150_compensate_y_sloc0_1_0,R_DSEG,001A,0004
+L016020?,R_CSEG,0C69,0000
 L005018?,R_CSEG,00DA,0000
 L014007?,R_CSEG,0A0C,0000
 L014005?,R_CSEG,09D3,0000
@@ -149,7 +142,7 @@ _BMM150_Read_Trim_Registers_trim_x1y1_1_84,R_XSEG,0000,0002
 <PUBLICS>
 _SPI_read_block,R_CSEG,0122,0000
 _SPI_transfer,R_CSEG,0101,0000
-_main,R_CSEG,0C0E,0000
+_main,R_CSEG,0BD1,0000
 _BMM150_Init,R_CSEG,02D9,0000
 _SPI_read_block_PARM_2,R_DSEG,000B,0003
 _SPI_read_block_PARM_3,R_DSEG,000E,0001
@@ -195,10 +188,8 @@ __divslong,any,0000,0000
 ___fsadd,any,0000,0000
 _printf,any,0000,0000
 _atan2f,any,0000,0000
-_sinf,any,0000,0000
 __gptrput,any,0000,0000
 __divsint,any,0000,0000
-_cosf,any,0000,0000
 ___fssub,any,0000,0000
 _crt0,any,0000,0000
 _atan2f_PARM_2,any,0000,0000
@@ -1686,176 +1677,150 @@ AD 82
 75 82 43
 C0 05
 12 addr16(_SPI_read;)  
-AE 82
+85 82 data8(_BMM150_Read_Data_raw_x_msb_1_119;)
 75 82 44
-C0 06
 12 addr16(_SPI_read;)  
-85 82 data8(_BMM150_Read_Data_raw_y_lsb_1_119;)
+AF 82
 75 82 45
+C0 07
 12 addr16(_SPI_read;)  
 85 82 data8(_BMM150_Read_Data_raw_y_msb_1_119;)
-75 data8(_SPI_read_block_PARM_2;) data8(_BMM150_Read_Data_raw_z_1_119;)
-75 data8(_SPI_read_block_PARM_2;0x0001;+;) 00
-75 data8(_SPI_read_block_PARM_2;0x0002;+;) 40
-75 data8(_SPI_read_block_PARM_3;) 02
-75 82 42
-12 addr16(_SPI_read_block;)  
-85 data8(_BMM150_Read_Data_raw_z_1_119;) data8(_BMM150_Read_Data_raw_z_lsb_1_119;)
-85 data8(_BMM150_Read_Data_raw_z_1_119;0x0001;+;) data8(_BMM150_Read_Data_raw_z_msb_1_119;)
+75 82 46
+12 addr16(_SPI_read;)  
+A9 82
+75 82 47
+C0 01
+12 addr16(_SPI_read;)  
+85 82 data8(_BMM150_Read_Data_raw_z_msb_1_119;)
 75 82 48
 12 addr16(_SPI_read;)  
-85 82 data8(_BMM150_Read_Data_raw_rhall_lsb_1_119;)
+A8 82
+D0 01
 75 82 49
+C0 00
+C0 01
 12 addr16(_SPI_read;)  
 85 82 data8(_BMM150_Read_Data_raw_rhall_msb_1_119;)
-75 data8(_SPI_read_block_PARM_2;) data8(_BMM150_Read_Data_raw_z_1_119;)
-75 data8(_SPI_read_block_PARM_2;0x0001;+;) 00
-75 data8(_SPI_read_block_PARM_2;0x0002;+;) 40
-75 data8(_SPI_read_block_PARM_3;) 02
-75 82 42
-12 addr16(_SPI_read_block;)  
-D0 06
+D0 01
+D0 00
+D0 07
 D0 05
-EE
-33
-95 E0
-C4
-23
-54 E0
-CE
-C4
-23
-CE
-6E
-CE
-54 E0
-CE
-6E
-FF
-53 05 F8
-ED
+74 F8
+5D
 C4
 23
 54 1F
 FD
-7A 00
-2E
-FB
-EA
-3F
-FA
-8B data8(_BMM150_Read_Data_x_val_1_119;)
-8A data8(_BMM150_Read_Data_x_val_1_119;0x0001;+;)
-C3
-74 FF
-9B
-74 8F
-8A F0
-63 F0 80
-95 F0
-50 rel2(L015002?;)
-8B data8(_BMM150_Read_Data_x_val_1_119;)
-EA
-24 E0
-F5 data8(_BMM150_Read_Data_x_val_1_119;0x0001;+;)
-E5 data8(_BMM150_Read_Data_raw_y_msb_1_119;)
-FA
+E5 data8(_BMM150_Read_Data_raw_x_msb_1_119;)
+FE
 33
 95 E0
 C4
 23
 54 E0
-CA
+CE
 C4
 23
-CA
-6A
-CA
+CE
+6E
+CE
 54 E0
-CA
-6A
-FB
+CE
+6E
+FA
+7B 00
+ED
+4E
+F5 data8(_BMM150_Read_Data_x_val_1_119;)
+EB
+4A
+F5 data8(_BMM150_Read_Data_x_val_1_119;0x0001;+;)
 74 F8
-55 data8(_BMM150_Read_Data_raw_y_lsb_1_119;)
+5F
 C4
 23
 54 1F
-FC
-7D 00
-2A
-FA
-ED
-3B
+FF
+E5 data8(_BMM150_Read_Data_raw_y_msb_1_119;)
 FB
-8A data8(_BMM150_Read_Data_y_val_1_119;)
-8B data8(_BMM150_Read_Data_y_val_1_119;0x0001;+;)
-C3
-74 FF
-9A
-74 8F
-8B F0
-63 F0 80
-95 F0
-50 rel2(L015004?;)
-8A data8(_BMM150_Read_Data_y_val_1_119;)
+33
+95 E0
+8B 06
+C4
+23
+54 E0
+CE
+C4
+23
+CE
+6E
+CE
+54 E0
+CE
+6E
+FA
+7B 00
+EF
+4E
+F5 data8(_BMM150_Read_Data_y_val_1_119;)
 EB
-24 E0
-F5 data8(_BMM150_Read_Data_y_val_1_119;0x0001;+;)
-AF data8(_BMM150_Read_Data_raw_z_msb_1_119;)
-E4
-54 01
-A2 E0
-CF
-13
-CF
-13
-CF
-FA
-74 FE
-55 data8(_BMM150_Read_Data_raw_z_lsb_1_119;)
-C3
-13
-7C 00
-4F
-FB
-EC
 4A
-FA
+F5 data8(_BMM150_Read_Data_y_val_1_119;0x0001;+;)
+74 FE
+59
 C3
-74 FF
-9B
-74 3F
-9A
-50 rel2(L015006?;)
-8B data8(_BMM150_Read_Data_z_val_1_119;)
-EA
-24 80
+13
+F9
+E5 data8(_BMM150_Read_Data_raw_z_msb_1_119;)
+FB
+33
+95 E0
+FC
+8B 06
+A2 E7
+CE
+33
+CE
+33
+CE
+54 01
+30 E0 rel3(L015003?;)
+44 FE
+FA
+7B 00
+E9
+4E
+F5 data8(_BMM150_Read_Data_z_val_1_119;)
+EB
+4A
 F5 data8(_BMM150_Read_Data_z_val_1_119;0x0001;+;)
-80 rel2(L015007?;)
-8B data8(_BMM150_Read_Data_z_val_1_119;)
-8A data8(_BMM150_Read_Data_z_val_1_119;0x0001;+;)
-AF data8(_BMM150_Read_Data_raw_rhall_msb_1_119;)
+74 FC
+58
+03
+03
+54 3F
+F8
+AE data8(_BMM150_Read_Data_raw_rhall_msb_1_119;)
 E4
 54 03
 A2 E0
-CF
+CE
 13
-CF
+CE
 13
 A2 E0
-CF
+CE
 13
-CF
+CE
 13
-CF
+CE
 FA
-74 3F
-55 data8(_BMM150_Read_Data_raw_rhall_lsb_1_119;)
-7C 00
-2F
+7B 00
+E8
+4E
 F5 data8(_BMM150_Read_Data_rhall_val_1_119;)
-EC
-3A
+EB
+4A
 F5 data8(_BMM150_Read_Data_rhall_val_1_119;0x0001;+;)
 75 data8(_BMM150_compensate_x_PARM_2;) data8(_BMM150_Read_Data_rhall_val_1_119;)
 75 data8(_BMM150_compensate_x_PARM_2;0x0001;+;) 00
@@ -1923,43 +1888,25 @@ ED
 A3
 EE
 02 addr16(__gptrput;)  
-90 data16(_main_mag_x_1_123;)  
+90 data16(_main_mag_x_1_121;)  
 E4
 F0
 A3
 F0
-90 data16(_main_mag_y_1_123;)  
+90 data16(_main_mag_y_1_121;)  
 E4
 F0
 A3
 F0
-90 data16(_main_mag_z_1_123;)  
+90 data16(_main_mag_z_1_121;)  
 E4
 F0
 A3
 F0
-90 data16(_main_prev_angle_1_123;)  
+90 data16(_main_smoothed_angle_1_121;)  
 E4
 F0
 A3
-F0
-A3
-F0
-A3
-F0
-90 data16(_main_cumulative_angle_1_123;)  
-F0
-A3
-E4
-F0
-A3
-F0
-A3
-F0
-90 data16(_main_smoothed_angle_1_123;)  
-F0
-A3
-E4
 F0
 A3
 F0
@@ -2008,7 +1955,7 @@ C0 E0
 E5 81
 24 F4
 F5 81
-90 data16(_main_sum_x_1_123;)  
+90 data16(_main_sum_x_1_121;)  
 E4
 F0
 A3
@@ -2017,7 +1964,7 @@ A3
 F0
 A3
 F0
-90 data16(_main_sum_y_1_123;)  
+90 data16(_main_sum_y_1_121;)  
 F0
 A3
 E4
@@ -2026,21 +1973,21 @@ A3
 F0
 A3
 F0
-75 data8(_main_sloc1_1_0;) 00
-74 9C
-25 data8(_main_sloc1_1_0;)
-50 rel2(L016021?;)
-02 addr16(L016012?;)  
-75 data8(_BMM150_Read_Data_PARM_2;) data8(_main_mag_y_1_123;)
-75 data8(_BMM150_Read_Data_PARM_2;0x0001;+;) data8(_main_mag_y_1_123;0x0008;>>;)
+7A 00
+BA 19 rel3(L016020?;)
+40 rel2(L016021?;)
+02 addr16(L016011?;)  
+75 data8(_BMM150_Read_Data_PARM_2;) data8(_main_mag_y_1_121;)
+75 data8(_BMM150_Read_Data_PARM_2;0x0001;+;) data8(_main_mag_y_1_121;0x0008;>>;)
 75 data8(_BMM150_Read_Data_PARM_2;0x0002;+;) 00
-75 data8(_BMM150_Read_Data_PARM_3;) data8(_main_mag_z_1_123;)
-75 data8(_BMM150_Read_Data_PARM_3;0x0001;+;) data8(_main_mag_z_1_123;0x0008;>>;)
+75 data8(_BMM150_Read_Data_PARM_3;) data8(_main_mag_z_1_121;)
+75 data8(_BMM150_Read_Data_PARM_3;0x0001;+;) data8(_main_mag_z_1_121;0x0008;>>;)
 75 data8(_BMM150_Read_Data_PARM_3;0x0002;+;) 00
-90 data16(_main_mag_x_1_123;)  
+90 data16(_main_mag_x_1_121;)  
 75 F0 00
+C0 02
 12 addr16(_BMM150_Read_Data;)  
-90 data16(_main_mag_x_1_123;)  
+90 data16(_main_mag_x_1_121;)  
 E0
 FB
 A3
@@ -2049,54 +1996,31 @@ FC
 8B 82
 8C 83
 12 addr16(___sint2fs;)  
-AB 82
-AC 83
-AD F0
-FE
-E4
-C0 E0
-C0 E0
-74 D8
-C0 E0
-74 41
-C0 E0
-8B 82
-8C 83
-8D F0
-EE
-12 addr16(___fssub;)  
 85 82 data8(_main_sloc0_1_0;)
 85 83 data8(_main_sloc0_1_0;0x0001;+;)
 85 F0 data8(_main_sloc0_1_0;0x0002;+;)
 F5 data8(_main_sloc0_1_0;0x0003;+;)
-E5 81
-24 FC
-F5 81
-90 data16(_main_mag_y_1_123;)  
+90 data16(_main_sum_x_1_121;)  
 E0
 FF
 A3
 E0
 F8
-8F 82
-88 83
-12 addr16(___sint2fs;)  
-AF 82
-A8 83
-A9 F0
+A3
+E0
+F9
+A3
+E0
 FB
-E4
-C0 E0
-C0 E0
-74 E4
-C0 E0
-74 41
-C0 E0
+C0 data8(_main_sloc0_1_0;)
+C0 data8(_main_sloc0_1_0;0x0001;+;)
+C0 data8(_main_sloc0_1_0;0x0002;+;)
+C0 data8(_main_sloc0_1_0;0x0003;+;)
 8F 82
 88 83
 89 F0
 EB
-12 addr16(___fssub;)  
+12 addr16(___fsadd;)  
 AB 82
 AC 83
 AD F0
@@ -2104,23 +2028,133 @@ FE
 E5 81
 24 FC
 F5 81
-74 BD
-C0 E0
-74 86
-C0 E0
-74 72
-C0 E0
-74 3F
-C0 E0
+90 data16(_main_sum_x_1_121;)  
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
+A3
+EE
+F0
+90 data16(_main_mag_y_1_121;)  
+E0
+FB
+A3
+E0
+FC
 8B 82
 8C 83
-8D F0
-EE
-12 addr16(___fsmul;)  
+12 addr16(___sint2fs;)  
+85 82 data8(_main_sloc0_1_0;)
+85 83 data8(_main_sloc0_1_0;0x0001;+;)
+85 F0 data8(_main_sloc0_1_0;0x0002;+;)
+F5 data8(_main_sloc0_1_0;0x0003;+;)
+90 data16(_main_sum_y_1_121;)  
+E0
+FF
+A3
+E0
+F8
+A3
+E0
+F9
+A3
+E0
+FB
+C0 data8(_main_sloc0_1_0;)
+C0 data8(_main_sloc0_1_0;0x0001;+;)
+C0 data8(_main_sloc0_1_0;0x0002;+;)
+C0 data8(_main_sloc0_1_0;0x0003;+;)
+8F 82
+88 83
+89 F0
+EB
+12 addr16(___fsadd;)  
 AB 82
 AC 83
 AD F0
 FE
+E5 81
+24 FC
+F5 81
+D0 02
+90 data16(_main_sum_y_1_121;)  
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
+A3
+EE
+F0
+0A
+02 addr16(L016008?;)  
+90 data16(_main_sum_y_1_121;)  
+E0
+FA
+A3
+E0
+FB
+A3
+E0
+FC
+A3
+E0
+FD
+E4
+C0 E0
+C0 E0
+74 C8
+C0 E0
+74 41
+C0 E0
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(___fsdiv;)  
+85 82 data8(_main_sloc1_1_0;)
+85 83 data8(_main_sloc1_1_0;0x0001;+;)
+85 F0 data8(_main_sloc1_1_0;0x0002;+;)
+F5 data8(_main_sloc1_1_0;0x0003;+;)
+E5 81
+24 FC
+F5 81
+90 data16(_main_sum_x_1_121;)  
+E0
+FE
+A3
+E0
+FF
+A3
+E0
+F8
+A3
+E0
+F9
+E4
+C0 E0
+C0 E0
+74 C8
+C0 E0
+74 41
+C0 E0
+8E 82
+8F 83
+88 F0
+E9
+12 addr16(___fsdiv;)  
+85 82 data8(_main_sloc0_1_0;)
+85 83 data8(_main_sloc0_1_0;0x0001;+;)
+85 F0 data8(_main_sloc0_1_0;0x0002;+;)
+F5 data8(_main_sloc0_1_0;0x0003;+;)
 E5 81
 24 FC
 F5 81
@@ -2128,303 +2162,23 @@ F5 81
 85 data8(_main_sloc0_1_0;0x0001;+;) data8(_atan2f_PARM_2;0x0001;+;)
 85 data8(_main_sloc0_1_0;0x0002;+;) data8(_atan2f_PARM_2;0x0002;+;)
 85 data8(_main_sloc0_1_0;0x0003;+;) data8(_atan2f_PARM_2;0x0003;+;)
-8B 82
-8C 83
-8D F0
-EE
+85 data8(_main_sloc1_1_0;) 82
+85 data8(_main_sloc1_1_0;0x0001;+;) 83
+85 data8(_main_sloc1_1_0;0x0002;+;) F0
+E5 data8(_main_sloc1_1_0;0x0003;+;)
 12 addr16(_atan2f;)  
-AB 82
-AC 83
-AD F0
-FE
-C0 03
-C0 04
-C0 05
-C0 06
-90 00 00
-75 F0 34
-74 43
-12 addr16(___fsmul;)  
-AB 82
-AC 83
-AD F0
-FE
-E5 81
-24 FC
-F5 81
-74 DB
-C0 E0
-74 0F
-C0 E0
-74 49
-C0 E0
-74 40
-C0 E0
-8B 82
-8C 83
-8D F0
-EE
-12 addr16(___fsdiv;)  
-AB 82
-AC 83
-AD F0
-FE
-E5 81
-24 FC
-F5 81
-C0 03
-C0 04
-C0 05
-C0 06
-90 0F DB
-75 F0 49
-74 40
-12 addr16(___fsmul;)  
-AB 82
-AC 83
-AD F0
-FE
-E5 81
-24 FC
-F5 81
-E4
-C0 E0
-C0 E0
-74 34
-C0 E0
-74 43
-C0 E0
-8B 82
-8C 83
-8D F0
-EE
-12 addr16(___fsdiv;)  
-AB 82
-AC 83
-AD F0
-FE
-E5 81
-24 FC
-F5 81
-8B 82
-8C 83
-8D F0
-EE
-C0 03
-C0 04
-C0 05
-C0 06
-12 addr16(_cosf;)  
-85 82 data8(_main_sloc0_1_0;)
-85 83 data8(_main_sloc0_1_0;0x0001;+;)
-85 F0 data8(_main_sloc0_1_0;0x0002;+;)
-F5 data8(_main_sloc0_1_0;0x0003;+;)
-90 data16(_main_sum_x_1_123;)  
-E0
-FA
-A3
-E0
-FF
-A3
-E0
-F8
-A3
-E0
-F9
-C0 data8(_main_sloc0_1_0;)
-C0 data8(_main_sloc0_1_0;0x0001;+;)
-C0 data8(_main_sloc0_1_0;0x0002;+;)
-C0 data8(_main_sloc0_1_0;0x0003;+;)
-8A 82
-8F 83
-88 F0
-E9
-12 addr16(___fsadd;)  
-AA 82
+AE 82
 AF 83
 A8 F0
 F9
-E5 81
-24 FC
-F5 81
-D0 06
-D0 05
-D0 04
-D0 03
-90 data16(_main_sum_x_1_123;)  
-EA
-F0
-A3
-EF
-F0
-A3
-E8
-F0
-A3
-E9
-F0
-8B 82
-8C 83
-8D F0
-EE
-12 addr16(_sinf;)  
-AA 82
-AB 83
-AC F0
-FD
-90 data16(_main_sum_y_1_123;)  
-E0
-FE
-A3
-E0
-FF
-A3
-E0
-F8
-A3
-E0
-F9
-C0 02
-C0 03
-C0 04
-C0 05
-8E 82
-8F 83
-88 F0
-E9
-12 addr16(___fsadd;)  
-AA 82
-AB 83
-AC F0
-FD
-E5 81
-24 FC
-F5 81
-90 data16(_main_sum_y_1_123;)  
-EA
-F0
-A3
-EB
-F0
-A3
-EC
-F0
-A3
-ED
-F0
-05 data8(_main_sloc1_1_0;)
-02 addr16(L016009?;)  
-90 data16(_main_sum_y_1_123;)  
-E0
-FA
-A3
-E0
-FB
-A3
-E0
-FC
-A3
-E0
-FD
-E4
-C0 E0
-C0 E0
-74 C8
-C0 E0
-74 42
-C0 E0
-8A 82
-8B 83
-8C F0
-ED
-12 addr16(___fsdiv;)  
-AA 82
-AB 83
-AC F0
-FD
-E5 81
-24 FC
-F5 81
-90 data16(_main_sum_x_1_123;)  
-E0
-FE
-A3
-E0
-FF
-A3
-E0
-F8
-A3
-E0
-F9
-C0 02
-C0 03
-C0 04
-C0 05
-E4
-C0 E0
-C0 E0
-74 C8
-C0 E0
-74 42
-C0 E0
-8E 82
-8F 83
-88 F0
-E9
-12 addr16(___fsdiv;)  
-85 82 data8(_atan2f_PARM_2;)
-85 83 data8(_atan2f_PARM_2;0x0001;+;)
-85 F0 data8(_atan2f_PARM_2;0x0002;+;)
-F5 data8(_atan2f_PARM_2;0x0003;+;)
-E5 81
-24 FC
-F5 81
-D0 05
-D0 04
-D0 03
-D0 02
-8A 82
-8B 83
-8C F0
-ED
-12 addr16(_atan2f;)  
-AA 82
-AB 83
-AC F0
-FD
-C0 02
-C0 03
-C0 04
-C0 05
+C0 06
+C0 07
+C0 00
+C0 01
 90 2E E1
 75 F0 65
 74 42
 12 addr16(___fsmul;)  
-85 82 data8(_main_sloc0_1_0;)
-85 83 data8(_main_sloc0_1_0;0x0001;+;)
-85 F0 data8(_main_sloc0_1_0;0x0002;+;)
-F5 data8(_main_sloc0_1_0;0x0003;+;)
-E5 81
-24 FC
-F5 81
-90 data16(_main_prev_angle_1_123;)  
-E0
-C0 E0
-A3
-E0
-C0 E0
-A3
-E0
-C0 E0
-A3
-E0
-C0 E0
-85 data8(_main_sloc0_1_0;) 82
-85 data8(_main_sloc0_1_0;0x0001;+;) 83
-85 data8(_main_sloc0_1_0;0x0002;+;) F0
-E5 data8(_main_sloc0_1_0;0x0003;+;)
-12 addr16(___fssub;)  
 AE 82
 AF 83
 A8 F0
@@ -2432,7 +2186,7 @@ F9
 E5 81
 24 FC
 F5 81
-90 data16(_main_delta_1_123;)  
+90 data16(_main_avg_angle_1_121;)  
 EE
 F0
 A3
@@ -2451,67 +2205,7 @@ C0 01
 E4
 C0 E0
 C0 E0
-74 34
 C0 E0
-74 43
-C0 E0
-8E 82
-8F 83
-88 F0
-E9
-12 addr16(___fsgt;)  
-AA 82
-E5 81
-24 FC
-F5 81
-D0 01
-D0 00
-D0 07
-D0 06
-EA
-60 rel2(L016004?;)
-E4
-C0 E0
-C0 E0
-74 B4
-C0 E0
-74 43
-C0 E0
-8E 82
-8F 83
-88 F0
-E9
-12 addr16(___fssub;)  
-AA 82
-AB 83
-AC F0
-FD
-E5 81
-24 FC
-F5 81
-90 data16(_main_delta_1_123;)  
-EA
-F0
-A3
-EB
-F0
-A3
-EC
-F0
-A3
-ED
-F0
-80 rel2(L016005?;)
-C0 06
-C0 07
-C0 00
-C0 01
-E4
-C0 E0
-C0 E0
-74 34
-C0 E0
-74 C3
 C0 E0
 8E 82
 8F 83
@@ -2527,7 +2221,7 @@ D0 00
 D0 07
 D0 06
 EA
-60 rel2(L016005?;)
+60 rel2(L016002?;)
 E4
 C0 E0
 C0 E0
@@ -2547,7 +2241,7 @@ FD
 E5 81
 24 FC
 F5 81
-90 data16(_main_delta_1_123;)  
+90 data16(_main_avg_angle_1_121;)  
 EA
 F0
 A3
@@ -2559,7 +2253,7 @@ F0
 A3
 ED
 F0
-90 data16(_main_cumulative_angle_1_123;)  
+90 data16(_main_avg_angle_1_121;)  
 E0
 FA
 A3
@@ -2571,23 +2265,44 @@ FC
 A3
 E0
 FD
-90 data16(_main_delta_1_123;)  
-E0
+C0 02
+C0 03
+C0 04
+C0 05
+E4
 C0 E0
-A3
-E0
 C0 E0
-A3
-E0
+74 B4
 C0 E0
-A3
-E0
+74 43
 C0 E0
 8A 82
 8B 83
 8C F0
 ED
-12 addr16(___fsadd;)  
+12 addr16(___fsgt;)  
+AE 82
+E5 81
+24 FC
+F5 81
+D0 05
+D0 04
+D0 03
+D0 02
+EE
+60 rel2(L016004?;)
+E4
+C0 E0
+C0 E0
+74 B4
+C0 E0
+74 43
+C0 E0
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(___fssub;)  
 AA 82
 AB 83
 AC F0
@@ -2595,7 +2310,7 @@ FD
 E5 81
 24 FC
 F5 81
-90 data16(_main_cumulative_angle_1_123;)  
+90 data16(_main_avg_angle_1_121;)  
 EA
 F0
 A3
@@ -2607,19 +2322,7 @@ F0
 A3
 ED
 F0
-90 data16(_main_prev_angle_1_123;)  
-E5 data8(_main_sloc0_1_0;)
-F0
-A3
-E5 data8(_main_sloc0_1_0;0x0001;+;)
-F0
-A3
-E5 data8(_main_sloc0_1_0;0x0002;+;)
-F0
-A3
-E5 data8(_main_sloc0_1_0;0x0003;+;)
-F0
-90 data16(_main_cumulative_angle_1_123;)  
+90 data16(_main_avg_angle_1_121;)  
 E0
 C0 E0
 A3
@@ -2646,7 +2349,7 @@ C0 02
 C0 03
 C0 04
 C0 05
-90 data16(_main_smoothed_angle_1_123;)  
+90 data16(_main_smoothed_angle_1_121;)  
 E0
 C0 E0
 A3
@@ -2689,7 +2392,7 @@ FD
 E5 81
 24 FC
 F5 81
-90 data16(_main_smoothed_angle_1_123;)  
+90 data16(_main_smoothed_angle_1_121;)  
 EA
 F0
 A3
@@ -2701,100 +2404,26 @@ F0
 A3
 ED
 F0
-90 data16(_main_mag_y_1_123;)  
-E0
-FA
-A3
-E0
-FB
-8A 82
-8B 83
-12 addr16(___sint2fs;)  
-AA 82
-AB 83
-AC F0
-FD
-90 data16(_main_mag_x_1_123;)  
-E0
-FE
-A3
-E0
-FF
-8E 82
-8F 83
-C0 02
-C0 03
-C0 04
-C0 05
-12 addr16(___sint2fs;)  
-85 82 data8(_atan2f_PARM_2;)
-85 83 data8(_atan2f_PARM_2;0x0001;+;)
-85 F0 data8(_atan2f_PARM_2;0x0002;+;)
-F5 data8(_atan2f_PARM_2;0x0003;+;)
-D0 05
-D0 04
-D0 03
-D0 02
-8A 82
-8B 83
-8C F0
-ED
-12 addr16(_atan2f;)  
-AA 82
-AB 83
-AC F0
-FD
-C0 02
-C0 03
-C0 04
-C0 05
-90 00 00
-75 F0 34
-74 43
-12 addr16(___fsmul;)  
-AA 82
-AB 83
-AC F0
-FD
-E5 81
-24 FC
-F5 81
-74 DB
-C0 E0
-74 0F
-C0 E0
-74 49
-C0 E0
-74 40
-C0 E0
-8A 82
-8B 83
-8C F0
-ED
-12 addr16(___fsdiv;)  
-AA 82
-AB 83
-AC F0
-FD
-E5 81
-24 FC
-F5 81
-C0 02
-C0 03
-C0 04
-C0 05
-90 data16(_main_mag_y_1_123;)  
+90 data16(_main_smoothed_angle_1_121;)  
 E0
 C0 E0
 A3
 E0
 C0 E0
-90 data16(_main_mag_x_1_123;)  
+A3
 E0
 C0 E0
 A3
 E0
 C0 E0
+C0 data8(_main_sloc1_1_0;)
+C0 data8(_main_sloc1_1_0;0x0001;+;)
+C0 data8(_main_sloc1_1_0;0x0002;+;)
+C0 data8(_main_sloc1_1_0;0x0003;+;)
+C0 data8(_main_sloc0_1_0;)
+C0 data8(_main_sloc0_1_0;0x0001;+;)
+C0 data8(_main_sloc0_1_0;0x0002;+;)
+C0 data8(_main_sloc0_1_0;0x0003;+;)
 74 data8(__str_8;)
 C0 E0
 74 data8(__str_8;0x0008;>>;)
@@ -2803,9 +2432,11 @@ C0 E0
 C0 E0
 12 addr16(_printf;)  
 E5 81
-24 F5
+24 F1
 F5 81
-02 addr16(L016007?;)  
+90 00 0A
+12 addr16(_waitms;)  
+02 addr16(L016006?;)  
 </CODE>
 
 <CODE R_CSEG>
@@ -2846,11 +2477,11 @@ F5 81
 00
 73 65 6E 73 6F 72 5F 74 65 73 74 2E 63 
 00
-4D 61 72 20 32 36 20 32 30 32 35 
+4D 61 72 20 32 37 20 32 30 32 35 
 00
-32 32 3A 35 37 3A 31 30 
+31 35 3A 32 30 3A 34 32 
 00
-25 64 2C 25 64 2C 25 66 
+25 66 2C 20 25 66 2C 20 25 66 
 0D
 0A
 00
