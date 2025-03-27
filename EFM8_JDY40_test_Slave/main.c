@@ -733,7 +733,7 @@ void main (void)
 						else { //move backward 
 							L_motor_dir = 1; 
 							R_motor_dir = 1; 
-							pwm_right *= 1.07;
+							pwm_right *= 1.05;
 						}
 					}
 					if ((vx_error>5)&&(vy_error<5)){

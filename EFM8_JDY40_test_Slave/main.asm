@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-; This file was generated Thu Mar 27 15:34:57 2025
+; This file was generated Thu Mar 27 15:47:27 2025
 ;--------------------------------------------------------
 $name main
 $optc51 --model-small
@@ -2917,7 +2917,7 @@ L030006?:
 	mov	_L_motor_dir,#0x01
 ;	main.c:735: R_motor_dir = 1; 
 	mov	_R_motor_dir,#0x01
-;	main.c:736: pwm_right *= 1.03;
+;	main.c:736: pwm_right *= 1.05;
 	mov	dpl,_pwm_right
 	push	ar7
 	lcall	___uchar2fs
@@ -2929,8 +2929,8 @@ L030006?:
 	push	ar4
 	push	ar5
 	push	ar6
-	mov	dptr,#0xD70A
-	mov	b,#0x83
+	mov	dptr,#0x6666
+	mov	b,#0x86
 	mov	a,#0x3F
 	lcall	___fsmul
 	mov	r3,dpl

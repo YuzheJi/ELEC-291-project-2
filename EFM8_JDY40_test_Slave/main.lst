@@ -1,7 +1,7 @@
 0000              1   ;--------------------------------------------------------
 0000              2   ; File Created by C51
 0000              3   ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-0000              4   ; This file was generated Thu Mar 27 15:34:57 2025
+0000              4   ; This file was generated Thu Mar 27 15:47:27 2025
 0000              5   ;--------------------------------------------------------
                   5   $name main
                   6   $optc51 --model-small
@@ -2917,7 +2917,7 @@
 0BF9 753801    2917            mov     _L_motor_dir,#0x01
 0BFC           2918   ;        main.c:735: R_motor_dir = 1; 
 0BFC 75F801    2919            mov     _R_motor_dir,#0x01
-0BFF           2920   ;        main.c:736: pwm_right *= 1.03;
+0BFF           2920   ;        main.c:736: pwm_right *= 1.05;
 0BFF 857882    2921            mov     dpl,_pwm_right
 0C02 C007      2922            push    ar7
 0C04 120000    2923            lcall   ___uchar2fs
@@ -2929,8 +2929,8 @@
 0C10 C004      2929            push    ar4
 0C12 C005      2930            push    ar5
 0C14 C006      2931            push    ar6
-0C16 90D70A    2932            mov     dptr,#0xD70A
-0C19 75F083    2933            mov     b,#0x83
+0C16 906666    2932            mov     dptr,#0x6666
+0C19 75F086    2933            mov     b,#0x86
 0C1C 743F      2934            mov     a,#0x3F
 0C1E 120000    2935            lcall   ___fsmul
 0C21 AB82      2936            mov     r3,dpl
