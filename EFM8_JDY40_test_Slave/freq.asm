@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-; This file was generated Wed Mar 26 14:40:00 2025
+; This file was generated Thu Mar 27 15:34:58 2025
 ;--------------------------------------------------------
 $name freq
 $optc51 --model-small
@@ -550,7 +550,7 @@ _get_freq:
 	using	0
 ;	freq.c:6: long freq100 = 0;
 ;	freq.c:8: unsigned char overflow_count=0;
-;	freq.c:11: for(i=0; i<20; i++){
+;	freq.c:11: for(i=0; i<5; i++){
 	clr	a
 	mov	_get_freq_freq100_1_23,a
 	mov	(_get_freq_freq100_1_23 + 1),a
@@ -562,7 +562,7 @@ _get_freq:
 L002017?:
 	clr	c
 	mov	a,_get_freq_i_1_23
-	subb	a,#0x14
+	subb	a,#0x05
 	mov	a,(_get_freq_i_1_23 + 1)
 	xrl	a,#0x80
 	subb	a,#0x80
@@ -768,7 +768,7 @@ L002016?:
 	mov	(_get_freq_freq100_1_23 + 1),dph
 	mov	(_get_freq_freq100_1_23 + 2),b
 	mov	(_get_freq_freq100_1_23 + 3),a
-;	freq.c:11: for(i=0; i<20; i++){
+;	freq.c:11: for(i=0; i<5; i++){
 	inc	_get_freq_i_1_23
 	clr	a
 	cjne	a,_get_freq_i_1_23,L002044?
@@ -776,7 +776,7 @@ L002016?:
 L002044?:
 	ljmp	L002017?
 L002020?:
-;	freq.c:40: freq100 /= 20.0;
+;	freq.c:40: freq100 /= 5.0;
 	mov	dpl,_get_freq_freq100_1_23
 	mov	dph,(_get_freq_freq100_1_23 + 1)
 	mov	b,(_get_freq_freq100_1_23 + 2)
@@ -791,7 +791,7 @@ L002020?:
 	push	acc
 	mov	a,#0xA0
 	push	acc
-	mov	a,#0x41
+	mov	a,#0x40
 	push	acc
 	mov	dpl,r2
 	mov	dph,r3

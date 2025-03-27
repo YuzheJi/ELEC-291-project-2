@@ -12,7 +12,7 @@
 
 //                                    ----------  
 // RF_RXD               P0.0      1  |          |  32      P0.1     RF_TXD
-//                      GND       2  |          |  31      P0.2  	
+//                      GND       2  |          |  31      P0.2  	Coin detector
 //                      5V        3  |          |  30      P0.3  	
 //                      5V        4  |          |  29      P0.4  
 //                      RST       5  |          |  28      P0.5  
@@ -21,8 +21,8 @@
 //                      P3.2      8  |          |  25      P1.0  
 //                      P3.1      9  |          |  24      P1.1  
 //                      P3.0     10  |          |  23      P1.2  
-//                      P2.6     11  |          |  22      P1.3  
-//                      P2.5     12  |          |  21      P1.4  
+//                      P2.6     11  |          |  22      P1.3     Boundary1
+//                      P2.5     12  |          |  21      P1.4  	Boundary2
 // R_bridge_2           P2.4     13  |          |  20      P1.5  	Magnet
 // R_bridge_1           P2.3     14  |          |  19      P1.6  	Servo_arm
 // L_bridge_2           P2.2     15  |          |  18      P1.7  	Servo_base
@@ -45,8 +45,6 @@
 #define Magnet 	   P1_5
 
 
-
-
 idata char buff[20];
 unsigned int pwm_counter = 0; 
 unsigned int servo_counter = 0; 
@@ -58,6 +56,8 @@ int vx = 0, vy = 0;
 long freq100;
 unsigned int fre_mea_count = 0;
 int d1, d2;
+unsigned int seed = 12345;
+float pwm_corr = 0.95;
 
 
 char _c51_external_startup (void)
@@ -493,7 +493,7 @@ void servo_pick(){
 	servo_arm = 250;
 	Magnet = 1;
 	waitms(200);
-	for(i = 0; i<109; i++){
+	for(i = 0; i<89; i++){
 		waitms(5);
 		servo_base--;
 	}
@@ -503,7 +503,7 @@ void servo_pick(){
 		servo_arm--;
 	}
 	waitms(200);
-	for(i = 0; i<45; i++){
+	for(i = 0; i<65; i++){
 		waitms(5);
 		servo_base--;
 	}
@@ -516,7 +516,7 @@ void servo_pick(){
 }
 
 int check_bound(int d1, int d2){
-	if(d1>14000||d2>14000)	return 1;
+	if(d1>5000||d2>12000)	return 1;
 	else return 0;
 }
 
@@ -547,16 +547,32 @@ void Init_all(){
 
 void Move_back_ms(int ms){
 
-	L_motor_dir = 0;
-	R_motor_dir = 0;
+	L_motor_dir = 1;
+	R_motor_dir = 1;
 
-	pwm_left = 100;
-	pwm_right = 100;
+	pwm_left = 50;
+	pwm_right = 50;
 
 	waitms(ms);
 
+	L_motor_dir = 0;
+	R_motor_dir = 0;
+	pwm_left = 0;
+	pwm_right = 0;
+	return;
+}
+
+void Right_angle(int angle){
+
 	L_motor_dir = 1;
-	R_motor_dir = 1;
+	R_motor_dir = 0;
+	pwm_left = 80;
+	pwm_right = 80 * pwm_corr;
+
+	waitms(angle);
+
+	L_motor_dir = 0;
+	R_motor_dir = 0;
 	pwm_left = 0;
 	pwm_right = 0;
 	return;
@@ -564,11 +580,20 @@ void Move_back_ms(int ms){
 
 void Move_forward(){
 
-	L_motor_dir = 1;
-	R_motor_dir = 1;
-	pwm_left = 100;
-	pwm_right = 100;
+	L_motor_dir = 0;
+	R_motor_dir = 0;
+	pwm_left = 90;
+	pwm_right = 90 * pwm_corr;
 	return;
+}
+
+unsigned int simple_rand() {
+    seed = (seed * 25173 + 13849) & 0xFFFF;  
+    return seed;     
+}
+
+unsigned int get_random_90_250() {
+    return (simple_rand() % (250 - 85 + 1)) + 85;
 }
 
 void Auto_mode_slave(){
@@ -577,47 +602,54 @@ void Auto_mode_slave(){
 	int state_res = 1;
 	int bound = 0;
 	char c;
-
-	Move_forward();
+	int dummy;
+	unsigned int angle;
 
 	while(count < 20 && state_res){
+		
 		if(RXU1()){
 			c=getchar1();	
 			if(c=='!'){
 				getstr1(buff, sizeof(buff)-1);
 				if(strlen(buff)==11){
-					printf("master_messgae_auto_mode: %s\r\n", buff);
-					sscanf(buff,"000,000,0,%d",&command);
+					//printf("master_messgae_auto_mode: %s\r\n", buff);
+					sscanf(buff,"%03d,%03d,%01d,%01d",&dummy, &dummy,&dummy,&command);
 					if(command) state_res = 1;
 					else state_res = 0;
 				}
-				else{
-					printf("bad_message_auto_mode: %s\r\n", buff);
-				}				
+				// else{
+				// 	printf("bad_message_auto_mode: %s\r\n", buff);
+				// }				
 			}
 			else if(c=='@'){
-				sprintf(buff, "%01d,%02d\n", state_res, count);
+				sprintf(buff, "%01d,%02d,%ld\n", state_res, count,freq100);
 				waitms(5); 
 				sendstr1(buff);
 			}
-			else{
-				printf("no message\r\n");
-			}
+			//printf("%d, %d\r\n",command, state_res);
 		}
 
+		Move_forward();
 		// detect the coin
 		d1 = ADC_at_Pin(QFP32_MUX_P1_3);
 		d2 = ADC_at_Pin(QFP32_MUX_P1_4);
-		bound_flag = check_bound(d1,d2);
-		printf("automode freq: %f, bound_dectect: %d\r\n",freq100/100.0,bound);
+		bound = check_bound(d1,d2);
+		printf("f:%04ld, d1:%d, d2:%d, bound_dectect: %d\r\n",freq100, d1,d2,bound);
 
-		if (freq100>5350){
+		if (freq100>5400){
 			Move_back_ms(300);
 			servo_pick();
 			count++;
 			Move_forward();
 		}
+
+		if(bound == 1){
+		 	angle = get_random_90_250();
+			Right_angle(angle*600/90);
+		 	printf("Turn!!! %d\r\n", angle);
+		}
 	}
+
 	printf("Auto mode finished!\r\n");
 }
 
@@ -629,7 +661,7 @@ void main (void)
     float threshold = 161;
 	int motor_pwm = 0; 
 	int pick = 0;
-	int auto_mode = 1;
+	int auto_mode = 0;
 	char pick_done = 1;
 	
 	Init_all();
@@ -647,7 +679,7 @@ void main (void)
 	SendATCommand("AT+RFC002\r\n");
 	SendATCommand("AT+POWE\r\n");
 	SendATCommand("AT+CLSS\r\n");
-	SendATCommand("AT+DVIDEFEF\r\n");  
+	SendATCommand("AT+DVIDEF11\r\n");  
 
     //initialize variables 
     L_bridge_1 = 0; 
@@ -660,11 +692,13 @@ void main (void)
 		//printf("freq: %f, bound_flag: %d\r\n\r", freq100/100.0,bound_flag);
 		if(pick==1){
 			servo_pick();
+			waitms(1000);
 			pick = 0;
 		}
 		
 		if(auto_mode){
 			Auto_mode_slave();
+			auto_mode = 0;
 		}
 
 		// The message format: 000,000 --- (vx,vy)
@@ -677,8 +711,8 @@ void main (void)
 				getstr1(buff, sizeof(buff)-1);
 				if(strlen(buff)==11)
 				{
-					printf("Master says: %s\r\n", buff);
-					sscanf(buff, "%03d,%03d,%01d,%d01", &vx, &vy, &pick, &auto_mode);
+					printf("Master says: %s,\r\n", buff);
+					sscanf(buff, "%03d,%03d,%01d,%01d", &vx, &vy, &pick, &auto_mode);
                 	printf("Joystick Received: Vx = %03d, Vy = %03d, Order = %01d, Auto = %01d\r\n", vx, vy, pick, auto_mode);
 
 					// Determine of Vx and Vy are within 5% error
@@ -691,7 +725,7 @@ void main (void)
 					// if vx moved but vy didn't move => move forward 
 					if ((vy_error>5) && (vx_error<5)){
 						pwm_left = vy_error; 
-						pwm_right = vy_error; 
+						pwm_right = vy_error * pwm_corr; 
 						if (vy_err > 0){ //move forward
 							L_motor_dir = 0; 
 							R_motor_dir = 0; 
@@ -699,11 +733,12 @@ void main (void)
 						else { //move backward 
 							L_motor_dir = 1; 
 							R_motor_dir = 1; 
+							pwm_right *= 1.07;
 						}
 					}
 					if ((vx_error>5)&&(vy_error<5)){
 						pwm_left = vx_error; 
-						pwm_right = vx_error; 
+						pwm_right = vx_error * pwm_corr; 
 						if (vx_err > 0){ //turn right
 							L_motor_dir = 1; 
 							R_motor_dir = 0; 
@@ -722,22 +757,22 @@ void main (void)
 							if (vx_err>0){
 								if (vy*100<=vy_thres*100/2){
 									pwm_left = vy_error; 
-									pwm_right = vy_error*100/(vx_error+vy_error);
+									pwm_right = pwm_corr*vy_error*100/(vx_error+vy_error);
 								}
 								else {
 									pwm_left = vx_error; 
-									pwm_right = vx_error*100/(vx_error+vy_error);
+									pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
 								}
 							}
 							// Region 2
 							else {
 								if (vy*100<=vy_thres*100/2){
 									pwm_left = vy_error*100/(vx_error+vy_error);
-									pwm_right = vy_error; 
+									pwm_right = vy_error*pwm_corr; 
 								}
 								else {
 									pwm_left = vx_error*100/(vx_error+vy_error);
-									pwm_right = vx_error; 
+									pwm_right = vx_error*pwm_corr; 
 								}
 							}
 						}
@@ -749,35 +784,34 @@ void main (void)
 							if (vx_err>0){
 								if (vy*100<=vy_thres*100/2){
 									pwm_left = vy_error; 
-									pwm_right = vy_error*100/(vx_error+vy_error);
+									pwm_right = pwm_corr*vy_error*100/(vx_error+vy_error);
 								}
 								else {
 									pwm_left = vx_error; 
-									pwm_right = vx_error*100/(vx_error+vy_error);
+									pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
 								}
 							}
 							// Region 3
 							else {
 								if (vy*100<=vy_thres*100/2){
 									pwm_left = vy_error*100/(vx_error+vy_error);
-									pwm_right = vy_error; 
+									pwm_right =pwm_corr*vy_error; 
 								}
 								else {
 									pwm_left = vx_error*100/(vx_error+vy_error);
-									pwm_right = vx_error; 
+									pwm_right = pwm_corr*vx_error; 
 								}
 							}
 						}
 					}
 				}
-				else
-				{
-					printf("*** BAD MESSAGE ***(%d): %s\r\n", buff,strlen(buff));
+				else{
+					printf("*** BAD MESSAGE ***: %s\r\n", buff);
 				}		
 			}
 			else if(c=='@') // Master wants slave data
 			{
-				sprintf(buff, "%04ld\n", freq100);
+				sprintf(buff, "0,00,%04ld\n", freq100);
 				waitms(5); // The radio seems to need this delay...
 				sendstr1(buff);
 			}

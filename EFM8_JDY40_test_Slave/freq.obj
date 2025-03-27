@@ -92,7 +92,7 @@ F5 data8(_get_freq_i_1_23;)
 F5 data8(_get_freq_i_1_23;0x0001;+;)
 C3
 E5 data8(_get_freq_i_1_23;)
-94 14
+94 05
 E5 data8(_get_freq_i_1_23;0x0001;+;)
 64 80
 94 80
@@ -290,7 +290,7 @@ C0 E0
 C0 E0
 74 A0
 C0 E0
-74 41
+74 40
 C0 E0
 8A 82
 8B 83
