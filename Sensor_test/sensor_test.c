@@ -542,23 +542,29 @@ void BMM150_Read_Data(int16_t *mag_x, int16_t *mag_y, int16_t *mag_z)
 }
 
 
-
 void main (void)
 {
 	xdata uint8_t i; 
 	xdata int16_t mag_x, mag_y, mag_z; 
 	xdata float angle;
-	xdata float sum_x, sum_y, alpha, avg_angle, smoothed_angle; 
-	// xdata float declination_angle; 
+	xdata float sum_x, sum_y, alpha, avg_angle, smoothed_angle, cal_x, cal_y, delta; 
+	xdata float declination_angle, x_scale, y_scale, x_offset, y_offset, prev_angle, cumulative_angle; 
 	
 	// Initialize variables
-	// declination_angle = 15.0 + 34.0/60.0; 
-	avg_angle = 0.0; 
-	sum_x = 0.0; 
-	sum_y = 0.0; 
-	alpha = 0.2; // for tuning 
+	avg_angle = 0.0; delta = 0.0;  
+	sum_x = 0.0; sum_y = 0.0;
+	mag_x = 0; mag_y = 0; mag_z = 0; 
+	prev_angle = 0.0; cumulative_angle = 0.0; 
+	// TUNE THESE 
+	alpha = 0.25;
+	// declination_angle = 45.0; 
+	declination_angle = 0.0; 
+	x_scale = 1.0; 
+	y_scale = 54.0/57.0; 
+	x_offset = (32.0+22.0) / 2.0; 
+	y_offset = (33.0+24.0) / 2.0; 
 	smoothed_angle = 0.0; 
-
+	
 	Set_Pin_Output(0x03); 
 	BMM150_Init();
 
@@ -571,33 +577,36 @@ void main (void)
 
 	while(1)
 	{
-		for (i = 0; i < 100; i++){
-			BMM150_Read_Data(&mag_x, &mag_y, &mag_z);
-			angle = atan2f((float)mag_y, (float)mag_x) * 180.0 / M_PI;
-			// angle += declination_angle; 
-
-			if (angle < 0.0) angle += 360.0; 
-			else if (angle > 360.0) angle -= 360.0;
-
-			sum_x += cosf(angle * M_PI / 180.0); 
-			sum_y += sinf(angle * M_PI / 180.0); 
-			waitms(1);
-		}
-		avg_angle = atan2f(sum_y/100.0, sum_x/100.0); 
-		if (avg_angle < 0.0) avg_angle += 2 * M_PI; 
-		avg_angle = avg_angle * 180.0/M_PI; 
-		smoothed_angle = alpha * avg_angle + (1-alpha) * smoothed_angle; 
-		printf("%d,%d,%f\r\n", mag_x, mag_y, smoothed_angle);
-		// printf("%f          \r", avg_angle);
 		avg_angle = 0.0; 
 		sum_x = 0.0; 
 		sum_y = 0.0;  
+		for (i = 0; i < 100; i++){
+			BMM150_Read_Data(&mag_x, &mag_y, &mag_z);
+			cal_x = ((float)mag_x - x_offset) * x_scale; 
+			cal_y = ((float)mag_y - y_offset) * y_scale; 
 
-		// BMM150_Read_Data(&mag_x, &mag_y, &mag_z);
-		// angle = atan2f((float)mag_y, (float)mag_x) * 180.0 / M_PI;
-		// printf("%f     ", angle);
+			angle = atan2f(cal_y, cal_x) * 180.0 / M_PI;
+			angle += declination_angle; 
 
-		waitms(100);
+			// if (angle < 0.0) angle += 360.0; 
+			// else if (angle >= 360.0) angle -= 360.0;
+
+			sum_x += cosf(angle * M_PI / 180.0); 
+			sum_y += sinf(angle * M_PI / 180.0); 
+		}
+		avg_angle = atan2f(sum_y/100.0, sum_x/100.0); 
+		avg_angle *= 180.0 / M_PI; 
+		delta = avg_angle - prev_angle;
+		if (delta > 180.0) delta -= 360.0;
+		else if (delta < - 180.0) delta += 360.0;
+
+		cumulative_angle += delta;
+		prev_angle = avg_angle;
+
+		smoothed_angle = alpha * cumulative_angle + (1-alpha) * smoothed_angle; 
+		avg_angle = atan2f((float)mag_y, (float)mag_x) * 180.0 / M_PI - declination_angle;
+		printf("%d,%d,%f\r\n", mag_x, mag_y, avg_angle);
+		// printf("%f          \r", avg_angle);
 	}
 
 }
