@@ -9,14 +9,16 @@
 #define SARCLK 18000000L
 #define RELOAD_10us (0x10000L-(SYSCLK/(12L*100000L))) // 10us rate
 #define TIMER_0_FREQ 2000L // For a 0.5ms tick
+#define F_SCK_MAX 2000000L   // SPI SCK 
+
 
 //                                    ----------  
 // RF_RXD               P0.0      1  |          |  32      P0.1     RF_TXD
 //                      GND       2  |          |  31      P0.2  	Coin detector
-//                      5V        3  |          |  30      P0.3  	
-//                      5V        4  |          |  29      P0.4  
-//                      RST       5  |          |  28      P0.5  
-//                      P3.7      6  |          |  27      P0.6  
+//                      5V        3  |          |  30      P0.3  	CS
+//                      5V        4  |          |  29      P0.4  	SDO
+//                      RST       5  |          |  28      P0.5  	SDI
+//                      P3.7      6  |          |  27      P0.6  	SCK
 //                      P3.3      7  |          |  26      P0.7  
 //                      P3.2      8  |          |  25      P1.0  
 //                      P3.1      9  |          |  24      P1.1  
@@ -30,11 +32,6 @@
 //                                    ----------  
 
 
-// Timer Overview
-// Timer1 - Baud rate 9600 for RF
-// Timer5 - Motor PWM 
-// Timer
-
 // Definitions
 #define R_bridge_1 P2_4
 #define R_bridge_2 P2_3
@@ -43,21 +40,58 @@
 #define Servo_base P1_7
 #define Servo_arm  P1_6
 #define Magnet 	   P1_5
+#define CS 		   P0_3
+
+// Constant Definitions
+#define M_PI 3.14159265358979323846
+
+// BMM150 Registers 
+#define BMM150_CHIP_ID          			0x40 // the chip identification number 0x32 -> read only if 0x4B bit enabled
+#define BMM150_DATA_X_LSB       			0x42 // X axis
+#define BMM150_DATA_X_MSB       			0x43
+#define BMM150_DATA_Y_LSB       			0x44 // Y axis
+#define BMM150_DATA_Y_MSB       			0x45
+#define BMM150_DATA_Z_LSB       			0x46 // Z axis
+#define BMM150_DATA_Z_MSB       			0x47
+#define BMM150_RHALL_LSB        			0x48 // hall resistance and Data Ready (DRDT) status bit
+#define BMM150_RHALL_MSB        			0x49 // hall resistance 
+#define BMM150_STATUS_REGISTER  			0x4A 
+#define BMM150_POWER_CONTROL    			0x4B 
+#define BMM150_OP_MODE          			0x4C
+#define BMM150_INTERRUPT        			0x4D
+#define BMM150_REP_XY           			0x51
+#define BMM150_REP_Z            			0x52
+#define BMM150_DIG_X1						0x5D
+#define BMM150_DIG_Z4_LSB					0x62
+#define BMM150_DIG_Z2_LSB					0x68
+
+// BMM150 Constants
+#define BMM150_CHIP_ID_VALUE    			0x32
+#define BMM150_POWER_ON         			0x01
+#define BMM150_NORMAL_MODE      			0x00
+#define BMM150_ODR_10HZ         			0x00  // Output data rate 10Hz
+#define BMM150_DATA_READY       			0x01
+#define BMM150_OVERFLOW_OUTPUT				-32768
+#define BMM150_OVERFLOW_ADCVAL_XYAXES_FLIP	INT16_C(-4096)
+#define BMM150_OVERFLOW_ADCVAL_ZAXIS_HALL 	INT16_C(-16384)
+#define BMM150_POSITIVE_SATURATION_Z 		INT16_C(32767)
+#define BMM150_NEGATIVE_SATURATION_Z 		INT16_C(-32767)
+
 
 
 idata char buff[20];
-unsigned int pwm_counter = 0; 
-unsigned int servo_counter = 0; 
-unsigned char pwm_left = 0, pwm_right = 0; 
-unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
-unsigned char servo_base = 1, servo_arm = 1; 
-int vx_thres = 161, vy_thres = 166; 
-int vx = 0, vy = 0; 
-long freq100;
-unsigned int fre_mea_count = 0;
-int d1, d2;
-unsigned int seed = 12345;
-float pwm_corr = 0.95;
+xdata unsigned int pwm_counter = 0; 
+xdata unsigned int servo_counter = 0; 
+xdata unsigned char pwm_left = 0, pwm_right = 0; 
+xdata unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
+xdata unsigned char servo_base = 1, servo_arm = 1; 
+xdata int vx_thres = 161, vy_thres = 166; 
+xdata int vx = 0, vy = 0; 
+xdata long freq100;
+xdata unsigned int fre_mea_count = 0;
+xdata int d1, d2;
+xdata unsigned int seed = 12345;
+xdata float pwm_corr = 0.95;
 
 
 char _c51_external_startup (void)
@@ -110,7 +144,7 @@ char _c51_external_startup (void)
 	
 	P0MDOUT |= 0x11; // Enable UART0 TX (P0.4) and UART1 TX (P0.0) as push-pull outputs
 	P2MDOUT |= 0x01; // P2.0 in push-pull mode
-	XBR0     = 0x01; // Enable UART0 on P0.4(TX) and P0.5(RX)                     
+	XBR0     = 0b_0000_0011; // UART0E = 1 and SPI0E = 1               
 	XBR1     = 0X00;
 	XBR2     = 0x41; // Enable crossbar and uart 1
 
@@ -125,8 +159,12 @@ char _c51_external_startup (void)
 	TMOD |=  0x20;                       
 	TR1 = 1; // START Timer1
 	TI = 1;  // Indicate TX0 ready
-  	
   	P2_0=1; // 'set' pin to 1 is normal operation mode.
+
+	// Configure SPI
+    SPI0CKR = (SYSCLK/(2*F_SCK_MAX))-1;
+    SPI0CFG = 0b_1110_0000; // this is mode 3, you need to determine the sampling etc. in datasheet
+    SPI0CN0 = 0b_0000_0001; // SPI enabled and in three wire mode
 
     // Initialize Timer 5 for periodic interrupts
 	SFRPAGE=0x10;
@@ -527,6 +565,9 @@ void Init_all(){
     Set_Pin_Output(0x22);
     Set_Pin_Output(0x21);
 	Set_Pin_Output(0x17);
+	Set_Pin_Output(0x03); 
+	Set_Pin_Output(0x05); 
+	Set_Pin_Output(0x06); 
 	Set_Pin_Output(0x16);
 	Set_Pin_Output(0x15);
 	Set_Pin_Input(0x02);
