@@ -99,6 +99,7 @@ xdata uint16_t  dig_z1, dig_z2, dig_z3, dig_z4;
 xdata uint8_t dig_xy1; 
 xdata int8_t dig_xy2; 
 xdata uint16_t dig_xyz1; 
+xdata float curr_angle; 
 
 
 char _c51_external_startup (void)
@@ -933,6 +934,33 @@ unsigned int get_random_90_250() {
     return (simple_rand() % (250 - 85 + 1)) + 85;
 }
 
+float Read_angle(void)
+{
+	xdata uint8_t i; 
+	xdata int16_t mag_x, mag_y; 
+	xdata float sum_x, sum_y; 
+	xdata float alpha, angle, smoothed_angle; 
+
+	sum_x = 0.0; sum_y = 0.0; alpha = 0.25; 
+	smoothed_angle = 0.0; angle = 0.0; 
+
+	for (i = 0; i < 25; i++){
+		BMM150_Read_Data(&mag_x, &mag_y);
+		sum_x += (float)mag_x; 
+		sum_y += (float)mag_y; 
+		waitms(1);
+	}
+	// printf("%f, %f\r\n", sum_x/25.0, sum_y/25.0);
+	angle = atan2f(sum_y/25.0, sum_x/25.0) * 180.0 / M_PI;
+	// BMM150_Read_Data(&mag_x, &mag_y);
+	// printf("%d, %d\r\n", mag_x, mag_y);
+	// angle = atan2f((float)mag_y, (float)mag_x) * 180.0 / M_PI; 
+	if (angle < 0.0) angle += 360.0; 
+	if (angle > 360.0) angle -= 360.0; 
+	// smoothed_angle = alpha * angle + (1-alpha) * smoothed_angle; 
+	return angle; 
+}
+
 void Auto_mode_slave(){
 	xdata int count = 0;
 	xdata int command;
@@ -943,6 +971,8 @@ void Auto_mode_slave(){
 	xdata unsigned int angle;
 
 	while(count < 20 && state_res){
+
+		curr_angle = Read_angle();
 		
 		if(RXU1()){
 			c=getchar1();	
@@ -959,7 +989,7 @@ void Auto_mode_slave(){
 				// }				
 			}
 			else if(c=='@'){
-				sprintf(buff, "%01d,%02d,%ld\n", state_res, count,freq100);
+				sprintf(buff, "%01d,%02d,%ld,%4.1f\n", state_res, count,freq100, curr_angle);
 				waitms(5); 
 				sendstr1(buff);
 			}
@@ -990,32 +1020,6 @@ void Auto_mode_slave(){
 	printf("Auto mode finished!\r\n");
 }
 
-float Read_angle(void)
-{
-	xdata uint8_t i; 
-	xdata int16_t mag_x, mag_y; 
-	xdata float sum_x, sum_y; 
-	xdata float alpha, angle, smoothed_angle; 
-
-	sum_x = 0.0; sum_y = 0.0; alpha = 0.25; 
-	smoothed_angle = 0.0; angle = 0.0; 
-
-	for (i = 0; i < 25; i++){
-		BMM150_Read_Data(&mag_x, &mag_y);
-		sum_x += (float)mag_x; 
-		sum_y += (float)mag_y; 
-		waitms(1);
-	}
-	// printf("%f, %f\r\n", sum_x/25.0, sum_y/25.0);
-	angle = atan2f(sum_y/25.0, sum_x/25.0) * 180.0 / M_PI;
-	// BMM150_Read_Data(&mag_x, &mag_y);
-	// printf("%d, %d\r\n", mag_x, mag_y);
-	// angle = atan2f((float)mag_y, (float)mag_x) * 180.0 / M_PI; 
-	if (angle < 0.0) angle += 360.0; 
-	if (angle > 360.0) angle -= 360.0; 
-	// smoothed_angle = alpha * angle + (1-alpha) * smoothed_angle; 
-	return angle; 
-}
 
 void Joystick_Control(int *vx_ptr, int *vy_ptr)
 {
@@ -1123,7 +1127,6 @@ void main (void)
 	xdata uint8_t auto_mode = 0;
 	xdata char pick_done = 1;
 	xdata uint8_t pick = 0;
-	xdata float angle; 
 	
 	// printf("Initializing\r\n");
 	Init_all();
@@ -1163,8 +1166,8 @@ void main (void)
 			Auto_mode_slave();
 			auto_mode = 0;
 		}
-		angle = Read_angle();
-		// printf("freq: %f, angle: %f\r\n", freq100/100.0, angle);
+		curr_angle = Read_angle();
+		// printf("freq: %f, angle: %f\r\n", freq100/100.0, curr_angle);
 
 		// The message format: 000,000 --- (vx,vy)
 		if(RXU1()) // Something has arrived
@@ -1187,7 +1190,7 @@ void main (void)
 			}
 			else if(c=='@') // Master wants slave data
 			{
-				sprintf(buff, "0,00,%04ld\n", freq100);
+				sprintf(buff, "0,00,%04ld,%4.1f\n", freq100, curr_angle);
 				waitms(5); // The radio seems to need this delay...
 				sendstr1(buff);
 			}
