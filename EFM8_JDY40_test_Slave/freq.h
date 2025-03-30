@@ -1,4 +1,4 @@
-#define metal_detect P0_2
+#define metal_detect P3_0
 
 #define SYSCLK      72000000L 
 

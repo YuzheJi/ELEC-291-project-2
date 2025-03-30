@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-; This file was generated Thu Mar 27 15:47:27 2025
+; This file was generated Sat Mar 29 18:51:36 2025
 ;--------------------------------------------------------
 $name freq
 $optc51 --model-small
@@ -577,16 +577,16 @@ L002037?:
 	clr	_TF0
 ;	freq.c:16: while(metal_detect!=0); // Wait for the signal to be zero
 L002001?:
-	jb	_P0_2,L002001?
+	jb	_P3_0,L002001?
 ;	freq.c:17: while(metal_detect!=1); // Wait for the signal to be one
 L002004?:
-	jnb	_P0_2,L002004?
+	jnb	_P3_0,L002004?
 ;	freq.c:18: TR0=1; // Start the timer
 	setb	_TR0
 ;	freq.c:19: while(metal_detect!=0) // Wait for the signal to be zero
 	mov	r1,_get_freq_overflow_count_1_23
 L002009?:
-	jnb	_P0_2,L002031?
+	jnb	_P3_0,L002031?
 ;	freq.c:21: if(TF0==1) // Did the 16-bit timer overflow?
 ;	freq.c:23: TF0=0;
 	jbc	_TF0,L002041?
@@ -598,7 +598,7 @@ L002041?:
 	sjmp	L002009?
 L002031?:
 L002014?:
-	jb	_P0_2,L002016?
+	jb	_P3_0,L002016?
 ;	freq.c:29: if(TF0==1) // Did the 16-bit timer overflow?
 ;	freq.c:31: TF0=0;
 	jbc	_TF0,L002043?
