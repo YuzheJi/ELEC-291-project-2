@@ -6,12 +6,16 @@ main
 --model-small
 </OPTC51>
 
+<PRINTF_FLOAT>
+printf_float
+</PRINTF_FLOAT>
+
 <SEGMENTS>
 R_GSINIT,code,0000,NO
 R_BSEG,bit,0000,NO
-R_XSEG,xdata,0054,NO
+R_XSEG,xdata,0058,NO
 BIT_BANK,data,0001,OV
-R_CONST,code,021D,NO
+R_CONST,code,0229,NO
 rbank0,data,0000,OV
 R_PSEG,xdata,0000,NO
 R_DINIT,code,0000,NO
@@ -21,19 +25,19 @@ R_IXSEG,xdata,001A,NO
 R_ISEG,idata,0014,NO
 R_HOME,code,0000,NO
 R_XINIT,code,001A,NO
-R_CSEG,code,2116,NO
+R_CSEG,code,2171,NO
 </SEGMENTS>
 
 <LOCALS>
 _Joystick_Control_sloc6_1_0,R_DSEG,002B,0002
 L002004?,R_CSEG,0029,0000
-_Auto_mode_slave_sloc0_1_0,R_DSEG,0016,0002
+_Auto_mode_slave_sloc0_1_0,R_DSEG,001A,0002
 L002001?,R_CSEG,001E,0000
-_BMM150_Read_Trim_Registers_trim_x1y1_1_97,R_XSEG,0018,0002
+_BMM150_Read_Trim_Registers_trim_x1y1_1_97,R_XSEG,001C,0002
 __xinit__vy_thres,R_XINIT,000C,0000
-L039008?,R_CSEG,175F,0000
-L039005?,R_CSEG,16A1,0000
-L039002?,R_CSEG,1648,0000
+L039008?,R_CSEG,1793,0000
+L039005?,R_CSEG,16D5,0000
+L039002?,R_CSEG,167C,0000
 L030002?,R_CSEG,0E26,0000
 bits,BIT_BANK,0000,0001
 L030001?,R_CSEG,0E22,0000
@@ -45,15 +49,15 @@ L003007?,R_CSEG,00A4,0000
 __xinit__L_motor_dir,R_XINIT,0006,0000
 _Joystick_Control_sloc3_1_0,R_DSEG,0024,0001
 L003004?,R_CSEG,0094,0000
-_Read_angle_sum_x_1_206,R_XSEG,0040,0004
+_Read_angle_sum_x_1_198,R_XSEG,003E,0004
 L003001?,R_CSEG,0099,0000
-_BMM150_compensate_y_process_comp_y0_1_116,R_XSEG,002E,0002
-_BMM150_Read_Trim_Registers_trim_xy1xy2_1_97,R_XSEG,001E,000A
-_main_vy_1_232,R_XSEG,0050,0002
+_BMM150_compensate_y_process_comp_y0_1_116,R_XSEG,0032,0002
+_BMM150_Read_Trim_Registers_trim_xy1xy2_1_97,R_XSEG,0022,000A
+_main_vy_1_232,R_XSEG,0054,0002
 L028009?,R_CSEG,0C9D,0000
 L010019?,R_CSEG,0303,0000
 L028006?,R_CSEG,0C97,0000
-_main_auto_mode_1_232,R_XSEG,0052,0001
+_main_auto_mode_1_232,R_XSEG,0056,0001
 L028004?,R_CSEG,0C74,0000
 L028002?,R_CSEG,0C53,0000
 L016008?,R_CSEG,0969,0000
@@ -64,37 +68,37 @@ L016001?,R_CSEG,0964,0000
 L004007?,R_CSEG,00DB,0000
 _Joystick_Control_sloc4_1_0,R_DSEG,0025,0002
 L004005?,R_CSEG,00B0,0000
-__str_20,R_CONST,01A4,0000
-__str_21,R_CONST,01B2,0000
-__str_22,R_CONST,01F7,0000
-__str_23,R_CONST,0211,0000
-__str_10,R_CONST,011A,0000
-__str_11,R_CONST,0127,0000
-__str_12,R_CONST,013D,0000
-__str_13,R_CONST,015D,0000
-__str_14,R_CONST,0166,0000
-__str_15,R_CONST,0170,0000
-__str_16,R_CONST,017A,0000
-__str_17,R_CONST,0184,0000
-__str_18,R_CONST,0190,0000
-__str_19,R_CONST,019A,0000
+__str_20,R_CONST,01AA,0000
+__str_21,R_CONST,01B8,0000
+__str_22,R_CONST,01FD,0000
+__str_23,R_CONST,0217,0000
+__str_10,R_CONST,0120,0000
+__str_11,R_CONST,012D,0000
+__str_12,R_CONST,0143,0000
+__str_13,R_CONST,0163,0000
+__str_14,R_CONST,016C,0000
+__str_15,R_CONST,0176,0000
+__str_16,R_CONST,0180,0000
+__str_17,R_CONST,018A,0000
+__str_18,R_CONST,0196,0000
+__str_19,R_CONST,01A0,0000
 L004001?,R_CSEG,00B9,0000
 L010022?,R_CSEG,034F,0000
-_BMM150_compensate_x_process_comp_x0_1_107,R_XSEG,002A,0002
-_main_vx_1_232,R_XSEG,004E,0002
+_BMM150_compensate_x_process_comp_x0_1_107,R_XSEG,002E,0002
+_main_vx_1_232,R_XSEG,0052,0002
 L029009?,R_CSEG,0DBB,0000
 L023013?,R_CSEG,0B27,0000
 L029008?,R_CSEG,0DB1,0000
 L011019?,R_CSEG,055E,0000
 L023011?,R_CSEG,0B13,0000
-_Read_angle_sloc0_1_0,R_DSEG,0018,0004
+_Read_angle_sloc0_1_0,R_DSEG,0016,0004
 L020009?,R_CSEG,0A6B,0000
 L029005?,R_CSEG,0D88,0000
-L039059?,R_CSEG,16C4,0000
+L039059?,R_CSEG,16F8,0000
 L029004?,R_CSEG,0D7E,0000
 L020007?,R_CSEG,0A24,0000
-L039057?,R_CSEG,15CD,0000
-L039056?,R_CSEG,15B7,0000
+L039057?,R_CSEG,1601,0000
+L039056?,R_CSEG,15EB,0000
 L029001?,R_CSEG,0D55,0000
 L011012?,R_CSEG,0797,0000
 L020003?,R_CSEG,0A2D,0000
@@ -112,78 +116,69 @@ b5,BIT_BANK,0000,0000
 b6,BIT_BANK,0000,0000
 b7,BIT_BANK,0000,0000
 L005008?,R_CSEG,00EB,0000
-_Read_angle_mag_x_1_206,R_XSEG,003C,0002
-L039069?,R_CSEG,1BCD,0000
-L039068?,R_CSEG,1BAD,0000
-L039067?,R_CSEG,1A56,0000
+_Read_angle_mag_x_1_198,R_XSEG,003A,0002
+L039069?,R_CSEG,1C01,0000
+L039068?,R_CSEG,1BE1,0000
+L039067?,R_CSEG,1A8A,0000
 L008028?,R_CSEG,01BE,0000
 L005001?,R_CSEG,00E6,0000
-L039066?,R_CSEG,180E,0000
-L039065?,R_CSEG,17A5,0000
+L039066?,R_CSEG,1842,0000
+L039065?,R_CSEG,17D9,0000
 L008026?,R_CSEG,0190,0000
 L011022?,R_CSEG,05AA,0000
-L039064?,R_CSEG,1788,0000
-L039063?,R_CSEG,1774,0000
+L039064?,R_CSEG,17BC,0000
+L039063?,R_CSEG,17A8,0000
 L008024?,R_CSEG,0162,0000
-L039062?,R_CSEG,176F,0000
-L039060?,R_CSEG,16D2,0000
+L039062?,R_CSEG,17A3,0000
+L039060?,R_CSEG,1706,0000
 L024013?,R_CSEG,0B67,0000
 L024011?,R_CSEG,0B52,0000
 L018007?,R_CSEG,09BD,0000
-L039071?,R_CSEG,1DFA,0000
-L039070?,R_CSEG,1C26,0000
+L039071?,R_CSEG,1E2E,0000
+L039070?,R_CSEG,1C5A,0000
 L018004?,R_CSEG,0A09,0000
 L009011?,R_CSEG,0268,0000
 L018002?,R_CSEG,09EB,0000
-L040016?,R_CSEG,1FA6,0000
-L037018?,R_CSEG,0FC9,0000
-L040011?,R_CSEG,20C9,0000
-L037014?,R_CSEG,11B6,0000
-L037012?,R_CSEG,10E9,0000
+L040016?,R_CSEG,1FDA,0000
+L037017?,R_CSEG,0FDB,0000
+L037016?,R_CSEG,0FD6,0000
+L040011?,R_CSEG,2112,0000
 __xinit__servo_base,R_XINIT,0008,0000
 __xinit__vx,R_XINIT,000E,0000
 __xinit__vy,R_XINIT,0010,0000
-_BMM150_Read_Data_rhall_val_1_125,R_XSEG,0034,0002
+_BMM150_Read_Data_rhall_val_1_125,R_XSEG,0038,0002
 __xinit__pwm_corr,R_XINIT,0016,0000
 L010008?,R_CSEG,052A,0000
-L037020?,R_CSEG,1202,0000
-_main_pick_1_232,R_XSEG,0053,0001
+_main_pick_1_232,R_XSEG,0057,0001
 L010006?,R_CSEG,0341,0000
+_Auto_mode_slave_dummy_1_200,R_XSEG,004E,0002
 L010005?,R_CSEG,0325,0000
 L010002?,R_CSEG,033A,0000
-L040036?,R_CSEG,20D1,0000
+L040036?,R_CSEG,211A,0000
 __xinit__pwm_right,R_XINIT,0005,0000
-L037039?,R_CSEG,102D,0000
-_Auto_mode_slave_dummy_1_197,R_XSEG,003A,0002
-L040035?,R_CSEG,20CE,0000
-L037038?,R_CSEG,100C,0000
-L040034?,R_CSEG,2004,0000
-L037037?,R_CSEG,1009,0000
-L040033?,R_CSEG,2001,0000
-L037036?,R_CSEG,0FF7,0000
-L040032?,R_CSEG,1FE0,0000
-L037035?,R_CSEG,0FE7,0000
-L038017?,R_CSEG,1238,0000
-L040031?,R_CSEG,1FDD,0000
+L040035?,R_CSEG,2117,0000
+L040034?,R_CSEG,204D,0000
+L040033?,R_CSEG,204A,0000
+L038018?,R_CSEG,1277,0000
+L040032?,R_CSEG,2029,0000
+L040031?,R_CSEG,2026,0000
 _Joystick_Control_sloc1_1_0,R_DSEG,0021,0001
-L037034?,R_CSEG,0FD9,0000
-L038016?,R_CSEG,1233,0000
-_BMM150_Read_Data_x_val_1_125,R_XSEG,0030,0002
+L038014?,R_CSEG,1498,0000
+L038012?,R_CSEG,13CB,0000
+_BMM150_Read_Data_x_val_1_125,R_XSEG,0034,0002
 L026015?,R_CSEG,0BBB,0000
 L026014?,R_CSEG,0BB6,0000
 L026013?,R_CSEG,0BAA,0000
+_Read_angle_sum_y_1_198,R_XSEG,0042,0004
 L026011?,R_CSEG,0BA8,0000
-L037047?,R_CSEG,11C1,0000
 L023009?,R_CSEG,0B11,0000
-L037046?,R_CSEG,11BE,0000
-L037045?,R_CSEG,11AB,0000
 L023006?,R_CSEG,0B42,0000
 L023004?,R_CSEG,0B3F,0000
 L023003?,R_CSEG,0B3B,0000
-L037040?,R_CSEG,1030,0000
 L023002?,R_CSEG,0B37,0000
 L023001?,R_CSEG,0B33,0000
 L011008?,R_CSEG,0783,0000
+L038020?,R_CSEG,14E4,0000
 __str_0,R_CONST,0000,0000
 __str_1,R_CONST,0038,0000
 __str_2,R_CONST,0057,0000
@@ -194,57 +189,68 @@ __str_6,R_CONST,00BE,0000
 L011006?,R_CSEG,059C,0000
 __str_7,R_CONST,00CC,0000
 __str_8,R_CONST,00E0,0000
-__str_9,R_CONST,00EF,0000
+__str_9,R_CONST,00F5,0000
 L008009?,R_CSEG,01BB,0000
-_Joystick_Control_vx_error_1_209,R_XSEG,004C,0002
+_Joystick_Control_vx_error_1_209,R_XSEG,0050,0002
 L011005?,R_CSEG,0580,0000
 L008008?,R_CSEG,01B9,0000
-_Read_angle_angle_1_206,R_XSEG,0048,0004
 __xinit__pwm_counter,R_XINIT,0000,0000
-_Read_angle_sum_y_1_206,R_XSEG,0044,0004
 L011002?,R_CSEG,0595,0000
 L008005?,R_CSEG,018D,0000
+L038039?,R_CSEG,12FD,0000
 L008004?,R_CSEG,018B,0000
+L038038?,R_CSEG,12DC,0000
+L038037?,R_CSEG,12D9,0000
+L038036?,R_CSEG,12C7,0000
 L008001?,R_CSEG,015F,0000
-L039017?,R_CSEG,1AFE,0000
+L038035?,R_CSEG,1295,0000
+L039017?,R_CSEG,1B32,0000
 _Joystick_Control_sloc2_1_0,R_DSEG,0022,0002
+L038034?,R_CSEG,1287,0000
 __xinit__vx_thres,R_XINIT,000A,0000
-L039014?,R_CSEG,18FC,0000
-L039011?,R_CSEG,176A,0000
-_BMM150_Read_Data_y_val_1_125,R_XSEG,0032,0002
+L039014?,R_CSEG,1930,0000
+L039011?,R_CSEG,179E,0000
+_BMM150_Read_Data_y_val_1_125,R_XSEG,0036,0002
 __xinit__R_motor_dir,R_XINIT,0007,0000
+L038047?,R_CSEG,14A3,0000
 L024009?,R_CSEG,0B50,0000
-L039028?,R_CSEG,1E84,0000
+L038046?,R_CSEG,14A0,0000
+L039028?,R_CSEG,1EB8,0000
+_Read_angle_angle_1_198,R_XSEG,0046,0004
+L038045?,R_CSEG,148D,0000
 L024006?,R_CSEG,0B82,0000
-L039025?,R_CSEG,1CE2,0000
+L039025?,R_CSEG,1D16,0000
 L024004?,R_CSEG,0B7F,0000
-L039023?,R_CSEG,1BA7,0000
+L039023?,R_CSEG,1BDB,0000
 L024003?,R_CSEG,0B7B,0000
+L038040?,R_CSEG,1300,0000
 L024002?,R_CSEG,0B77,0000
 L024001?,R_CSEG,0B73,0000
-L039020?,R_CSEG,19ED,0000
+L039020?,R_CSEG,1A21,0000
 __xinit__pwm_left,R_XINIT,0004,0000
+_Auto_mode_slave_command_1_200,R_XSEG,004A,0002
 L009005?,R_CSEG,029C,0000
 L009002?,R_CSEG,0285,0000
-_Auto_mode_slave_state_res_1_197,R_XSEG,0038,0002
 _BMM150_compensate_x_sloc0_1_0,R_DSEG,0004,0004
-L039031?,R_CSEG,1DA1,0000
+L039031?,R_CSEG,1DD5,0000
 L028018?,R_CSEG,0CEB,0000
-L040006?,R_CSEG,20A5,0000
-L037009?,R_CSEG,109C,0000
+L040006?,R_CSEG,20EE,0000
+_Read_angle_mag_y_1_198,R_XSEG,003C,0002
+L037008?,R_CSEG,10A5,0000
 L028016?,R_CSEG,0CC6,0000
-L040004?,R_CSEG,1FCB,0000
+L040004?,R_CSEG,1FFF,0000
 L028015?,R_CSEG,0CC2,0000
-L040002?,R_CSEG,1FBC,0000
+L040002?,R_CSEG,1FF0,0000
+L037005?,R_CSEG,0FD3,0000
+L037004?,R_CSEG,1255,0000
+_Auto_mode_slave_state_res_1_200,R_XSEG,004C,0002
 L028012?,R_CSEG,0CBC,0000
-L037002?,R_CSEG,1093,0000
+L037002?,R_CSEG,11E3,0000
 L028010?,R_CSEG,0CA1,0000
-_Auto_mode_slave_command_1_197,R_XSEG,0036,0002
 L004018?,R_CSEG,00BC,0000
 __xinit__servo_counter,R_XINIT,0002,0000
-_BMM150_compensate_y_retval_1_116,R_XSEG,002C,0002
-_Read_angle_mag_y_1_206,R_XSEG,003E,0002
-_BMM150_compensate_x_retval_1_107,R_XSEG,0028,0002
+_BMM150_compensate_y_retval_1_116,R_XSEG,0030,0002
+_BMM150_compensate_x_retval_1_107,R_XSEG,002C,0002
 L028023?,R_CSEG,0D14,0000
 __xinit__seed,R_XINIT,0014,0000
 L028020?,R_CSEG,0D04,0000
@@ -252,12 +258,10 @@ _Joystick_Control_sloc5_1_0,R_DSEG,0027,0004
 __xinit__fre_mea_count,R_XINIT,0012,0000
 _Joystick_Control_sloc0_1_0,R_DSEG,001F,0002
 _BMM150_compensate_y_sloc0_1_0,R_DSEG,000B,0004
-L038008?,R_CSEG,1302,0000
+L038009?,R_CSEG,136C,0000
 L020019?,R_CSEG,0A30,0000
-L038005?,R_CSEG,1230,0000
-L038004?,R_CSEG,14B2,0000
 L029012?,R_CSEG,0DE4,0000
-L038002?,R_CSEG,1440,0000
+L038002?,R_CSEG,1363,0000
 L020011?,R_CSEG,0A72,0000
 L026005?,R_CSEG,0BDC,0000
 L017012?,R_CSEG,0996,0000
@@ -265,7 +269,7 @@ L026003?,R_CSEG,0BD4,0000
 L026002?,R_CSEG,0BCA,0000
 L026001?,R_CSEG,0BC0,0000
 L014008?,R_CSEG,0930,0000
-_BMM150_Read_Trim_Registers_trim_xyz_data_1_97,R_XSEG,001A,0004
+_BMM150_Read_Trim_Registers_trim_xyz_data_1_97,R_XSEG,001E,0004
 L014001?,R_CSEG,092B,0000
 __xinit__servo_arm,R_XINIT,0009,0000
 </LOCALS>
@@ -276,12 +280,13 @@ _InitPinADC,R_CSEG,0B9D,0000
 _SendATCommand,R_CSEG,0A73,0000
 _waitms_or_RI1,R_CSEG,0A1C,0000
 _SPI_transfer,R_CSEG,00E3,0000
-_Read_angle,R_CSEG,1218,0000
+_Read_angle,R_CSEG,0FBB,0000
 _buff,R_ISEG,0000,0014
-_main,R_CSEG,1F12,0000
+_main,R_CSEG,1F46,0000
 _servo_counter,R_IXSEG,0002,0002
 _BMM150_Init,R_CSEG,0235,0000
 _servo_base,R_IXSEG,0008,0001
+_curr_angle,R_XSEG,0018,0004
 _sendstr1,R_CSEG,0936,0000
 _seed,R_IXSEG,0014,0002
 _getchar1,R_CSEG,0961,0000
@@ -297,7 +302,7 @@ _InitPinADC_PARM_2,R_OSEG,0000,0001
 _freq100,R_XSEG,0000,0004
 _vx,R_IXSEG,000E,0002
 _vy,R_IXSEG,0010,0002
-_Joystick_Control,R_CSEG,14C6,0000
+_Joystick_Control,R_CSEG,14FA,0000
 _pwm_right,R_IXSEG,0005,0001
 _BMM150_Read_Data,R_CSEG,07A3,0000
 _BMM150_Read_Data_PARM_2,R_DSEG,000F,0003
@@ -332,7 +337,7 @@ _Right_angle,R_CSEG,0EB9,0000
 _SPI_read,R_CSEG,00EF,0000
 _dig_y1,R_XSEG,000A,0001
 _dig_y2,R_XSEG,000B,0001
-_Auto_mode_slave,R_CSEG,0FBB,0000
+_Auto_mode_slave,R_CSEG,1269,0000
 _dig_z1,R_XSEG,000C,0002
 _dig_z2,R_XSEG,000E,0002
 _dig_z3,R_XSEG,0010,0002
@@ -2536,7 +2541,412 @@ E4
 35 F0
 F5 83
 22
-90 data16(_Auto_mode_slave_state_res_1_197;)  
+90 data16(_Read_angle_sum_x_1_198;)  
+E4
+F0
+A3
+F0
+A3
+F0
+A3
+F0
+90 data16(_Read_angle_sum_y_1_198;)  
+F0
+A3
+E4
+F0
+A3
+F0
+A3
+F0
+7A 00
+BA 19 rel3(L037016?;)
+40 rel2(L037017?;)
+02 addr16(L037008?;)  
+75 data8(_BMM150_Read_Data_PARM_2;) data8(_Read_angle_mag_y_1_198;)
+75 data8(_BMM150_Read_Data_PARM_2;0x0001;+;) data8(_Read_angle_mag_y_1_198;0x0008;>>;)
+75 data8(_BMM150_Read_Data_PARM_2;0x0002;+;) 00
+90 data16(_Read_angle_mag_x_1_198;)  
+75 F0 00
+C0 02
+12 addr16(_BMM150_Read_Data;)  
+90 data16(_Read_angle_mag_x_1_198;)  
+E0
+FB
+A3
+E0
+FC
+8B 82
+8C 83
+12 addr16(___sint2fs;)  
+85 82 data8(_Read_angle_sloc0_1_0;)
+85 83 data8(_Read_angle_sloc0_1_0;0x0001;+;)
+85 F0 data8(_Read_angle_sloc0_1_0;0x0002;+;)
+F5 data8(_Read_angle_sloc0_1_0;0x0003;+;)
+90 data16(_Read_angle_sum_x_1_198;)  
+E0
+FF
+A3
+E0
+F8
+A3
+E0
+F9
+A3
+E0
+FB
+C0 data8(_Read_angle_sloc0_1_0;)
+C0 data8(_Read_angle_sloc0_1_0;0x0001;+;)
+C0 data8(_Read_angle_sloc0_1_0;0x0002;+;)
+C0 data8(_Read_angle_sloc0_1_0;0x0003;+;)
+8F 82
+88 83
+89 F0
+EB
+12 addr16(___fsadd;)  
+AB 82
+AC 83
+AD F0
+FE
+E5 81
+24 FC
+F5 81
+90 data16(_Read_angle_sum_x_1_198;)  
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
+A3
+EE
+F0
+90 data16(_Read_angle_mag_y_1_198;)  
+E0
+FB
+A3
+E0
+FC
+8B 82
+8C 83
+12 addr16(___sint2fs;)  
+85 82 data8(_Read_angle_sloc0_1_0;)
+85 83 data8(_Read_angle_sloc0_1_0;0x0001;+;)
+85 F0 data8(_Read_angle_sloc0_1_0;0x0002;+;)
+F5 data8(_Read_angle_sloc0_1_0;0x0003;+;)
+90 data16(_Read_angle_sum_y_1_198;)  
+E0
+FF
+A3
+E0
+F8
+A3
+E0
+F9
+A3
+E0
+FB
+C0 data8(_Read_angle_sloc0_1_0;)
+C0 data8(_Read_angle_sloc0_1_0;0x0001;+;)
+C0 data8(_Read_angle_sloc0_1_0;0x0002;+;)
+C0 data8(_Read_angle_sloc0_1_0;0x0003;+;)
+8F 82
+88 83
+89 F0
+EB
+12 addr16(___fsadd;)  
+AB 82
+AC 83
+AD F0
+FE
+E5 81
+24 FC
+F5 81
+90 data16(_Read_angle_sum_y_1_198;)  
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
+A3
+EE
+F0
+90 00 01
+12 addr16(_waitms;)  
+D0 02
+0A
+02 addr16(L037005?;)  
+90 data16(_Read_angle_sum_y_1_198;)  
+E0
+FA
+A3
+E0
+FB
+A3
+E0
+FC
+A3
+E0
+FD
+E4
+C0 E0
+C0 E0
+74 C8
+C0 E0
+74 41
+C0 E0
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(___fsdiv;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+90 data16(_Read_angle_sum_x_1_198;)  
+E0
+FE
+A3
+E0
+FF
+A3
+E0
+F8
+A3
+E0
+F9
+C0 02
+C0 03
+C0 04
+C0 05
+E4
+C0 E0
+C0 E0
+74 C8
+C0 E0
+74 41
+C0 E0
+8E 82
+8F 83
+88 F0
+E9
+12 addr16(___fsdiv;)  
+85 82 data8(_atan2f_PARM_2;)
+85 83 data8(_atan2f_PARM_2;0x0001;+;)
+85 F0 data8(_atan2f_PARM_2;0x0002;+;)
+F5 data8(_atan2f_PARM_2;0x0003;+;)
+E5 81
+24 FC
+F5 81
+D0 05
+D0 04
+D0 03
+D0 02
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(_atan2f;)  
+AA 82
+AB 83
+AC F0
+FD
+C0 02
+C0 03
+C0 04
+C0 05
+90 00 00
+75 F0 34
+74 43
+12 addr16(___fsmul;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+74 DB
+C0 E0
+74 0F
+C0 E0
+74 49
+C0 E0
+74 40
+C0 E0
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(___fsdiv;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+90 data16(_Read_angle_angle_1_198;)  
+EA
+F0
+A3
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
+C0 02
+C0 03
+C0 04
+C0 05
+E4
+C0 E0
+C0 E0
+C0 E0
+C0 E0
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(___fslt;)  
+AE 82
+E5 81
+24 FC
+F5 81
+D0 05
+D0 04
+D0 03
+D0 02
+EE
+60 rel2(L037002?;)
+E4
+C0 E0
+C0 E0
+74 B4
+C0 E0
+74 43
+C0 E0
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(___fsadd;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+90 data16(_Read_angle_angle_1_198;)  
+EA
+F0
+A3
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
+90 data16(_Read_angle_angle_1_198;)  
+E0
+FA
+A3
+E0
+FB
+A3
+E0
+FC
+A3
+E0
+FD
+C0 02
+C0 03
+C0 04
+C0 05
+E4
+C0 E0
+C0 E0
+74 B4
+C0 E0
+74 43
+C0 E0
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(___fsgt;)  
+AE 82
+E5 81
+24 FC
+F5 81
+D0 05
+D0 04
+D0 03
+D0 02
+EE
+60 rel2(L037004?;)
+E4
+C0 E0
+C0 E0
+74 B4
+C0 E0
+74 43
+C0 E0
+8A 82
+8B 83
+8C F0
+ED
+12 addr16(___fssub;)  
+AA 82
+AB 83
+AC F0
+FD
+E5 81
+24 FC
+F5 81
+90 data16(_Read_angle_angle_1_198;)  
+EA
+F0
+A3
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
+90 data16(_Read_angle_angle_1_198;)  
+E0
+FA
+A3
+E0
+FB
+A3
+E0
+FC
+A3
+E0
+8A 82
+8B 83
+8C F0
+22
+90 data16(_Auto_mode_slave_state_res_1_200;)  
 74 01
 F0
 E4
@@ -2551,33 +2961,56 @@ E5 data8(_Auto_mode_slave_sloc0_1_0;)
 E5 data8(_Auto_mode_slave_sloc0_1_0;0x0001;+;)
 64 80
 94 80
-40 rel2(L037034?;)
-02 addr16(L037020?;)  
-90 data16(_Auto_mode_slave_state_res_1_197;)  
+40 rel2(L038034?;)
+02 addr16(L038020?;)  
+90 data16(_Auto_mode_slave_state_res_1_200;)  
 E0
 FC
 A3
 E0
 FD
 4C
-70 rel2(L037035?;)
-02 addr16(L037020?;)  
+70 rel2(L038035?;)
+02 addr16(L038020?;)  
+C0 04
+C0 05
+12 addr16(_Read_angle;)  
+AE 82
+AF 83
+AC F0
+FD
+90 data16(_curr_angle;)  
+EE
+F0
+A3
+EF
+F0
+A3
+EC
+F0
+A3
+ED
+F0
 C0 04
 C0 05
 12 addr16(_RXU1;)  
+E4
+33
 D0 05
 D0 04
-40 rel2(L037036?;)
-02 addr16(L037012?;)  
+D0 05
+D0 04
+70 rel2(L038036?;)
+02 addr16(L038012?;)  
 C0 04
 C0 05
 12 addr16(_getchar1;)  
 AE 82
 D0 05
 D0 04
-BE 21 rel3(L037037?;)
-80 rel2(L037038?;)
-02 addr16(L037009?;)  
+BE 21 rel3(L038037?;)
+80 rel2(L038038?;)
+02 addr16(L038009?;)  
 75 data8(_getstr1_PARM_2;) 13
 90 data16(_buff;)  
 75 F0 40
@@ -2587,31 +3020,31 @@ BE 21 rel3(L037037?;)
 12 addr16(_strlen;)  
 AF 82
 AA 83
-BF 0B rel3(L037039?;)
-BA 00 rel3(L037039?;)
-80 rel2(L037040?;)
-02 addr16(L037012?;)  
-74 data8(_Auto_mode_slave_command_1_197;)
+BF 0B rel3(L038039?;)
+BA 00 rel3(L038039?;)
+80 rel2(L038040?;)
+02 addr16(L038012?;)  
+74 data8(_Auto_mode_slave_command_1_200;)
 C0 E0
-74 data8(_Auto_mode_slave_command_1_197;0x0008;>>;)
-C0 E0
-E4
-C0 E0
-74 data8(_Auto_mode_slave_dummy_1_197;)
-C0 E0
-74 data8(_Auto_mode_slave_dummy_1_197;0x0008;>>;)
+74 data8(_Auto_mode_slave_command_1_200;0x0008;>>;)
 C0 E0
 E4
 C0 E0
-74 data8(_Auto_mode_slave_dummy_1_197;)
+74 data8(_Auto_mode_slave_dummy_1_200;)
 C0 E0
-74 data8(_Auto_mode_slave_dummy_1_197;0x0008;>>;)
+74 data8(_Auto_mode_slave_dummy_1_200;0x0008;>>;)
 C0 E0
 E4
 C0 E0
-74 data8(_Auto_mode_slave_dummy_1_197;)
+74 data8(_Auto_mode_slave_dummy_1_200;)
 C0 E0
-74 data8(_Auto_mode_slave_dummy_1_197;0x0008;>>;)
+74 data8(_Auto_mode_slave_dummy_1_200;0x0008;>>;)
+C0 E0
+E4
+C0 E0
+74 data8(_Auto_mode_slave_dummy_1_200;)
+C0 E0
+74 data8(_Auto_mode_slave_dummy_1_200;0x0008;>>;)
 C0 E0
 E4
 C0 E0
@@ -2631,28 +3064,40 @@ C0 E0
 E5 81
 24 EE
 F5 81
-90 data16(_Auto_mode_slave_command_1_197;)  
+90 data16(_Auto_mode_slave_command_1_200;)  
 E0
 FF
 A3
 E0
 FA
 4F
-60 rel2(L037002?;)
-90 data16(_Auto_mode_slave_state_res_1_197;)  
+60 rel2(L038002?;)
+90 data16(_Auto_mode_slave_state_res_1_200;)  
 74 01
 F0
 E4
 A3
 F0
-80 rel2(L037012?;)
-90 data16(_Auto_mode_slave_state_res_1_197;)  
+80 rel2(L038012?;)
+90 data16(_Auto_mode_slave_state_res_1_200;)  
 E4
 F0
 A3
 F0
-80 rel2(L037012?;)
-BE 40 rel3(L037012?;)
+80 rel2(L038012?;)
+BE 40 rel3(L038012?;)
+90 data16(_curr_angle;)  
+E0
+C0 E0
+A3
+E0
+C0 E0
+A3
+E0
+C0 E0
+A3
+E0
+C0 E0
 90 data16(_freq100;)  
 E0
 C0 E0
@@ -2683,7 +3128,7 @@ C0 E0
 C0 E0
 12 addr16(_sprintf;)  
 E5 81
-24 F2
+24 EE
 F5 81
 90 00 05
 12 addr16(_waitms;)  
@@ -2787,7 +3232,7 @@ E4
 8F F0
 63 F0 80
 95 F0
-50 rel2(L037014?;)
+50 rel2(L038014?;)
 90 01 2C
 C0 02
 C0 03
@@ -2797,17 +3242,17 @@ D0 03
 D0 02
 05 data8(_Auto_mode_slave_sloc0_1_0;)
 E4
-B5 data8(_Auto_mode_slave_sloc0_1_0;) rel3(L037045?;)
+B5 data8(_Auto_mode_slave_sloc0_1_0;) rel3(L038045?;)
 05 data8(_Auto_mode_slave_sloc0_1_0;0x0001;+;)
 C0 02
 C0 03
 12 addr16(_Move_forward;)  
 D0 03
 D0 02
-BA 01 rel3(L037046?;)
-BB 00 rel3(L037046?;)
-80 rel2(L037047?;)
-02 addr16(L037018?;)  
+BA 01 rel3(L038046?;)
+BB 00 rel3(L038046?;)
+80 rel2(L038047?;)
+02 addr16(L038018?;)  
 12 addr16(_get_random_90_250;)  
 AA 82
 AB 83
@@ -2836,7 +3281,7 @@ C0 E0
 E5 81
 24 FB
 F5 81
-02 addr16(L037018?;)  
+02 addr16(L038018?;)  
 74 data8(__str_11;)
 C0 E0
 74 data8(__str_11;0x0008;>>;)
@@ -2847,411 +3292,6 @@ C0 E0
 15 81
 15 81
 15 81
-22
-90 data16(_Read_angle_sum_x_1_206;)  
-E4
-F0
-A3
-F0
-A3
-F0
-A3
-F0
-90 data16(_Read_angle_sum_y_1_206;)  
-F0
-A3
-E4
-F0
-A3
-F0
-A3
-F0
-7A 00
-BA 19 rel3(L038016?;)
-40 rel2(L038017?;)
-02 addr16(L038008?;)  
-75 data8(_BMM150_Read_Data_PARM_2;) data8(_Read_angle_mag_y_1_206;)
-75 data8(_BMM150_Read_Data_PARM_2;0x0001;+;) data8(_Read_angle_mag_y_1_206;0x0008;>>;)
-75 data8(_BMM150_Read_Data_PARM_2;0x0002;+;) 00
-90 data16(_Read_angle_mag_x_1_206;)  
-75 F0 00
-C0 02
-12 addr16(_BMM150_Read_Data;)  
-90 data16(_Read_angle_mag_x_1_206;)  
-E0
-FB
-A3
-E0
-FC
-8B 82
-8C 83
-12 addr16(___sint2fs;)  
-85 82 data8(_Read_angle_sloc0_1_0;)
-85 83 data8(_Read_angle_sloc0_1_0;0x0001;+;)
-85 F0 data8(_Read_angle_sloc0_1_0;0x0002;+;)
-F5 data8(_Read_angle_sloc0_1_0;0x0003;+;)
-90 data16(_Read_angle_sum_x_1_206;)  
-E0
-FF
-A3
-E0
-F8
-A3
-E0
-F9
-A3
-E0
-FB
-C0 data8(_Read_angle_sloc0_1_0;)
-C0 data8(_Read_angle_sloc0_1_0;0x0001;+;)
-C0 data8(_Read_angle_sloc0_1_0;0x0002;+;)
-C0 data8(_Read_angle_sloc0_1_0;0x0003;+;)
-8F 82
-88 83
-89 F0
-EB
-12 addr16(___fsadd;)  
-AB 82
-AC 83
-AD F0
-FE
-E5 81
-24 FC
-F5 81
-90 data16(_Read_angle_sum_x_1_206;)  
-EB
-F0
-A3
-EC
-F0
-A3
-ED
-F0
-A3
-EE
-F0
-90 data16(_Read_angle_mag_y_1_206;)  
-E0
-FB
-A3
-E0
-FC
-8B 82
-8C 83
-12 addr16(___sint2fs;)  
-85 82 data8(_Read_angle_sloc0_1_0;)
-85 83 data8(_Read_angle_sloc0_1_0;0x0001;+;)
-85 F0 data8(_Read_angle_sloc0_1_0;0x0002;+;)
-F5 data8(_Read_angle_sloc0_1_0;0x0003;+;)
-90 data16(_Read_angle_sum_y_1_206;)  
-E0
-FF
-A3
-E0
-F8
-A3
-E0
-F9
-A3
-E0
-FB
-C0 data8(_Read_angle_sloc0_1_0;)
-C0 data8(_Read_angle_sloc0_1_0;0x0001;+;)
-C0 data8(_Read_angle_sloc0_1_0;0x0002;+;)
-C0 data8(_Read_angle_sloc0_1_0;0x0003;+;)
-8F 82
-88 83
-89 F0
-EB
-12 addr16(___fsadd;)  
-AB 82
-AC 83
-AD F0
-FE
-E5 81
-24 FC
-F5 81
-90 data16(_Read_angle_sum_y_1_206;)  
-EB
-F0
-A3
-EC
-F0
-A3
-ED
-F0
-A3
-EE
-F0
-90 00 01
-12 addr16(_waitms;)  
-D0 02
-0A
-02 addr16(L038005?;)  
-90 data16(_Read_angle_sum_y_1_206;)  
-E0
-FA
-A3
-E0
-FB
-A3
-E0
-FC
-A3
-E0
-FD
-E4
-C0 E0
-C0 E0
-74 C8
-C0 E0
-74 41
-C0 E0
-8A 82
-8B 83
-8C F0
-ED
-12 addr16(___fsdiv;)  
-AA 82
-AB 83
-AC F0
-FD
-E5 81
-24 FC
-F5 81
-90 data16(_Read_angle_sum_x_1_206;)  
-E0
-FE
-A3
-E0
-FF
-A3
-E0
-F8
-A3
-E0
-F9
-C0 02
-C0 03
-C0 04
-C0 05
-E4
-C0 E0
-C0 E0
-74 C8
-C0 E0
-74 41
-C0 E0
-8E 82
-8F 83
-88 F0
-E9
-12 addr16(___fsdiv;)  
-85 82 data8(_atan2f_PARM_2;)
-85 83 data8(_atan2f_PARM_2;0x0001;+;)
-85 F0 data8(_atan2f_PARM_2;0x0002;+;)
-F5 data8(_atan2f_PARM_2;0x0003;+;)
-E5 81
-24 FC
-F5 81
-D0 05
-D0 04
-D0 03
-D0 02
-8A 82
-8B 83
-8C F0
-ED
-12 addr16(_atan2f;)  
-AA 82
-AB 83
-AC F0
-FD
-C0 02
-C0 03
-C0 04
-C0 05
-90 00 00
-75 F0 34
-74 43
-12 addr16(___fsmul;)  
-AA 82
-AB 83
-AC F0
-FD
-E5 81
-24 FC
-F5 81
-74 DB
-C0 E0
-74 0F
-C0 E0
-74 49
-C0 E0
-74 40
-C0 E0
-8A 82
-8B 83
-8C F0
-ED
-12 addr16(___fsdiv;)  
-AA 82
-AB 83
-AC F0
-FD
-E5 81
-24 FC
-F5 81
-90 data16(_Read_angle_angle_1_206;)  
-EA
-F0
-A3
-EB
-F0
-A3
-EC
-F0
-A3
-ED
-F0
-C0 02
-C0 03
-C0 04
-C0 05
-E4
-C0 E0
-C0 E0
-C0 E0
-C0 E0
-8A 82
-8B 83
-8C F0
-ED
-12 addr16(___fslt;)  
-AE 82
-E5 81
-24 FC
-F5 81
-D0 05
-D0 04
-D0 03
-D0 02
-EE
-60 rel2(L038002?;)
-E4
-C0 E0
-C0 E0
-74 B4
-C0 E0
-74 43
-C0 E0
-8A 82
-8B 83
-8C F0
-ED
-12 addr16(___fsadd;)  
-AA 82
-AB 83
-AC F0
-FD
-E5 81
-24 FC
-F5 81
-90 data16(_Read_angle_angle_1_206;)  
-EA
-F0
-A3
-EB
-F0
-A3
-EC
-F0
-A3
-ED
-F0
-90 data16(_Read_angle_angle_1_206;)  
-E0
-FA
-A3
-E0
-FB
-A3
-E0
-FC
-A3
-E0
-FD
-C0 02
-C0 03
-C0 04
-C0 05
-E4
-C0 E0
-C0 E0
-74 B4
-C0 E0
-74 43
-C0 E0
-8A 82
-8B 83
-8C F0
-ED
-12 addr16(___fsgt;)  
-AE 82
-E5 81
-24 FC
-F5 81
-D0 05
-D0 04
-D0 03
-D0 02
-EE
-60 rel2(L038004?;)
-E4
-C0 E0
-C0 E0
-74 B4
-C0 E0
-74 43
-C0 E0
-8A 82
-8B 83
-8C F0
-ED
-12 addr16(___fssub;)  
-AA 82
-AB 83
-AC F0
-FD
-E5 81
-24 FC
-F5 81
-90 data16(_Read_angle_angle_1_206;)  
-EA
-F0
-A3
-EB
-F0
-A3
-EC
-F0
-A3
-ED
-F0
-90 data16(_Read_angle_angle_1_206;)  
-E0
-FA
-A3
-E0
-FB
-A3
-E0
-FC
-A3
-E0
-8A 82
-8B 83
-8C F0
 22
 12 addr16(__gptrget;)  
 F5 data8(_Joystick_Control_sloc0_1_0;)
@@ -4668,6 +4708,22 @@ FA
 E4
 F0
 12 addr16(_Read_angle;)  
+AA 82
+AB 83
+AC F0
+FD
+90 data16(_curr_angle;)  
+EA
+F0
+A3
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
 12 addr16(_RXU1;)  
 50 rel2(L040016?;)
 12 addr16(_getchar1;)  
@@ -4789,6 +4845,18 @@ F5 81
 BA 40 rel3(L040035?;)
 80 rel2(L040036?;)
 02 addr16(L040016?;)  
+90 data16(_curr_angle;)  
+E0
+C0 E0
+A3
+E0
+C0 E0
+A3
+E0
+C0 E0
+A3
+E0
+C0 E0
 90 data16(_freq100;)  
 E0
 C0 E0
@@ -4815,7 +4883,7 @@ C0 E0
 C0 E0
 12 addr16(_sprintf;)  
 E5 81
-24 F6
+24 F2
 F5 81
 90 00 05
 12 addr16(_waitms;)  
@@ -4893,7 +4961,8 @@ A6
 25 30 33 64 2C 25 30 33 64 2C 25 30 31 64 2C 25 30
 31 64 
 00
-25 30 31 64 2C 25 30 32 64 2C 25 6C 64 
+25 30 31 64 2C 25 30 32 64 2C 25 6C 64 2C 25 34 2E
+31 66 
 0A
 00
 66 3A 25 30 34 6C 64 2C 20 64 31 3A 25 64 2C 20 64
@@ -4963,7 +5032,7 @@ A6
 0D
 0A
 00
-30 2C 30 30 2C 25 30 34 6C 64 
+30 2C 30 30 2C 25 30 34 6C 64 2C 25 34 2E 31 66 
 0A
 00
 </CODE>
