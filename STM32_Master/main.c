@@ -367,20 +367,20 @@ void main(void)
 		
 		timeout_cnt=0;
 		while(1){
-			if(ReceivedBytes2()>9) break; // Something has arrived
+			if(ReceivedBytes2()>15) break; // Something has arrived
 			if(++timeout_cnt>250) break; // Wait up to 25ms for the repply
 			Delay_us(100); // 100us*250=25ms
 		}		
-		if(ReceivedBytes2()>9){
+		if(ReceivedBytes2()>15){
 			egets2(buff, sizeof(buff)-1);
-			if(strlen(buff)==10){
+			if(strlen(buff)==16){
 				if(auto_state) 	printf("Slave_auto says: %s\r", buff);
 				else 			printf("Slave_manual says: %s\r", buff);
 				sscanf(buff, "%01d,%02d,%04d",&state_res,&count_res,&metal_freq);
 			}
 			else{
 				while (ReceivedBytes2()) egetc2(); 
-				printf("*** BAD MESSAGE ***: %s\r", buff);
+				printf("*** BAD MESSAGE ***: %s, length: %d\r", buff, (int)strlen(buff));
 			}
 		}
 		else{
