@@ -99,7 +99,7 @@ xdata uint16_t  dig_z1, dig_z2, dig_z3, dig_z4;
 xdata uint8_t dig_xy1; 
 xdata int8_t dig_xy2; 
 xdata uint16_t dig_xyz1; 
-xdata float curr_angle; 
+xdata float curr_angle=0; 
 
 
 char _c51_external_startup (void)
@@ -944,7 +944,7 @@ float Read_angle(void)
 	sum_x = 0.0; sum_y = 0.0; alpha = 0.25; 
 	smoothed_angle = 0.0; angle = 0.0; 
 
-	for (i = 0; i < 25; i++){
+	for (i = 0; i < 10; i++){
 		BMM150_Read_Data(&mag_x, &mag_y);
 		sum_x += (float)mag_x; 
 		sum_y += (float)mag_y; 
@@ -978,8 +978,8 @@ void Auto_mode_slave(){
 			c=getchar1();	
 			if(c=='!'){
 				getstr1(buff, sizeof(buff)-1);
-				if(strlen(buff)==12){
-					//printf("master_messgae_auto_mode: %s\r\n", buff);
+				if(strlen(buff)==11){
+					printf("master_messgae_auto_mode: %s\r\n", buff);
 					sscanf(buff,"%03d,%03d,%01d,%01d",&dummy, &dummy,&dummy,&command);
 					if(command) state_res = 1;
 					else state_res = 0;
@@ -1003,7 +1003,7 @@ void Auto_mode_slave(){
 		bound = check_bound(d1,d2);
 		printf("f:%04ld, d1:%d, d2:%d, bound_dectect: %d\r\n",freq100, d1,d2,bound);
 
-		if (freq100>5400){
+		if (freq100>=5350){
 			Move_back_ms(300);
 			servo_pick();
 			count++;
@@ -1124,9 +1124,8 @@ void main (void)
 {
     xdata char c;
 	xdata int vx = 0, vy = 0; 
-	int auto_mode = 0;
-	int pick = 0;
-	int cnt;
+	xdata int auto_mode = 0;
+	char pick_char = '0';
 	
 	// printf("Initializing\r\n");
 	Init_all();
@@ -1156,10 +1155,10 @@ void main (void)
 	while(1)
 	{	
 		
-		if(pick==1){
+		if(pick_char=='1'){
 			servo_pick();
 			waitms(1000);
-			pick = 0;
+			pick_char = '0';
 		}
 		
 		if(auto_mode){
@@ -1171,15 +1170,14 @@ void main (void)
 		if(RXU1()) // Something has arrived
 		{
 			c=getchar1();
-			
 			if(c=='!') // Master is sending message
 			{
 				getstr1(buff, sizeof(buff)-1);
-				if(strlen(buff)==12)
+				if(strlen(buff)==11)
 				{
-					printf("Master says: %s,\r\n", buff);
-					cnt = sscanf(buff, "!%03d,%03d,%d,%d", &vx, &vy, &pick, &auto_mode);
-                	printf("Joystick Received: Vx = %d, Vy = %d, Order = %d, Auto = %d, cnt: %d\r\n", vx, vy, pick, auto_mode, cnt);
+					printf("Master says: %s\r\n", buff);
+					sscanf(buff, "%03d,%03d,%c,%01d", &vx, &vy, &pick_char, &auto_mode);
+		        	printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, pick_char, auto_mode);
 					Joystick_Control(&vx, &vy);
 				}
 				else{

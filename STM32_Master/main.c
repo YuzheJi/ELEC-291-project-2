@@ -361,9 +361,9 @@ void main(void)
 		// Construct a test message
 		printf("%s\r\n",buff);
 		eputc2('!'); 
-		waitms(5); 			// This may need adjustment depending on how busy is the slave
-		eputs2(buff); 		// Send the test message
-		eputc2('@'); 		// Request a message from the slave
+		waitms(20); 			// This may need adjustment depending on how busy is the slave
+		eputs2(buff); 			// Send the test message
+		eputc2('@'); 			// Request a message from the slave
 		
 		timeout_cnt=0;
 		while(1){
