@@ -14,13 +14,14 @@
 
 long timer22_counter = 0;
 long button_counter = 0;
+long pick_counter = 0;
 int buzzer_wait = 6000; 		//buzzer wait time in ms
 char buff[80];
 int dummy;
-
-
-
-
+int pick_order = 0;
+int auto_state = 0;
+char lb[17];
+int i ;
 // LQFP32 pinout
 //              ----------
 // 3.3v   VDD -|1       32|- VSS
@@ -222,6 +223,8 @@ void TIM22_Handler(void)
 	TIM22->SR &= ~BIT0; // clear update interrupt flag
 	timer22_counter++; 
 	button_counter++;
+	pick_counter++;
+	if(pick_counter == 200 && pick_order) pick_order = 0;
 	if(timer22_counter < 101) Buzzer(1);
 	else if (timer22_counter < buzzer_wait) Buzzer(0);
 	else{
@@ -229,107 +232,18 @@ void TIM22_Handler(void)
 	} 
 }
 
-void Auto_mode(){
-
-	int timeout_cnt;
-	int no_res_count = 0;
-	int command = 1;
-	int state_res;
-	int count;
-
-	while(no_res_count > -1){
-		sprintf(buff, "000,000,0,1\n"); 
-		printf("%s\r\n",buff);
-		eputc2('!'); 
-		waitms(15); 
-		eputs2(buff); 
-		eputc2('@'); 	
-		timeout_cnt=0;
-		while(1){
-			if(ReceivedBytes2()>4) break; // Something has arrived
-			if(++timeout_cnt>250) break; // Wait up to 25ms for the repply
-			Delay_us(100); 
-		}
-		if(ReceivedBytes2()>4){
-			egets2(buff, sizeof(buff)-1);
-			if(strlen(buff)==10){
-				sscanf(buff,"%d,%02d,%04d",&state_res, &count, &dummy);
-				printf("%d, %s\r\n",state_res,buff);
-				if(state_res == 1) no_res_count = -1;
-			}
-		}
-		else {
-			while (ReceivedBytes2()) egetc2(); 
-			printf("no response auto_mode_setting %d\r\n",no_res_count);
-			no_res_count++;
-		}
-		waitms(50);
-		if(no_res_count>100){
-			no_res_count = -1;
-			state_res = 0;
-			LCDprint("No response",1,1);
-			LCDprint("Exiting... ",2,1);
-			waitms(1000);
-		}
-	}
-
-	while(state_res){
-		if(!JOYBUT){
-			button_counter = 0;
-			while(!JOYBUT);
-			if (button_counter<1000L);
-			else {
-				command = 0;
-				printf("auto exit... \r\n");
-			}
-		}
-
-		sprintf(buff, "000,000,0,%d\n",command); 
-		printf("%s\r\n",buff);
-		eputc2('!'); 
-		waitms(15); 
-		eputs2(buff); 
-		eputc2('@'); // Request a message from the slave		
-		timeout_cnt=0;
-		while(1){
-			if(ReceivedBytes2()>1) break; // Something has arrived
-			if(++timeout_cnt>250) break; // Wait up to 25ms for the repply
-			Delay_us(100); // 100us*250=25ms
-		}
-			
-		if(ReceivedBytes2()>1) {
-			egets2(buff, sizeof(buff)-1);
-			if(strlen(buff)==10){
-				printf("Slave says: %s\r", buff);
-				sscanf(buff,"%01d,%02d,%04d",&state_res, &count,dummy);
-			}
-			else{
-				while (ReceivedBytes2()) egetc2(); 
-				printf("*** BAD MESSAGE ***: %s\r", buff);
-			}
-		}
-		else {
-			while (ReceivedBytes2()) egetc2(); 
-			printf("NO RESPONSE\r\n");
-		}
-		waitms(50); 
-	}
-	return;
-}
-
 void main(void)
 {  
-	char lb[17];
     int timeout_cnt=0;
 	int nadc;
-	int pick_order = 0;
-	int auto_state = 0;
 
 	// note: x,y here are not the same as the x,y printed on joystick
 	int vx100;
 	int vy100;
 	int vctrl100;
 	int metal_freq = 0;
+	int state_res = 0;
+	int count_res = 0;
 		
 	uint8_t charge[8] = {
 		0b00000010, //       
@@ -342,7 +256,6 @@ void main(void)
 		0x00  //       
 	};
 
-
 	Configure_Pins();
 	LCD_4BIT();
 	initADC();
@@ -352,9 +265,6 @@ void main(void)
 	LCDprint("ELEC-291:       ", 1, 1);
 	LCDprint("       Project2 ", 2, 1);
 
-	waitms(1000);
-	LCDprint("Coin-Picking    ", 1, 1);
-	LCDprint("          Robot ", 2, 1);
 	waitms(1000);
 	ReceptionOff();
 
@@ -368,45 +278,92 @@ void main(void)
 	SendATCommand("AT+DVIDEF11\r\n");
 
 	while(1)
-	{
+	{	
+		// auto mode
+		// massage: 000,000,0,1
+		if(auto_state){
+			sprintf(buff, "%03d,%03d,0,%d\n", 0,0,auto_state);
+			TIM22->CR1 &= ~BIT0; 
+			LCDprint(   "Automode:       ",1,1);
+			sprintf(lb, "Count:     %d/20",count_res);
+			LCDprint(lb,2,1);
 
-		nadc=readADC(ADC_CHSELR_CHSEL8);
-		vx100 = (int)100.0*(nadc*3.3)/0x1000;
+			if(!JOYBUT){
+				sprintf(buff, "%03d,%03d,0,0\n", 161,166);
+				while(!JOYBUT){
+					auto_state = 0;
+					eputc2('!'); 
+					waitms(5); 			
+					eputs2(buff); 		
+					waitms(50);
+				};
+			}
+		}
 
-		nadc=readADC(ADC_CHSELR_CHSEL9);
-		vy100 = (int)100.0*(nadc*3.3)/0x1000;
+		// manuel mode
+		// massage: vx,vy,pick,auto
+		else{
+			TIM22->CR1 |= BIT0; 
+			nadc=readADC(ADC_CHSELR_CHSEL8);
+			vx100 = (int)100.0*(nadc*3.3)/0x1000;
 
-		nadc=readADC(ADC_CHSELR_CHSEL6);
-		vctrl100 = (int)100.0*(nadc*3.3)/0x1000;
+			nadc=readADC(ADC_CHSELR_CHSEL9);
+			vy100 = (int)100.0*(nadc*3.3)/0x1000;
 
-		vctrl100 = 100*(vctrl100 - 167)/133;
-		if(vctrl100 < 1){
-			sprintf(lb,"Vx=%.2f   B:", vx100/100.0);
-			LCDprint(lb,1,1);
-			WriteCommand(0x8c);
-			WriteData(0);
-			WriteData(0);
-		}	
-		else if(vctrl100 > 100){
-			sprintf(lb,"Vx=%.2f   B:100%%", vx100/100.0, vctrl100);
-			LCDprint(lb,1,1);
-		}		
-		
-		else {
-			sprintf(lb,"Vx=%.2f   B:%d%%", vx100/100.0, vctrl100);
-			LCDprint(lb,1,1);
-		}	
-		
-		
-		sprintf(lb,"Vy=%.2f", vy100/100.0);
-		LCDprint(lb,2,1);
+			nadc=readADC(ADC_CHSELR_CHSEL6);
+			vctrl100 = (int)100.0*(nadc*3.3)/0x1000;
 
-		sprintf(buff, "%03d,%03d,%01d,%01d\n", vx100, vy100, pick_order, auto_state); // Construct a test message
+			vctrl100 = 100*(vctrl100 - 167)/133;
+			if(vctrl100 < 1){
+				sprintf(lb,"Vx=%.2f   B:", vx100/100.0);
+				LCDprint(lb,1,1);
+				WriteCommand(0x8c);
+				WriteData(0);
+				WriteData(0);
+			}	
+			else if(vctrl100 > 100){
+				sprintf(lb,"Vx=%.2f   B:100%%", vx100/100.0, vctrl100);
+				LCDprint(lb,1,1);
+			}		
+			else {
+				sprintf(lb,"Vx=%.2f   B:%d%%", vx100/100.0, vctrl100);
+				LCDprint(lb,1,1);
+			}	
+			
+			sprintf(lb,"Vy=%.2f", vy100/100.0);
+			LCDprint(lb,2,1);
+
+			if(!JOYBUT){
+				button_counter = 0;
+				while(!JOYBUT);
+				if (button_counter<1000L){
+					pick_order = 1;
+					pick_counter = 0;
+				} 
+				else {
+					auto_state = 1;
+				}
+			}
+	
+			if(!PB1){
+				while(!PB1);
+				printf("1 pressed!\r\n");
+			}
+	
+			if(!PB2){
+				while(!PB2);
+				printf("2 pressed!\r\n");
+			}
+
+			sprintf(buff, "%03d,%03d,%01d,%01d\n", vx100, vy100, pick_order, auto_state); 
+
+		}
+		// Construct a test message
 		printf("%s\r\n",buff);
 		eputc2('!'); 
-		waitms(5); // This may need adjustment depending on how busy is the slave
-		eputs2(buff); // Send the test message
-		eputc2('@'); // Request a message from the slave
+		waitms(5); 			// This may need adjustment depending on how busy is the slave
+		eputs2(buff); 		// Send the test message
+		eputc2('@'); 		// Request a message from the slave
 		
 		timeout_cnt=0;
 		while(1){
@@ -417,8 +374,9 @@ void main(void)
 		if(ReceivedBytes2()>9){
 			egets2(buff, sizeof(buff)-1);
 			if(strlen(buff)==10){
-				printf("Slave says: %s\r", buff);
-				sscanf(buff, "%01d,%02d,%04d",&dummy,&dummy,&metal_freq);
+				if(auto_state) 	printf("Slave_auto says: %s\r", buff);
+				else 			printf("Slave_manual says: %s\r", buff);
+				sscanf(buff, "%01d,%02d,%04d",&state_res,&count_res,&metal_freq);
 			}
 			else{
 				while (ReceivedBytes2()) egetc2(); 
@@ -431,33 +389,10 @@ void main(void)
 			pick_order = 0;
 		}
 
-		if(!JOYBUT){
-			button_counter = 0;
-			while(!JOYBUT);
-			if (button_counter<1000L) pick_order = 1;
-			else {
-				auto_state = 1;
-				Auto_enter();
-				printf("auto \r\n");
-				Auto_mode();
-				auto_state = 0;
-			}
-		}
-
-		if(!PB1){
-			while(!PB1);
-			printf("1 pressed!\r\n");
-		}
-
-		if(!PB2){
-			while(!PB2);
-			printf("2 pressed!\r\n");
-		}
-
+		//if(!state_res) auto_state = 0;
+		//else auto_state = 1;
 		buzzer_ctrl(metal_freq);
-
-		TIM22->CR1 |= BIT0; 
-		waitms(20);  // Set the information interchange pace: communicate about every 50ms
+		waitms(50);  // Set the information interchange pace: communicate about every 50ms
 	}
 	
 }
