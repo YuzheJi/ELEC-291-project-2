@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-; This file was generated Sat Mar 29 19:10:28 2025
+; This file was generated Sat Mar 29 19:54:10 2025
 ;--------------------------------------------------------
 $name main
 $optc51 --model-small
@@ -600,6 +600,10 @@ _Joystick_Control_sloc5_1_0:
 	ds 4
 _Joystick_Control_sloc6_1_0:
 	ds 2
+_main_auto_mode_1_232:
+	ds 2
+_main_pick_1_232:
+	ds 2
 ;--------------------------------------------------------
 ; overlayable items in internal ram 
 ;--------------------------------------------------------
@@ -709,10 +713,6 @@ _main_vx_1_232:
 	ds 2
 _main_vy_1_232:
 	ds 2
-_main_auto_mode_1_232:
-	ds 1
-_main_pick_1_232:
-	ds 1
 ;--------------------------------------------------------
 ; absolute external ram data
 ;--------------------------------------------------------
@@ -4323,13 +4323,13 @@ L038038?:
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_getstr1
-;	main.c:981: if(strlen(buff)==11){
+;	main.c:981: if(strlen(buff)==12){
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_strlen
 	mov	r7,dpl
 	mov	r2,dph
-	cjne	r7,#0x0B,L038039?
+	cjne	r7,#0x0C,L038039?
 	cjne	r2,#0x00,L038039?
 	sjmp	L038040?
 L038039?:
@@ -6080,12 +6080,12 @@ L039028?:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
+;auto_mode                 Allocated with name '_main_auto_mode_1_232'
+;pick                      Allocated with name '_main_pick_1_232'
+;cnt                       Allocated to registers r3 r4 
 ;c                         Allocated with name '_main_c_1_232'
 ;vx                        Allocated with name '_main_vx_1_232'
 ;vy                        Allocated with name '_main_vy_1_232'
-;auto_mode                 Allocated with name '_main_auto_mode_1_232'
-;pick_done                 Allocated with name '_main_pick_done_1_232'
-;pick                      Allocated with name '_main_pick_1_232'
 ;------------------------------------------------------------
 ;	main.c:1123: void main (void)
 ;	-----------------------------------------
@@ -6103,13 +6103,13 @@ _main:
 	movx	@dptr,a
 	inc	dptr
 	movx	@dptr,a
-;	main.c:1127: xdata uint8_t auto_mode = 0;
-	mov	dptr,#_main_auto_mode_1_232
-;	main.c:1129: xdata uint8_t pick = 0;
+;	main.c:1127: int auto_mode = 0;
+;	main.c:1128: int pick = 0;
 	clr	a
-	movx	@dptr,a
-	mov	dptr,#_main_pick_1_232
-	movx	@dptr,a
+	mov	_main_auto_mode_1_232,a
+	mov	(_main_auto_mode_1_232 + 1),a
+	mov	_main_pick_1_232,a
+	mov	(_main_pick_1_232 + 1),a
 ;	main.c:1132: Init_all();
 	lcall	_Init_all
 ;	main.c:1133: BMM150_Init();
@@ -6178,31 +6178,34 @@ _main:
 ;	main.c:1156: while(1)
 L040016?:
 ;	main.c:1159: if(pick==1){
-	mov	dptr,#_main_pick_1_232
-	movx	a,@dptr
-	mov	r2,a
-	cjne	r2,#0x01,L040002?
+	mov	a,#0x01
+	cjne	a,_main_pick_1_232,L040027?
+	clr	a
+	cjne	a,(_main_pick_1_232 + 1),L040027?
+	sjmp	L040028?
+L040027?:
+	sjmp	L040002?
+L040028?:
 ;	main.c:1160: servo_pick();
 	lcall	_servo_pick
 ;	main.c:1161: waitms(1000);
 	mov	dptr,#0x03E8
 	lcall	_waitms
 ;	main.c:1162: pick = 0;
-	mov	dptr,#_main_pick_1_232
 	clr	a
-	movx	@dptr,a
+	mov	_main_pick_1_232,a
+	mov	(_main_pick_1_232 + 1),a
 L040002?:
 ;	main.c:1165: if(auto_mode){
-	mov	dptr,#_main_auto_mode_1_232
-	movx	a,@dptr
-	mov	r2,a
+	mov	a,_main_auto_mode_1_232
+	orl	a,(_main_auto_mode_1_232 + 1)
 	jz	L040004?
 ;	main.c:1166: Auto_mode_slave();
 	lcall	_Auto_mode_slave
 ;	main.c:1167: auto_mode = 0;
-	mov	dptr,#_main_auto_mode_1_232
 	clr	a
-	movx	@dptr,a
+	mov	_main_auto_mode_1_232,a
+	mov	(_main_auto_mode_1_232 + 1),a
 L040004?:
 ;	main.c:1169: curr_angle = Read_angle();
 	lcall	_Read_angle
@@ -6222,24 +6225,24 @@ L040004?:
 	inc	dptr
 	mov	a,r5
 	movx	@dptr,a
-;	main.c:1173: if(RXU1()) // Something has arrived
+;	main.c:1171: if(RXU1()) // Something has arrived
 	lcall	_RXU1
 	jnc	L040016?
-;	main.c:1175: c=getchar1();
+;	main.c:1173: c=getchar1();
 	lcall	_getchar1
 	mov	r2,dpl
-;	main.c:1177: if(c=='!') // Master is sending message
+;	main.c:1175: if(c=='!') // Master is sending message
 	cjne	r2,#0x21,L040031?
 	sjmp	L040032?
 L040031?:
 	ljmp	L040011?
 L040032?:
-;	main.c:1179: getstr1(buff, sizeof(buff)-1);
+;	main.c:1177: getstr1(buff, sizeof(buff)-1);
 	mov	_getstr1_PARM_2,#0x13
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_getstr1
-;	main.c:1180: if(strlen(buff)==12)
+;	main.c:1178: if(strlen(buff)==12)
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_strlen
@@ -6251,18 +6254,35 @@ L040032?:
 L040033?:
 	ljmp	L040006?
 L040034?:
-;	main.c:1183: sscanf(buff, "%03d,%03d,%01d,%01d", &vx, &vy, &pick, &auto_mode);
+;	main.c:1180: printf("Master says: %s,\r\n", buff);
+	mov	a,#_buff
+	push	acc
+	mov	a,#(_buff >> 8)
+	push	acc
+	mov	a,#0x40
+	push	acc
+	mov	a,#__str_21
+	push	acc
+	mov	a,#(__str_21 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	lcall	_printf
+	mov	a,sp
+	add	a,#0xfa
+	mov	sp,a
+;	main.c:1181: cnt = sscanf(buff, "!%03d,%03d,%d,%d", &vx, &vy, &pick, &auto_mode);
 	mov	a,#_main_auto_mode_1_232
 	push	acc
 	mov	a,#(_main_auto_mode_1_232 >> 8)
 	push	acc
-	clr	a
+	mov	a,#0x40
 	push	acc
 	mov	a,#_main_pick_1_232
 	push	acc
 	mov	a,#(_main_pick_1_232 >> 8)
 	push	acc
-	clr	a
+	mov	a,#0x40
 	push	acc
 	mov	a,#_main_vy_1_232
 	push	acc
@@ -6276,9 +6296,9 @@ L040034?:
 	push	acc
 	clr	a
 	push	acc
-	mov	a,#__str_7
+	mov	a,#__str_22
 	push	acc
-	mov	a,#(__str_7 >> 8)
+	mov	a,#(__str_22 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -6289,22 +6309,18 @@ L040034?:
 	mov	a,#0x40
 	push	acc
 	lcall	_sscanf
+	mov	r3,dpl
+	mov	r4,dph
 	mov	a,sp
 	add	a,#0xee
 	mov	sp,a
-;	main.c:1184: printf("Joystick Received: Vx = %03d, Vy = %03d, Order = %01d, Auto = %01d\r\n", vx, vy, pick, auto_mode);
-	mov	dptr,#_main_auto_mode_1_232
-	movx	a,@dptr
-	mov	r3,a
-	mov	r4,#0x00
-	mov	dptr,#_main_pick_1_232
-	movx	a,@dptr
-	mov	r5,a
-	mov	r6,#0x00
+;	main.c:1182: printf("Joystick Received: Vx = %d, Vy = %d, Order = %d, Auto = %d, cnt: %d\r\n", vx, vy, pick, auto_mode, cnt);
 	push	ar3
 	push	ar4
-	push	ar5
-	push	ar6
+	push	_main_auto_mode_1_232
+	push	(_main_auto_mode_1_232 + 1)
+	push	_main_pick_1_232
+	push	(_main_pick_1_232 + 1)
 	mov	dptr,#_main_vy_1_232
 	movx	a,@dptr
 	push	acc
@@ -6317,17 +6333,17 @@ L040034?:
 	inc	dptr
 	movx	a,@dptr
 	push	acc
-	mov	a,#__str_21
+	mov	a,#__str_23
 	push	acc
-	mov	a,#(__str_21 >> 8)
+	mov	a,#(__str_23 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
 	lcall	_printf
 	mov	a,sp
-	add	a,#0xf5
+	add	a,#0xf3
 	mov	sp,a
-;	main.c:1185: Joystick_Control(&vx, &vy);
+;	main.c:1183: Joystick_Control(&vx, &vy);
 	mov	_Joystick_Control_PARM_2,#_main_vy_1_232
 	mov	(_Joystick_Control_PARM_2 + 1),#(_main_vy_1_232 >> 8)
 	mov	(_Joystick_Control_PARM_2 + 2),#0x00
@@ -6336,16 +6352,16 @@ L040034?:
 	lcall	_Joystick_Control
 	ljmp	L040016?
 L040006?:
-;	main.c:1188: printf("*** BAD MESSAGE ***: %s\r\n", buff);
+;	main.c:1186: printf("*** BAD MESSAGE ***: %s\r\n", buff);
 	mov	a,#_buff
 	push	acc
 	mov	a,#(_buff >> 8)
 	push	acc
 	mov	a,#0x40
 	push	acc
-	mov	a,#__str_22
+	mov	a,#__str_24
 	push	acc
-	mov	a,#(__str_22 >> 8)
+	mov	a,#(__str_24 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -6355,13 +6371,13 @@ L040006?:
 	mov	sp,a
 	ljmp	L040016?
 L040011?:
-;	main.c:1191: else if(c=='@') // Master wants slave data
+;	main.c:1189: else if(c=='@') // Master wants slave data
 	cjne	r2,#0x40,L040035?
 	sjmp	L040036?
 L040035?:
 	ljmp	L040016?
 L040036?:
-;	main.c:1193: sprintf(buff, "0,00,%04ld,%4.1f\n", freq100, curr_angle);
+;	main.c:1191: sprintf(buff, "0,00,%04ld,%4.1f\n", freq100, curr_angle);
 	mov	dptr,#_curr_angle
 	movx	a,@dptr
 	push	acc
@@ -6386,9 +6402,9 @@ L040036?:
 	inc	dptr
 	movx	a,@dptr
 	push	acc
-	mov	a,#__str_23
+	mov	a,#__str_25
 	push	acc
-	mov	a,#(__str_23 >> 8)
+	mov	a,#(__str_25 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -6402,10 +6418,10 @@ L040036?:
 	mov	a,sp
 	add	a,#0xf2
 	mov	sp,a
-;	main.c:1194: waitms(5); // The radio seems to need this delay...
+;	main.c:1192: waitms(5); // The radio seems to need this delay...
 	mov	dptr,#0x0005
 	lcall	_waitms
-;	main.c:1195: sendstr1(buff);
+;	main.c:1193: sendstr1(buff);
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_sendstr1
@@ -6547,17 +6563,25 @@ __str_20:
 	db 0x0A
 	db 0x00
 __str_21:
-	db 'Joystick Received: Vx = %03d, Vy = %03d, Order = %01d, Auto '
-	db '= %01d'
+	db 'Master says: %s,'
 	db 0x0D
 	db 0x0A
 	db 0x00
 __str_22:
+	db '!%03d,%03d,%d,%d'
+	db 0x00
+__str_23:
+	db 'Joystick Received: Vx = %d, Vy = %d, Order = %d, Auto = %d, '
+	db 'cnt: %d'
+	db 0x0D
+	db 0x0A
+	db 0x00
+__str_24:
 	db '*** BAD MESSAGE ***: %s'
 	db 0x0D
 	db 0x0A
 	db 0x00
-__str_23:
+__str_25:
 	db '0,00,%04ld,%4.1f'
 	db 0x0A
 	db 0x00

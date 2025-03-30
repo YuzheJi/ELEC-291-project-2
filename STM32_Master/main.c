@@ -389,8 +389,6 @@ void main(void)
 			pick_order = 0;
 		}
 
-		//if(!state_res) auto_state = 0;
-		//else auto_state = 1;
 		buzzer_ctrl(metal_freq);
 		waitms(50);  // Set the information interchange pace: communicate about every 50ms
 	}

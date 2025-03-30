@@ -13,19 +13,19 @@ printf_float
 <SEGMENTS>
 R_GSINIT,code,0000,NO
 R_BSEG,bit,0000,NO
-R_XSEG,xdata,0058,NO
+R_XSEG,xdata,0056,NO
 BIT_BANK,data,0001,OV
-R_CONST,code,0229,NO
+R_CONST,code,024E,NO
 rbank0,data,0000,OV
 R_PSEG,xdata,0000,NO
 R_DINIT,code,0000,NO
-R_DSEG,data,002D,NO
+R_DSEG,data,0031,NO
 R_OSEG,data,0003,OV
 R_IXSEG,xdata,001A,NO
 R_ISEG,idata,0014,NO
 R_HOME,code,0000,NO
 R_XINIT,code,001A,NO
-R_CSEG,code,2171,NO
+R_CSEG,code,2192,NO
 </SEGMENTS>
 
 <LOCALS>
@@ -57,7 +57,7 @@ _main_vy_1_232,R_XSEG,0054,0002
 L028009?,R_CSEG,0C9D,0000
 L010019?,R_CSEG,0303,0000
 L028006?,R_CSEG,0C97,0000
-_main_auto_mode_1_232,R_XSEG,0056,0001
+_main_auto_mode_1_232,R_DSEG,002D,0002
 L028004?,R_CSEG,0C74,0000
 L028002?,R_CSEG,0C53,0000
 L016008?,R_CSEG,0969,0000
@@ -70,8 +70,10 @@ _Joystick_Control_sloc4_1_0,R_DSEG,0025,0002
 L004005?,R_CSEG,00B0,0000
 __str_20,R_CONST,01AA,0000
 __str_21,R_CONST,01B8,0000
-__str_22,R_CONST,01FD,0000
-__str_23,R_CONST,0217,0000
+__str_22,R_CONST,01CB,0000
+__str_23,R_CONST,01DC,0000
+__str_24,R_CONST,0222,0000
+__str_25,R_CONST,023C,0000
 __str_10,R_CONST,0120,0000
 __str_11,R_CONST,012D,0000
 __str_12,R_CONST,0143,0000
@@ -142,26 +144,28 @@ L018002?,R_CSEG,09EB,0000
 L040016?,R_CSEG,1FDA,0000
 L037017?,R_CSEG,0FDB,0000
 L037016?,R_CSEG,0FD6,0000
-L040011?,R_CSEG,2112,0000
+L040011?,R_CSEG,2133,0000
 __xinit__servo_base,R_XINIT,0008,0000
+L040028?,R_CSEG,1FE7,0000
+L040027?,R_CSEG,1FE5,0000
 __xinit__vx,R_XINIT,000E,0000
 __xinit__vy,R_XINIT,0010,0000
 _BMM150_Read_Data_rhall_val_1_125,R_XSEG,0038,0002
 __xinit__pwm_corr,R_XINIT,0016,0000
 L010008?,R_CSEG,052A,0000
-_main_pick_1_232,R_XSEG,0057,0001
+_main_pick_1_232,R_DSEG,002F,0002
 L010006?,R_CSEG,0341,0000
 _Auto_mode_slave_dummy_1_200,R_XSEG,004E,0002
 L010005?,R_CSEG,0325,0000
 L010002?,R_CSEG,033A,0000
-L040036?,R_CSEG,211A,0000
+L040036?,R_CSEG,213B,0000
 __xinit__pwm_right,R_XINIT,0005,0000
-L040035?,R_CSEG,2117,0000
-L040034?,R_CSEG,204D,0000
-L040033?,R_CSEG,204A,0000
+L040035?,R_CSEG,2138,0000
+L040034?,R_CSEG,2051,0000
+L040033?,R_CSEG,204E,0000
 L038018?,R_CSEG,1277,0000
-L040032?,R_CSEG,2029,0000
-L040031?,R_CSEG,2026,0000
+L040032?,R_CSEG,202D,0000
+L040031?,R_CSEG,202A,0000
 _Joystick_Control_sloc1_1_0,R_DSEG,0021,0001
 L038014?,R_CSEG,1498,0000
 L038012?,R_CSEG,13CB,0000
@@ -234,13 +238,13 @@ L009002?,R_CSEG,0285,0000
 _BMM150_compensate_x_sloc0_1_0,R_DSEG,0004,0004
 L039031?,R_CSEG,1DD5,0000
 L028018?,R_CSEG,0CEB,0000
-L040006?,R_CSEG,20EE,0000
+L040006?,R_CSEG,210F,0000
 _Read_angle_mag_y_1_198,R_XSEG,003C,0002
 L037008?,R_CSEG,10A5,0000
 L028016?,R_CSEG,0CC6,0000
-L040004?,R_CSEG,1FFF,0000
+L040004?,R_CSEG,2003,0000
 L028015?,R_CSEG,0CC2,0000
-L040002?,R_CSEG,1FF0,0000
+L040002?,R_CSEG,1FF5,0000
 L037005?,R_CSEG,0FD3,0000
 L037004?,R_CSEG,1255,0000
 _Auto_mode_slave_state_res_1_200,R_XSEG,004C,0002
@@ -3020,7 +3024,7 @@ BE 21 rel3(L038037?;)
 12 addr16(_strlen;)  
 AF 82
 AA 83
-BF 0B rel3(L038039?;)
+BF 0C rel3(L038039?;)
 BA 00 rel3(L038039?;)
 80 rel2(L038040?;)
 02 addr16(L038012?;)  
@@ -4637,11 +4641,11 @@ E4
 F0
 A3
 F0
-90 data16(_main_auto_mode_1_232;)  
 E4
-F0
-90 data16(_main_pick_1_232;)  
-F0
+F5 data8(_main_auto_mode_1_232;)
+F5 data8(_main_auto_mode_1_232;0x0001;+;)
+F5 data8(_main_pick_1_232;)
+F5 data8(_main_pick_1_232;0x0001;+;)
 12 addr16(_Init_all;)  
 12 addr16(_BMM150_Init;)  
 90 01 F4
@@ -4689,24 +4693,25 @@ C2 A1
 C2 A2
 C2 A4
 C2 A3
-90 data16(_main_pick_1_232;)  
-E0
-FA
-BA 01 rel3(L040002?;)
+74 01
+B5 data8(_main_pick_1_232;) rel3(L040027?;)
+E4
+B5 data8(_main_pick_1_232;0x0001;+;) rel3(L040027?;)
+80 rel2(L040028?;)
+80 rel2(L040002?;)
 12 addr16(_servo_pick;)  
 90 03 E8
 12 addr16(_waitms;)  
-90 data16(_main_pick_1_232;)  
 E4
-F0
-90 data16(_main_auto_mode_1_232;)  
-E0
-FA
+F5 data8(_main_pick_1_232;)
+F5 data8(_main_pick_1_232;0x0001;+;)
+E5 data8(_main_auto_mode_1_232;)
+45 data8(_main_auto_mode_1_232;0x0001;+;)
 60 rel2(L040004?;)
 12 addr16(_Auto_mode_slave;)  
-90 data16(_main_auto_mode_1_232;)  
 E4
-F0
+F5 data8(_main_auto_mode_1_232;)
+F5 data8(_main_auto_mode_1_232;0x0001;+;)
 12 addr16(_Read_angle;)  
 AA 82
 AB 83
@@ -4744,17 +4749,33 @@ BB 0C rel3(L040033?;)
 BC 00 rel3(L040033?;)
 80 rel2(L040034?;)
 02 addr16(L040006?;)  
+74 data8(_buff;)
+C0 E0
+74 data8(_buff;0x0008;>>;)
+C0 E0
+74 40
+C0 E0
+74 data8(__str_21;)
+C0 E0
+74 data8(__str_21;0x0008;>>;)
+C0 E0
+74 80
+C0 E0
+12 addr16(_printf;)  
+E5 81
+24 FA
+F5 81
 74 data8(_main_auto_mode_1_232;)
 C0 E0
 74 data8(_main_auto_mode_1_232;0x0008;>>;)
 C0 E0
-E4
+74 40
 C0 E0
 74 data8(_main_pick_1_232;)
 C0 E0
 74 data8(_main_pick_1_232;0x0008;>>;)
 C0 E0
-E4
+74 40
 C0 E0
 74 data8(_main_vy_1_232;)
 C0 E0
@@ -4768,9 +4789,9 @@ C0 E0
 C0 E0
 E4
 C0 E0
-74 data8(__str_7;)
+74 data8(__str_22;)
 C0 E0
-74 data8(__str_7;0x0008;>>;)
+74 data8(__str_22;0x0008;>>;)
 C0 E0
 74 80
 C0 E0
@@ -4781,21 +4802,17 @@ C0 E0
 74 40
 C0 E0
 12 addr16(_sscanf;)  
+AB 82
+AC 83
 E5 81
 24 EE
 F5 81
-90 data16(_main_auto_mode_1_232;)  
-E0
-FB
-7C 00
-90 data16(_main_pick_1_232;)  
-E0
-FD
-7E 00
 C0 03
 C0 04
-C0 05
-C0 06
+C0 data8(_main_auto_mode_1_232;)
+C0 data8(_main_auto_mode_1_232;0x0001;+;)
+C0 data8(_main_pick_1_232;)
+C0 data8(_main_pick_1_232;0x0001;+;)
 90 data16(_main_vy_1_232;)  
 E0
 C0 E0
@@ -4808,15 +4825,15 @@ C0 E0
 A3
 E0
 C0 E0
-74 data8(__str_21;)
+74 data8(__str_23;)
 C0 E0
-74 data8(__str_21;0x0008;>>;)
+74 data8(__str_23;0x0008;>>;)
 C0 E0
 74 80
 C0 E0
 12 addr16(_printf;)  
 E5 81
-24 F5
+24 F3
 F5 81
 75 data8(_Joystick_Control_PARM_2;) data8(_main_vy_1_232;)
 75 data8(_Joystick_Control_PARM_2;0x0001;+;) data8(_main_vy_1_232;0x0008;>>;)
@@ -4831,9 +4848,9 @@ C0 E0
 C0 E0
 74 40
 C0 E0
-74 data8(__str_22;)
+74 data8(__str_24;)
 C0 E0
-74 data8(__str_22;0x0008;>>;)
+74 data8(__str_24;0x0008;>>;)
 C0 E0
 74 80
 C0 E0
@@ -4869,9 +4886,9 @@ C0 E0
 A3
 E0
 C0 E0
-74 data8(__str_23;)
+74 data8(__str_25;)
 C0 E0
-74 data8(__str_23;0x0008;>>;)
+74 data8(__str_25;0x0008;>>;)
 C0 E0
 74 80
 C0 E0
@@ -5019,11 +5036,17 @@ A6
 0D
 0A
 00
+4D 61 73 74 65 72 20 73 61 79 73 3A 20 25 73 2C 
+0D
+0A
+00
+21 25 30 33 64 2C 25 30 33 64 2C 25 64 2C 25 64 
+00
 4A 6F 79 73 74 69 63 6B 20 52 65 63 65 69 76 65 64
-3A 20 56 78 20 3D 20 25 30 33 64 2C 20 56 79 20
-3D 20 25 30 33 64 2C 20 4F 72 64 65 72 20 3D 20
-25 30 31 64 2C 20 41 75 74 6F 20 
-3D 20 25 30 31 64 
+3A 20 56 78 20 3D 20 25 64 2C 20 56 79 20 3D 20
+25 64 2C 20 4F 72 64 65 72 20 3D 20 25 64 2C 20
+41 75 74 6F 20 3D 20 25 64 2C 20 
+63 6E 74 3A 20 25 64 
 0D
 0A
 00
