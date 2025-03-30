@@ -8,7 +8,7 @@
 #define BAUDRATE 115200L
 #define F_SCK_MAX 2000000L   // Max SCK freq (Hz)
 
-#define CS P0_3
+#define CS P1_0
 #define M_PI 3.14159265358979323846
 
 //                                    ----------  
@@ -120,11 +120,13 @@ char _c51_external_startup (void)
 	#endif
 
     // Configure I/O ports for SPI and UART
-    P0MDOUT = 0b_0000_1101; // SCK, MOSI, and P0.3 are push-pull, others open-drain
+    // P0MDOUT = 0b_0000_1101; // SCK, MOSI, and P0.3 are push-pull, others open-drain
+	P0MDOUT |= 0b_1100_0000;
     P1MDOUT = 0b_0000_0000; // P1 all open-drain
     XBR0 = 0b_0000_0011;    // SPI0E=1, URT0E=1
     XBR1 = 0b_0000_0000;
     XBR2 = 0b_0100_0000;    // Enable crossbar and weak pull-ups
+	P0SKIP 	 = 0b_0000_0111; 
 
 	#if ( ((SYSCLK/BAUDRATE)/(12L*2L)) > 0x100)
 		#error Can not configure baudrate using timer 1 
@@ -443,69 +445,66 @@ int16_t BMM150_compensate_y (int16_t *mag_data_y, int16_t *data_rhall)
     return retval;
 }
 
-int16_t BMM150_compensate_z (int16_t *mag_data_z, int16_t *data_rhall){
-	xdata int32_t retval;
-    xdata int16_t process_comp_z0;
-    xdata int32_t process_comp_z1;
-    xdata int32_t process_comp_z2;
-    xdata int32_t process_comp_z3;
-    xdata int16_t process_comp_z4;
+// int16_t BMM150_compensate_z (int16_t *mag_data_z, int16_t *data_rhall){
+// 	xdata int32_t retval;
+//     xdata int16_t process_comp_z0;
+//     xdata int32_t process_comp_z1;
+//     xdata int32_t process_comp_z2;
+//     xdata int32_t process_comp_z3;
+//     xdata int16_t process_comp_z4;
 
-    if (*mag_data_z != BMM150_OVERFLOW_ADCVAL_ZAXIS_HALL)
-    {
-        if ((dig_z2 != 0) && (dig_z1 != 0) && (*data_rhall != 0) &&
-            (dig_xyz1 != 0))
-        {
-            /*Processing compensation equations */
-            process_comp_z0 = ((int16_t)*data_rhall) - ((int16_t)dig_xyz1);
-            process_comp_z1 = (((int32_t)dig_z3) * ((int32_t)(process_comp_z0))) / 4;
-            process_comp_z2 = (((int32_t)(*mag_data_z - dig_z4)) * 32768);
-            process_comp_z3 = ((int32_t)dig_z1) * (((int16_t)*data_rhall) * 2);
-            process_comp_z4 = (int16_t)((process_comp_z3 + (32768)) / 65536);
-            retval = ((process_comp_z2 - process_comp_z1) / (dig_z2 + process_comp_z4));
+//     if (*mag_data_z != BMM150_OVERFLOW_ADCVAL_ZAXIS_HALL)
+//     {
+//         if ((dig_z2 != 0) && (dig_z1 != 0) && (*data_rhall != 0) &&
+//             (dig_xyz1 != 0))
+//         {
+//             /*Processing compensation equations */
+//             process_comp_z0 = ((int16_t)*data_rhall) - ((int16_t)dig_xyz1);
+//             process_comp_z1 = (((int32_t)dig_z3) * ((int32_t)(process_comp_z0))) / 4;
+//             process_comp_z2 = (((int32_t)(*mag_data_z - dig_z4)) * 32768);
+//             process_comp_z3 = ((int32_t)dig_z1) * (((int16_t)*data_rhall) * 2);
+//             process_comp_z4 = (int16_t)((process_comp_z3 + (32768)) / 65536);
+//             retval = ((process_comp_z2 - process_comp_z1) / (dig_z2 + process_comp_z4));
 
-            /* Saturate result to +/- 2 micro-tesla */
-            if (retval > BMM150_POSITIVE_SATURATION_Z)
-            {
-                retval = BMM150_POSITIVE_SATURATION_Z;
-            }
-            else if (retval < BMM150_NEGATIVE_SATURATION_Z)
-            {
-                retval = BMM150_NEGATIVE_SATURATION_Z;
-            }
+//             /* Saturate result to +/- 2 micro-tesla */
+//             if (retval > BMM150_POSITIVE_SATURATION_Z)
+//             {
+//                 retval = BMM150_POSITIVE_SATURATION_Z;
+//             }
+//             else if (retval < BMM150_NEGATIVE_SATURATION_Z)
+//             {
+//                 retval = BMM150_NEGATIVE_SATURATION_Z;
+//             }
 
-            /* Conversion of LSB to micro-tesla */
-            retval = retval / 16;
-        }
-        else
-        {
-            retval = BMM150_OVERFLOW_OUTPUT;
-        }
-    }
-    else
-    {
-        /* Overflow condition */
-        retval = BMM150_OVERFLOW_OUTPUT;
-    }
+//             /* Conversion of LSB to micro-tesla */
+//             retval = retval / 16;
+//         }
+//         else
+//         {
+//             retval = BMM150_OVERFLOW_OUTPUT;
+//         }
+//     }
+//     else
+//     {
+//         /* Overflow condition */
+//         retval = BMM150_OVERFLOW_OUTPUT;
+//     }
 
-    return (int16_t)retval;
-}
+//     return (int16_t)retval;
+// }
 
-void BMM150_Read_Data(int16_t *mag_x, int16_t *mag_y, int16_t *mag_z)
+void BMM150_Read_Data(int16_t *mag_x, int16_t *mag_y)
 {
-	uint8_t raw_x_lsb, raw_x_msb, raw_y_lsb, raw_y_msb, raw_z_lsb, raw_z_msb, raw_rhall_lsb, raw_rhall_msb; 
-	int16_t x_val, y_val, z_val, rhall_val; 
+	uint8_t raw_x_lsb, raw_x_msb, raw_y_lsb, raw_y_msb, raw_rhall_lsb, raw_rhall_msb; 
+	int16_t x_val, y_val, rhall_val; 
 	// uint16_t z_raw; 
 	int16_t msb_data; 
 	raw_x_lsb = SPI_read(BMM150_DATA_X_LSB);
 	raw_x_msb = SPI_read(BMM150_DATA_X_MSB);
 	raw_y_lsb = SPI_read(BMM150_DATA_Y_LSB);
 	raw_y_msb = SPI_read(BMM150_DATA_Y_MSB);
-	// SPI_read_block(BMM150_DATA_Z_LSB, raw_z, 2);
-	raw_z_lsb = SPI_read(BMM150_DATA_Z_LSB);
-	raw_z_msb = SPI_read(BMM150_DATA_Z_MSB);
-	// raw_z_lsb = raw_z[0];
-	// raw_z_msb = raw_z[1];
+	// raw_z_lsb = SPI_read(BMM150_DATA_Z_LSB);
+	// raw_z_msb = SPI_read(BMM150_DATA_Z_MSB);
 	raw_rhall_lsb = SPI_read(BMM150_RHALL_LSB); 
 	raw_rhall_msb = SPI_read(BMM150_RHALL_MSB);
 
@@ -541,9 +540,9 @@ void BMM150_Read_Data(int16_t *mag_x, int16_t *mag_y, int16_t *mag_z)
 	// z_raw = ((uint16_t)raw_z_msb << 7) | ((raw_z_lsb & 0xFE) >> 1);
 	// if (z_raw > 0x3FFF) z_val = z_raw - 0x8000;
 	// else z_val = z_raw; 
-	raw_z_lsb = ((raw_z_lsb & 0xFE) >> 1);
-	msb_data = ((int16_t)((int8_t)raw_z_msb)) >> 7; 
-	z_val = (int16_t)(msb_data | raw_z_lsb);
+	// raw_z_lsb = ((raw_z_lsb & 0xFE) >> 1);
+	// msb_data = ((int16_t)((int8_t)raw_z_msb)) >> 7; 
+	// z_val = (int16_t)(msb_data | raw_z_lsb);
 
 	//Extract R-HALL data (14-bit, 2's complement)
 	// rhall_val = ((uint16_t)raw_rhall_msb) * 64 + (raw_rhall_lsb & 0x3F); 
@@ -555,7 +554,7 @@ void BMM150_Read_Data(int16_t *mag_x, int16_t *mag_y, int16_t *mag_z)
 	// printf("%d, %d, %d, %d\r\n", x_val, y_val, z_val, rhall_val);
 	*mag_x = BMM150_compensate_x(&x_val, &rhall_val);
 	*mag_y = BMM150_compensate_y(&y_val, &rhall_val);
-	*mag_z = BMM150_compensate_z(&z_val, &rhall_val);
+	// *mag_z = BMM150_compensate_z(&z_val, &rhall_val);
 	// printf("%d, %d, %d\r\n", *mag_x, *mag_y, *mag_z);
 
 }
@@ -564,7 +563,7 @@ void BMM150_Read_Data(int16_t *mag_x, int16_t *mag_y, int16_t *mag_z)
 void main (void)
 {
 	xdata uint8_t i; 
-	xdata int16_t mag_x, mag_y, mag_z; 
+	xdata int16_t mag_x, mag_y; 
 	// xdata float angle;
 	xdata float sum_x, sum_y, alpha, avg_angle, smoothed_angle, cal_x, cal_y;  
 	xdata float declination_angle, x_scale, y_scale; 
@@ -572,7 +571,7 @@ void main (void)
 	// Initialize variables
 	avg_angle = 0.0; cal_x = 0.0; cal_y = 0.0; 
 	sum_x = 0.0; sum_y = 0.0;
-	mag_x = 0; mag_y = 0; mag_z = 0; 
+	mag_x = 0; mag_y = 0; 
 	// TUNE THESE 
 	alpha = 0.25;
 	// declination_angle = 45.0; 
@@ -581,7 +580,7 @@ void main (void)
 	y_scale = 54.0/57.0; 
 	smoothed_angle = 0.0; 
 	
-	Set_Pin_Output(0x03); 
+	Set_Pin_Output(0x10); 
 	BMM150_Init();
 
 	waitms(500);
@@ -596,7 +595,7 @@ void main (void)
 		sum_x = 0.0; 
 		sum_y = 0.0;  
 		for (i = 0; i < 25; i++){
-			BMM150_Read_Data(&mag_x, &mag_y, &mag_z);
+			BMM150_Read_Data(&mag_x, &mag_y);
 			// cal_x = (float)mag_x * x_scale; 
 			// cal_y = (float)mag_y * y_scale; 
 			sum_x += (float)mag_x; 
@@ -611,7 +610,7 @@ void main (void)
 		if (avg_angle > 360.0) avg_angle -= 360.0; 
 		smoothed_angle = alpha * avg_angle + (1-alpha) * smoothed_angle; 
 
-		printf("%f, %f, %f\r\n", sum_x/25.0, sum_y/25.0, smoothed_angle);
+		printf("%f,%f,%f\r\n", sum_x/25.0, sum_y/25.0, smoothed_angle);
 		// if (avg_angle > 180.0) angle -= 360.0; 
 		// else if (avg_angle < -180.0) angle += 360.0;
 		// smoothed_angle = alpha * avg_angle + (1-alpha) * smoothed_angle; 

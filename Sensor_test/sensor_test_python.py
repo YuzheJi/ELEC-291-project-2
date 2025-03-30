@@ -4,7 +4,7 @@ import matplotlib.animation as animation
 from collections import deque
 
 # === CONFIGURATION ===
-SERIAL_PORT = 'COM6'   # Change to your actual port
+SERIAL_PORT = 'COM4'   # Change to your actual port
 BAUD_RATE = 115200
 MAX_POINTS = 200       # Max number of points on plot
 
@@ -22,7 +22,7 @@ fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6), sharex=True)
 # --- X and Y plot ---
 line1, = ax1.plot([], [], label="X")
 line2, = ax1.plot([], [], label="Y")
-ax1.set_ylim(-100, 100)
+ax1.set_ylim(-50, 50)
 ax1.set_ylabel("Magnetometer Reading")
 ax1.set_title("X, Y and Angle vs Time")
 ax1.legend()
@@ -48,8 +48,8 @@ def update(frame):
         if ',' in line:
             parts = line.split(',')
             if len(parts) == 3:
-                x = int(parts[0])
-                y = int(parts[1])
+                x = float(parts[0])
+                y = float(parts[1])
                 angle = float(parts[2])
                 x_data.append(x)
                 y_data.append(y)

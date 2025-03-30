@@ -1,6 +1,8 @@
 #include <EFM8LB1.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
+#include <math.h>
 #include <string.h>
 #include "freq.h"
 
@@ -9,18 +11,20 @@
 #define SARCLK 18000000L
 #define RELOAD_10us (0x10000L-(SYSCLK/(12L*100000L))) // 10us rate
 #define TIMER_0_FREQ 2000L // For a 0.5ms tick
+#define F_SCK_MAX 2000000L   // SPI SCK 
+
 
 //                                    ----------  
-// RF_RXD               P0.0      1  |          |  32      P0.1     RF_TXD
+// 	                    P0.0      1  |          |  32      P0.1     
 //                      GND       2  |          |  31      P0.2  	Coin detector
-//                      5V        3  |          |  30      P0.3  	
-//                      5V        4  |          |  29      P0.4  
-//                      RST       5  |          |  28      P0.5  
-//                      P3.7      6  |          |  27      P0.6  
-//                      P3.3      7  |          |  26      P0.7  
-//                      P3.2      8  |          |  25      P1.0  
-//                      P3.1      9  |          |  24      P1.1  
-//                      P3.0     10  |          |  23      P1.2  
+//                      5V        3  |          |  30      P0.3  	SCK
+//                      5V        4  |          |  29      P0.4  	
+//                      RST       5  |          |  28      P0.5  	
+//                      P3.7      6  |          |  27      P0.6  	SDO (MISO)
+//                      P3.3      7  |          |  26      P0.7  	SDI (MOSI)
+//                      P3.2      8  |          |  25      P1.0  	CS
+//                      P3.1      9  |          |  24      P1.1  	RXD (MCU: TXD)
+//                      P3.0     10  |          |  23      P1.2  	TXD (MCU: RXD)
 //                      P2.6     11  |          |  22      P1.3     Boundary1
 //                      P2.5     12  |          |  21      P1.4  	Boundary2
 // R_bridge_2           P2.4     13  |          |  20      P1.5  	Magnet
@@ -28,12 +32,6 @@
 // L_bridge_2           P2.2     15  |          |  18      P1.7  	Servo_base
 // L_bridge_1           P2.1     16  |          |  17      P2.0     RF_SET
 //                                    ----------  
-
-
-// Timer Overview
-// Timer1 - Baud rate 9600 for RF
-// Timer5 - Motor PWM 
-// Timer
 
 // Definitions
 #define R_bridge_1 P2_4
@@ -43,21 +41,64 @@
 #define Servo_base P1_7
 #define Servo_arm  P1_6
 #define Magnet 	   P1_5
+#define CS 		   P1_0
+
+// Constant Definitions
+#define M_PI 3.14159265358979323846
+
+// BMM150 Registers 
+#define BMM150_CHIP_ID          			0x40 // the chip identification number 0x32 -> read only if 0x4B bit enabled
+#define BMM150_DATA_X_LSB       			0x42 // X axis
+#define BMM150_DATA_X_MSB       			0x43
+#define BMM150_DATA_Y_LSB       			0x44 // Y axis
+#define BMM150_DATA_Y_MSB       			0x45
+#define BMM150_DATA_Z_LSB       			0x46 // Z axis
+#define BMM150_DATA_Z_MSB       			0x47
+#define BMM150_RHALL_LSB        			0x48 // hall resistance and Data Ready (DRDT) status bit
+#define BMM150_RHALL_MSB        			0x49 // hall resistance 
+#define BMM150_STATUS_REGISTER  			0x4A 
+#define BMM150_POWER_CONTROL    			0x4B 
+#define BMM150_OP_MODE          			0x4C
+#define BMM150_INTERRUPT        			0x4D
+#define BMM150_REP_XY           			0x51
+#define BMM150_REP_Z            			0x52
+#define BMM150_DIG_X1						0x5D
+#define BMM150_DIG_Z4_LSB					0x62
+#define BMM150_DIG_Z2_LSB					0x68
+
+// BMM150 Constants
+#define BMM150_CHIP_ID_VALUE    			0x32
+#define BMM150_POWER_ON         			0x01
+#define BMM150_NORMAL_MODE      			0x00
+#define BMM150_ODR_10HZ         			0x00  // Output data rate 10Hz
+#define BMM150_DATA_READY       			0x01
+#define BMM150_OVERFLOW_OUTPUT				-32768
+#define BMM150_OVERFLOW_ADCVAL_XYAXES_FLIP	INT16_C(-4096)
+#define BMM150_OVERFLOW_ADCVAL_ZAXIS_HALL 	INT16_C(-16384)
+#define BMM150_POSITIVE_SATURATION_Z 		INT16_C(32767)
+#define BMM150_NEGATIVE_SATURATION_Z 		INT16_C(-32767)
 
 
+// Global variables 
 idata char buff[20];
-unsigned int pwm_counter = 0; 
-unsigned int servo_counter = 0; 
-unsigned char pwm_left = 0, pwm_right = 0; 
-unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
-unsigned char servo_base = 1, servo_arm = 1; 
-int vx_thres = 161, vy_thres = 166; 
-int vx = 0, vy = 0; 
-long freq100;
-unsigned int fre_mea_count = 0;
-int d1, d2;
-unsigned int seed = 12345;
-float pwm_corr = 0.95;
+xdata unsigned int pwm_counter = 0; 
+xdata unsigned int servo_counter = 0; 
+xdata unsigned char pwm_left = 0, pwm_right = 0; 
+xdata unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
+xdata unsigned char servo_base = 1, servo_arm = 1; 
+xdata int vx_thres = 161, vy_thres = 166; 
+xdata int vx = 0, vy = 0; 
+xdata long freq100;
+xdata unsigned int fre_mea_count = 0;
+xdata int d1, d2;
+xdata unsigned int seed = 12345;
+xdata float pwm_corr = 0.95;
+//BMM150 Global Variables
+xdata int8_t dig_x1, dig_x2, dig_y1, dig_y2; 
+xdata uint16_t  dig_z1, dig_z2, dig_z3, dig_z4;
+xdata uint8_t dig_xy1; 
+xdata int8_t dig_xy2; 
+xdata uint16_t dig_xyz1; 
 
 
 char _c51_external_startup (void)
@@ -107,13 +148,16 @@ char _c51_external_startup (void)
 	#else
 		#error SYSCLK must be either 12250000L, 24500000L, 48000000L, or 72000000L
 	#endif
-	
-	P0MDOUT |= 0x11; // Enable UART0 TX (P0.4) and UART1 TX (P0.0) as push-pull outputs
-	P2MDOUT |= 0x01; // P2.0 in push-pull mode
-	XBR0     = 0x01; // Enable UART0 on P0.4(TX) and P0.5(RX)                     
-	XBR1     = 0X00;
-	XBR2     = 0x41; // Enable crossbar and uart 1
 
+
+	P0MDOUT |= 0b_1100_0000;
+	P1MDOUT |= 0b_0000_0110;
+	P2MDOUT |= 0b_0000_0001; // P2.0 in push-pull mode
+	XBR0     = 0b_0000_0011; // UART0E = 1 and SPI0E = 1               
+	XBR1     = 0b_0000_0000;
+	XBR2     = 0b_0100_0001; // Enable crossbar and uart 1
+	P0SKIP 	 = 0b_0000_0111; 
+	P1SKIP   = 0b_1111_1001;
 	// Configure Uart 0
 	#if (((SYSCLK/BAUDRATE)/(2L*12L))>0xFFL)
 		#error Timer 0 reload value is incorrect because (SYSCLK/BAUDRATE)/(2L*12L) > 0xFF
@@ -125,8 +169,12 @@ char _c51_external_startup (void)
 	TMOD |=  0x20;                       
 	TR1 = 1; // START Timer1
 	TI = 1;  // Indicate TX0 ready
-  	
   	P2_0=1; // 'set' pin to 1 is normal operation mode.
+
+	// Configure SPI
+    SPI0CKR = (SYSCLK/(2*F_SCK_MAX))-1;
+    SPI0CFG = 0b_1110_0000; // SPI mode 3
+    SPI0CN0 = 0b_0000_0001; // SPI enabled and in three wire mode
 
     // Initialize Timer 5 for periodic interrupts
 	SFRPAGE=0x10;
@@ -135,7 +183,6 @@ char _c51_external_startup (void)
 	EIE2|=0b_0000_1000; // Enable Timer5 interrupts
 	TR5=1;         // Start Timer5 (TMR5CN0 is bit addressable)
 	
-
 	EA=1;  // Enable global interrupts
 	SFRPAGE=0x00;
 	
@@ -170,6 +217,295 @@ void waitms (unsigned int ms)
 		for (k=0; k<4; k++) Timer3us(250);
 }
 
+unsigned char SPI_transfer(unsigned char tx_data)
+{
+    SPI0DAT = tx_data;  // Send data
+    while (!SPIF);      // Wait for transfer to complete
+    SPIF = 0;           // Clear SPI interrupt flag
+    return SPI0DAT;     // Return received data
+}
+
+unsigned char SPI_read(unsigned char reg_addr)
+{
+    xdata unsigned char value;
+    
+    // For SPI read operation, set MSB of address to 1
+    reg_addr = reg_addr | 0x80;
+    
+    CS = 0;                // Select the device
+    SPI_transfer(reg_addr);     // Send register address
+    value = SPI_transfer(0x00); // Read value (send dummy byte) dummy byte is a placeholder byte sent by the master when it wants to receive data
+    CS = 1;                // Deselect the device
+    
+    return value;
+}
+
+void SPI_write(unsigned char reg_addr, unsigned char reg_value)
+{
+    // For SPI write operation, MSB should be 0
+    reg_addr = reg_addr & 0x7F;
+    
+    CS = 0;                // Select device
+    SPI_transfer(reg_addr);     // Send register address
+    SPI_transfer(reg_value);    // Send value
+    CS = 1;                // Deselect device
+}
+
+void BMM150_Read_Trim_Registers(void)
+{
+	xdata uint8_t i; 
+	xdata uint16_t temp_msb; 
+	xdata uint8_t trim_x1y1[2] = {0};
+	xdata uint8_t trim_xyz_data[4] = {0};
+	xdata uint8_t trim_xy1xy2[10] = {0};
+	temp_msb = 0; 
+	// Reading trim_x1y1 at 0x5D
+	for (i=0;i<2;i++){
+		trim_x1y1[i] = SPI_read(BMM150_DIG_X1+i); 
+	}
+	for (i=0;i<4;i++){
+		trim_xyz_data[i] = SPI_read(BMM150_DIG_Z4_LSB+i);
+	}
+	for (i=0;i<10;i++){
+		trim_xy1xy2[i] = SPI_read(BMM150_DIG_Z2_LSB+i);
+	}
+	// Update trim data 
+	dig_x1 = (int8_t) trim_x1y1[0]; 
+	dig_y1 = (int8_t) trim_x1y1[1]; 
+	dig_x2 = (int8_t) trim_xyz_data[2]; 
+	dig_y2 = (int8_t) trim_xyz_data[3]; 
+
+	// temp_msb = ((uint16_t)trim_xy1xy2[3]) << 8;
+	// dig_z1 = (uint16_t)(temp_msb | trim_xy1xy2[2]);
+
+	// temp_msb = ((uint16_t)trim_xy1xy2[1]) << 8;
+	// dig_z2 = (int16_t)(temp_msb | trim_xy1xy2[0]);
+
+	// temp_msb = ((uint16_t)trim_xy1xy2[7]) << 8;
+	// dig_z3 = (int16_t)(temp_msb | trim_xy1xy2[6]);
+
+	// temp_msb = ((uint16_t)trim_xyz_data[1]) << 8;
+	// dig_z4 = (int16_t)(temp_msb | trim_xyz_data[0]);
+
+	dig_xy1 = trim_xy1xy2[9];
+	dig_xy2 = (int8_t)trim_xy1xy2[8];
+
+	temp_msb = ((uint16_t)(trim_xy1xy2[5] & 0x7F)) << 8;
+	dig_xyz1 = (uint16_t)(temp_msb | trim_xy1xy2[4]);
+
+}
+
+void BMM150_Init(void)
+{
+    xdata unsigned char chip_id;
+    
+    // Set all required pins
+    CS = 1; // Deselect BMM150
+    
+    // Wait for sensor startup
+    waitms(10);
+    
+    // Software reset by setting bit 7 and bit 1 in register 0x4B
+    SPI_write(BMM150_POWER_CONTROL, 0x82);
+    waitms(10);  // Wait for reset to complete
+    
+    // Power on the sensor (set power control bit)
+    SPI_write(BMM150_POWER_CONTROL, BMM150_POWER_ON);
+    waitms(5);
+    
+    // Read and verify chip ID
+    chip_id = SPI_read(BMM150_CHIP_ID);
+    if (chip_id != BMM150_CHIP_ID_VALUE)
+    {
+        printf("Error: Could not find BMM150 sensor (Chip ID: 0x%02X)\r\n", chip_id);
+        while (1) {
+            printf("Press restart to check again!\r");
+        }; // Halt if sensor not found
+    }
+	else {
+		printf("DONE! Chip ID = 0x%02X\r\n", chip_id);
+	}
+    
+    // Set operation mode to normal and data rate to 10Hz
+    SPI_write(BMM150_OP_MODE, BMM150_NORMAL_MODE | (BMM150_ODR_10HZ * 8));
+    
+    // Set repetitions for XY and Z axes for regular preset
+    SPI_write(BMM150_REP_XY, 0x7F); // XY-repetitions = 9
+    SPI_write(BMM150_REP_Z, 0x0E);  // Z-repetitions = 15
+
+	BMM150_Read_Trim_Registers();
+    
+    printf("BMM150 initialized successfully! Chip ID: 0x%02X\r\n", chip_id);
+	return; 
+}
+
+int16_t BMM150_compensate_x(int16_t *mag_data_x, int16_t *data_rhall)
+{
+	xdata int16_t retval;
+    xdata uint16_t process_comp_x0;
+    xdata int32_t process_comp_x1;
+    xdata uint16_t process_comp_x2;
+    xdata int32_t process_comp_x3;
+    xdata int32_t process_comp_x4;
+    xdata int32_t process_comp_x5;
+    xdata int32_t process_comp_x6;
+    xdata int32_t process_comp_x7;
+    xdata int32_t process_comp_x8;
+    xdata int32_t process_comp_x9;
+    xdata int32_t process_comp_x10;
+
+	//initialize value
+	process_comp_x0 = 0; 
+
+	if (*mag_data_x != BMM150_OVERFLOW_ADCVAL_XYAXES_FLIP){
+		if (*data_rhall != 0)
+		{
+			/* Availability of valid data */
+			process_comp_x0 = *data_rhall;
+		}
+		else if (dig_xyz1 != 0)
+		{
+			process_comp_x0 = dig_xyz1;
+		}
+		else
+		{
+			process_comp_x0 = 0;
+		}
+		if (process_comp_x0 != 0)
+		{
+			/* Processing compensation equations */
+			process_comp_x1 = ((int32_t)dig_xyz1) * 16384;
+			process_comp_x2 = ((uint16_t)(process_comp_x1 / process_comp_x0)) - ((uint16_t)0x4000);
+			retval = ((int16_t)process_comp_x2);
+			process_comp_x3 = (((int32_t)retval) * ((int32_t)retval));
+			process_comp_x4 = (((int32_t)dig_xy2) * (process_comp_x3 / 128));
+			process_comp_x5 = (int32_t)(((int16_t)dig_xy1) * 128);
+			process_comp_x6 = ((int32_t)retval) * process_comp_x5;
+			process_comp_x7 = (((process_comp_x4 + process_comp_x6) / 512) + ((int32_t)0x100000));
+			process_comp_x8 = ((int32_t)(((int16_t)dig_x2) + ((int16_t)0xA0)));
+			process_comp_x9 = ((process_comp_x7 * process_comp_x8) / 4096);
+			process_comp_x10 = ((int32_t)*mag_data_x) * process_comp_x9;
+			retval = ((int16_t)(process_comp_x10 / 8192));
+			retval = (retval + (((int16_t)dig_x1) * 8)) / 16;
+		}
+		else {
+			retval = BMM150_OVERFLOW_OUTPUT; 
+		}
+	}
+	else{
+		retval = BMM150_OVERFLOW_OUTPUT; 
+	}
+	return retval; 
+}
+
+int16_t BMM150_compensate_y (int16_t *mag_data_y, int16_t *data_rhall)
+{
+	xdata int16_t retval;
+    xdata uint16_t process_comp_y0;
+    xdata int32_t process_comp_y1;
+    xdata uint16_t process_comp_y2;
+    xdata int32_t process_comp_y3;
+    xdata int32_t process_comp_y4;
+    xdata int32_t process_comp_y5;
+    xdata int32_t process_comp_y6;
+    xdata int32_t process_comp_y7;
+    xdata int32_t process_comp_y8;
+    xdata int32_t process_comp_y9;
+
+	//initialize variable
+	process_comp_y0 = 0; 
+
+    /* Overflow condition check */
+    if (*mag_data_y != BMM150_OVERFLOW_ADCVAL_XYAXES_FLIP)
+    {
+        if (*data_rhall != 0)
+        {
+            /* Availability of valid data */
+            process_comp_y0 = *data_rhall;
+        }
+        else if (dig_xyz1 != 0)
+        {
+            process_comp_y0 = dig_xyz1;
+        }
+        else
+        {
+            process_comp_y0 = 0;
+        }
+
+        if (process_comp_y0 != 0)
+        {
+            /* Processing compensation equations */
+            process_comp_y1 = (((int32_t)dig_xyz1) * 16384) / process_comp_y0;
+            process_comp_y2 = ((uint16_t)process_comp_y1) - ((uint16_t)0x4000);
+            retval = ((int16_t)process_comp_y2);
+            process_comp_y3 = ((int32_t) retval) * ((int32_t)retval);
+            process_comp_y4 = ((int32_t)dig_xy2) * (process_comp_y3 / 128);
+            process_comp_y5 = ((int32_t)(((int16_t)dig_xy1) * 128));
+            process_comp_y6 = ((process_comp_y4 + (((int32_t)retval) * process_comp_y5)) / 512);
+            process_comp_y7 = ((int32_t)(((int16_t)dig_y2) + ((int16_t)0xA0)));
+            process_comp_y8 = (((process_comp_y6 + ((int32_t)0x100000)) * process_comp_y7) / 4096);
+            process_comp_y9 = (((int32_t)*mag_data_y) * process_comp_y8);
+            retval = (int16_t)(process_comp_y9 / 8192);
+            retval = (retval + (((int16_t)dig_y1) * 8)) / 16;
+        }
+        else
+        {
+            retval = BMM150_OVERFLOW_OUTPUT;
+        }
+    }
+    else
+    {
+        /* Overflow condition */
+        retval = BMM150_OVERFLOW_OUTPUT;
+    }
+
+    return retval;
+}
+
+void BMM150_Read_Data(int16_t *mag_x, int16_t *mag_y)
+{
+	xdata uint8_t raw_x_lsb, raw_x_msb, raw_y_lsb, raw_y_msb, raw_rhall_lsb, raw_rhall_msb; 
+	// xdata uint8_t raw_z_lsb, raw_z_msb; 
+	// xdata int16_t z_val; 
+	xdata int16_t x_val, y_val, rhall_val;  
+	xdata int16_t msb_data; 
+	raw_x_lsb = SPI_read(BMM150_DATA_X_LSB);
+	raw_x_msb = SPI_read(BMM150_DATA_X_MSB);
+	raw_y_lsb = SPI_read(BMM150_DATA_Y_LSB);
+	raw_y_msb = SPI_read(BMM150_DATA_Y_MSB);
+	// raw_z_lsb = SPI_read(BMM150_DATA_Z_LSB);
+	// raw_z_msb = SPI_read(BMM150_DATA_Z_MSB);
+	raw_rhall_lsb = SPI_read(BMM150_RHALL_LSB); 
+	raw_rhall_msb = SPI_read(BMM150_RHALL_MSB);
+
+
+	// Extract X data (13-bit, 2's complement)
+	raw_x_lsb = ((raw_x_lsb & 0b_1111_1000)) >> 3;
+	msb_data = ((int16_t)((int8_t)raw_x_msb)) << 5; 
+	x_val = (int16_t)(msb_data | raw_x_lsb);
+
+	// Extract Y data (13-bit, 2's complement)
+	raw_y_lsb = ((raw_y_lsb & 0b_1111_1000)) >> 3;
+	msb_data = ((int16_t)((int8_t)raw_y_msb)) << 5; 
+	y_val = (int16_t)(msb_data | raw_y_lsb);
+
+	// Extract Z data (15-bit, 2's complement) - NOT USED 
+	// raw_z_lsb = ((raw_z_lsb & 0xFE) >> 1);
+	// msb_data = ((int16_t)((int8_t)raw_z_msb)) >> 7; 
+	// z_val = (int16_t)(msb_data | raw_z_lsb);
+
+	//Extract R-HALL data (14-bit, 2's complement)
+	raw_rhall_lsb = ((raw_rhall_lsb & 0xFC) >> 2);
+	rhall_val = (uint16_t)(((uint16_t)raw_rhall_msb << 6) | raw_rhall_lsb);
+
+	// printf("%d, %d, %d, %d\r\n", x_val, y_val, z_val, rhall_val);
+	*mag_x = BMM150_compensate_x(&x_val, &rhall_val);
+	*mag_y = BMM150_compensate_y(&y_val, &rhall_val);
+	// *mag_z = BMM150_compensate_z(&z_val, &rhall_val);
+	// printf("%d, %d\r\n", *mag_x, *mag_y);
+}
+
+
 void UART1_Init (unsigned long baudrate)
 {
     SFRPAGE = 0x20;
@@ -202,7 +538,7 @@ void sendstr1 (char * s)
 
 char getchar1 (void)
 {
-	char c;
+	xdata char c;
     SFRPAGE = 0x20;
 	while (!RI1);
 	RI1=0;
@@ -215,8 +551,8 @@ char getchar1 (void)
 
 char getchar1_with_timeout (void)
 {
-	char c;
-	unsigned int timeout;
+	xdata char c;
+	xdata unsigned int timeout;
     SFRPAGE = 0x20;
     timeout=0;
 	while (!RI1)
@@ -241,8 +577,8 @@ char getchar1_with_timeout (void)
 
 void getstr1 (char * s, unsigned char n)
 {
-	char c;
-	unsigned char cnt;
+	xdata char c;
+	xdata unsigned char cnt;
 	
 	cnt=0;
 	while(1)
@@ -280,8 +616,8 @@ bit RXU1 (void)
 
 void waitms_or_RI1 (unsigned int ms)
 {
-	unsigned int j;
-	unsigned char k;
+	xdata unsigned int j;
+	xdata unsigned char k;
 	for(j=0; j<ms; j++)
 	{
 		for (k=0; k<4; k++)
@@ -483,9 +819,8 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 	}
 }
 
-
 void servo_pick(){
-	int i;
+	xdata int i;
 	servo_arm = 1;
 	servo_base = 1;
 	servo_base = 250;
@@ -529,7 +864,9 @@ void Init_all(){
 	Set_Pin_Output(0x17);
 	Set_Pin_Output(0x16);
 	Set_Pin_Output(0x15);
-	Set_Pin_Input(0x02);
+	Set_Pin_Output(0x10); // CS
+	Set_Pin_Input(0x30);
+	
 
 	InitPinADC(1,3);
 	InitPinADC(1,4);
@@ -597,13 +934,13 @@ unsigned int get_random_90_250() {
 }
 
 void Auto_mode_slave(){
-	int count = 0;
-	int command;
-	int state_res = 1;
-	int bound = 0;
-	char c;
-	int dummy;
-	unsigned int angle;
+	xdata int count = 0;
+	xdata int command;
+	xdata int state_res = 1;
+	xdata int bound = 0;
+	xdata char c;
+	xdata int dummy;
+	xdata unsigned int angle;
 
 	while(count < 20 && state_res){
 		
@@ -653,18 +990,144 @@ void Auto_mode_slave(){
 	printf("Auto mode finished!\r\n");
 }
 
+float Read_angle(void)
+{
+	xdata uint8_t i; 
+	xdata int16_t mag_x, mag_y; 
+	xdata float sum_x, sum_y; 
+	xdata float alpha, angle, smoothed_angle; 
+
+	sum_x = 0.0; sum_y = 0.0; alpha = 0.25; 
+	smoothed_angle = 0.0; angle = 0.0; 
+
+	for (i = 0; i < 25; i++){
+		BMM150_Read_Data(&mag_x, &mag_y);
+		sum_x += (float)mag_x; 
+		sum_y += (float)mag_y; 
+		waitms(1);
+	}
+	// printf("%f, %f\r\n", sum_x/25.0, sum_y/25.0);
+	angle = atan2f(sum_y/25.0, sum_x/25.0) * 180.0 / M_PI;
+	// BMM150_Read_Data(&mag_x, &mag_y);
+	// printf("%d, %d\r\n", mag_x, mag_y);
+	// angle = atan2f((float)mag_y, (float)mag_x) * 180.0 / M_PI; 
+	if (angle < 0.0) angle += 360.0; 
+	if (angle > 360.0) angle -= 360.0; 
+	// smoothed_angle = alpha * angle + (1-alpha) * smoothed_angle; 
+	return angle; 
+}
+
+void Joystick_Control(int *vx_ptr, int *vy_ptr)
+{
+	xdata int vx, vy; 
+	xdata int vx_error, vy_error, vx_err, vy_err;
+    xdata int threshold = 161;
+	vx = *vx_ptr; 
+	vy = *vy_ptr; 
+	// Determine of Vx and Vy are within 5% error
+	vx_error = abs(vx-vx_thres)*100/vx_thres; 
+	vy_error = abs(vy-vy_thres)*100/vy_thres; 
+	vx_err = vx-vx_thres; 
+	vy_err = vy-vy_thres; 
+	pwm_left = 0; 
+	pwm_right = 0; 
+	// if vx moved but vy didn't move => move forward 
+	if ((vy_error>5) && (vx_error<5)){
+		pwm_left = vy_error; 
+		pwm_right = vy_error * pwm_corr; 
+		if (vy_err > 0){ //move forward
+			L_motor_dir = 0; 
+			R_motor_dir = 0; 
+		}
+		else { //move backward 
+			L_motor_dir = 1; 
+			R_motor_dir = 1; 
+			pwm_right *= 1.05;
+		}
+	}
+	if ((vx_error>5)&&(vy_error<5)){
+		pwm_left = vx_error; 
+		pwm_right = vx_error * pwm_corr; 
+		if (vx_err > 0){ //turn right
+			L_motor_dir = 1; 
+			R_motor_dir = 0; 
+		}
+		else{ //turn left 
+			L_motor_dir = 0; 
+			R_motor_dir = 1; 
+		}
+	}
+	if ((vx_error>5)&&(vy_error)>5){
+		// Region 1 & Region 2
+		if (vy_err>0){
+			L_motor_dir = 0; 
+			R_motor_dir = 0; 
+			// Region 1
+			if (vx_err>0){
+				if (vy*100<=vy_thres*100/2){
+					pwm_left = vy_error; 
+					pwm_right = pwm_corr*vy_error*100/(vx_error+vy_error);
+				}
+				else {
+					pwm_left = vx_error; 
+					pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
+				}
+			}
+			// Region 2
+			else {
+				if (vy*100<=vy_thres*100/2){
+					pwm_left = vy_error*100/(vx_error+vy_error);
+					pwm_right = vy_error*pwm_corr; 
+				}
+				else {
+					pwm_left = vx_error*100/(vx_error+vy_error);
+					pwm_right = vx_error*pwm_corr; 
+				}
+			}
+		}
+		// Region 3 & 4
+		if (vy_err<0){
+			L_motor_dir = 1; 
+			R_motor_dir = 1; 
+			// Region 4
+			if (vx_err>0){
+				if (vy*100<=vy_thres*100/2){
+					pwm_left = vy_error; 
+					pwm_right = pwm_corr*vy_error*100/(vx_error+vy_error);
+				}
+				else {
+					pwm_left = vx_error; 
+					pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
+				}
+			}
+			// Region 3
+			else {
+				if (vy*100<=vy_thres*100/2){
+					pwm_left = vy_error*100/(vx_error+vy_error);
+					pwm_right =pwm_corr*vy_error; 
+				}
+				else {
+					pwm_left = vx_error*100/(vx_error+vy_error);
+					pwm_right = pwm_corr*vx_error; 
+				}
+			}
+		}
+	}
+	return; 
+}
+
 void main (void)
 {
-    char c;
-	int vx_error, vy_error, vx_err, vy_err;
-    int vx = 0, vy = 0; 
-    float threshold = 161;
-	int motor_pwm = 0; 
-	int pick = 0;
-	int auto_mode = 0;
-	char pick_done = 1;
+    xdata char c;
+	xdata int vx = 0, vy = 0; 
+	xdata uint8_t auto_mode = 0;
+	xdata char pick_done = 1;
+	xdata uint8_t pick = 0;
+	xdata float angle; 
 	
+	// printf("Initializing\r\n");
 	Init_all();
+	BMM150_Init();
 	waitms(500);
 	printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
 	UART1_Init(9600);
@@ -689,7 +1152,7 @@ void main (void)
 	
 	while(1)
 	{	
-		//printf("freq: %f, bound_flag: %d\r\n\r", freq100/100.0,bound_flag);
+		
 		if(pick==1){
 			servo_pick();
 			waitms(1000);
@@ -700,6 +1163,8 @@ void main (void)
 			Auto_mode_slave();
 			auto_mode = 0;
 		}
+		angle = Read_angle();
+		// printf("freq: %f, angle: %f\r\n", freq100/100.0, angle);
 
 		// The message format: 000,000 --- (vx,vy)
 		if(RXU1()) // Something has arrived
@@ -709,101 +1174,12 @@ void main (void)
 			if(c=='!') // Master is sending message
 			{
 				getstr1(buff, sizeof(buff)-1);
-				if(strlen(buff)==11)
+				if(strlen(buff)==12)
 				{
-					printf("Master says: %s,\r\n", buff);
+					// printf("Master says: %s,\r\n", buff);
 					sscanf(buff, "%03d,%03d,%01d,%01d", &vx, &vy, &pick, &auto_mode);
                 	printf("Joystick Received: Vx = %03d, Vy = %03d, Order = %01d, Auto = %01d\r\n", vx, vy, pick, auto_mode);
-
-					// Determine of Vx and Vy are within 5% error
-					vx_error = abs(vx-vx_thres)*100/vx_thres; 
-					vy_error = abs(vy-vy_thres)*100/vy_thres; 
-					vx_err = vx-vx_thres; 
-					vy_err = vy-vy_thres; 
-					pwm_left = 0; 
-					pwm_right = 0; 
-					// if vx moved but vy didn't move => move forward 
-					if ((vy_error>5) && (vx_error<5)){
-						pwm_left = vy_error; 
-						pwm_right = vy_error * pwm_corr; 
-						if (vy_err > 0){ //move forward
-							L_motor_dir = 0; 
-							R_motor_dir = 0; 
-						}
-						else { //move backward 
-							L_motor_dir = 1; 
-							R_motor_dir = 1; 
-							pwm_right *= 1.05;
-						}
-					}
-					if ((vx_error>5)&&(vy_error<5)){
-						pwm_left = vx_error; 
-						pwm_right = vx_error * pwm_corr; 
-						if (vx_err > 0){ //turn right
-							L_motor_dir = 1; 
-							R_motor_dir = 0; 
-						}
-						else{ //turn left 
-							L_motor_dir = 0; 
-							R_motor_dir = 1; 
-						}
-					}
-					if ((vx_error>5)&&(vy_error)>5){
-						// Region 1 & Region 2
-						if (vy_err>0){
-							L_motor_dir = 0; 
-							R_motor_dir = 0; 
-							// Region 1
-							if (vx_err>0){
-								if (vy*100<=vy_thres*100/2){
-									pwm_left = vy_error; 
-									pwm_right = pwm_corr*vy_error*100/(vx_error+vy_error);
-								}
-								else {
-									pwm_left = vx_error; 
-									pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
-								}
-							}
-							// Region 2
-							else {
-								if (vy*100<=vy_thres*100/2){
-									pwm_left = vy_error*100/(vx_error+vy_error);
-									pwm_right = vy_error*pwm_corr; 
-								}
-								else {
-									pwm_left = vx_error*100/(vx_error+vy_error);
-									pwm_right = vx_error*pwm_corr; 
-								}
-							}
-						}
-						// Region 3 & 4
-						if (vy_err<0){
-							L_motor_dir = 1; 
-							R_motor_dir = 1; 
-							// Region 4
-							if (vx_err>0){
-								if (vy*100<=vy_thres*100/2){
-									pwm_left = vy_error; 
-									pwm_right = pwm_corr*vy_error*100/(vx_error+vy_error);
-								}
-								else {
-									pwm_left = vx_error; 
-									pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
-								}
-							}
-							// Region 3
-							else {
-								if (vy*100<=vy_thres*100/2){
-									pwm_left = vy_error*100/(vx_error+vy_error);
-									pwm_right =pwm_corr*vy_error; 
-								}
-								else {
-									pwm_left = vx_error*100/(vx_error+vy_error);
-									pwm_right = pwm_corr*vx_error; 
-								}
-							}
-						}
-					}
+					Joystick_Control(&vx, &vy);
 				}
 				else{
 					printf("*** BAD MESSAGE ***: %s\r\n", buff);
