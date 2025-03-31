@@ -100,6 +100,7 @@ xdata uint8_t dig_xy1;
 xdata int8_t dig_xy2; 
 xdata uint16_t dig_xyz1; 
 xdata float curr_angle=0; 
+xdata char mea_rest=0
 
 
 char _c51_external_startup (void)
@@ -765,9 +766,8 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 	fre_mea_count++;
 	if(fre_mea_count == 1000){
 		fre_mea_count = 0;
-		freq100 = get_freq();
+		if(!mea_rest) freq100 = get_freq();
 	}
-
 
     pwm_counter++; 
     if (pwm_counter == 100){
@@ -852,7 +852,7 @@ void servo_pick(){
 }
 
 int check_bound(int d1, int d2){
-	if(d1>5000||d2>12000)	return 1;
+	if(d1>12000||d2>12000)	return 1;
 	else return 0;
 }
 
@@ -920,8 +920,8 @@ void Move_forward(){
 
 	L_motor_dir = 0;
 	R_motor_dir = 0;
-	pwm_left = 90;
-	pwm_right = 90 * pwm_corr;
+	pwm_left = 60;
+	pwm_right = 60 * pwm_corr;
 	return;
 }
 
@@ -1003,17 +1003,22 @@ void Auto_mode_slave(){
 		bound = check_bound(d1,d2);
 		printf("f:%04ld, d1:%d, d2:%d, bound_dectect: %d\r\n",freq100, d1,d2,bound);
 
-		if (freq100>=5350){
+		if (freq100>=5340){
 			Move_back_ms(300);
+			waitms(100);
 			servo_pick();
 			count++;
+			waitms(100);
 			Move_forward();
+			freq100 = 1;
+			mea_rest = 1;
 		}
 
 		if(bound == 1){
+			Move_back_ms(500);
+			waitms(100);
 		 	angle = get_random_90_250();
 			Right_angle(angle*600/90);
-		 	printf("Turn!!! %d\r\n", angle);
 		}
 	}
 
