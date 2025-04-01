@@ -87,7 +87,7 @@ xdata unsigned int pwm_counter = 0;
 xdata unsigned int servo_counter = 0; 
 xdata unsigned char pwm_left = 0, pwm_right = 0; 
 xdata unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
-xdata unsigned char servo_base = 100, servo_arm = 2; 
+xdata unsigned char servo_base = 60, servo_arm = 2; 
 xdata int vx_thres = 161, vy_thres = 166; 
 xdata int vx = 0, vy = 0; 
 xdata long freq100;
@@ -224,293 +224,293 @@ void waitms (unsigned int ms)
 		for (k=0; k<4; k++) Timer3us(250);
 }
 
-// unsigned char SPI_transfer(unsigned char tx_data)
-// {
-//     SPI0DAT = tx_data;  // Send data
-//     while (!SPIF);      // Wait for transfer to complete
-//     SPIF = 0;           // Clear SPI interrupt flag
-//     return SPI0DAT;     // Return received data
-// }
+unsigned char SPI_transfer(unsigned char tx_data)
+{
+    SPI0DAT = tx_data;  // Send data
+    while (!SPIF);      // Wait for transfer to complete
+    SPIF = 0;           // Clear SPI interrupt flag
+    return SPI0DAT;     // Return received data
+}
 
-// unsigned char SPI_read(unsigned char reg_addr)
-// {
-//     xdata unsigned char value;
+unsigned char SPI_read(unsigned char reg_addr)
+{
+    xdata unsigned char value;
     
-//     // For SPI read operation, set MSB of address to 1
-//     reg_addr = reg_addr | 0x80;
+    // For SPI read operation, set MSB of address to 1
+    reg_addr = reg_addr | 0x80;
     
-//     CS = 0;                // Select the device
-//     SPI_transfer(reg_addr);     // Send register address
-//     value = SPI_transfer(0x00); // Read value (send dummy byte) dummy byte is a placeholder byte sent by the master when it wants to receive data
-//     CS = 1;                // Deselect the device
+    CS = 0;                // Select the device
+    SPI_transfer(reg_addr);     // Send register address
+    value = SPI_transfer(0x00); // Read value (send dummy byte) dummy byte is a placeholder byte sent by the master when it wants to receive data
+    CS = 1;                // Deselect the device
     
-//     return value;
-// }
+    return value;
+}
 
-// void SPI_write(unsigned char reg_addr, unsigned char reg_value)
-// {
-//     // For SPI write operation, MSB should be 0
-//     reg_addr = reg_addr & 0x7F;
+void SPI_write(unsigned char reg_addr, unsigned char reg_value)
+{
+    // For SPI write operation, MSB should be 0
+    reg_addr = reg_addr & 0x7F;
     
-//     CS = 0;                // Select device
-//     SPI_transfer(reg_addr);     // Send register address
-//     SPI_transfer(reg_value);    // Send value
-//     CS = 1;                // Deselect device
-// }
+    CS = 0;                // Select device
+    SPI_transfer(reg_addr);     // Send register address
+    SPI_transfer(reg_value);    // Send value
+    CS = 1;                // Deselect device
+}
 
-// void BMM150_Read_Trim_Registers(void)
-// {
-// 	xdata uint8_t i; 
-// 	xdata uint16_t temp_msb; 
-// 	xdata uint8_t trim_x1y1[2] = {0};
-// 	xdata uint8_t trim_xyz_data[4] = {0};
-// 	xdata uint8_t trim_xy1xy2[10] = {0};
-// 	temp_msb = 0; 
-// 	// Reading trim_x1y1 at 0x5D
-// 	for (i=0;i<2;i++){
-// 		trim_x1y1[i] = SPI_read(BMM150_DIG_X1+i); 
-// 	}
-// 	for (i=0;i<4;i++){
-// 		trim_xyz_data[i] = SPI_read(BMM150_DIG_Z4_LSB+i);
-// 	}
-// 	for (i=0;i<10;i++){
-// 		trim_xy1xy2[i] = SPI_read(BMM150_DIG_Z2_LSB+i);
-// 	}
-// 	// Update trim data 
-// 	dig_x1 = (int8_t) trim_x1y1[0]; 
-// 	dig_y1 = (int8_t) trim_x1y1[1]; 
-// 	dig_x2 = (int8_t) trim_xyz_data[2]; 
-// 	dig_y2 = (int8_t) trim_xyz_data[3]; 
+void BMM150_Read_Trim_Registers(void)
+{
+	xdata uint8_t i; 
+	xdata uint16_t temp_msb; 
+	xdata uint8_t trim_x1y1[2] = {0};
+	xdata uint8_t trim_xyz_data[4] = {0};
+	xdata uint8_t trim_xy1xy2[10] = {0};
+	temp_msb = 0; 
+	// Reading trim_x1y1 at 0x5D
+	for (i=0;i<2;i++){
+		trim_x1y1[i] = SPI_read(BMM150_DIG_X1+i); 
+	}
+	for (i=0;i<4;i++){
+		trim_xyz_data[i] = SPI_read(BMM150_DIG_Z4_LSB+i);
+	}
+	for (i=0;i<10;i++){
+		trim_xy1xy2[i] = SPI_read(BMM150_DIG_Z2_LSB+i);
+	}
+	// Update trim data 
+	dig_x1 = (int8_t) trim_x1y1[0]; 
+	dig_y1 = (int8_t) trim_x1y1[1]; 
+	dig_x2 = (int8_t) trim_xyz_data[2]; 
+	dig_y2 = (int8_t) trim_xyz_data[3]; 
 
-// 	// temp_msb = ((uint16_t)trim_xy1xy2[3]) << 8;
-// 	// dig_z1 = (uint16_t)(temp_msb | trim_xy1xy2[2]);
+	// temp_msb = ((uint16_t)trim_xy1xy2[3]) << 8;
+	// dig_z1 = (uint16_t)(temp_msb | trim_xy1xy2[2]);
 
-// 	// temp_msb = ((uint16_t)trim_xy1xy2[1]) << 8;
-// 	// dig_z2 = (int16_t)(temp_msb | trim_xy1xy2[0]);
+	// temp_msb = ((uint16_t)trim_xy1xy2[1]) << 8;
+	// dig_z2 = (int16_t)(temp_msb | trim_xy1xy2[0]);
 
-// 	// temp_msb = ((uint16_t)trim_xy1xy2[7]) << 8;
-// 	// dig_z3 = (int16_t)(temp_msb | trim_xy1xy2[6]);
+	// temp_msb = ((uint16_t)trim_xy1xy2[7]) << 8;
+	// dig_z3 = (int16_t)(temp_msb | trim_xy1xy2[6]);
 
-// 	// temp_msb = ((uint16_t)trim_xyz_data[1]) << 8;
-// 	// dig_z4 = (int16_t)(temp_msb | trim_xyz_data[0]);
+	// temp_msb = ((uint16_t)trim_xyz_data[1]) << 8;
+	// dig_z4 = (int16_t)(temp_msb | trim_xyz_data[0]);
 
-// 	dig_xy1 = trim_xy1xy2[9];
-// 	dig_xy2 = (int8_t)trim_xy1xy2[8];
+	dig_xy1 = trim_xy1xy2[9];
+	dig_xy2 = (int8_t)trim_xy1xy2[8];
 
-// 	temp_msb = ((uint16_t)(trim_xy1xy2[5] & 0x7F)) << 8;
-// 	dig_xyz1 = (uint16_t)(temp_msb | trim_xy1xy2[4]);
+	temp_msb = ((uint16_t)(trim_xy1xy2[5] & 0x7F)) << 8;
+	dig_xyz1 = (uint16_t)(temp_msb | trim_xy1xy2[4]);
 
-// }
+}
 
-// void BMM150_Init(void)
-// {
-//     xdata unsigned char chip_id;
+void BMM150_Init(void)
+{
+    xdata unsigned char chip_id;
     
-//     // Set all required pins
-//     CS = 1; // Deselect BMM150
+    // Set all required pins
+    CS = 1; // Deselect BMM150
     
-//     // Wait for sensor startup
-//     waitms(10);
+    // Wait for sensor startup
+    waitms(10);
     
-//     // Software reset by setting bit 7 and bit 1 in register 0x4B
-//     SPI_write(BMM150_POWER_CONTROL, 0x82);
-//     waitms(10);  // Wait for reset to complete
+    // Software reset by setting bit 7 and bit 1 in register 0x4B
+    SPI_write(BMM150_POWER_CONTROL, 0x82);
+    waitms(10);  // Wait for reset to complete
     
-//     // Power on the sensor (set power control bit)
-//     SPI_write(BMM150_POWER_CONTROL, BMM150_POWER_ON);
-//     waitms(5);
+    // Power on the sensor (set power control bit)
+    SPI_write(BMM150_POWER_CONTROL, BMM150_POWER_ON);
+    waitms(5);
     
-//     // Read and verify chip ID
-//     chip_id = SPI_read(BMM150_CHIP_ID);
-//     if (chip_id != BMM150_CHIP_ID_VALUE)
-//     {
-//         printf("Error: Could not find BMM150 sensor (Chip ID: 0x%02X)\r\n", chip_id);
-//         while (1) {
-//             printf("Press restart to check again!\r");
-//         }; // Halt if sensor not found
-//     }
-// 	else {
-// 		printf("DONE! Chip ID = 0x%02X\r\n", chip_id);
-// 	}
+    // Read and verify chip ID
+    chip_id = SPI_read(BMM150_CHIP_ID);
+    if (chip_id != BMM150_CHIP_ID_VALUE)
+    {
+        printf("Error: Could not find BMM150 sensor (Chip ID: 0x%02X)\r\n", chip_id);
+        while (1) {
+            printf("Press restart to check again!\r");
+        }; // Halt if sensor not found
+    }
+	else {
+		printf("DONE! Chip ID = 0x%02X\r\n", chip_id);
+	}
     
-//     // Set operation mode to normal and data rate to 10Hz
-//     SPI_write(BMM150_OP_MODE, BMM150_NORMAL_MODE | (BMM150_ODR_10HZ * 8));
+    // Set operation mode to normal and data rate to 10Hz
+    SPI_write(BMM150_OP_MODE, BMM150_NORMAL_MODE | (BMM150_ODR_10HZ * 8));
     
-//     // Set repetitions for XY and Z axes for regular preset
-//     SPI_write(BMM150_REP_XY, 0x7F); // XY-repetitions = 9
-//     SPI_write(BMM150_REP_Z, 0x0E);  // Z-repetitions = 15
+    // Set repetitions for XY and Z axes for regular preset
+    SPI_write(BMM150_REP_XY, 0x7F); // XY-repetitions = 9
+    SPI_write(BMM150_REP_Z, 0x0E);  // Z-repetitions = 15
 
-// 	BMM150_Read_Trim_Registers();
+	BMM150_Read_Trim_Registers();
     
-//     printf("BMM150 initialized successfully! Chip ID: 0x%02X\r\n", chip_id);
-// 	return; 
-// }
+    printf("BMM150 initialized successfully! Chip ID: 0x%02X\r\n", chip_id);
+	return; 
+}
 
-// int16_t BMM150_compensate_x(int16_t *mag_data_x, int16_t *data_rhall)
-// {
-// 	xdata int16_t retval;
-//     xdata uint16_t process_comp_x0;
-//     xdata int32_t process_comp_x1;
-//     xdata uint16_t process_comp_x2;
-//     xdata int32_t process_comp_x3;
-//     xdata int32_t process_comp_x4;
-//     xdata int32_t process_comp_x5;
-//     xdata int32_t process_comp_x6;
-//     xdata int32_t process_comp_x7;
-//     xdata int32_t process_comp_x8;
-//     xdata int32_t process_comp_x9;
-//     xdata int32_t process_comp_x10;
+int16_t BMM150_compensate_x(int16_t *mag_data_x, int16_t *data_rhall)
+{
+	xdata int16_t retval;
+    xdata uint16_t process_comp_x0;
+    xdata int32_t process_comp_x1;
+    xdata uint16_t process_comp_x2;
+    xdata int32_t process_comp_x3;
+    xdata int32_t process_comp_x4;
+    xdata int32_t process_comp_x5;
+    xdata int32_t process_comp_x6;
+    xdata int32_t process_comp_x7;
+    xdata int32_t process_comp_x8;
+    xdata int32_t process_comp_x9;
+    xdata int32_t process_comp_x10;
 
-// 	//initialize value
-// 	process_comp_x0 = 0; 
+	//initialize value
+	process_comp_x0 = 0; 
 
-// 	if (*mag_data_x != BMM150_OVERFLOW_ADCVAL_XYAXES_FLIP){
-// 		if (*data_rhall != 0)
-// 		{
-// 			/* Availability of valid data */
-// 			process_comp_x0 = *data_rhall;
-// 		}
-// 		else if (dig_xyz1 != 0)
-// 		{
-// 			process_comp_x0 = dig_xyz1;
-// 		}
-// 		else
-// 		{
-// 			process_comp_x0 = 0;
-// 		}
-// 		if (process_comp_x0 != 0)
-// 		{
-// 			/* Processing compensation equations */
-// 			process_comp_x1 = ((int32_t)dig_xyz1) * 16384;
-// 			process_comp_x2 = ((uint16_t)(process_comp_x1 / process_comp_x0)) - ((uint16_t)0x4000);
-// 			retval = ((int16_t)process_comp_x2);
-// 			process_comp_x3 = (((int32_t)retval) * ((int32_t)retval));
-// 			process_comp_x4 = (((int32_t)dig_xy2) * (process_comp_x3 / 128));
-// 			process_comp_x5 = (int32_t)(((int16_t)dig_xy1) * 128);
-// 			process_comp_x6 = ((int32_t)retval) * process_comp_x5;
-// 			process_comp_x7 = (((process_comp_x4 + process_comp_x6) / 512) + ((int32_t)0x100000));
-// 			process_comp_x8 = ((int32_t)(((int16_t)dig_x2) + ((int16_t)0xA0)));
-// 			process_comp_x9 = ((process_comp_x7 * process_comp_x8) / 4096);
-// 			process_comp_x10 = ((int32_t)*mag_data_x) * process_comp_x9;
-// 			retval = ((int16_t)(process_comp_x10 / 8192));
-// 			retval = (retval + (((int16_t)dig_x1) * 8)) / 16;
-// 		}
-// 		else {
-// 			retval = BMM150_OVERFLOW_OUTPUT; 
-// 		}
-// 	}
-// 	else{
-// 		retval = BMM150_OVERFLOW_OUTPUT; 
-// 	}
-// 	return retval; 
-// }
+	if (*mag_data_x != BMM150_OVERFLOW_ADCVAL_XYAXES_FLIP){
+		if (*data_rhall != 0)
+		{
+			/* Availability of valid data */
+			process_comp_x0 = *data_rhall;
+		}
+		else if (dig_xyz1 != 0)
+		{
+			process_comp_x0 = dig_xyz1;
+		}
+		else
+		{
+			process_comp_x0 = 0;
+		}
+		if (process_comp_x0 != 0)
+		{
+			/* Processing compensation equations */
+			process_comp_x1 = ((int32_t)dig_xyz1) * 16384;
+			process_comp_x2 = ((uint16_t)(process_comp_x1 / process_comp_x0)) - ((uint16_t)0x4000);
+			retval = ((int16_t)process_comp_x2);
+			process_comp_x3 = (((int32_t)retval) * ((int32_t)retval));
+			process_comp_x4 = (((int32_t)dig_xy2) * (process_comp_x3 / 128));
+			process_comp_x5 = (int32_t)(((int16_t)dig_xy1) * 128);
+			process_comp_x6 = ((int32_t)retval) * process_comp_x5;
+			process_comp_x7 = (((process_comp_x4 + process_comp_x6) / 512) + ((int32_t)0x100000));
+			process_comp_x8 = ((int32_t)(((int16_t)dig_x2) + ((int16_t)0xA0)));
+			process_comp_x9 = ((process_comp_x7 * process_comp_x8) / 4096);
+			process_comp_x10 = ((int32_t)*mag_data_x) * process_comp_x9;
+			retval = ((int16_t)(process_comp_x10 / 8192));
+			retval = (retval + (((int16_t)dig_x1) * 8)) / 16;
+		}
+		else {
+			retval = BMM150_OVERFLOW_OUTPUT; 
+		}
+	}
+	else{
+		retval = BMM150_OVERFLOW_OUTPUT; 
+	}
+	return retval; 
+}
 
-// int16_t BMM150_compensate_y (int16_t *mag_data_y, int16_t *data_rhall)
-// {
-// 	xdata int16_t retval;
-//     xdata uint16_t process_comp_y0;
-//     xdata int32_t process_comp_y1;
-//     xdata uint16_t process_comp_y2;
-//     xdata int32_t process_comp_y3;
-//     xdata int32_t process_comp_y4;
-//     xdata int32_t process_comp_y5;
-//     xdata int32_t process_comp_y6;
-//     xdata int32_t process_comp_y7;
-//     xdata int32_t process_comp_y8;
-//     xdata int32_t process_comp_y9;
+int16_t BMM150_compensate_y (int16_t *mag_data_y, int16_t *data_rhall)
+{
+	xdata int16_t retval;
+    xdata uint16_t process_comp_y0;
+    xdata int32_t process_comp_y1;
+    xdata uint16_t process_comp_y2;
+    xdata int32_t process_comp_y3;
+    xdata int32_t process_comp_y4;
+    xdata int32_t process_comp_y5;
+    xdata int32_t process_comp_y6;
+    xdata int32_t process_comp_y7;
+    xdata int32_t process_comp_y8;
+    xdata int32_t process_comp_y9;
 
-// 	//initialize variable
-// 	process_comp_y0 = 0; 
+	//initialize variable
+	process_comp_y0 = 0; 
 
-//     /* Overflow condition check */
-//     if (*mag_data_y != BMM150_OVERFLOW_ADCVAL_XYAXES_FLIP)
-//     {
-//         if (*data_rhall != 0)
-//         {
-//             /* Availability of valid data */
-//             process_comp_y0 = *data_rhall;
-//         }
-//         else if (dig_xyz1 != 0)
-//         {
-//             process_comp_y0 = dig_xyz1;
-//         }
-//         else
-//         {
-//             process_comp_y0 = 0;
-//         }
+    /* Overflow condition check */
+    if (*mag_data_y != BMM150_OVERFLOW_ADCVAL_XYAXES_FLIP)
+    {
+        if (*data_rhall != 0)
+        {
+            /* Availability of valid data */
+            process_comp_y0 = *data_rhall;
+        }
+        else if (dig_xyz1 != 0)
+        {
+            process_comp_y0 = dig_xyz1;
+        }
+        else
+        {
+            process_comp_y0 = 0;
+        }
 
-//         if (process_comp_y0 != 0)
-//         {
-//             /* Processing compensation equations */
-//             process_comp_y1 = (((int32_t)dig_xyz1) * 16384) / process_comp_y0;
-//             process_comp_y2 = ((uint16_t)process_comp_y1) - ((uint16_t)0x4000);
-//             retval = ((int16_t)process_comp_y2);
-//             process_comp_y3 = ((int32_t) retval) * ((int32_t)retval);
-//             process_comp_y4 = ((int32_t)dig_xy2) * (process_comp_y3 / 128);
-//             process_comp_y5 = ((int32_t)(((int16_t)dig_xy1) * 128));
-//             process_comp_y6 = ((process_comp_y4 + (((int32_t)retval) * process_comp_y5)) / 512);
-//             process_comp_y7 = ((int32_t)(((int16_t)dig_y2) + ((int16_t)0xA0)));
-//             process_comp_y8 = (((process_comp_y6 + ((int32_t)0x100000)) * process_comp_y7) / 4096);
-//             process_comp_y9 = (((int32_t)*mag_data_y) * process_comp_y8);
-//             retval = (int16_t)(process_comp_y9 / 8192);
-//             retval = (retval + (((int16_t)dig_y1) * 8)) / 16;
-//         }
-//         else
-//         {
-//             retval = BMM150_OVERFLOW_OUTPUT;
-//         }
-//     }
-//     else
-//     {
-//         /* Overflow condition */
-//         retval = BMM150_OVERFLOW_OUTPUT;
-//     }
+        if (process_comp_y0 != 0)
+        {
+            /* Processing compensation equations */
+            process_comp_y1 = (((int32_t)dig_xyz1) * 16384) / process_comp_y0;
+            process_comp_y2 = ((uint16_t)process_comp_y1) - ((uint16_t)0x4000);
+            retval = ((int16_t)process_comp_y2);
+            process_comp_y3 = ((int32_t) retval) * ((int32_t)retval);
+            process_comp_y4 = ((int32_t)dig_xy2) * (process_comp_y3 / 128);
+            process_comp_y5 = ((int32_t)(((int16_t)dig_xy1) * 128));
+            process_comp_y6 = ((process_comp_y4 + (((int32_t)retval) * process_comp_y5)) / 512);
+            process_comp_y7 = ((int32_t)(((int16_t)dig_y2) + ((int16_t)0xA0)));
+            process_comp_y8 = (((process_comp_y6 + ((int32_t)0x100000)) * process_comp_y7) / 4096);
+            process_comp_y9 = (((int32_t)*mag_data_y) * process_comp_y8);
+            retval = (int16_t)(process_comp_y9 / 8192);
+            retval = (retval + (((int16_t)dig_y1) * 8)) / 16;
+        }
+        else
+        {
+            retval = BMM150_OVERFLOW_OUTPUT;
+        }
+    }
+    else
+    {
+        /* Overflow condition */
+        retval = BMM150_OVERFLOW_OUTPUT;
+    }
 
-//     return retval;
-// }
+    return retval;
+}
 
-// void BMM150_Read_Data(int16_t *mag_x, int16_t *mag_y)
-// {
-// 	xdata uint8_t raw_x_lsb, raw_x_msb, raw_y_lsb, raw_y_msb, raw_rhall_lsb, raw_rhall_msb; 
-// 	// xdata uint8_t raw_z_lsb, raw_z_msb; 
-// 	// xdata int16_t z_val; 
-// 	xdata int16_t x_val, y_val, rhall_val;  
-// 	xdata int16_t msb_data; 
-// 	raw_x_lsb = SPI_read(BMM150_DATA_X_LSB);
-// 	raw_x_msb = SPI_read(BMM150_DATA_X_MSB);
-// 	raw_y_lsb = SPI_read(BMM150_DATA_Y_LSB);
-// 	raw_y_msb = SPI_read(BMM150_DATA_Y_MSB);
-// 	// raw_z_lsb = SPI_read(BMM150_DATA_Z_LSB);
-// 	// raw_z_msb = SPI_read(BMM150_DATA_Z_MSB);
-// 	raw_rhall_lsb = SPI_read(BMM150_RHALL_LSB); 
-// 	raw_rhall_msb = SPI_read(BMM150_RHALL_MSB);
+void BMM150_Read_Data(int16_t *mag_x, int16_t *mag_y)
+{
+	xdata uint8_t raw_x_lsb, raw_x_msb, raw_y_lsb, raw_y_msb, raw_rhall_lsb, raw_rhall_msb; 
+	// xdata uint8_t raw_z_lsb, raw_z_msb; 
+	// xdata int16_t z_val; 
+	xdata int16_t x_val, y_val, rhall_val;  
+	xdata int16_t msb_data; 
+	raw_x_lsb = SPI_read(BMM150_DATA_X_LSB);
+	raw_x_msb = SPI_read(BMM150_DATA_X_MSB);
+	raw_y_lsb = SPI_read(BMM150_DATA_Y_LSB);
+	raw_y_msb = SPI_read(BMM150_DATA_Y_MSB);
+	// raw_z_lsb = SPI_read(BMM150_DATA_Z_LSB);
+	// raw_z_msb = SPI_read(BMM150_DATA_Z_MSB);
+	raw_rhall_lsb = SPI_read(BMM150_RHALL_LSB); 
+	raw_rhall_msb = SPI_read(BMM150_RHALL_MSB);
 
 
-// 	// Extract X data (13-bit, 2's complement)
-// 	raw_x_lsb = ((raw_x_lsb & 0b_1111_1000)) >> 3;
-// 	msb_data = ((int16_t)((int8_t)raw_x_msb)) << 5; 
-// 	x_val = (int16_t)(msb_data | raw_x_lsb);
+	// Extract X data (13-bit, 2's complement)
+	raw_x_lsb = ((raw_x_lsb & 0b_1111_1000)) >> 3;
+	msb_data = ((int16_t)((int8_t)raw_x_msb)) << 5; 
+	x_val = (int16_t)(msb_data | raw_x_lsb);
 
-// 	// Extract Y data (13-bit, 2's complement)
-// 	raw_y_lsb = ((raw_y_lsb & 0b_1111_1000)) >> 3;
-// 	msb_data = ((int16_t)((int8_t)raw_y_msb)) << 5; 
-// 	y_val = (int16_t)(msb_data | raw_y_lsb);
+	// Extract Y data (13-bit, 2's complement)
+	raw_y_lsb = ((raw_y_lsb & 0b_1111_1000)) >> 3;
+	msb_data = ((int16_t)((int8_t)raw_y_msb)) << 5; 
+	y_val = (int16_t)(msb_data | raw_y_lsb);
 
-// 	// Extract Z data (15-bit, 2's complement) - NOT USED 
-// 	// raw_z_lsb = ((raw_z_lsb & 0xFE) >> 1);
-// 	// msb_data = ((int16_t)((int8_t)raw_z_msb)) >> 7; 
-// 	// z_val = (int16_t)(msb_data | raw_z_lsb);
+	// Extract Z data (15-bit, 2's complement) - NOT USED 
+	// raw_z_lsb = ((raw_z_lsb & 0xFE) >> 1);
+	// msb_data = ((int16_t)((int8_t)raw_z_msb)) >> 7; 
+	// z_val = (int16_t)(msb_data | raw_z_lsb);
 
-// 	//Extract R-HALL data (14-bit, 2's complement)
-// 	raw_rhall_lsb = ((raw_rhall_lsb & 0xFC) >> 2);
-// 	rhall_val = (uint16_t)(((uint16_t)raw_rhall_msb << 6) | raw_rhall_lsb);
+	//Extract R-HALL data (14-bit, 2's complement)
+	raw_rhall_lsb = ((raw_rhall_lsb & 0xFC) >> 2);
+	rhall_val = (uint16_t)(((uint16_t)raw_rhall_msb << 6) | raw_rhall_lsb);
 
-// 	// printf("%d, %d, %d, %d\r\n", x_val, y_val, z_val, rhall_val);
-// 	*mag_x = BMM150_compensate_x(&x_val, &rhall_val);
-// 	*mag_y = BMM150_compensate_y(&y_val, &rhall_val);
-// 	// *mag_z = BMM150_compensate_z(&z_val, &rhall_val);
-// 	// printf("%d, %d\r\n", *mag_x, *mag_y);
-// }
+	// printf("%d, %d, %d, %d\r\n", x_val, y_val, z_val, rhall_val);
+	*mag_x = BMM150_compensate_x(&x_val, &rhall_val);
+	*mag_y = BMM150_compensate_y(&y_val, &rhall_val);
+	// *mag_z = BMM150_compensate_z(&z_val, &rhall_val);
+	// printf("%d, %d\r\n", *mag_x, *mag_y);
+}
 
 
 void UART1_Init (unsigned long baudrate)
@@ -801,11 +801,11 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 		if(mea_yes) freq100 = get_freq();
 	}
 
-	// weight_mea_count++;
-	// if(weight_mea_count == 20000){
-	// 	weight_mea_count = 0;
-	// 	if(mea_yes) weight = ReadHX711();
-	// }
+	weight_mea_count++;
+	if(weight_mea_count == 20000){
+		weight_mea_count = 0;
+		if(mea_yes) weight = ReadHX711();
+	}
 
     pwm_counter++; 
     if (pwm_counter == 100){
@@ -867,57 +867,39 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 }
 
 void servo_pick(){
-	// xdata int i;
-	printf("Initiailizing angle\r\n");
-	servo_arm = 100;
-	servo_base = 100;
-	waitms(500);
-	printf("Turning servo base \r\n");
-	servo_base = 250;
+	xdata int i;
+	servo_arm = 2;
+	servo_base = 60;
 	waitms(400);
-	printf("Turning servo arm \r\n");
-	servo_arm = 250;
-	printf("Magnet on\r\n");
+	servo_base = 255;
+	waitms(400);
 	Magnet = 1;
+	servo_arm = 250;
 	waitms(400);
-	printf("Magnet delay done, moving servo base again\r\n");
-	servo_base = 200;
+	for(i = 0; i < 130; i++){
+		waitms(5);
+		servo_base--;
+	}
 	waitms(400);
-	servo_arm = 100; 
+	for(i = 0; i < 130; i++){
+		waitms(5);
+		servo_base++;
+	}
+	waitms(400);
+	for(i = 0; i<150; i++){
+		waitms(5);
+		servo_arm--;
+	}
 	waitms(200);
-
-	// if (servo_arm<200)
-	// {
-	// 	servo_arm++;
-	// }
-	// else
-	// {
-	// 	servo_arm=100;	
-	// }
-
-	// if (servo_base>100)
-	// {
-	// 	servo_base--;
-	// }
-	// else
-	// {
-	// 	servo_base=200;	
-	// }
-	// waitms(200);
-	// for(i = 0; i<159; i++){
-	// 	waitms(2);
-	// 	servo_arm--;
-	// }
-	// waitms(200);
-	// for(i = 0; i<65; i++){
-	// 	waitms(2);
-	// 	servo_base--;
-	// }
-	// waitms(500);
-	// Magnet = 0;
-	// waitms(200);
-	// servo_arm=1;
-	// servo_base=1;
+	for(i = 0; i<115; i++){
+		waitms(5);
+		servo_base--;
+	}
+	waitms(500);
+	Magnet = 0;
+	waitms(200);
+	servo_arm=2;
+	servo_base=60;
 	return;
 }
 
@@ -1008,27 +990,27 @@ unsigned int get_random_90_250() {
     return (simple_rand() % (250 - 85 + 1)) + 85;
 }
 
-// float Read_angle(void)
-// {
-// 	xdata uint8_t i; 
-// 	xdata int16_t mag_x, mag_y; 
-// 	xdata float sum_x, sum_y; 
-// 	xdata float angle; 
+float Read_angle(void)
+{
+	xdata uint8_t i; 
+	xdata int16_t mag_x, mag_y; 
+	xdata float sum_x, sum_y; 
+	xdata float angle; 
 
-// 	sum_x = 0.0; sum_y = 0.0;
-// 	angle = 0.0; 
+	sum_x = 0.0; sum_y = 0.0;
+	angle = 0.0; 
 
-// 	for (i = 0; i < 10; i++){
-// 		BMM150_Read_Data(&mag_x, &mag_y);
-// 		sum_x += (float)mag_x; 
-// 		sum_y += (float)mag_y; 
-// 		Timer3us(1);
-// 	}
-// 	angle = atan2f(sum_y, sum_x) * 180.0 / M_PI;
-// 	if (angle < 0.0) angle += 360.0; 
-// 	if (angle > 360.0) angle -= 360.0; 
-// 	return angle; 
-// }
+	for (i = 0; i < 10; i++){
+		BMM150_Read_Data(&mag_x, &mag_y);
+		sum_x += (float)mag_x; 
+		sum_y += (float)mag_y; 
+		Timer3us(1);
+	}
+	angle = atan2f(sum_y, sum_x) * 180.0 / M_PI;
+	if (angle < 0.0) angle += 360.0; 
+	if (angle > 360.0) angle -= 360.0; 
+	return angle; 
+}
 
 void Auto_mode_slave(){
 	xdata int count = 0;
@@ -1220,7 +1202,7 @@ void main (void)
 	
 	// printf("Initializing\r\n");
 	Init_all();
-	// BMM150_Init();
+	BMM150_Init();
 	waitms(500);
 	printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
 	UART1_Init(9600);
@@ -1246,13 +1228,11 @@ void main (void)
 	//initialize current angle 
 	// curr_angle = Read_angle();
 	waitms(1000);
-	servo_pick();
 	while(1)
 	{	
-		servo_base = 100;
-		// temp = Read_angle();
-		//printf("coinval = %d\n", weight);
-		// printf("Current angle = %d, Raw angle = %d\r\n", (int)curr_angle, (int)temp);
+		temp = Read_angle();
+		// printf("coinval = %d\n", weight);
+		printf("Current angle = %d, Raw angle = %d\r\n", (int)curr_angle, (int)temp);
 
 		if(pick_char=='1'){
 			servo_pick();
