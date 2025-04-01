@@ -1,11 +1,14 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
+<<<<<<< HEAD
+; This file was generated Mon Mar 31 23:57:52 2025
+=======
 ; This file was generated Mon Mar 31 18:03:53 2025
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 ;--------------------------------------------------------
 $name main
 $optc51 --model-small
-$printf_float
 	R_DSEG    segment data
 	R_CSEG    segment code
 	R_BSEG    segment bit
@@ -68,6 +71,9 @@ $printf_float
 	public __c51_external_startup
 	public _weight
 	public _mea_yes
+	public _angle_diff
+	public _last_raw_angle
+	public _raw_angle
 	public _curr_angle
 	public _pwm_corr
 	public _seed
@@ -85,6 +91,7 @@ $printf_float
 	public _pwm_left
 	public _servo_counter
 	public _pwm_counter
+	public _temp
 	public _dig_xyz1
 	public _dig_xy2
 	public _dig_xy1
@@ -588,24 +595,16 @@ _Read_angle_sloc0_1_0:
 	ds 4
 _Auto_mode_slave_sloc0_1_0:
 	ds 2
-_Auto_mode_slave_sloc1_1_0:
-	ds 4
 _Joystick_Control_PARM_2:
 	ds 3
 _Joystick_Control_sloc0_1_0:
 	ds 2
 _Joystick_Control_sloc1_1_0:
-	ds 1
-_Joystick_Control_sloc2_1_0:
-	ds 2
-_Joystick_Control_sloc3_1_0:
-	ds 1
-_Joystick_Control_sloc4_1_0:
-	ds 2
-_Joystick_Control_sloc5_1_0:
 	ds 4
-_Joystick_Control_sloc6_1_0:
-	ds 2
+_Joystick_Control_sloc2_1_0:
+	ds 4
+_Joystick_Control_sloc3_1_0:
+	ds 4
 _main_pick_char_1_237:
 	ds 1
 ;--------------------------------------------------------
@@ -673,6 +672,8 @@ _dig_xy2:
 	ds 1
 _dig_xyz1:
 	ds 2
+_temp:
+	ds 4
 _BMM150_Read_Trim_Registers_trim_x1y1_1_97:
 	ds 2
 _BMM150_Read_Trim_Registers_trim_xyz_data_1_97:
@@ -714,6 +715,12 @@ _Auto_mode_slave_state_res_1_205:
 _Auto_mode_slave_dummy_1_205:
 	ds 2
 _Joystick_Control_vx_error_1_214:
+	ds 2
+_Joystick_Control_vy_error_1_214:
+	ds 2
+_Joystick_Control_vx_err_1_214:
+	ds 2
+_Joystick_Control_vy_err_1_214:
 	ds 2
 _main_vx_1_237:
 	ds 2
@@ -762,6 +769,12 @@ _seed:
 _pwm_corr:
 	ds 4
 _curr_angle:
+	ds 4
+_raw_angle:
+	ds 4
+_last_raw_angle:
+	ds 4
+_angle_diff:
 	ds 4
 _mea_yes:
 	ds 1
@@ -4231,15 +4244,15 @@ L038017?:
 	inc	dptr
 	mov	a,r6
 	movx	@dptr,a
-;	main.c:993: waitms(1);
-	mov	dptr,#0x0001
-	lcall	_waitms
+;	main.c:993: Timer3us(1);
+	mov	dpl,#0x01
+	lcall	_Timer3us
 	pop	ar2
 ;	main.c:989: for (i = 0; i < 10; i++){
 	inc	r2
 	ljmp	L038005?
 L038008?:
-;	main.c:995: angle = atan2f(sum_y/25.0, sum_x/25.0) * 180.0 / M_PI;
+;	main.c:995: angle = atan2f(sum_y, sum_x) * 180.0 / M_PI;
 	mov	dptr,#_Read_angle_sum_y_1_203
 	movx	a,@dptr
 	mov	r2,a
@@ -4252,64 +4265,18 @@ L038008?:
 	inc	dptr
 	movx	a,@dptr
 	mov	r5,a
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0xC8
-	push	acc
-	mov	a,#0x41
-	push	acc
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r4
-	mov	a,r5
-	lcall	___fsdiv
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
 	mov	dptr,#_Read_angle_sum_x_1_203
 	movx	a,@dptr
-	mov	r6,a
+	mov	_atan2f_PARM_2,a
 	inc	dptr
 	movx	a,@dptr
-	mov	r7,a
+	mov	(_atan2f_PARM_2 + 1),a
 	inc	dptr
 	movx	a,@dptr
-	mov	r0,a
+	mov	(_atan2f_PARM_2 + 2),a
 	inc	dptr
 	movx	a,@dptr
-	mov	r1,a
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
-	clr	a
-	push	acc
-	push	acc
-	mov	a,#0xC8
-	push	acc
-	mov	a,#0x41
-	push	acc
-	mov	dpl,r6
-	mov	dph,r7
-	mov	b,r0
-	mov	a,r1
-	lcall	___fsdiv
-	mov	_atan2f_PARM_2,dpl
-	mov	(_atan2f_PARM_2 + 1),dph
-	mov	(_atan2f_PARM_2 + 2),b
 	mov	(_atan2f_PARM_2 + 3),a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar5
-	pop	ar4
-	pop	ar3
-	pop	ar2
 	mov	dpl,r2
 	mov	dph,r3
 	mov	b,r4
@@ -4514,7 +4481,6 @@ L038004?:
 ;Allocation info for local variables in function 'Auto_mode_slave'
 ;------------------------------------------------------------
 ;sloc0                     Allocated with name '_Auto_mode_slave_sloc0_1_0'
-;sloc1                     Allocated with name '_Auto_mode_slave_sloc1_1_0'
 ;count                     Allocated with name '_Auto_mode_slave_count_1_205'
 ;command                   Allocated with name '_Auto_mode_slave_command_1_205'
 ;state_res                 Allocated with name '_Auto_mode_slave_state_res_1_205'
@@ -4535,7 +4501,25 @@ _Auto_mode_slave:
 	clr	a
 	inc	dptr
 	movx	@dptr,a
-;	main.c:1011: while(count < 20 && state_res){
+;	main.c:1010: curr_angle = Read_angle();
+	lcall	_Read_angle
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r4,b
+	mov	r5,a
+	mov	dptr,#_curr_angle
+	mov	a,r2
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r3
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r4
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r5
+	movx	@dptr,a
+;	main.c:1012: while(count < 20 && state_res){
 	clr	a
 	mov	_Auto_mode_slave_sloc0_1_0,a
 	mov	(_Auto_mode_slave_sloc0_1_0 + 1),a
@@ -4547,7 +4531,7 @@ L039018?:
 	xrl	a,#0x80
 	subb	a,#0x80
 	jc	L039034?
-	ljmp	L039020?
+	ret
 L039034?:
 	mov	dptr,#_Auto_mode_slave_state_res_1_205
 	movx	a,@dptr
@@ -4557,9 +4541,9 @@ L039034?:
 	mov	r5,a
 	orl	a,r4
 	jnz	L039035?
-	ljmp	L039020?
+	ret
 L039035?:
-;	main.c:1013: if(RXU1()){
+;	main.c:1014: if(RXU1()){
 	push	ar4
 	push	ar5
 	lcall	_RXU1
@@ -4568,25 +4552,25 @@ L039035?:
 	jc	L039036?
 	ljmp	L039012?
 L039036?:
-;	main.c:1014: c=getchar1();	
+;	main.c:1015: c=getchar1();	
 	push	ar4
 	push	ar5
 	lcall	_getchar1
 	mov	r6,dpl
 	pop	ar5
 	pop	ar4
-;	main.c:1015: if(c=='!'){
+;	main.c:1016: if(c=='!'){
 	cjne	r6,#0x21,L039037?
 	sjmp	L039038?
 L039037?:
 	ljmp	L039009?
 L039038?:
-;	main.c:1016: getstr1(buff, sizeof(buff)-1);
+;	main.c:1017: getstr1(buff, sizeof(buff)-1);
 	mov	_getstr1_PARM_2,#0x13
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_getstr1
-;	main.c:1017: if(strlen(buff)==11){
+;	main.c:1018: if(strlen(buff)==11){
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_strlen
@@ -4598,7 +4582,7 @@ L039038?:
 L039039?:
 	ljmp	L039012?
 L039040?:
-;	main.c:1018: printf("master_messgae_auto_mode: %s\r\n", buff);
+;	main.c:1019: printf("master_messgae_auto_mode: %s\r\n", buff);
 	mov	a,#_buff
 	push	acc
 	mov	a,#(_buff >> 8)
@@ -4615,7 +4599,7 @@ L039040?:
 	mov	a,sp
 	add	a,#0xfa
 	mov	sp,a
-;	main.c:1019: sscanf(buff,"%03d,%03d,%01d,%01d",&dummy, &dummy,&dummy,&command);
+;	main.c:1020: sscanf(buff,"%03d,%03d,%01d,%01d",&dummy, &dummy,&dummy,&command);
 	mov	a,#_Auto_mode_slave_command_1_205
 	push	acc
 	mov	a,#(_Auto_mode_slave_command_1_205 >> 8)
@@ -4656,7 +4640,7 @@ L039040?:
 	mov	a,sp
 	add	a,#0xee
 	mov	sp,a
-;	main.c:1020: if(command) state_res = 1;
+;	main.c:1021: if(command) state_res = 1;
 	mov	dptr,#_Auto_mode_slave_command_1_205
 	movx	a,@dptr
 	mov	r7,a
@@ -4671,9 +4655,9 @@ L039040?:
 	clr	a
 	inc	dptr
 	movx	@dptr,a
-	sjmp	L039012?
+	ljmp	L039012?
 L039002?:
-;	main.c:1021: else state_res = 0;
+;	main.c:1022: else state_res = 0;
 	mov	dptr,#_Auto_mode_slave_state_res_1_205
 	clr	a
 	movx	@dptr,a
@@ -4681,21 +4665,32 @@ L039002?:
 	movx	@dptr,a
 	sjmp	L039012?
 L039009?:
-;	main.c:1027: else if(c=='@'){
+;	main.c:1028: else if(c=='@'){
 	cjne	r6,#0x40,L039012?
-;	main.c:1028: sprintf(buff, "%01d,%02d,%ld,%05d,%4.1f\n", state_res, count,freq100, 0, curr_angle);
+;	main.c:1029: sprintf(buff, "%01d,%02d,%ld,%05d,%03d\n", state_res, count,freq100, 0, (int)curr_angle);
 	mov	dptr,#_curr_angle
 	movx	a,@dptr
-	push	acc
+	mov	r2,a
 	inc	dptr
 	movx	a,@dptr
-	push	acc
+	mov	r3,a
 	inc	dptr
 	movx	a,@dptr
-	push	acc
+	mov	r6,a
 	inc	dptr
 	movx	a,@dptr
-	push	acc
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r6
+	push	ar4
+	push	ar5
+	lcall	___fs2sint
+	mov	r2,dpl
+	mov	r3,dph
+	pop	ar5
+	pop	ar4
+	push	ar2
+	push	ar3
 	clr	a
 	push	acc
 	push	acc
@@ -4729,19 +4724,19 @@ L039009?:
 	push	acc
 	lcall	_sprintf
 	mov	a,sp
-	add	a,#0xec
+	add	a,#0xee
 	mov	sp,a
-;	main.c:1029: waitms(5); 
+;	main.c:1030: waitms(5); 
 	mov	dptr,#0x0005
 	lcall	_waitms
-;	main.c:1030: sendstr1(buff);
+;	main.c:1031: sendstr1(buff);
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_sendstr1
 L039012?:
-;	main.c:1035: Move_forward();
+;	main.c:1036: Move_forward();
 	lcall	_Move_forward
-;	main.c:1037: d1 = ADC_at_Pin(QFP32_MUX_P1_3);
+;	main.c:1038: d1 = ADC_at_Pin(QFP32_MUX_P1_3);
 	mov	dpl,#0x09
 	lcall	_ADC_at_Pin
 	mov	a,dpl
@@ -4751,7 +4746,7 @@ L039012?:
 	inc	dptr
 	mov	a,b
 	movx	@dptr,a
-;	main.c:1038: d2 = ADC_at_Pin(QFP32_MUX_P1_4);
+;	main.c:1039: d2 = ADC_at_Pin(QFP32_MUX_P1_4);
 	mov	dpl,#0x0A
 	lcall	_ADC_at_Pin
 	mov	r2,dpl
@@ -4762,7 +4757,7 @@ L039012?:
 	inc	dptr
 	mov	a,r3
 	movx	@dptr,a
-;	main.c:1039: bound = check_bound(d1,d2);
+;	main.c:1040: bound = check_bound(d1,d2);
 	mov	dptr,#_d1
 	movx	a,@dptr
 	mov	r4,a
@@ -4776,7 +4771,7 @@ L039012?:
 	lcall	_check_bound
 	mov	r2,dpl
 	mov	r3,dph
-;	main.c:1040: printf("f:%04ld, d1:%d, d2:%d, bound_dectect: %d\r\n",freq100, d1,d2,bound);
+;	main.c:1041: printf("f:%04ld, d1:%d, d2:%d, bound_dectect: %d\r\n",freq100, d1,d2,bound);
 	push	ar2
 	push	ar3
 	push	ar2
@@ -4817,7 +4812,7 @@ L039012?:
 	mov	sp,a
 	pop	ar3
 	pop	ar2
-;	main.c:1042: if (freq100>=5340){
+;	main.c:1043: if (freq100>=5340){
 	mov	dptr,#_freq100
 	movx	a,@dptr
 	mov	r4,a
@@ -4841,73 +4836,55 @@ L039012?:
 	xrl	a,#0x80
 	subb	a,#0x80
 	jc	L039014?
-;	main.c:1043: mea_yes = 0;
+;	main.c:1044: mea_yes = 0;
 	mov	dptr,#_mea_yes
 	clr	a
 	movx	@dptr,a
-;	main.c:1044: Move_back_ms(300);
+;	main.c:1045: Move_back_ms(300);
 	mov	dptr,#0x012C
 	push	ar2
 	push	ar3
 	lcall	_Move_back_ms
-;	main.c:1045: waitms(100);
+;	main.c:1046: waitms(100);
 	mov	dptr,#0x0064
 	lcall	_waitms
-;	main.c:1046: servo_pick();
+;	main.c:1047: servo_pick();
 	lcall	_servo_pick
 	pop	ar3
 	pop	ar2
-;	main.c:1047: count++;
+;	main.c:1048: count++;
 	inc	_Auto_mode_slave_sloc0_1_0
 	clr	a
 	cjne	a,_Auto_mode_slave_sloc0_1_0,L039045?
 	inc	(_Auto_mode_slave_sloc0_1_0 + 1)
 L039045?:
-;	main.c:1048: waitms(100);
+;	main.c:1049: waitms(100);
 	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
 	lcall	_waitms
-;	main.c:1049: mea_yes = 1;
+;	main.c:1050: mea_yes = 1;
 	mov	dptr,#_mea_yes
 	mov	a,#0x01
 	movx	@dptr,a
-;	main.c:1050: Move_forward();
+;	main.c:1051: Move_forward();
 	lcall	_Move_forward
 	pop	ar3
 	pop	ar2
 L039014?:
-;	main.c:1053: if(bound == 1){
+;	main.c:1054: if(bound == 1){
 	cjne	r2,#0x01,L039046?
 	cjne	r3,#0x00,L039046?
 	sjmp	L039047?
 L039046?:
 	ljmp	L039018?
 L039047?:
-;	main.c:1054: Move_back_ms(500);
+;	main.c:1055: Move_back_ms(500);
 	mov	dptr,#0x01F4
 	lcall	_Move_back_ms
-;	main.c:1055: waitms(100);
+;	main.c:1056: waitms(100);
 	mov	dptr,#0x0064
 	lcall	_waitms
-;	main.c:1056: curr_angle = Read_angle();
-	lcall	_Read_angle
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	dptr,#_curr_angle
-	mov	a,r2
-	movx	@dptr,a
-	inc	dptr
-	mov	a,r3
-	movx	@dptr,a
-	inc	dptr
-	mov	a,r4
-	movx	@dptr,a
-	inc	dptr
-	mov	a,r5
-	movx	@dptr,a
 ;	main.c:1057: angle = get_random_90_250();
 	lcall	_get_random_90_250
 	mov	__mulint_PARM_2,dpl
@@ -4924,33 +4901,20 @@ L039047?:
 	mov	dph,r3
 	lcall	__divuint
 	lcall	_Right_angle
-;	main.c:1059: curr_angle = fabsf(curr_angle - Read_angle());
+;	main.c:1059: curr_angle = Read_angle() * 1.2;
 	lcall	_Read_angle
-	mov	_Auto_mode_slave_sloc1_1_0,dpl
-	mov	(_Auto_mode_slave_sloc1_1_0 + 1),dph
-	mov	(_Auto_mode_slave_sloc1_1_0 + 2),b
-	mov	(_Auto_mode_slave_sloc1_1_0 + 3),a
-	mov	dptr,#_curr_angle
-	movx	a,@dptr
-	mov	r6,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r7,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r2,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r3,a
-	push	_Auto_mode_slave_sloc1_1_0
-	push	(_Auto_mode_slave_sloc1_1_0 + 1)
-	push	(_Auto_mode_slave_sloc1_1_0 + 2)
-	push	(_Auto_mode_slave_sloc1_1_0 + 3)
-	mov	dpl,r6
-	mov	dph,r7
-	mov	b,r2
-	mov	a,r3
-	lcall	___fssub
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r4,b
+	mov	r5,a
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	mov	dptr,#0x999A
+	mov	b,#0x99
+	mov	a,#0x3F
+	lcall	___fsmul
 	mov	r2,dpl
 	mov	r3,dph
 	mov	r4,b
@@ -4958,15 +4922,6 @@ L039047?:
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r4
-	mov	a,r5
-	lcall	_fabsf
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
 	mov	dptr,#_curr_angle
 	mov	a,r2
 	movx	@dptr,a
@@ -4980,19 +4935,6 @@ L039047?:
 	mov	a,r5
 	movx	@dptr,a
 	ljmp	L039018?
-L039020?:
-;	main.c:1063: printf("Auto mode finished!\r\n");
-	mov	a,#__str_11
-	push	acc
-	mov	a,#(__str_11 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	dec	sp
-	dec	sp
-	dec	sp
-	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'Joystick_Control'
 ;------------------------------------------------------------
@@ -5002,29 +4944,25 @@ L039020?:
 ;sloc1                     Allocated with name '_Joystick_Control_sloc1_1_0'
 ;sloc2                     Allocated with name '_Joystick_Control_sloc2_1_0'
 ;sloc3                     Allocated with name '_Joystick_Control_sloc3_1_0'
-;sloc4                     Allocated with name '_Joystick_Control_sloc4_1_0'
-;sloc5                     Allocated with name '_Joystick_Control_sloc5_1_0'
-;sloc6                     Allocated with name '_Joystick_Control_sloc6_1_0'
 ;vx                        Allocated with name '_Joystick_Control_vx_1_214'
 ;vy                        Allocated with name '_Joystick_Control_vy_1_214'
 ;vx_error                  Allocated with name '_Joystick_Control_vx_error_1_214'
 ;vy_error                  Allocated with name '_Joystick_Control_vy_error_1_214'
 ;vx_err                    Allocated with name '_Joystick_Control_vx_err_1_214'
 ;vy_err                    Allocated with name '_Joystick_Control_vy_err_1_214'
-;threshold                 Allocated with name '_Joystick_Control_threshold_1_214'
 ;------------------------------------------------------------
-;	main.c:1066: void Joystick_Control(int *vx_ptr, int *vy_ptr)
+;	main.c:1066: float Joystick_Control(int *vx_ptr, int *vy_ptr)
 ;	-----------------------------------------
 ;	 function Joystick_Control
 ;	-----------------------------------------
 _Joystick_Control:
-;	main.c:1071: vx = *vx_ptr; 
+;	main.c:1070: vx = *vx_ptr; 
 	lcall	__gptrget
-	mov	_Joystick_Control_sloc0_1_0,a
+	mov	r2,a
 	inc	dptr
 	lcall	__gptrget
-	mov	(_Joystick_Control_sloc0_1_0 + 1),a
-;	main.c:1072: vy = *vy_ptr; 
+	mov	r3,a
+;	main.c:1071: vy = *vy_ptr; 
 	mov	r4,_Joystick_Control_PARM_2
 	mov	r5,(_Joystick_Control_PARM_2 + 1)
 	mov	r6,(_Joystick_Control_PARM_2 + 2)
@@ -5036,20 +4974,22 @@ _Joystick_Control:
 	inc	dptr
 	lcall	__gptrget
 	mov	r5,a
-;	main.c:1074: vx_error = abs(vx-vx_thres)*100/vx_thres; 
+;	main.c:1077: vx_error = abs(vx-vx_thres)*100/vx_thres; 
 	mov	dptr,#_vx_thres
 	movx	a,@dptr
 	mov	r6,a
 	inc	dptr
 	movx	a,@dptr
 	mov	r7,a
-	mov	a,_Joystick_Control_sloc0_1_0
+	mov	a,r2
 	clr	c
 	subb	a,r6
 	mov	dpl,a
-	mov	a,(_Joystick_Control_sloc0_1_0 + 1)
+	mov	a,r3
 	subb	a,r7
 	mov	dph,a
+	push	ar2
+	push	ar3
 	push	ar4
 	push	ar5
 	lcall	_abs
@@ -5077,7 +5017,7 @@ _Joystick_Control:
 	inc	dptr
 	mov	a,b
 	movx	@dptr,a
-;	main.c:1075: vy_error = abs(vy-vy_thres)*100/vy_thres; 
+;	main.c:1078: vy_error = abs(vy-vy_thres)*100/vy_thres; 
 	mov	dptr,#_vy_thres
 	movx	a,@dptr
 	mov	r6,a
@@ -5102,13 +5042,12 @@ _Joystick_Control:
 	mov	r7,dph
 	mov	dptr,#_vy_thres
 	movx	a,@dptr
-	mov	_Joystick_Control_sloc2_1_0,a
+	mov	_Joystick_Control_sloc0_1_0,a
 	inc	dptr
 	movx	a,@dptr
-	mov	(_Joystick_Control_sloc2_1_0 + 1),a
-	mov	__divsint_PARM_2,_Joystick_Control_sloc2_1_0
-	mov	(__divsint_PARM_2 + 1),(_Joystick_Control_sloc2_1_0 + 1)
-;	main.c:1076: vx_err = vx-vx_thres; 
+	mov	(_Joystick_Control_sloc0_1_0 + 1),a
+	mov	__divsint_PARM_2,_Joystick_Control_sloc0_1_0
+	mov	(__divsint_PARM_2 + 1),(_Joystick_Control_sloc0_1_0 + 1)
 	mov	dpl,r6
 	mov	dph,r7
 	lcall	__divsint
@@ -5116,35 +5055,52 @@ _Joystick_Control:
 	mov	r7,dph
 	pop	ar5
 	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	dptr,#_Joystick_Control_vy_error_1_214
+	mov	a,r6
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r7
+	movx	@dptr,a
+;	main.c:1079: vx_err = vx-vx_thres; 
 	mov	dptr,#_vx_thres
 	movx	a,@dptr
-	mov	r2,a
+	mov	r0,a
 	inc	dptr
 	movx	a,@dptr
-	mov	r3,a
-	mov	a,_Joystick_Control_sloc0_1_0
+	mov	r1,a
+	mov	dptr,#_Joystick_Control_vx_err_1_214
+	mov	a,r2
 	clr	c
-	subb	a,r2
-	mov	_Joystick_Control_sloc4_1_0,a
-	mov	a,(_Joystick_Control_sloc0_1_0 + 1)
-	subb	a,r3
-	mov	(_Joystick_Control_sloc4_1_0 + 1),a
-;	main.c:1077: vy_err = vy-vy_thres; 
+	subb	a,r0
+	movx	@dptr,a
+	mov	a,r3
+	subb	a,r1
+	inc	dptr
+	movx	@dptr,a
+;	main.c:1080: vy_err = vy-vy_thres; 
 	mov	a,r4
 	clr	c
-	subb	a,_Joystick_Control_sloc2_1_0
-	mov	_Joystick_Control_sloc0_1_0,a
+	subb	a,_Joystick_Control_sloc0_1_0
+	mov	r2,a
 	mov	a,r5
-	subb	a,(_Joystick_Control_sloc2_1_0 + 1)
-	mov	(_Joystick_Control_sloc0_1_0 + 1),a
-;	main.c:1078: pwm_left = 0; 
+	subb	a,(_Joystick_Control_sloc0_1_0 + 1)
+	mov	r3,a
+	mov	dptr,#_Joystick_Control_vy_err_1_214
+	mov	a,r2
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r3
+	movx	@dptr,a
+;	main.c:1081: pwm_left = 0; 
 	mov	dptr,#_pwm_left
-;	main.c:1079: pwm_right = 0; 
+;	main.c:1082: pwm_right = 0; 
 	clr	a
 	movx	@dptr,a
 	mov	dptr,#_pwm_right
 	movx	@dptr,a
-;	main.c:1081: if ((vy_error>5) && (vx_error<5)){
+;	main.c:1084: if ((vy_error>5) && (vx_error<5)){
 	clr	c
 	mov	a,#0x05
 	subb	a,r6
@@ -5153,43 +5109,42 @@ _Joystick_Control:
 	mov	b,r7
 	xrl	b,#0x80
 	subb	a,b
-	clr	a
-	rlc	a
-	mov	_Joystick_Control_sloc1_1_0,a
-	jnz	L040056?
+	jc	L040062?
 	ljmp	L040005?
-L040056?:
+L040062?:
 	mov	dptr,#_Joystick_Control_vx_error_1_214
 	movx	a,@dptr
-	mov	r2,a
+	mov	r0,a
 	inc	dptr
 	movx	a,@dptr
-	mov	r3,a
+	mov	r1,a
 	clr	c
-	mov	a,r2
+	mov	a,r0
 	subb	a,#0x05
-	mov	a,r3
+	mov	a,r1
 	xrl	a,#0x80
 	subb	a,#0x80
-	jc	L040057?
+	jc	L040063?
 	ljmp	L040005?
-L040057?:
-;	main.c:1082: pwm_left = vy_error; 
+L040063?:
+;	main.c:1085: pwm_left = vy_error; 
+	push	ar4
+	push	ar5
 	mov	dptr,#_pwm_left
 	mov	a,r6
 	movx	@dptr,a
-;	main.c:1083: pwm_right = vy_error * pwm_corr; 
+;	main.c:1086: pwm_right = vy_error * pwm_corr; 
 	mov	dpl,r6
 	mov	dph,r7
-	push	ar4
-	push	ar5
+	push	ar2
+	push	ar3
 	push	ar6
 	push	ar7
 	lcall	___sint2fs
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r0,b
-	mov	r1,a
+	mov	r0,dpl
+	mov	r1,dph
+	mov	r4,b
+	mov	r5,a
 	mov	dptr,#_pwm_corr
 	movx	a,@dptr
 	push	acc
@@ -5202,73 +5157,83 @@ L040057?:
 	inc	dptr
 	movx	a,@dptr
 	push	acc
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r0
-	mov	a,r1
+	mov	dpl,r0
+	mov	dph,r1
+	mov	b,r4
+	mov	a,r5
 	lcall	___fsmul
-	mov	r2,dpl
-	mov	r3,dph
+	mov	r4,dpl
+	mov	r5,dph
 	mov	r0,b
 	mov	r1,a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	mov	dpl,r2
-	mov	dph,r3
+	pop	ar7
+	pop	ar6
+	mov	dpl,r4
+	mov	dph,r5
 	mov	b,r0
 	mov	a,r1
+	push	ar4
+	push	ar5
+	push	ar6
+	push	ar7
 	lcall	___fs2uchar
-	mov	_Joystick_Control_sloc3_1_0,dpl
+	mov	_Joystick_Control_sloc0_1_0,dpl
 	pop	ar7
 	pop	ar6
 	pop	ar5
 	pop	ar4
+	pop	ar3
+	pop	ar2
 	mov	dptr,#_pwm_right
-	mov	a,_Joystick_Control_sloc3_1_0
+	mov	a,_Joystick_Control_sloc0_1_0
 	movx	@dptr,a
-;	main.c:1084: if (vy_err > 0){ //move forward
+;	main.c:1087: if (vy_err > 0){ //move forward
 	clr	c
 	clr	a
-	subb	a,_Joystick_Control_sloc0_1_0
+	subb	a,r2
 	clr	a
 	xrl	a,#0x80
-	mov	b,(_Joystick_Control_sloc0_1_0 + 1)
+	mov	b,r3
 	xrl	b,#0x80
 	subb	a,b
+	pop	ar5
+	pop	ar4
 	jnc	L040002?
-;	main.c:1085: L_motor_dir = 0; 
+;	main.c:1088: L_motor_dir = 0; 
 	mov	dptr,#_L_motor_dir
-;	main.c:1086: R_motor_dir = 0; 
+;	main.c:1089: R_motor_dir = 0; 
 	clr	a
 	movx	@dptr,a
 	mov	dptr,#_R_motor_dir
 	movx	@dptr,a
 	sjmp	L040005?
 L040002?:
-;	main.c:1089: L_motor_dir = 1; 
+;	main.c:1092: L_motor_dir = 1; 
 	mov	dptr,#_L_motor_dir
 	mov	a,#0x01
 	movx	@dptr,a
-;	main.c:1090: R_motor_dir = 1; 
+;	main.c:1093: R_motor_dir = 1; 
 	mov	dptr,#_R_motor_dir
 	mov	a,#0x01
 	movx	@dptr,a
-;	main.c:1091: pwm_right *= 1.05;
-	mov	dpl,_Joystick_Control_sloc3_1_0
+;	main.c:1094: pwm_right *= 1.05;
+	mov	dpl,_Joystick_Control_sloc0_1_0
 	push	ar4
 	push	ar5
 	push	ar6
 	push	ar7
 	lcall	___uchar2fs
-	mov	r0,dpl
-	mov	r1,dph
-	mov	r2,b
-	mov	r3,a
-	push	ar0
-	push	ar1
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r0,b
+	mov	r1,a
 	push	ar2
 	push	ar3
+	push	ar0
+	push	ar1
 	mov	dptr,#0x6666
 	mov	b,#0x86
 	mov	a,#0x3F
@@ -5292,55 +5257,119 @@ L040002?:
 	pop	ar4
 	mov	dptr,#_pwm_right
 	movx	@dptr,a
-;	main.c:1162: return; 
-;	main.c:1091: pwm_right *= 1.05;
 L040005?:
-;	main.c:1094: if ((vx_error>5)&&(vy_error<5)){
+;	main.c:1097: if ((vx_error>5)&&(vy_error<5)){
 	mov	dptr,#_Joystick_Control_vx_error_1_214
 	movx	a,@dptr
-	mov	_Joystick_Control_sloc6_1_0,a
+	mov	r2,a
 	inc	dptr
 	movx	a,@dptr
-	mov	(_Joystick_Control_sloc6_1_0 + 1),a
+	mov	r3,a
 	clr	c
 	mov	a,#0x05
-	subb	a,_Joystick_Control_sloc6_1_0
+	subb	a,r2
 	clr	a
 	xrl	a,#0x80
-	mov	b,(_Joystick_Control_sloc6_1_0 + 1)
+	mov	b,r3
 	xrl	b,#0x80
 	subb	a,b
 	clr	a
 	rlc	a
-	mov	_Joystick_Control_sloc3_1_0,a
-	jnz	L040059?
-	ljmp	L040011?
-L040059?:
+	mov	_Joystick_Control_sloc0_1_0,a
+	jnz	L040065?
+	ljmp	L040015?
+L040065?:
 	clr	c
 	mov	a,r6
 	subb	a,#0x05
 	mov	a,r7
 	xrl	a,#0x80
 	subb	a,#0x80
-	jc	L040060?
-	ljmp	L040011?
-L040060?:
-;	main.c:1095: pwm_left = vx_error; 
+	jc	L040066?
+	ljmp	L040015?
+L040066?:
+;	main.c:1098: angle_diff = fabsf(raw_angle - last_raw_angle); //calculate the angle difference 
+	mov	dptr,#_raw_angle
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r0,a
+	push	ar2
+	push	ar3
 	push	ar4
 	push	ar5
-	mov	dptr,#_pwm_left
-	mov	a,_Joystick_Control_sloc6_1_0
+	mov	dptr,#_last_raw_angle
+	movx	a,@dptr
+	push	acc
+	inc	dptr
+	movx	a,@dptr
+	push	acc
+	inc	dptr
+	movx	a,@dptr
+	push	acc
+	inc	dptr
+	movx	a,@dptr
+	push	acc
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r1
+	mov	a,r0
+	lcall	___fssub
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	_fabsf
+	mov	_Joystick_Control_sloc1_1_0,dpl
+	mov	(_Joystick_Control_sloc1_1_0 + 1),dph
+	mov	(_Joystick_Control_sloc1_1_0 + 2),b
+	mov	(_Joystick_Control_sloc1_1_0 + 3),a
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	dptr,#_angle_diff
+	mov	a,_Joystick_Control_sloc1_1_0
 	movx	@dptr,a
-;	main.c:1096: pwm_right = vx_error * pwm_corr; 
-	mov	dpl,_Joystick_Control_sloc6_1_0
-	mov	dph,(_Joystick_Control_sloc6_1_0 + 1)
-	push	ar6
-	push	ar7
+	inc	dptr
+	mov	a,(_Joystick_Control_sloc1_1_0 + 1)
+	movx	@dptr,a
+	inc	dptr
+	mov	a,(_Joystick_Control_sloc1_1_0 + 2)
+	movx	@dptr,a
+	inc	dptr
+	mov	a,(_Joystick_Control_sloc1_1_0 + 3)
+	movx	@dptr,a
+;	main.c:1099: pwm_left = vx_error; 
+	mov	dptr,#_pwm_left
+	mov	a,r2
+	movx	@dptr,a
+;	main.c:1100: pwm_right = vx_error * pwm_corr; 
+	mov	dpl,r2
+	mov	dph,r3
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
 	lcall	___sint2fs
-	mov	r4,dpl
-	mov	r5,dph
-	mov	r2,b
-	mov	r3,a
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
 	mov	dptr,#_pwm_corr
 	movx	a,@dptr
 	push	acc
@@ -5353,993 +5382,1627 @@ L040060?:
 	inc	dptr
 	movx	a,@dptr
 	push	acc
-	mov	dpl,r4
-	mov	dph,r5
-	mov	b,r2
-	mov	a,r3
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
 	lcall	___fsmul
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	pop	ar7
-	pop	ar6
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r4
-	mov	a,r5
-	push	ar4
-	push	ar5
-	push	ar6
-	push	ar7
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
 	lcall	___fs2uchar
 	mov	a,dpl
-	pop	ar7
-	pop	ar6
 	pop	ar5
 	pop	ar4
+	pop	ar3
+	pop	ar2
 	mov	dptr,#_pwm_right
 	movx	@dptr,a
-;	main.c:1097: if (vx_err > 0){ //turn right
+;	main.c:1101: if (vx_err > 0){ //turn right
+	mov	dptr,#_Joystick_Control_vx_err_1_214
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
 	clr	c
 	clr	a
-	subb	a,_Joystick_Control_sloc4_1_0
+	subb	a,r6
 	clr	a
 	xrl	a,#0x80
-	mov	b,(_Joystick_Control_sloc4_1_0 + 1)
+	mov	b,r7
 	xrl	b,#0x80
 	subb	a,b
+	jnc	L040008?
+;	main.c:1102: L_motor_dir = 1; 
+	mov	dptr,#_L_motor_dir
+	mov	a,#0x01
+	movx	@dptr,a
+;	main.c:1103: R_motor_dir = 0;
+	mov	dptr,#_R_motor_dir
+	clr	a
+	movx	@dptr,a
+;	main.c:1104: curr_angle += angle_diff * 1.45; // TUNE THIS
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	push	_Joystick_Control_sloc1_1_0
+	push	(_Joystick_Control_sloc1_1_0 + 1)
+	push	(_Joystick_Control_sloc1_1_0 + 2)
+	push	(_Joystick_Control_sloc1_1_0 + 3)
+	mov	dptr,#0x999A
+	mov	b,#0xB9
+	mov	a,#0x3F
+	lcall	___fsmul
+	mov	_Joystick_Control_sloc2_1_0,dpl
+	mov	(_Joystick_Control_sloc2_1_0 + 1),dph
+	mov	(_Joystick_Control_sloc2_1_0 + 2),b
+	mov	(_Joystick_Control_sloc2_1_0 + 3),a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dptr,#_curr_angle
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	push	_Joystick_Control_sloc2_1_0
+	push	(_Joystick_Control_sloc2_1_0 + 1)
+	push	(_Joystick_Control_sloc2_1_0 + 2)
+	push	(_Joystick_Control_sloc2_1_0 + 3)
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	___fsadd
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
 	pop	ar5
 	pop	ar4
-	jnc	L040008?
-;	main.c:1098: L_motor_dir = 1; 
-	mov	dptr,#_L_motor_dir
-	mov	a,#0x01
+	pop	ar3
+	pop	ar2
+	mov	dptr,#_curr_angle
+	mov	a,r6
 	movx	@dptr,a
-;	main.c:1099: R_motor_dir = 0; 
-	mov	dptr,#_R_motor_dir
-	clr	a
+	inc	dptr
+	mov	a,r7
 	movx	@dptr,a
-	sjmp	L040011?
+	inc	dptr
+	mov	a,r0
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r1
+	movx	@dptr,a
+	sjmp	L040009?
 L040008?:
-;	main.c:1102: L_motor_dir = 0; 
+;	main.c:1107: L_motor_dir = 0; 
 	mov	dptr,#_L_motor_dir
 	clr	a
 	movx	@dptr,a
-;	main.c:1103: R_motor_dir = 1; 
+;	main.c:1108: R_motor_dir = 1; 
 	mov	dptr,#_R_motor_dir
 	mov	a,#0x01
+	movx	@dptr,a
+;	main.c:1109: curr_angle -= angle_diff * 1.4; // TUNE THIS
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	push	_Joystick_Control_sloc1_1_0
+	push	(_Joystick_Control_sloc1_1_0 + 1)
+	push	(_Joystick_Control_sloc1_1_0 + 2)
+	push	(_Joystick_Control_sloc1_1_0 + 3)
+	mov	dptr,#0x3333
+	mov	b,#0xB3
+	mov	a,#0x3F
+	lcall	___fsmul
+	mov	_Joystick_Control_sloc2_1_0,dpl
+	mov	(_Joystick_Control_sloc2_1_0 + 1),dph
+	mov	(_Joystick_Control_sloc2_1_0 + 2),b
+	mov	(_Joystick_Control_sloc2_1_0 + 3),a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dptr,#_curr_angle
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	push	_Joystick_Control_sloc2_1_0
+	push	(_Joystick_Control_sloc2_1_0 + 1)
+	push	(_Joystick_Control_sloc2_1_0 + 2)
+	push	(_Joystick_Control_sloc2_1_0 + 3)
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	___fssub
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	dptr,#_curr_angle
+	mov	a,r6
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r7
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r0
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r1
+	movx	@dptr,a
+;	main.c:1178: return curr_angle; 
+;	main.c:1109: curr_angle -= angle_diff * 1.4; // TUNE THIS
+L040009?:
+;	main.c:1111: if (curr_angle > 360.0) curr_angle -= 360.0; 
+	mov	dptr,#_curr_angle
+	movx	a,@dptr
+	mov	_Joystick_Control_sloc2_1_0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc2_1_0 + 1),a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc2_1_0 + 2),a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc2_1_0 + 3),a
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0xB4
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,_Joystick_Control_sloc2_1_0
+	mov	dph,(_Joystick_Control_sloc2_1_0 + 1)
+	mov	b,(_Joystick_Control_sloc2_1_0 + 2)
+	mov	a,(_Joystick_Control_sloc2_1_0 + 3)
+	lcall	___fsgt
+	mov	r6,dpl
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	a,r6
+	jz	L040011?
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0xB4
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,_Joystick_Control_sloc2_1_0
+	mov	dph,(_Joystick_Control_sloc2_1_0 + 1)
+	mov	b,(_Joystick_Control_sloc2_1_0 + 2)
+	mov	a,(_Joystick_Control_sloc2_1_0 + 3)
+	lcall	___fssub
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r1,b
+	mov	r0,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	dptr,#_curr_angle
+	mov	a,r6
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r7
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r1
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r0
 	movx	@dptr,a
 L040011?:
-;	main.c:1106: if ((vx_error>5)&&(vy_error)>5){
-	mov	a,_Joystick_Control_sloc3_1_0
-	jnz	L040062?
-	ret
-L040062?:
-	mov	a,_Joystick_Control_sloc1_1_0
-	jnz	L040063?
-	ret
-L040063?:
-;	main.c:1108: if (vy_err>0){
-	clr	c
+;	main.c:1112: if (curr_angle < 0.0) curr_angle += 360.0; 
+	mov	dptr,#_curr_angle
+	movx	a,@dptr
+	mov	_Joystick_Control_sloc2_1_0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc2_1_0 + 1),a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc2_1_0 + 2),a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc2_1_0 + 3),a
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
 	clr	a
+	push	acc
+	push	acc
+	push	acc
+	push	acc
+	mov	dpl,_Joystick_Control_sloc2_1_0
+	mov	dph,(_Joystick_Control_sloc2_1_0 + 1)
+	mov	b,(_Joystick_Control_sloc2_1_0 + 2)
+	mov	a,(_Joystick_Control_sloc2_1_0 + 3)
+	lcall	___fslt
+	mov	r6,dpl
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	a,r6
+	jz	L040015?
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	clr	a
+	push	acc
+	push	acc
+	mov	a,#0xB4
+	push	acc
+	mov	a,#0x43
+	push	acc
+	mov	dpl,_Joystick_Control_sloc2_1_0
+	mov	dph,(_Joystick_Control_sloc2_1_0 + 1)
+	mov	b,(_Joystick_Control_sloc2_1_0 + 2)
+	mov	a,(_Joystick_Control_sloc2_1_0 + 3)
+	lcall	___fsadd
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	dptr,#_curr_angle
+	mov	a,r6
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r7
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r0
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r1
+	movx	@dptr,a
+L040015?:
+;	main.c:1114: if ((vx_error>5)&&(vy_error)>5){
+	mov	a,_Joystick_Control_sloc0_1_0
+	jnz	L040070?
+	ljmp	L040040?
+L040070?:
+	mov	dptr,#_Joystick_Control_vy_error_1_214
+	movx	a,@dptr
+	mov	_Joystick_Control_sloc0_1_0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc0_1_0 + 1),a
+	clr	c
+	mov	a,#0x05
 	subb	a,_Joystick_Control_sloc0_1_0
 	clr	a
 	xrl	a,#0x80
 	mov	b,(_Joystick_Control_sloc0_1_0 + 1)
 	xrl	b,#0x80
 	subb	a,b
-	jc	L040064?
-	ljmp	L040023?
-L040064?:
-;	main.c:1109: L_motor_dir = 0; 
+	jc	L040071?
+	ljmp	L040040?
+L040071?:
+;	main.c:1116: angle_diff = fabsf(raw_angle - last_raw_angle);
+	push	ar4
+	push	ar5
+	mov	dptr,#_raw_angle
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r5,a
+	push	ar2
+	push	ar3
+	mov	dptr,#_last_raw_angle
+	movx	a,@dptr
+	push	acc
+	inc	dptr
+	movx	a,@dptr
+	push	acc
+	inc	dptr
+	movx	a,@dptr
+	push	acc
+	inc	dptr
+	movx	a,@dptr
+	push	acc
+	mov	dpl,r0
+	mov	dph,r1
+	mov	b,r4
+	mov	a,r5
+	lcall	___fssub
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r0
+	mov	a,r1
+	push	ar4
+	push	ar5
+	lcall	_fabsf
+	mov	_Joystick_Control_sloc2_1_0,dpl
+	mov	(_Joystick_Control_sloc2_1_0 + 1),dph
+	mov	(_Joystick_Control_sloc2_1_0 + 2),b
+	mov	(_Joystick_Control_sloc2_1_0 + 3),a
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	dptr,#_angle_diff
+	mov	a,_Joystick_Control_sloc2_1_0
+	movx	@dptr,a
+	inc	dptr
+	mov	a,(_Joystick_Control_sloc2_1_0 + 1)
+	movx	@dptr,a
+	inc	dptr
+	mov	a,(_Joystick_Control_sloc2_1_0 + 2)
+	movx	@dptr,a
+	inc	dptr
+	mov	a,(_Joystick_Control_sloc2_1_0 + 3)
+	movx	@dptr,a
+;	main.c:1117: if (vy_err>0){
+	mov	dptr,#_Joystick_Control_vy_err_1_214
+	movx	a,@dptr
+	mov	_Joystick_Control_sloc1_1_0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc1_1_0 + 1),a
+	clr	c
+	clr	a
+	subb	a,_Joystick_Control_sloc1_1_0
+	clr	a
+	xrl	a,#0x80
+	mov	b,(_Joystick_Control_sloc1_1_0 + 1)
+	xrl	b,#0x80
+	subb	a,b
+	pop	ar5
+	pop	ar4
+	jc	L040072?
+	ljmp	L040027?
+L040072?:
+;	main.c:1118: L_motor_dir = 0; 
 	mov	dptr,#_L_motor_dir
-;	main.c:1110: R_motor_dir = 0; 
+;	main.c:1119: R_motor_dir = 0; 
 	clr	a
 	movx	@dptr,a
 	mov	dptr,#_R_motor_dir
 	movx	@dptr,a
-;	main.c:1112: if (vx_err>0){
+;	main.c:1121: if (vx_err>0){
+	mov	dptr,#_Joystick_Control_vx_err_1_214
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
 	clr	c
 	clr	a
-	subb	a,_Joystick_Control_sloc4_1_0
+	subb	a,r0
 	clr	a
 	xrl	a,#0x80
-	mov	b,(_Joystick_Control_sloc4_1_0 + 1)
+	mov	b,r1
 	xrl	b,#0x80
 	subb	a,b
-	jc	L040065?
-	ljmp	L040020?
-L040065?:
-;	main.c:1113: if (vy*100<=vy_thres*100/2){
+	jc	L040073?
+	ljmp	L040024?
+L040073?:
+;	main.c:1123: if (vy*100<=vy_thres*100/2){
 	mov	__mulint_PARM_2,r4
 	mov	(__mulint_PARM_2 + 1),r5
-	mov	dptr,#0x0064
-	push	ar4
-	push	ar5
-	push	ar6
-	push	ar7
-	lcall	__mulint
-	mov	r2,dpl
-	mov	r3,dph
-	pop	ar7
-	pop	ar6
-	pop	ar5
-	pop	ar4
-	mov	__mulint_PARM_2,_Joystick_Control_sloc2_1_0
-	mov	(__mulint_PARM_2 + 1),(_Joystick_Control_sloc2_1_0 + 1)
 	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
 	push	ar4
 	push	ar5
-	push	ar6
-	push	ar7
 	lcall	__mulint
 	mov	r0,dpl
 	mov	r1,dph
+	mov	dptr,#_vy_thres
+	movx	a,@dptr
+	mov	__mulint_PARM_2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	(__mulint_PARM_2 + 1),a
+	mov	dptr,#0x0064
+	push	ar0
+	push	ar1
+	lcall	__mulint
+	mov	r6,dpl
+	mov	r7,dph
 	mov	__divsint_PARM_2,#0x02
 	clr	a
 	mov	(__divsint_PARM_2 + 1),a
-	mov	dpl,r0
-	mov	dph,r1
+	mov	dpl,r6
+	mov	dph,r7
 	lcall	__divsint
-	mov	r0,dpl
-	mov	r1,dph
-	pop	ar7
-	pop	ar6
+	mov	r6,dpl
+	mov	r7,dph
+	pop	ar1
+	pop	ar0
 	pop	ar5
 	pop	ar4
 	pop	ar3
 	pop	ar2
 	clr	c
-	mov	a,r0
-	subb	a,r2
-	mov	a,r1
+	mov	a,r6
+	subb	a,r0
+	mov	a,r7
 	xrl	a,#0x80
-	mov	b,r3
+	mov	b,r1
 	xrl	b,#0x80
 	subb	a,b
-	jnc	L040066?
-	ljmp	L040014?
-L040066?:
-;	main.c:1114: pwm_left = vy_error; 
+	jnc	L040074?
+	ljmp	L040018?
+L040074?:
+;	main.c:1124: pwm_left = vy_error; 
 	push	ar4
 	push	ar5
 	mov	dptr,#_pwm_left
-	mov	a,r6
+	mov	a,_Joystick_Control_sloc0_1_0
 	movx	@dptr,a
-;	main.c:1115: pwm_right = pwm_corr*vy_error*100/(vx_error+vy_error);
+;	main.c:1125: pwm_right = pwm_corr*vy_error*100/(vx_error+vy_error);
 	mov	dptr,#_pwm_corr
 	movx	a,@dptr
-	mov	_Joystick_Control_sloc5_1_0,a
+	mov	_Joystick_Control_sloc3_1_0,a
 	inc	dptr
 	movx	a,@dptr
-	mov	(_Joystick_Control_sloc5_1_0 + 1),a
+	mov	(_Joystick_Control_sloc3_1_0 + 1),a
 	inc	dptr
 	movx	a,@dptr
-	mov	(_Joystick_Control_sloc5_1_0 + 2),a
+	mov	(_Joystick_Control_sloc3_1_0 + 2),a
 	inc	dptr
 	movx	a,@dptr
-	mov	(_Joystick_Control_sloc5_1_0 + 3),a
-	mov	dpl,r6
-	mov	dph,r7
-	push	ar6
-	push	ar7
-	lcall	___sint2fs
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
+	mov	(_Joystick_Control_sloc3_1_0 + 3),a
+	mov	dpl,_Joystick_Control_sloc0_1_0
+	mov	dph,(_Joystick_Control_sloc0_1_0 + 1)
 	push	ar2
 	push	ar3
+	lcall	___sint2fs
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r0,b
+	mov	r1,a
 	push	ar4
 	push	ar5
-	mov	dpl,_Joystick_Control_sloc5_1_0
-	mov	dph,(_Joystick_Control_sloc5_1_0 + 1)
-	mov	b,(_Joystick_Control_sloc5_1_0 + 2)
-	mov	a,(_Joystick_Control_sloc5_1_0 + 3)
+	push	ar0
+	push	ar1
+	mov	dpl,_Joystick_Control_sloc3_1_0
+	mov	dph,(_Joystick_Control_sloc3_1_0 + 1)
+	mov	b,(_Joystick_Control_sloc3_1_0 + 2)
+	mov	a,(_Joystick_Control_sloc3_1_0 + 3)
 	lcall	___fsmul
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r0,b
+	mov	r1,a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	pop	ar7
-	pop	ar6
 	push	ar4
 	push	ar5
-	push	ar6
-	push	ar7
-	push	ar2
-	push	ar3
 	push	ar4
 	push	ar5
+	push	ar0
+	push	ar1
 	mov	dptr,#0x0000
 	mov	b,#0xC8
 	mov	a,#0x42
 	lcall	___fsmul
-	mov	_Joystick_Control_sloc5_1_0,dpl
-	mov	(_Joystick_Control_sloc5_1_0 + 1),dph
-	mov	(_Joystick_Control_sloc5_1_0 + 2),b
-	mov	(_Joystick_Control_sloc5_1_0 + 3),a
+	mov	_Joystick_Control_sloc3_1_0,dpl
+	mov	(_Joystick_Control_sloc3_1_0 + 1),dph
+	mov	(_Joystick_Control_sloc3_1_0 + 2),b
+	mov	(_Joystick_Control_sloc3_1_0 + 3),a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	pop	ar7
-	pop	ar6
-	pop	ar5
-	pop	ar4
-	mov	a,r6
-	add	a,_Joystick_Control_sloc6_1_0
-	mov	dpl,a
-	mov	a,r7
-	addc	a,(_Joystick_Control_sloc6_1_0 + 1)
-	mov	dph,a
-	push	ar6
-	push	ar7
-	lcall	___sint2fs
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
-	mov	dpl,_Joystick_Control_sloc5_1_0
-	mov	dph,(_Joystick_Control_sloc5_1_0 + 1)
-	mov	b,(_Joystick_Control_sloc5_1_0 + 2)
-	mov	a,(_Joystick_Control_sloc5_1_0 + 3)
-	lcall	___fsdiv
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar7
-	pop	ar6
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r4
-	mov	a,r5
-	push	ar4
-	push	ar5
-	push	ar6
-	push	ar7
-	lcall	___fs2uchar
-	mov	a,dpl
-	pop	ar7
-	pop	ar6
-	pop	ar5
-	pop	ar4
-	mov	dptr,#_pwm_right
-	movx	@dptr,a
-	pop	ar5
-	pop	ar4
-	ljmp	L040023?
-L040014?:
-;	main.c:1118: pwm_left = vx_error; 
-	push	ar4
-	push	ar5
-	mov	dptr,#_pwm_left
-	mov	a,_Joystick_Control_sloc6_1_0
-	movx	@dptr,a
-;	main.c:1119: pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
-	mov	dptr,#_pwm_corr
-	movx	a,@dptr
-	mov	_Joystick_Control_sloc5_1_0,a
-	inc	dptr
-	movx	a,@dptr
-	mov	(_Joystick_Control_sloc5_1_0 + 1),a
-	inc	dptr
-	movx	a,@dptr
-	mov	(_Joystick_Control_sloc5_1_0 + 2),a
-	inc	dptr
-	movx	a,@dptr
-	mov	(_Joystick_Control_sloc5_1_0 + 3),a
-	mov	dpl,_Joystick_Control_sloc6_1_0
-	mov	dph,(_Joystick_Control_sloc6_1_0 + 1)
-	push	ar6
-	push	ar7
-	lcall	___sint2fs
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
-	mov	dpl,_Joystick_Control_sloc5_1_0
-	mov	dph,(_Joystick_Control_sloc5_1_0 + 1)
-	mov	b,(_Joystick_Control_sloc5_1_0 + 2)
-	mov	a,(_Joystick_Control_sloc5_1_0 + 3)
-	lcall	___fsmul
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar7
-	pop	ar6
-	push	ar4
-	push	ar5
-	push	ar6
-	push	ar7
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
-	mov	dptr,#0x0000
-	mov	b,#0xC8
-	mov	a,#0x42
-	lcall	___fsmul
-	mov	_Joystick_Control_sloc5_1_0,dpl
-	mov	(_Joystick_Control_sloc5_1_0 + 1),dph
-	mov	(_Joystick_Control_sloc5_1_0 + 2),b
-	mov	(_Joystick_Control_sloc5_1_0 + 3),a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar7
-	pop	ar6
-	pop	ar5
-	pop	ar4
-	mov	a,r6
-	add	a,_Joystick_Control_sloc6_1_0
-	mov	dpl,a
-	mov	a,r7
-	addc	a,(_Joystick_Control_sloc6_1_0 + 1)
-	mov	dph,a
-	push	ar6
-	push	ar7
-	lcall	___sint2fs
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
-	mov	dpl,_Joystick_Control_sloc5_1_0
-	mov	dph,(_Joystick_Control_sloc5_1_0 + 1)
-	mov	b,(_Joystick_Control_sloc5_1_0 + 2)
-	mov	a,(_Joystick_Control_sloc5_1_0 + 3)
-	lcall	___fsdiv
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar7
-	pop	ar6
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r4
-	mov	a,r5
-	push	ar4
-	push	ar5
-	push	ar6
-	push	ar7
-	lcall	___fs2uchar
-	mov	a,dpl
-	pop	ar7
-	pop	ar6
-	pop	ar5
-	pop	ar4
-	mov	dptr,#_pwm_right
-	movx	@dptr,a
-	pop	ar5
-	pop	ar4
-	ljmp	L040023?
-L040020?:
-;	main.c:1124: if (vy*100<=vy_thres*100/2){
-	mov	__mulint_PARM_2,r4
-	mov	(__mulint_PARM_2 + 1),r5
-	mov	dptr,#0x0064
-	push	ar4
-	push	ar5
-	push	ar6
-	push	ar7
-	lcall	__mulint
-	mov	r2,dpl
-	mov	r3,dph
-	pop	ar7
-	pop	ar6
-	pop	ar5
-	pop	ar4
-	mov	__mulint_PARM_2,_Joystick_Control_sloc2_1_0
-	mov	(__mulint_PARM_2 + 1),(_Joystick_Control_sloc2_1_0 + 1)
-	mov	dptr,#0x0064
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
-	push	ar6
-	push	ar7
-	lcall	__mulint
-	mov	r0,dpl
-	mov	r1,dph
-	mov	__divsint_PARM_2,#0x02
-	clr	a
-	mov	(__divsint_PARM_2 + 1),a
-	mov	dpl,r0
-	mov	dph,r1
-	lcall	__divsint
-	mov	r0,dpl
-	mov	r1,dph
-	pop	ar7
-	pop	ar6
 	pop	ar5
 	pop	ar4
 	pop	ar3
 	pop	ar2
-	clr	c
-	mov	a,r0
-	subb	a,r2
-	mov	a,r1
-	xrl	a,#0x80
-	mov	b,r3
-	xrl	b,#0x80
-	subb	a,b
-	jnc	L040067?
-	ljmp	L040017?
-L040067?:
-;	main.c:1125: pwm_left = vy_error*100/(vx_error+vy_error);
-	push	ar4
-	push	ar5
-	mov	__mulint_PARM_2,r6
-	mov	(__mulint_PARM_2 + 1),r7
-	mov	dptr,#0x0064
-	push	ar4
-	push	ar5
-	push	ar6
-	push	ar7
-	lcall	__mulint
-	mov	r2,dpl
-	mov	r3,dph
-	pop	ar7
-	pop	ar6
-	mov	a,r6
-	add	a,_Joystick_Control_sloc6_1_0
-	mov	__divsint_PARM_2,a
-	mov	a,r7
-	addc	a,(_Joystick_Control_sloc6_1_0 + 1)
-	mov	(__divsint_PARM_2 + 1),a
-	mov	dpl,r2
-	mov	dph,r3
-	push	ar6
-	push	ar7
-	lcall	__divsint
-	mov	r2,dpl
-	pop	ar7
-	pop	ar6
-	pop	ar5
-	pop	ar4
-	mov	dptr,#_pwm_left
-	mov	a,r2
-	movx	@dptr,a
-;	main.c:1126: pwm_right = vy_error*pwm_corr; 
-	mov	dpl,r6
-	mov	dph,r7
-	push	ar6
-	push	ar7
-	lcall	___sint2fs
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	dptr,#_pwm_corr
-	movx	a,@dptr
-	push	acc
-	inc	dptr
-	movx	a,@dptr
-	push	acc
-	inc	dptr
-	movx	a,@dptr
-	push	acc
-	inc	dptr
-	movx	a,@dptr
-	push	acc
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r4
-	mov	a,r5
-	lcall	___fsmul
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar7
-	pop	ar6
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r4
-	mov	a,r5
-	push	ar4
-	push	ar5
-	push	ar6
-	push	ar7
-	lcall	___fs2uchar
-	mov	a,dpl
-	pop	ar7
-	pop	ar6
-	pop	ar5
-	pop	ar4
-	mov	dptr,#_pwm_right
-	movx	@dptr,a
-	pop	ar5
-	pop	ar4
-	ljmp	L040023?
-L040017?:
-;	main.c:1129: pwm_left = vx_error*100/(vx_error+vy_error);
-	push	ar4
-	push	ar5
-	mov	__mulint_PARM_2,_Joystick_Control_sloc6_1_0
-	mov	(__mulint_PARM_2 + 1),(_Joystick_Control_sloc6_1_0 + 1)
-	mov	dptr,#0x0064
-	push	ar4
-	push	ar5
-	push	ar6
-	push	ar7
-	lcall	__mulint
-	mov	r2,dpl
-	mov	r3,dph
-	pop	ar7
-	pop	ar6
-	mov	a,r6
-	add	a,_Joystick_Control_sloc6_1_0
-	mov	__divsint_PARM_2,a
-	mov	a,r7
-	addc	a,(_Joystick_Control_sloc6_1_0 + 1)
-	mov	(__divsint_PARM_2 + 1),a
-	mov	dpl,r2
-	mov	dph,r3
-	push	ar6
-	push	ar7
-	lcall	__divsint
-	mov	r2,dpl
-	pop	ar7
-	pop	ar6
-	pop	ar5
-	pop	ar4
-	mov	dptr,#_pwm_left
-	mov	a,r2
-	movx	@dptr,a
-;	main.c:1130: pwm_right = vx_error*pwm_corr; 
-	mov	dpl,_Joystick_Control_sloc6_1_0
-	mov	dph,(_Joystick_Control_sloc6_1_0 + 1)
-	push	ar6
-	push	ar7
-	lcall	___sint2fs
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	dptr,#_pwm_corr
-	movx	a,@dptr
-	push	acc
-	inc	dptr
-	movx	a,@dptr
-	push	acc
-	inc	dptr
-	movx	a,@dptr
-	push	acc
-	inc	dptr
-	movx	a,@dptr
-	push	acc
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r4
-	mov	a,r5
-	lcall	___fsmul
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar7
-	pop	ar6
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r4
-	mov	a,r5
-	push	ar4
-	push	ar5
-	push	ar6
-	push	ar7
-	lcall	___fs2uchar
-	mov	a,dpl
-	pop	ar7
-	pop	ar6
-	pop	ar5
-	pop	ar4
-	mov	dptr,#_pwm_right
-	movx	@dptr,a
-;	main.c:1162: return; 
-	pop	ar5
-	pop	ar4
-;	main.c:1130: pwm_right = vx_error*pwm_corr; 
-L040023?:
-;	main.c:1135: if (vy_err<0){
+	mov	a,_Joystick_Control_sloc0_1_0
+	add	a,r2
+	mov	dpl,a
 	mov	a,(_Joystick_Control_sloc0_1_0 + 1)
-	jb	acc.7,L040068?
-	ret
-L040068?:
-;	main.c:1136: L_motor_dir = 1; 
-	mov	dptr,#_L_motor_dir
-	mov	a,#0x01
+	addc	a,r3
+	mov	dph,a
+	push	ar2
+	push	ar3
+	lcall	___sint2fs
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r0,b
+	mov	r1,a
+	push	ar4
+	push	ar5
+	push	ar0
+	push	ar1
+	mov	dpl,_Joystick_Control_sloc3_1_0
+	mov	dph,(_Joystick_Control_sloc3_1_0 + 1)
+	mov	b,(_Joystick_Control_sloc3_1_0 + 2)
+	mov	a,(_Joystick_Control_sloc3_1_0 + 3)
+	lcall	___fsdiv
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r0
+	mov	a,r1
+	push	ar4
+	push	ar5
+	lcall	___fs2uchar
+	mov	a,dpl
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	dptr,#_pwm_right
 	movx	@dptr,a
-;	main.c:1137: R_motor_dir = 1; 
-	mov	dptr,#_R_motor_dir
-	mov	a,#0x01
+	pop	ar5
+	pop	ar4
+	ljmp	L040019?
+L040018?:
+;	main.c:1128: pwm_left = vx_error; 
+	push	ar4
+	push	ar5
+	mov	dptr,#_pwm_left
+	mov	a,r2
 	movx	@dptr,a
-;	main.c:1139: if (vx_err>0){
-	clr	c
-	clr	a
-	subb	a,_Joystick_Control_sloc4_1_0
-	clr	a
-	xrl	a,#0x80
-	mov	b,(_Joystick_Control_sloc4_1_0 + 1)
-	xrl	b,#0x80
-	subb	a,b
-	jc	L040069?
-	ljmp	L040031?
-L040069?:
-;	main.c:1140: if (vy*100<=vy_thres*100/2){
+;	main.c:1129: pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
+	mov	dptr,#_pwm_corr
+	movx	a,@dptr
+	mov	_Joystick_Control_sloc3_1_0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc3_1_0 + 1),a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc3_1_0 + 2),a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc3_1_0 + 3),a
+	mov	dpl,r2
+	mov	dph,r3
+	push	ar2
+	push	ar3
+	lcall	___sint2fs
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r0,b
+	mov	r1,a
+	push	ar4
+	push	ar5
+	push	ar0
+	push	ar1
+	mov	dpl,_Joystick_Control_sloc3_1_0
+	mov	dph,(_Joystick_Control_sloc3_1_0 + 1)
+	mov	b,(_Joystick_Control_sloc3_1_0 + 2)
+	mov	a,(_Joystick_Control_sloc3_1_0 + 3)
+	lcall	___fsmul
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	push	ar4
+	push	ar5
+	push	ar4
+	push	ar5
+	push	ar0
+	push	ar1
+	mov	dptr,#0x0000
+	mov	b,#0xC8
+	mov	a,#0x42
+	lcall	___fsmul
+	mov	_Joystick_Control_sloc3_1_0,dpl
+	mov	(_Joystick_Control_sloc3_1_0 + 1),dph
+	mov	(_Joystick_Control_sloc3_1_0 + 2),b
+	mov	(_Joystick_Control_sloc3_1_0 + 3),a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	a,_Joystick_Control_sloc0_1_0
+	add	a,r2
+	mov	dpl,a
+	mov	a,(_Joystick_Control_sloc0_1_0 + 1)
+	addc	a,r3
+	mov	dph,a
+	push	ar2
+	push	ar3
+	lcall	___sint2fs
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r0,b
+	mov	r1,a
+	push	ar4
+	push	ar5
+	push	ar0
+	push	ar1
+	mov	dpl,_Joystick_Control_sloc3_1_0
+	mov	dph,(_Joystick_Control_sloc3_1_0 + 1)
+	mov	b,(_Joystick_Control_sloc3_1_0 + 2)
+	mov	a,(_Joystick_Control_sloc3_1_0 + 3)
+	lcall	___fsdiv
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r0
+	mov	a,r1
+	push	ar4
+	push	ar5
+	lcall	___fs2uchar
+	mov	a,dpl
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	dptr,#_pwm_right
+	movx	@dptr,a
+;	main.c:1178: return curr_angle; 
+	pop	ar5
+	pop	ar4
+;	main.c:1129: pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
+L040019?:
+;	main.c:1131: curr_angle += angle_diff * 1.5; // TUNE THIS 
+	push	ar4
+	push	ar5
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	push	_Joystick_Control_sloc2_1_0
+	push	(_Joystick_Control_sloc2_1_0 + 1)
+	push	(_Joystick_Control_sloc2_1_0 + 2)
+	push	(_Joystick_Control_sloc2_1_0 + 3)
+	mov	dptr,#0x0000
+	mov	b,#0xC0
+	mov	a,#0x3F
+	lcall	___fsmul
+	mov	_Joystick_Control_sloc3_1_0,dpl
+	mov	(_Joystick_Control_sloc3_1_0 + 1),dph
+	mov	(_Joystick_Control_sloc3_1_0 + 2),b
+	mov	(_Joystick_Control_sloc3_1_0 + 3),a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar5
+	pop	ar4
+	mov	dptr,#_curr_angle
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r5,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	push	_Joystick_Control_sloc3_1_0
+	push	(_Joystick_Control_sloc3_1_0 + 1)
+	push	(_Joystick_Control_sloc3_1_0 + 2)
+	push	(_Joystick_Control_sloc3_1_0 + 3)
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r0
+	mov	a,r1
+	lcall	___fsadd
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	pop	ar2
+	mov	dptr,#_curr_angle
+	mov	a,r4
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r5
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r0
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r1
+	movx	@dptr,a
+	pop	ar5
+	pop	ar4
+	ljmp	L040027?
+L040024?:
+;	main.c:1135: if (vy*100<=vy_thres*100/2){
 	mov	__mulint_PARM_2,r4
 	mov	(__mulint_PARM_2 + 1),r5
 	mov	dptr,#0x0064
-	push	ar6
-	push	ar7
-	lcall	__mulint
-	mov	r2,dpl
-	mov	r3,dph
-	pop	ar7
-	pop	ar6
-	mov	__mulint_PARM_2,_Joystick_Control_sloc2_1_0
-	mov	(__mulint_PARM_2 + 1),(_Joystick_Control_sloc2_1_0 + 1)
-	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
-	push	ar6
-	push	ar7
+	push	ar4
+	push	ar5
 	lcall	__mulint
 	mov	r0,dpl
 	mov	r1,dph
+	mov	dptr,#_vy_thres
+	movx	a,@dptr
+	mov	__mulint_PARM_2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	(__mulint_PARM_2 + 1),a
+	mov	dptr,#0x0064
+	push	ar0
+	push	ar1
+	lcall	__mulint
+	mov	r6,dpl
+	mov	r7,dph
 	mov	__divsint_PARM_2,#0x02
 	clr	a
 	mov	(__divsint_PARM_2 + 1),a
-	mov	dpl,r0
-	mov	dph,r1
+	mov	dpl,r6
+	mov	dph,r7
 	lcall	__divsint
-	mov	r0,dpl
-	mov	r1,dph
-	pop	ar7
-	pop	ar6
+	mov	r6,dpl
+	mov	r7,dph
+	pop	ar1
+	pop	ar0
+	pop	ar5
+	pop	ar4
 	pop	ar3
 	pop	ar2
 	clr	c
-	mov	a,r0
-	subb	a,r2
-	mov	a,r1
+	mov	a,r6
+	subb	a,r0
+	mov	a,r7
 	xrl	a,#0x80
-	mov	b,r3
+	mov	b,r1
 	xrl	b,#0x80
 	subb	a,b
-	jnc	L040070?
-	ljmp	L040025?
-L040070?:
-;	main.c:1141: pwm_left = vy_error; 
+	jnc	L040075?
+	ljmp	L040021?
+L040075?:
+;	main.c:1136: pwm_left = vy_error*100/(vx_error+vy_error);
+	push	ar4
+	push	ar5
+	mov	__mulint_PARM_2,_Joystick_Control_sloc0_1_0
+	mov	(__mulint_PARM_2 + 1),(_Joystick_Control_sloc0_1_0 + 1)
+	mov	dptr,#0x0064
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	lcall	__mulint
+	mov	r0,dpl
+	mov	r1,dph
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	a,_Joystick_Control_sloc0_1_0
+	add	a,r2
+	mov	__divsint_PARM_2,a
+	mov	a,(_Joystick_Control_sloc0_1_0 + 1)
+	addc	a,r3
+	mov	(__divsint_PARM_2 + 1),a
+	mov	dpl,r0
+	mov	dph,r1
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	lcall	__divsint
+	mov	r0,dpl
+	pop	ar5
+	pop	ar4
 	mov	dptr,#_pwm_left
-	mov	a,r6
+	mov	a,r0
 	movx	@dptr,a
-;	main.c:1142: pwm_right = pwm_corr*vy_error*100/(vx_error+vy_error);
+;	main.c:1137: pwm_right = vy_error*pwm_corr; 
+	mov	dpl,_Joystick_Control_sloc0_1_0
+	mov	dph,(_Joystick_Control_sloc0_1_0 + 1)
+	lcall	___sint2fs
+	mov	r0,dpl
+	mov	r1,dph
+	mov	r4,b
+	mov	r5,a
 	mov	dptr,#_pwm_corr
 	movx	a,@dptr
-	mov	_Joystick_Control_sloc5_1_0,a
+	push	acc
 	inc	dptr
 	movx	a,@dptr
-	mov	(_Joystick_Control_sloc5_1_0 + 1),a
+	push	acc
 	inc	dptr
 	movx	a,@dptr
-	mov	(_Joystick_Control_sloc5_1_0 + 2),a
+	push	acc
 	inc	dptr
 	movx	a,@dptr
-	mov	(_Joystick_Control_sloc5_1_0 + 3),a
-	mov	dpl,r6
-	mov	dph,r7
-	push	ar6
-	push	ar7
-	lcall	___sint2fs
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r0,b
-	mov	r1,a
-	push	ar2
-	push	ar3
-	push	ar0
-	push	ar1
-	mov	dpl,_Joystick_Control_sloc5_1_0
-	mov	dph,(_Joystick_Control_sloc5_1_0 + 1)
-	mov	b,(_Joystick_Control_sloc5_1_0 + 2)
-	mov	a,(_Joystick_Control_sloc5_1_0 + 3)
+	push	acc
+	mov	dpl,r0
+	mov	dph,r1
+	mov	b,r4
+	mov	a,r5
 	lcall	___fsmul
-	mov	r2,dpl
-	mov	r3,dph
+	mov	r4,dpl
+	mov	r5,dph
 	mov	r0,b
 	mov	r1,a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	push	ar2
-	push	ar3
-	push	ar0
-	push	ar1
-	mov	dptr,#0x0000
-	mov	b,#0xC8
-	mov	a,#0x42
-	lcall	___fsmul
-	mov	_Joystick_Control_sloc5_1_0,dpl
-	mov	(_Joystick_Control_sloc5_1_0 + 1),dph
-	mov	(_Joystick_Control_sloc5_1_0 + 2),b
-	mov	(_Joystick_Control_sloc5_1_0 + 3),a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar7
-	pop	ar6
-	mov	a,r6
-	add	a,_Joystick_Control_sloc6_1_0
-	mov	dpl,a
-	mov	a,r7
-	addc	a,(_Joystick_Control_sloc6_1_0 + 1)
-	mov	dph,a
-	lcall	___sint2fs
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r0,b
-	mov	r1,a
-	push	ar2
-	push	ar3
-	push	ar0
-	push	ar1
-	mov	dpl,_Joystick_Control_sloc5_1_0
-	mov	dph,(_Joystick_Control_sloc5_1_0 + 1)
-	mov	b,(_Joystick_Control_sloc5_1_0 + 2)
-	mov	a,(_Joystick_Control_sloc5_1_0 + 3)
-	lcall	___fsdiv
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r0,b
-	mov	r1,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	mov	dpl,r2
-	mov	dph,r3
+	mov	dpl,r4
+	mov	dph,r5
 	mov	b,r0
 	mov	a,r1
+	push	ar4
+	push	ar5
 	lcall	___fs2uchar
 	mov	a,dpl
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
 	mov	dptr,#_pwm_right
 	movx	@dptr,a
-	ret
-L040025?:
-;	main.c:1145: pwm_left = vx_error; 
+	pop	ar5
+	pop	ar4
+	ljmp	L040022?
+L040021?:
+;	main.c:1140: pwm_left = vx_error*100/(vx_error+vy_error);
+	push	ar4
+	push	ar5
+	mov	__mulint_PARM_2,r2
+	mov	(__mulint_PARM_2 + 1),r3
+	mov	dptr,#0x0064
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	lcall	__mulint
+	mov	r0,dpl
+	mov	r1,dph
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	mov	a,_Joystick_Control_sloc0_1_0
+	add	a,r2
+	mov	__divsint_PARM_2,a
+	mov	a,(_Joystick_Control_sloc0_1_0 + 1)
+	addc	a,r3
+	mov	(__divsint_PARM_2 + 1),a
+	mov	dpl,r0
+	mov	dph,r1
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	lcall	__divsint
+	mov	r0,dpl
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
 	mov	dptr,#_pwm_left
-	mov	a,_Joystick_Control_sloc6_1_0
+	mov	a,r0
 	movx	@dptr,a
-;	main.c:1146: pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
+;	main.c:1141: pwm_right = vx_error*pwm_corr; 
+	mov	dpl,r2
+	mov	dph,r3
+	push	ar2
+	push	ar3
+	lcall	___sint2fs
+	mov	r0,dpl
+	mov	r1,dph
+	mov	r4,b
+	mov	r5,a
 	mov	dptr,#_pwm_corr
 	movx	a,@dptr
-	mov	_Joystick_Control_sloc5_1_0,a
+	push	acc
 	inc	dptr
 	movx	a,@dptr
-	mov	(_Joystick_Control_sloc5_1_0 + 1),a
+	push	acc
 	inc	dptr
 	movx	a,@dptr
-	mov	(_Joystick_Control_sloc5_1_0 + 2),a
+	push	acc
 	inc	dptr
 	movx	a,@dptr
-	mov	(_Joystick_Control_sloc5_1_0 + 3),a
-	mov	dpl,_Joystick_Control_sloc6_1_0
-	mov	dph,(_Joystick_Control_sloc6_1_0 + 1)
-	push	ar6
-	push	ar7
-	lcall	___sint2fs
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r0,b
-	mov	r1,a
-	push	ar2
-	push	ar3
-	push	ar0
-	push	ar1
-	mov	dpl,_Joystick_Control_sloc5_1_0
-	mov	dph,(_Joystick_Control_sloc5_1_0 + 1)
-	mov	b,(_Joystick_Control_sloc5_1_0 + 2)
-	mov	a,(_Joystick_Control_sloc5_1_0 + 3)
+	push	acc
+	mov	dpl,r0
+	mov	dph,r1
+	mov	b,r4
+	mov	a,r5
 	lcall	___fsmul
-	mov	r2,dpl
-	mov	r3,dph
+	mov	r4,dpl
+	mov	r5,dph
 	mov	r0,b
 	mov	r1,a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	push	ar2
-	push	ar3
-	push	ar0
-	push	ar1
-	mov	dptr,#0x0000
-	mov	b,#0xC8
-	mov	a,#0x42
-	lcall	___fsmul
-	mov	_Joystick_Control_sloc5_1_0,dpl
-	mov	(_Joystick_Control_sloc5_1_0 + 1),dph
-	mov	(_Joystick_Control_sloc5_1_0 + 2),b
-	mov	(_Joystick_Control_sloc5_1_0 + 3),a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	pop	ar7
-	pop	ar6
-	mov	a,r6
-	add	a,_Joystick_Control_sloc6_1_0
-	mov	dpl,a
-	mov	a,r7
-	addc	a,(_Joystick_Control_sloc6_1_0 + 1)
-	mov	dph,a
-	lcall	___sint2fs
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r0,b
-	mov	r1,a
-	push	ar2
-	push	ar3
-	push	ar0
-	push	ar1
-	mov	dpl,_Joystick_Control_sloc5_1_0
-	mov	dph,(_Joystick_Control_sloc5_1_0 + 1)
-	mov	b,(_Joystick_Control_sloc5_1_0 + 2)
-	mov	a,(_Joystick_Control_sloc5_1_0 + 3)
-	lcall	___fsdiv
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r0,b
-	mov	r1,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	mov	dpl,r2
-	mov	dph,r3
+	mov	dpl,r4
+	mov	dph,r5
 	mov	b,r0
 	mov	a,r1
+	push	ar4
+	push	ar5
 	lcall	___fs2uchar
 	mov	a,dpl
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
 	mov	dptr,#_pwm_right
 	movx	@dptr,a
-	ret
-L040031?:
-;	main.c:1151: if (vy*100<=vy_thres*100/2){
+;	main.c:1178: return curr_angle; 
+	pop	ar5
+	pop	ar4
+;	main.c:1141: pwm_right = vx_error*pwm_corr; 
+L040022?:
+;	main.c:1143: curr_angle -= angle_diff * 1.5; // TUNE THIS 
+	push	ar4
+	push	ar5
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	push	_Joystick_Control_sloc2_1_0
+	push	(_Joystick_Control_sloc2_1_0 + 1)
+	push	(_Joystick_Control_sloc2_1_0 + 2)
+	push	(_Joystick_Control_sloc2_1_0 + 3)
+	mov	dptr,#0x0000
+	mov	b,#0xC0
+	mov	a,#0x3F
+	lcall	___fsmul
+	mov	_Joystick_Control_sloc3_1_0,dpl
+	mov	(_Joystick_Control_sloc3_1_0 + 1),dph
+	mov	(_Joystick_Control_sloc3_1_0 + 2),b
+	mov	(_Joystick_Control_sloc3_1_0 + 3),a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar5
+	pop	ar4
+	mov	dptr,#_curr_angle
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r5,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	push	_Joystick_Control_sloc3_1_0
+	push	(_Joystick_Control_sloc3_1_0 + 1)
+	push	(_Joystick_Control_sloc3_1_0 + 2)
+	push	(_Joystick_Control_sloc3_1_0 + 3)
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r0
+	mov	a,r1
+	lcall	___fssub
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	pop	ar2
+	mov	dptr,#_curr_angle
+	mov	a,r4
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r5
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r0
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r1
+	movx	@dptr,a
+;	main.c:1178: return curr_angle; 
+	pop	ar5
+	pop	ar4
+;	main.c:1143: curr_angle -= angle_diff * 1.5; // TUNE THIS 
+L040027?:
+;	main.c:1147: if (vy_err<0){
+	mov	a,(_Joystick_Control_sloc1_1_0 + 1)
+	jb	acc.7,L040076?
+	ljmp	L040040?
+L040076?:
+;	main.c:1148: L_motor_dir = 1; 
+	mov	dptr,#_L_motor_dir
+	mov	a,#0x01
+	movx	@dptr,a
+;	main.c:1149: R_motor_dir = 1; 
+	mov	dptr,#_R_motor_dir
+	mov	a,#0x01
+	movx	@dptr,a
+;	main.c:1151: if (vx_err>0){
+	mov	dptr,#_Joystick_Control_vx_err_1_214
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	clr	c
+	clr	a
+	subb	a,r0
+	clr	a
+	xrl	a,#0x80
+	mov	b,r1
+	xrl	b,#0x80
+	subb	a,b
+	jc	L040077?
+	ljmp	L040035?
+L040077?:
+;	main.c:1152: if (vy*100<=vy_thres*100/2){
 	mov	__mulint_PARM_2,r4
 	mov	(__mulint_PARM_2 + 1),r5
 	mov	dptr,#0x0064
+	push	ar2
+	push	ar3
+	lcall	__mulint
+	mov	r0,dpl
+	mov	r1,dph
+	mov	dptr,#_vy_thres
+	movx	a,@dptr
+	mov	__mulint_PARM_2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	(__mulint_PARM_2 + 1),a
+	mov	dptr,#0x0064
+	push	ar0
+	push	ar1
+	lcall	__mulint
+	mov	r6,dpl
+	mov	r7,dph
+	mov	__divsint_PARM_2,#0x02
+	clr	a
+	mov	(__divsint_PARM_2 + 1),a
+	mov	dpl,r6
+	mov	dph,r7
+	lcall	__divsint
+	mov	r6,dpl
+	mov	r7,dph
+	pop	ar1
+	pop	ar0
+	pop	ar3
+	pop	ar2
+	clr	c
+	mov	a,r6
+	subb	a,r0
+	mov	a,r7
+	xrl	a,#0x80
+	mov	b,r1
+	xrl	b,#0x80
+	subb	a,b
+	jnc	L040078?
+	ljmp	L040029?
+L040078?:
+;	main.c:1153: pwm_left = vy_error; 
+	mov	dptr,#_pwm_left
+	mov	a,_Joystick_Control_sloc0_1_0
+	movx	@dptr,a
+;	main.c:1154: pwm_right = pwm_corr*vy_error*100/(vx_error+vy_error);
+	mov	dptr,#_pwm_corr
+	movx	a,@dptr
+	mov	_Joystick_Control_sloc3_1_0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc3_1_0 + 1),a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc3_1_0 + 2),a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc3_1_0 + 3),a
+	mov	dpl,_Joystick_Control_sloc0_1_0
+	mov	dph,(_Joystick_Control_sloc0_1_0 + 1)
+	push	ar2
+	push	ar3
+	lcall	___sint2fs
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
 	push	ar6
 	push	ar7
-	lcall	__mulint
-	mov	r2,dpl
-	mov	r3,dph
-	pop	ar7
-	pop	ar6
-	mov	__mulint_PARM_2,_Joystick_Control_sloc2_1_0
-	mov	(__mulint_PARM_2 + 1),(_Joystick_Control_sloc2_1_0 + 1)
+	push	ar0
+	push	ar1
+	mov	dpl,_Joystick_Control_sloc3_1_0
+	mov	dph,(_Joystick_Control_sloc3_1_0 + 1)
+	mov	b,(_Joystick_Control_sloc3_1_0 + 2)
+	mov	a,(_Joystick_Control_sloc3_1_0 + 3)
+	lcall	___fsmul
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	push	ar6
+	push	ar7
+	push	ar0
+	push	ar1
+	mov	dptr,#0x0000
+	mov	b,#0xC8
+	mov	a,#0x42
+	lcall	___fsmul
+	mov	_Joystick_Control_sloc3_1_0,dpl
+	mov	(_Joystick_Control_sloc3_1_0 + 1),dph
+	mov	(_Joystick_Control_sloc3_1_0 + 2),b
+	mov	(_Joystick_Control_sloc3_1_0 + 3),a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	pop	ar2
+	mov	a,_Joystick_Control_sloc0_1_0
+	add	a,r2
+	mov	dpl,a
+	mov	a,(_Joystick_Control_sloc0_1_0 + 1)
+	addc	a,r3
+	mov	dph,a
+	lcall	___sint2fs
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	push	ar6
+	push	ar7
+	push	ar0
+	push	ar1
+	mov	dpl,_Joystick_Control_sloc3_1_0
+	mov	dph,(_Joystick_Control_sloc3_1_0 + 1)
+	mov	b,(_Joystick_Control_sloc3_1_0 + 2)
+	mov	a,(_Joystick_Control_sloc3_1_0 + 3)
+	lcall	___fsdiv
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	___fs2uchar
+	mov	a,dpl
+	mov	dptr,#_pwm_right
+	movx	@dptr,a
+	ljmp	L040030?
+L040029?:
+;	main.c:1157: pwm_left = vx_error; 
+	mov	dptr,#_pwm_left
+	mov	a,r2
+	movx	@dptr,a
+;	main.c:1158: pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
+	mov	dptr,#_pwm_corr
+	movx	a,@dptr
+	mov	_Joystick_Control_sloc3_1_0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc3_1_0 + 1),a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc3_1_0 + 2),a
+	inc	dptr
+	movx	a,@dptr
+	mov	(_Joystick_Control_sloc3_1_0 + 3),a
+	mov	dpl,r2
+	mov	dph,r3
+	push	ar2
+	push	ar3
+	lcall	___sint2fs
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	push	ar6
+	push	ar7
+	push	ar0
+	push	ar1
+	mov	dpl,_Joystick_Control_sloc3_1_0
+	mov	dph,(_Joystick_Control_sloc3_1_0 + 1)
+	mov	b,(_Joystick_Control_sloc3_1_0 + 2)
+	mov	a,(_Joystick_Control_sloc3_1_0 + 3)
+	lcall	___fsmul
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	push	ar6
+	push	ar7
+	push	ar0
+	push	ar1
+	mov	dptr,#0x0000
+	mov	b,#0xC8
+	mov	a,#0x42
+	lcall	___fsmul
+	mov	_Joystick_Control_sloc3_1_0,dpl
+	mov	(_Joystick_Control_sloc3_1_0 + 1),dph
+	mov	(_Joystick_Control_sloc3_1_0 + 2),b
+	mov	(_Joystick_Control_sloc3_1_0 + 3),a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	pop	ar3
+	pop	ar2
+	mov	a,_Joystick_Control_sloc0_1_0
+	add	a,r2
+	mov	dpl,a
+	mov	a,(_Joystick_Control_sloc0_1_0 + 1)
+	addc	a,r3
+	mov	dph,a
+	lcall	___sint2fs
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	push	ar6
+	push	ar7
+	push	ar0
+	push	ar1
+	mov	dpl,_Joystick_Control_sloc3_1_0
+	mov	dph,(_Joystick_Control_sloc3_1_0 + 1)
+	mov	b,(_Joystick_Control_sloc3_1_0 + 2)
+	mov	a,(_Joystick_Control_sloc3_1_0 + 3)
+	lcall	___fsdiv
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	___fs2uchar
+	mov	a,dpl
+	mov	dptr,#_pwm_right
+	movx	@dptr,a
+L040030?:
+;	main.c:1160: curr_angle -= angle_diff * 1.4; // TUNE THIS 
+	push	_Joystick_Control_sloc2_1_0
+	push	(_Joystick_Control_sloc2_1_0 + 1)
+	push	(_Joystick_Control_sloc2_1_0 + 2)
+	push	(_Joystick_Control_sloc2_1_0 + 3)
+	mov	dptr,#0x3333
+	mov	b,#0xB3
+	mov	a,#0x3F
+	lcall	___fsmul
+	mov	_Joystick_Control_sloc3_1_0,dpl
+	mov	(_Joystick_Control_sloc3_1_0 + 1),dph
+	mov	(_Joystick_Control_sloc3_1_0 + 2),b
+	mov	(_Joystick_Control_sloc3_1_0 + 3),a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dptr,#_curr_angle
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	push	_Joystick_Control_sloc3_1_0
+	push	(_Joystick_Control_sloc3_1_0 + 1)
+	push	(_Joystick_Control_sloc3_1_0 + 2)
+	push	(_Joystick_Control_sloc3_1_0 + 3)
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	___fssub
+	mov	r6,dpl
+	mov	r7,dph
+	mov	r0,b
+	mov	r1,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dptr,#_curr_angle
+	mov	a,r6
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r7
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r0
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r1
+	movx	@dptr,a
+	ljmp	L040040?
+L040035?:
+;	main.c:1164: if (vy*100<=vy_thres*100/2){
+	mov	__mulint_PARM_2,r4
+	mov	(__mulint_PARM_2 + 1),r5
 	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
-	push	ar6
-	push	ar7
 	lcall	__mulint
 	mov	r4,dpl
 	mov	r5,dph
+	mov	dptr,#_vy_thres
+	movx	a,@dptr
+	mov	__mulint_PARM_2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	(__mulint_PARM_2 + 1),a
+	mov	dptr,#0x0064
+	push	ar4
+	push	ar5
+	lcall	__mulint
+	mov	r6,dpl
+	mov	r7,dph
 	mov	__divsint_PARM_2,#0x02
 	clr	a
+	mov	(__divsint_PARM_2 + 1),a
+	mov	dpl,r6
+	mov	dph,r7
+	lcall	__divsint
+	mov	r6,dpl
+	mov	r7,dph
+	pop	ar5
+	pop	ar4
+	pop	ar3
+	pop	ar2
+	clr	c
+	mov	a,r6
+	subb	a,r4
+	mov	a,r7
+	xrl	a,#0x80
+	mov	b,r5
+	xrl	b,#0x80
+	subb	a,b
+	jnc	L040079?
+	ljmp	L040032?
+L040079?:
+;	main.c:1165: pwm_left = vy_error*100/(vx_error+vy_error);
+	mov	__mulint_PARM_2,_Joystick_Control_sloc0_1_0
+	mov	(__mulint_PARM_2 + 1),(_Joystick_Control_sloc0_1_0 + 1)
+	mov	dptr,#0x0064
+	push	ar2
+	push	ar3
+	lcall	__mulint
+	mov	r4,dpl
+	mov	r5,dph
+	pop	ar3
+	pop	ar2
+	mov	a,_Joystick_Control_sloc0_1_0
+	add	a,r2
+	mov	__divsint_PARM_2,a
+	mov	a,(_Joystick_Control_sloc0_1_0 + 1)
+	addc	a,r3
 	mov	(__divsint_PARM_2 + 1),a
 	mov	dpl,r4
 	mov	dph,r5
 	lcall	__divsint
 	mov	r4,dpl
-	mov	r5,dph
-	pop	ar7
-	pop	ar6
-	pop	ar3
-	pop	ar2
-	clr	c
-	mov	a,r4
-	subb	a,r2
-	mov	a,r5
-	xrl	a,#0x80
-	mov	b,r3
-	xrl	b,#0x80
-	subb	a,b
-	jnc	L040071?
-	ljmp	L040028?
-L040071?:
-;	main.c:1152: pwm_left = vy_error*100/(vx_error+vy_error);
-	mov	__mulint_PARM_2,r6
-	mov	(__mulint_PARM_2 + 1),r7
-	mov	dptr,#0x0064
-	push	ar6
-	push	ar7
-	lcall	__mulint
-	mov	r2,dpl
-	mov	r3,dph
-	pop	ar7
-	pop	ar6
-	mov	a,r6
-	add	a,_Joystick_Control_sloc6_1_0
-	mov	__divsint_PARM_2,a
-	mov	a,r7
-	addc	a,(_Joystick_Control_sloc6_1_0 + 1)
-	mov	(__divsint_PARM_2 + 1),a
-	mov	dpl,r2
-	mov	dph,r3
-	push	ar6
-	push	ar7
-	lcall	__divsint
-	mov	r2,dpl
-	pop	ar7
-	pop	ar6
 	mov	dptr,#_pwm_left
-	mov	a,r2
+	mov	a,r4
 	movx	@dptr,a
-;	main.c:1153: pwm_right =pwm_corr*vy_error; 
+;	main.c:1166: pwm_right =pwm_corr*vy_error; 
 	mov	dptr,#_pwm_corr
 	movx	a,@dptr
-	mov	_Joystick_Control_sloc5_1_0,a
+	mov	_Joystick_Control_sloc3_1_0,a
 	inc	dptr
 	movx	a,@dptr
-	mov	(_Joystick_Control_sloc5_1_0 + 1),a
+	mov	(_Joystick_Control_sloc3_1_0 + 1),a
 	inc	dptr
 	movx	a,@dptr
-	mov	(_Joystick_Control_sloc5_1_0 + 2),a
+	mov	(_Joystick_Control_sloc3_1_0 + 2),a
 	inc	dptr
 	movx	a,@dptr
-	mov	(_Joystick_Control_sloc5_1_0 + 3),a
-	mov	dpl,r6
-	mov	dph,r7
+	mov	(_Joystick_Control_sloc3_1_0 + 3),a
+	mov	dpl,_Joystick_Control_sloc0_1_0
+	mov	dph,(_Joystick_Control_sloc0_1_0 + 1)
 	lcall	___sint2fs
 	mov	r0,dpl
 	mov	r1,dph
-	mov	r2,b
-	mov	r3,a
+	mov	r4,b
+	mov	r5,a
 	push	ar0
 	push	ar1
+	push	ar4
+	push	ar5
+	mov	dpl,_Joystick_Control_sloc3_1_0
+	mov	dph,(_Joystick_Control_sloc3_1_0 + 1)
+	mov	b,(_Joystick_Control_sloc3_1_0 + 2)
+	mov	a,(_Joystick_Control_sloc3_1_0 + 3)
+	lcall	___fsmul
+	mov	r4,dpl
+	mov	r5,dph
+	mov	r6,b
+	mov	r7,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r6
+	mov	a,r7
+	lcall	___fs2uchar
+	mov	a,dpl
+	mov	dptr,#_pwm_right
+	movx	@dptr,a
+	ljmp	L040033?
+L040032?:
+;	main.c:1169: pwm_left = vx_error*100/(vx_error+vy_error);
+	mov	__mulint_PARM_2,r2
+	mov	(__mulint_PARM_2 + 1),r3
+	mov	dptr,#0x0064
 	push	ar2
 	push	ar3
-	mov	dpl,_Joystick_Control_sloc5_1_0
-	mov	dph,(_Joystick_Control_sloc5_1_0 + 1)
-	mov	b,(_Joystick_Control_sloc5_1_0 + 2)
-	mov	a,(_Joystick_Control_sloc5_1_0 + 3)
+	lcall	__mulint
+	mov	r4,dpl
+	mov	r5,dph
+	pop	ar3
+	pop	ar2
+	mov	a,_Joystick_Control_sloc0_1_0
+	add	a,r2
+	mov	__divsint_PARM_2,a
+	mov	a,(_Joystick_Control_sloc0_1_0 + 1)
+	addc	a,r3
+	mov	(__divsint_PARM_2 + 1),a
+	mov	dpl,r4
+	mov	dph,r5
+	push	ar2
+	push	ar3
+	lcall	__divsint
+	mov	r4,dpl
+	pop	ar3
+	pop	ar2
+	mov	dptr,#_pwm_left
+	mov	a,r4
+	movx	@dptr,a
+;	main.c:1170: pwm_right = pwm_corr*vx_error; 
+	mov	dptr,#_pwm_corr
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r5,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	mov	dpl,r2
+	mov	dph,r3
+	push	ar4
+	push	ar5
+	push	ar6
+	push	ar7
+	lcall	___sint2fs
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r0,b
+	mov	r1,a
+	pop	ar7
+	pop	ar6
+	pop	ar5
+	pop	ar4
+	push	ar2
+	push	ar3
+	push	ar0
+	push	ar1
+	mov	dpl,r4
+	mov	dph,r5
+	mov	b,r6
+	mov	a,r7
 	lcall	___fsmul
 	mov	r2,dpl
 	mov	r3,dph
@@ -6356,34 +7019,66 @@ L040071?:
 	mov	a,dpl
 	mov	dptr,#_pwm_right
 	movx	@dptr,a
-	ret
-L040028?:
-;	main.c:1156: pwm_left = vx_error*100/(vx_error+vy_error);
-	mov	__mulint_PARM_2,_Joystick_Control_sloc6_1_0
-	mov	(__mulint_PARM_2 + 1),(_Joystick_Control_sloc6_1_0 + 1)
-	mov	dptr,#0x0064
-	push	ar6
-	push	ar7
-	lcall	__mulint
+L040033?:
+;	main.c:1172: curr_angle += angle_diff * 1.4; // TUNE THIS 
+	push	_Joystick_Control_sloc2_1_0
+	push	(_Joystick_Control_sloc2_1_0 + 1)
+	push	(_Joystick_Control_sloc2_1_0 + 2)
+	push	(_Joystick_Control_sloc2_1_0 + 3)
+	mov	dptr,#0x3333
+	mov	b,#0xB3
+	mov	a,#0x3F
+	lcall	___fsmul
 	mov	r2,dpl
 	mov	r3,dph
-	pop	ar7
-	pop	ar6
-	mov	a,r6
-	add	a,_Joystick_Control_sloc6_1_0
-	mov	__divsint_PARM_2,a
-	mov	a,r7
-	addc	a,(_Joystick_Control_sloc6_1_0 + 1)
-	mov	(__divsint_PARM_2 + 1),a
-	mov	dpl,r2
-	mov	dph,r3
-	lcall	__divsint
+	mov	r4,b
+	mov	r5,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dptr,#_curr_angle
+	movx	a,@dptr
+	mov	r6,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r7,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	push	ar2
+	push	ar3
+	push	ar4
+	push	ar5
+	mov	dpl,r6
+	mov	dph,r7
+	mov	b,r0
+	mov	a,r1
+	lcall	___fsadd
 	mov	r2,dpl
-	mov	dptr,#_pwm_left
+	mov	r3,dph
+	mov	r4,b
+	mov	r5,a
+	mov	a,sp
+	add	a,#0xfc
+	mov	sp,a
+	mov	dptr,#_curr_angle
 	mov	a,r2
 	movx	@dptr,a
-;	main.c:1157: pwm_right = pwm_corr*vx_error; 
-	mov	dptr,#_pwm_corr
+	inc	dptr
+	mov	a,r3
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r4
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r5
+	movx	@dptr,a
+L040040?:
+;	main.c:1177: last_raw_angle = raw_angle; 
+	mov	dptr,#_raw_angle
 	movx	a,@dptr
 	mov	r2,a
 	inc	dptr
@@ -6395,46 +7090,33 @@ L040028?:
 	inc	dptr
 	movx	a,@dptr
 	mov	r5,a
-	mov	dpl,_Joystick_Control_sloc6_1_0
-	mov	dph,(_Joystick_Control_sloc6_1_0 + 1)
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
-	lcall	___sint2fs
-	mov	r6,dpl
-	mov	r7,dph
-	mov	r0,b
-	mov	r1,a
-	pop	ar5
-	pop	ar4
-	pop	ar3
-	pop	ar2
-	push	ar6
-	push	ar7
-	push	ar0
-	push	ar1
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r4
-	mov	a,r5
-	lcall	___fsmul
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
-	mov	a,sp
-	add	a,#0xfc
-	mov	sp,a
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r4
-	mov	a,r5
-	lcall	___fs2uchar
-	mov	a,dpl
-	mov	dptr,#_pwm_right
+	mov	dptr,#_last_raw_angle
+	mov	a,r2
 	movx	@dptr,a
-;	main.c:1162: return; 
+	inc	dptr
+	mov	a,r3
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r4
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r5
+	movx	@dptr,a
+;	main.c:1178: return curr_angle; 
+	mov	dptr,#_curr_angle
+	movx	a,@dptr
+	mov	r2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r3,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r4
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
@@ -6444,13 +7126,14 @@ L040028?:
 ;vx                        Allocated with name '_main_vx_1_237'
 ;vy                        Allocated with name '_main_vy_1_237'
 ;auto_mode                 Allocated with name '_main_auto_mode_1_237'
+;angle_count               Allocated with name '_main_angle_count_1_237'
 ;------------------------------------------------------------
-;	main.c:1165: void main (void)
+;	main.c:1181: void main (void)
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
-;	main.c:1168: xdata int vx = 0, vy = 0; 
+;	main.c:1184: xdata int vx = 0, vy = 0; 
 	mov	dptr,#_main_vx_1_237
 	clr	a
 	movx	@dptr,a
@@ -6461,25 +7144,25 @@ _main:
 	movx	@dptr,a
 	inc	dptr
 	movx	@dptr,a
-;	main.c:1169: xdata int auto_mode = 0;
+;	main.c:1185: xdata int auto_mode = 0;
 	mov	dptr,#_main_auto_mode_1_237
 	clr	a
 	movx	@dptr,a
 	inc	dptr
 	movx	@dptr,a
-;	main.c:1170: char pick_char = '0';
+;	main.c:1186: char pick_char = '0';
 	mov	_main_pick_char_1_237,#0x30
-;	main.c:1173: Init_all();
+;	main.c:1190: Init_all();
 	lcall	_Init_all
-;	main.c:1174: BMM150_Init();
+;	main.c:1191: BMM150_Init();
 	lcall	_BMM150_Init
-;	main.c:1175: waitms(500);
+;	main.c:1192: waitms(500);
 	mov	dptr,#0x01F4
 	lcall	_waitms
-;	main.c:1176: printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
-	mov	a,#__str_12
+;	main.c:1193: printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
+	mov	a,#__str_11
 	push	acc
-	mov	a,#(__str_12 >> 8)
+	mov	a,#(__str_11 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -6487,85 +7170,54 @@ _main:
 	dec	sp
 	dec	sp
 	dec	sp
-;	main.c:1177: UART1_Init(9600);
+;	main.c:1194: UART1_Init(9600);
 	mov	dptr,#0x2580
 	clr	a
 	mov	b,a
 	lcall	_UART1_Init
-;	main.c:1179: ReceptionOff();
+;	main.c:1196: ReceptionOff();
 	lcall	_ReceptionOff
-;	main.c:1182: SendATCommand("AT+VER\r\n");
+;	main.c:1199: SendATCommand("AT+VER\r\n");
+	mov	dptr,#__str_12
+	mov	b,#0x80
+	lcall	_SendATCommand
+;	main.c:1200: SendATCommand("AT+BAUD\r\n");
 	mov	dptr,#__str_13
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:1183: SendATCommand("AT+BAUD\r\n");
+;	main.c:1201: SendATCommand("AT+RFID\r\n");
 	mov	dptr,#__str_14
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:1184: SendATCommand("AT+RFID\r\n");
+;	main.c:1202: SendATCommand("AT+DVID\r\n");
 	mov	dptr,#__str_15
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:1185: SendATCommand("AT+DVID\r\n");
+;	main.c:1203: SendATCommand("AT+RFC002\r\n");
 	mov	dptr,#__str_16
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:1186: SendATCommand("AT+RFC002\r\n");
+;	main.c:1204: SendATCommand("AT+POWE\r\n");
 	mov	dptr,#__str_17
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:1187: SendATCommand("AT+POWE\r\n");
+;	main.c:1205: SendATCommand("AT+CLSS\r\n");
 	mov	dptr,#__str_18
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:1188: SendATCommand("AT+CLSS\r\n");
+;	main.c:1206: SendATCommand("AT+DVIDEF11\r\n");  
 	mov	dptr,#__str_19
 	mov	b,#0x80
 	lcall	_SendATCommand
-;	main.c:1189: SendATCommand("AT+DVIDEF11\r\n");  
-	mov	dptr,#__str_20
-	mov	b,#0x80
-	lcall	_SendATCommand
-;	main.c:1192: L_bridge_1 = 0; 
+;	main.c:1209: L_bridge_1 = 0; 
 	clr	_P2_1
-;	main.c:1193: L_bridge_2 = 0; 
+;	main.c:1210: L_bridge_2 = 0; 
 	clr	_P2_2
-;	main.c:1194: R_bridge_1 = 0; 
+;	main.c:1211: R_bridge_1 = 0; 
 	clr	_P2_4
-;	main.c:1195: R_bridge_2 = 0; 
+;	main.c:1212: R_bridge_2 = 0; 
 	clr	_P2_3
-;	main.c:1197: while(1)
-L041016?:
-;	main.c:1201: if(pick_char=='1'){
-	mov	a,#0x31
-	cjne	a,_main_pick_char_1_237,L041002?
-;	main.c:1202: servo_pick();
-	lcall	_servo_pick
-;	main.c:1203: waitms(1000);
-	mov	dptr,#0x03E8
-	lcall	_waitms
-;	main.c:1204: pick_char = '0';
-	mov	_main_pick_char_1_237,#0x30
-L041002?:
-;	main.c:1207: if(auto_mode){
-	mov	dptr,#_main_auto_mode_1_237
-	movx	a,@dptr
-	mov	r2,a
-	inc	dptr
-	movx	a,@dptr
-	mov	r3,a
-	orl	a,r2
-	jz	L041004?
-;	main.c:1208: Auto_mode_slave();
-	lcall	_Auto_mode_slave
-;	main.c:1209: auto_mode = 0;
-	mov	dptr,#_main_auto_mode_1_237
-	clr	a
-	movx	@dptr,a
-	inc	dptr
-	movx	@dptr,a
-L041004?:
-;	main.c:1211: curr_angle = Read_angle();
+;	main.c:1215: curr_angle = Read_angle();
 	lcall	_Read_angle
 	mov	r2,dpl
 	mov	r3,dph
@@ -6583,6 +7235,64 @@ L041004?:
 	inc	dptr
 	mov	a,r5
 	movx	@dptr,a
+<<<<<<< HEAD
+;	main.c:1216: while(1)
+L041016?:
+;	main.c:1218: temp = Read_angle();
+	lcall	_Read_angle
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r4,b
+	mov	r5,a
+	mov	dptr,#_temp
+	mov	a,r2
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r3
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r4
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r5
+	movx	@dptr,a
+;	main.c:1222: if(pick_char=='1'){
+	mov	a,#0x31
+	cjne	a,_main_pick_char_1_237,L041002?
+;	main.c:1223: servo_pick();
+	lcall	_servo_pick
+;	main.c:1224: waitms(1000);
+	mov	dptr,#0x03E8
+	lcall	_waitms
+;	main.c:1225: pick_char = '0';
+	mov	_main_pick_char_1_237,#0x30
+L041002?:
+;	main.c:1228: if(auto_mode){
+	mov	dptr,#_main_auto_mode_1_237
+	movx	a,@dptr
+	mov	r2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r3,a
+	orl	a,r2
+	jz	L041004?
+;	main.c:1229: Auto_mode_slave();
+	lcall	_Auto_mode_slave
+;	main.c:1230: auto_mode = 0;
+	mov	dptr,#_main_auto_mode_1_237
+	clr	a
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+L041004?:
+;	main.c:1233: if(RXU1()) // Something has arrived
+	lcall	_RXU1
+	jnc	L041016?
+;	main.c:1235: c=getchar1();
+	lcall	_getchar1
+	mov	r2,dpl
+;	main.c:1236: if(c=='!') // Master is sending message
+=======
 ;	main.c:1212: if(RXU1()) // Something has arrived
 	lcall	_RXU1
 	jnc	L041016?
@@ -6590,17 +7300,26 @@ L041004?:
 	lcall	_getchar1
 	mov	r2,dpl
 ;	main.c:1215: if(c=='!') // Master is sending message
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	cjne	r2,#0x21,L041031?
 	sjmp	L041032?
 L041031?:
 	ljmp	L041011?
 L041032?:
+<<<<<<< HEAD
+;	main.c:1238: getstr1(buff, sizeof(buff)-1);
+=======
 ;	main.c:1217: getstr1(buff, sizeof(buff)-1);
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	mov	_getstr1_PARM_2,#0x13
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_getstr1
+<<<<<<< HEAD
+;	main.c:1239: if(strlen(buff)==11)
+=======
 ;	main.c:1218: if(strlen(buff)==11)
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_strlen
@@ -6612,7 +7331,11 @@ L041032?:
 L041033?:
 	ljmp	L041006?
 L041034?:
+<<<<<<< HEAD
+;	main.c:1242: sscanf(buff, "%03d,%03d,%c,%01d", &vx, &vy, &pick_char, &auto_mode);
+=======
 ;	main.c:1220: sscanf(buff, "%03d,%03d,%c,%01d", &vx, &vy, &pick_char, &auto_mode);
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	mov	a,#_main_auto_mode_1_237
 	push	acc
 	mov	a,#(_main_auto_mode_1_237 >> 8)
@@ -6637,9 +7360,15 @@ L041034?:
 	push	acc
 	clr	a
 	push	acc
+<<<<<<< HEAD
+	mov	a,#__str_20
+	push	acc
+	mov	a,#(__str_20 >> 8)
+=======
 	mov	a,#__str_21
 	push	acc
 	mov	a,#(__str_21 >> 8)
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -6653,7 +7382,11 @@ L041034?:
 	mov	a,sp
 	add	a,#0xee
 	mov	sp,a
+<<<<<<< HEAD
+;	main.c:1243: printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, pick_char, auto_mode);
+=======
 ;	main.c:1221: printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, pick_char, auto_mode);
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	mov	a,_main_pick_char_1_237
 	mov	r3,a
 	rlc	a
@@ -6679,9 +7412,15 @@ L041034?:
 	inc	dptr
 	movx	a,@dptr
 	push	acc
+<<<<<<< HEAD
+	mov	a,#__str_21
+	push	acc
+	mov	a,#(__str_21 >> 8)
+=======
 	mov	a,#__str_22
 	push	acc
 	mov	a,#(__str_22 >> 8)
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -6689,25 +7428,55 @@ L041034?:
 	mov	a,sp
 	add	a,#0xf5
 	mov	sp,a
+<<<<<<< HEAD
+;	main.c:1244: curr_angle = Joystick_Control(&vx, &vy);
+=======
 ;	main.c:1222: Joystick_Control(&vx, &vy);
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	mov	_Joystick_Control_PARM_2,#_main_vy_1_237
 	mov	(_Joystick_Control_PARM_2 + 1),#(_main_vy_1_237 >> 8)
 	mov	(_Joystick_Control_PARM_2 + 2),#0x00
 	mov	dptr,#_main_vx_1_237
 	mov	b,#0x00
 	lcall	_Joystick_Control
+	mov	r3,dpl
+	mov	r4,dph
+	mov	r5,b
+	mov	r6,a
+	mov	dptr,#_curr_angle
+	mov	a,r3
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r4
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r5
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r6
+	movx	@dptr,a
 	ljmp	L041016?
 L041006?:
+<<<<<<< HEAD
+;	main.c:1247: printf("*** BAD MESSAGE ***: %s\r\n", buff);
+=======
 ;	main.c:1225: printf("*** BAD MESSAGE ***: %s\r\n", buff);
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	mov	a,#_buff
 	push	acc
 	mov	a,#(_buff >> 8)
 	push	acc
 	mov	a,#0x40
 	push	acc
+<<<<<<< HEAD
+	mov	a,#__str_22
+	push	acc
+	mov	a,#(__str_22 >> 8)
+=======
 	mov	a,#__str_23
 	push	acc
 	mov	a,#(__str_23 >> 8)
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -6717,25 +7486,40 @@ L041006?:
 	mov	sp,a
 	ljmp	L041016?
 L041011?:
+<<<<<<< HEAD
+;	main.c:1250: else if(c=='@') // Master wants slave data
+=======
 ;	main.c:1228: else if(c=='@') // Master wants slave data
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	cjne	r2,#0x40,L041035?
 	sjmp	L041036?
 L041035?:
 	ljmp	L041016?
 L041036?:
+<<<<<<< HEAD
+;	main.c:1252: sprintf(buff, "0,00,%04ld,%05d,%03d\n", freq100, weight, (int)curr_angle);
+=======
 ;	main.c:1230: sprintf(buff, "0,00,%04ld,%05d,%4.1f\n", freq100, weight, curr_angle);
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	mov	dptr,#_curr_angle
 	movx	a,@dptr
-	push	acc
+	mov	r2,a
 	inc	dptr
 	movx	a,@dptr
-	push	acc
+	mov	r3,a
 	inc	dptr
 	movx	a,@dptr
-	push	acc
+	mov	r4,a
 	inc	dptr
 	movx	a,@dptr
-	push	acc
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r4
+	lcall	___fs2sint
+	mov	r2,dpl
+	mov	r3,dph
+	push	ar2
+	push	ar3
 	mov	dptr,#_weight
 	movx	a,@dptr
 	push	acc
@@ -6754,9 +7538,15 @@ L041036?:
 	inc	dptr
 	movx	a,@dptr
 	push	acc
+<<<<<<< HEAD
+	mov	a,#__str_23
+	push	acc
+	mov	a,#(__str_23 >> 8)
+=======
 	mov	a,#__str_24
 	push	acc
 	mov	a,#(__str_24 >> 8)
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -6768,18 +7558,28 @@ L041036?:
 	push	acc
 	lcall	_sprintf
 	mov	a,sp
-	add	a,#0xf0
+	add	a,#0xf2
 	mov	sp,a
+<<<<<<< HEAD
+;	main.c:1253: printf("%s\r\n",buff);
+=======
 ;	main.c:1231: printf("%s\r\n",buff);
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	mov	a,#_buff
 	push	acc
 	mov	a,#(_buff >> 8)
 	push	acc
 	mov	a,#0x40
 	push	acc
+<<<<<<< HEAD
+	mov	a,#__str_24
+	push	acc
+	mov	a,#(__str_24 >> 8)
+=======
 	mov	a,#__str_25
 	push	acc
 	mov	a,#(__str_25 >> 8)
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -6787,10 +7587,17 @@ L041036?:
 	mov	a,sp
 	add	a,#0xfa
 	mov	sp,a
+<<<<<<< HEAD
+;	main.c:1254: waitms(5); // The radio seems to need this delay...
+	mov	dptr,#0x0005
+	lcall	_waitms
+;	main.c:1255: sendstr1(buff);
+=======
 ;	main.c:1232: waitms(10); // The radio seems to need this delay...
 	mov	dptr,#0x000A
 	lcall	_waitms
 ;	main.c:1233: sendstr1(buff);
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_sendstr1
@@ -6831,6 +7638,12 @@ __xinit__seed:
 __xinit__pwm_corr:
 	db 0x33,0x33,0x73,0x3F	;  9.500000e-001
 __xinit__curr_angle:
+	db 0x00,0x00,0x00,0x00	;  0.000000e+000
+__xinit__raw_angle:
+	db 0x00,0x00,0x00,0x00	;  0.000000e+000
+__xinit__last_raw_angle:
+	db 0x00,0x00,0x00,0x00	;  0.000000e+000
+__xinit__angle_diff:
 	db 0x00,0x00,0x00,0x00	;  0.000000e+000
 __xinit__mea_yes:
 	db 0x01	;  1 
@@ -6879,7 +7692,7 @@ __str_8:
 	db '%03d,%03d,%01d,%01d'
 	db 0x00
 __str_9:
-	db '%01d,%02d,%ld,%05d,%4.1f'
+	db '%01d,%02d,%ld,%05d,%03d'
 	db 0x0A
 	db 0x00
 __str_10:
@@ -6888,75 +7701,89 @@ __str_10:
 	db 0x0A
 	db 0x00
 __str_11:
-	db 'Auto mode finished!'
-	db 0x0D
-	db 0x0A
-	db 0x00
-__str_12:
 	db 0x0D
 	db 0x0A
 	db 'EFM8LB12 JDY-40 Slave Test.'
 	db 0x0D
 	db 0x0A
 	db 0x00
-__str_13:
+__str_12:
 	db 'AT+VER'
 	db 0x0D
 	db 0x0A
 	db 0x00
-__str_14:
+__str_13:
 	db 'AT+BAUD'
 	db 0x0D
 	db 0x0A
 	db 0x00
-__str_15:
+__str_14:
 	db 'AT+RFID'
 	db 0x0D
 	db 0x0A
 	db 0x00
-__str_16:
+__str_15:
 	db 'AT+DVID'
 	db 0x0D
 	db 0x0A
 	db 0x00
-__str_17:
+__str_16:
 	db 'AT+RFC002'
 	db 0x0D
 	db 0x0A
 	db 0x00
-__str_18:
+__str_17:
 	db 'AT+POWE'
 	db 0x0D
 	db 0x0A
 	db 0x00
-__str_19:
+__str_18:
 	db 'AT+CLSS'
 	db 0x0D
 	db 0x0A
 	db 0x00
-__str_20:
+__str_19:
 	db 'AT+DVIDEF11'
 	db 0x0D
 	db 0x0A
 	db 0x00
+<<<<<<< HEAD
+__str_20:
+	db '%03d,%03d,%c,%01d'
+	db 0x00
+__str_21:
+=======
 __str_21:
 	db '%03d,%03d,%c,%01d'
 	db 0x00
 __str_22:
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	db 'Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d'
 	db 0x0D
 	db 0x0A
 	db 0x00
+<<<<<<< HEAD
+__str_22:
+=======
 __str_23:
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	db '*** BAD MESSAGE ***: %s'
 	db 0x0D
 	db 0x0A
 	db 0x00
+<<<<<<< HEAD
+__str_23:
+	db '0,00,%04ld,%05d,%03d'
+	db 0x0A
+	db 0x00
+__str_24:
+=======
 __str_24:
 	db '0,00,%04ld,%05d,%4.1f'
 	db 0x0A
 	db 0x00
 __str_25:
+>>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
 	db '%s'
 	db 0x0D
 	db 0x0A
