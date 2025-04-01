@@ -1,11 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-<<<<<<< HEAD
-; This file was generated Mon Mar 31 23:57:52 2025
-=======
-; This file was generated Mon Mar 31 18:03:53 2025
->>>>>>> 8abda3f8b56aa3564268914109dfaa54e2ba2927
+; This file was generated Tue Apr 01 13:02:05 2025
 ;--------------------------------------------------------
 $name freq
 $optc51 --model-small
