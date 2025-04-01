@@ -241,24 +241,23 @@ void TIM22_Handler(void)
 
 void Coin_chk(int weight_diff){
 
-	if( weight_diff > 600 && weight_diff < 750){
+	if( weight_diff > 570 && weight_diff < 750){
 		liangkuai++;
 	}
 
-	else if( weight_diff > 499 && weight_diff < 650){
+	else if( weight_diff > 370 && weight_diff <= 570){
 		yikuai++;
 	}
 
-	else if( weight_diff > 367 && weight_diff < 408){
+	else if( weight_diff > 345 && weight_diff <= 370){
 		liangmaowu++;
 	}
 
-	else if( weight_diff > 321 && weight_diff < 363){
+	else if( weight_diff > 299 && weight_diff <= 344){
 		wufen++;
 	}
 
-
-	else if( weight_diff > 148 && weight_diff < 170){
+	else if( weight_diff > 105 && weight_diff <= 299){
 		yimao++;
 	}
 
@@ -303,7 +302,7 @@ void main(void)
 	int state_res = 0;
 	int count_res = 0;
 	int weight = 0;
-	int weights[10] = {0};
+	int weights[25] = {0};
 	float angle = 0;
 	char index=0;
 	int old_weight = 0;
@@ -426,32 +425,33 @@ void main(void)
 		// Construct a test message
 		printf("%s\r\n",buff);
 		eputc2('!'); 
-		waitms(20); 			// This may need adjustment depending on how busy is the slave
+		waitms(10); 			// This may need adjustment depending on how busy is the slave
 		eputs2(buff); 			// Send the test message
 		eputc2('@'); 			// Request a message from the slave
 		
 		timeout_cnt=0;
 		while(1){
-			if(ReceivedBytes2()>20) break; // Something has arrived
-			if(++timeout_cnt>500) break; // Wait up to 25ms for the repply
+			if(ReceivedBytes2()>19) break; // Something has arrived
+			if(++timeout_cnt>1000) break; // Wait up to 25ms for the repply
 			Delay_us(100); // 100us*250=25ms
 		}		
-		if(ReceivedBytes2()>20){
+		if(ReceivedBytes2()>19){
 			egets2(buff, sizeof(buff)-1);
-			if(strlen(buff)==22){
+			if(strlen(buff)==20){
 				if(auto_state) 	printf("Slave_auto says: %s\r", buff);
 				else 			printf("Slave_manual says: %s\r", buff);
 				sscanf(buff, "%01d,%02d,%04d,%05d,%4.1f",&state_res,&count_res,&metal_freq,&weight,&angle);
-				weights[index % 10] = weight; // 存入数组
+				weights[index % 25] = weight; // 存入数组
         		index++;
 				if (1){
-					float std = calculate_std(weights, 10);
+					float std = calculate_std(weights, 25);
 					printf("标准差: %.3f\r\n", std);
-					if (std < 600) {
+					if (std < 3000) {
 						old_weight = new_weight;
-						printf("重量稳定: %d\r\n", calculate_mean(weights,10));
-						new_weight = calculate_mean(weights,10);
+						printf("重量稳定: %d\r\n", calculate_mean(weights,25));
+						new_weight = calculate_mean(weights,25);
 						Coin_chk(new_weight-old_weight);
+						printf("Coins: value: %d\r\n", new_weight-old_weight);
 					}
 				}
 			}
@@ -469,7 +469,7 @@ void main(void)
 		printf("Coins: liangkuai: %d, yikuai: %d, wumao: %d, liangmaowu: %d, yimao: %d, wufen: %d\r\n", liangkuai,yikuai,wumao,liangmaowu,yimao,wufen);
 
 		buzzer_ctrl(metal_freq);
-		waitms(20);  // Set the information interchange pace: communicate about every 50ms
+		waitms(50);  // Set the information interchange pace: communicate about every 50ms
 	}
 	
 }
