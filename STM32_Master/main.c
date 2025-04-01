@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include "UART2.h"
 #include "lcd.h"
 #include "adc.h"
@@ -21,7 +22,13 @@ int dummy;
 int pick_order = 0;
 int auto_state = 0;
 char lb[17];
-int i ;
+int i;
+char liangkuai = 0;
+char yikuai = 0;
+char wumao = 0;
+char liangmaowu = 0;
+char yimao = 0;
+char wufen = 0;
 // LQFP32 pinout
 //              ----------
 // 3.3v   VDD -|1       32|- VSS
@@ -232,6 +239,57 @@ void TIM22_Handler(void)
 	} 
 }
 
+void Coin_chk(int weight_diff){
+
+	if( weight_diff > 600 && weight_diff < 750){
+		liangkuai++;
+	}
+
+	else if( weight_diff > 499 && weight_diff < 650){
+		yikuai++;
+	}
+
+	else if( weight_diff > 367 && weight_diff < 408){
+		liangmaowu++;
+	}
+
+	else if( weight_diff > 321 && weight_diff < 363){
+		wufen++;
+	}
+
+
+	else if( weight_diff > 148 && weight_diff < 170){
+		yimao++;
+	}
+
+	return;
+
+}
+
+float calculate_std(int data[], int size) {
+    float sum = 0.0, mean, std = 0.0;
+    
+    // 计算均值
+    for (int i = 0; i < size; i++) {
+        sum += data[i];
+    }
+    mean = sum / size;
+    
+    // 计算标准差
+    for (int i = 0; i < size; i++) {
+        std += pow(data[i] - mean, 2);
+    }
+    return std / size;
+}
+
+int calculate_mean(int data[], int size) {
+    float sum = 0.0;
+    for (int i = 0; i < size; i++) {
+        sum += data[i];
+    }
+    return sum / size;
+}
+
 void main(void)
 {  
     int timeout_cnt=0;
@@ -245,7 +303,12 @@ void main(void)
 	int state_res = 0;
 	int count_res = 0;
 	int weight = 0;
+	int weights[10] = {0};
 	float angle = 0;
+	char index=0;
+	int old_weight = 0;
+	int new_weight = 0;
+
 		
 	uint8_t charge[8] = {
 		0b00000010, //       
@@ -370,15 +433,27 @@ void main(void)
 		timeout_cnt=0;
 		while(1){
 			if(ReceivedBytes2()>20) break; // Something has arrived
-			if(++timeout_cnt>250) break; // Wait up to 25ms for the repply
+			if(++timeout_cnt>500) break; // Wait up to 25ms for the repply
 			Delay_us(100); // 100us*250=25ms
 		}		
 		if(ReceivedBytes2()>20){
 			egets2(buff, sizeof(buff)-1);
-			if(strlen(buff)==21){
+			if(strlen(buff)==22){
 				if(auto_state) 	printf("Slave_auto says: %s\r", buff);
 				else 			printf("Slave_manual says: %s\r", buff);
-				sscanf(buff, "%01d,%02d,%04d,%04d,%4.1f",&state_res,&count_res,&metal_freq,&weight,&angle);
+				sscanf(buff, "%01d,%02d,%04d,%05d,%4.1f",&state_res,&count_res,&metal_freq,&weight,&angle);
+				weights[index % 10] = weight; // 存入数组
+        		index++;
+				if (1){
+					float std = calculate_std(weights, 10);
+					printf("标准差: %.3f\r\n", std);
+					if (std < 600) {
+						old_weight = new_weight;
+						printf("重量稳定: %d\r\n", calculate_mean(weights,10));
+						new_weight = calculate_mean(weights,10);
+						Coin_chk(new_weight-old_weight);
+					}
+				}
 			}
 			else{
 				while (ReceivedBytes2()) egetc2(); 
@@ -391,8 +466,10 @@ void main(void)
 			pick_order = 0;
 		}
 
+		printf("Coins: liangkuai: %d, yikuai: %d, wumao: %d, liangmaowu: %d, yimao: %d, wufen: %d\r\n", liangkuai,yikuai,wumao,liangmaowu,yimao,wufen);
+
 		buzzer_ctrl(metal_freq);
-		waitms(50);  // Set the information interchange pace: communicate about every 50ms
+		waitms(20);  // Set the information interchange pace: communicate about every 50ms
 	}
 	
 }
