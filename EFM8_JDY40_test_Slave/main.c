@@ -87,7 +87,7 @@ xdata unsigned int pwm_counter = 0;
 xdata unsigned int servo_counter = 0; 
 xdata unsigned char pwm_left = 0, pwm_right = 0; 
 xdata unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
-xdata unsigned char servo_base = 1, servo_arm = 1; 
+xdata unsigned char servo_base = 100, servo_arm = 2; 
 xdata int vx_thres = 161, vy_thres = 166; 
 xdata int vx = 0, vy = 0; 
 xdata long freq100;
@@ -848,29 +848,61 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 		Servo_arm=1;
 		Servo_base=1;
 	}
-	if(servo_arm==servo_counter)
+	if(servo_arm>=servo_counter)
 	{
-		Servo_arm=0;
+		Servo_arm = 1;
 	}
-	if(servo_base==servo_counter)
+	else 
 	{
-		Servo_base=0;
+		Servo_arm = 0; 
+	}
+	if(servo_base>=servo_counter)
+	{
+		Servo_base = 1;
+	}
+	else 
+	{
+		Servo_base = 0; 
 	}
 }
 
 void servo_pick(){
 	// xdata int i;
-	servo_arm = 1;
-	servo_base = 1;
+	printf("Initiailizing angle\r\n");
+	servo_arm = 100;
+	servo_base = 100;
+	waitms(500);
+	printf("Turning servo base \r\n");
 	servo_base = 250;
 	waitms(400);
+	printf("Turning servo arm \r\n");
 	servo_arm = 250;
 	printf("Magnet on\r\n");
 	Magnet = 1;
 	waitms(400);
-	printf("Magnet delay done\r\n");
-	servo_base = 150;
+	printf("Magnet delay done, moving servo base again\r\n");
+	servo_base = 200;
 	waitms(400);
+	servo_arm = 100; 
+	waitms(200);
+
+	// if (servo_arm<200)
+	// {
+	// 	servo_arm++;
+	// }
+	// else
+	// {
+	// 	servo_arm=100;	
+	// }
+
+	// if (servo_base>100)
+	// {
+	// 	servo_base--;
+	// }
+	// else
+	// {
+	// 	servo_base=200;	
+	// }
 	// waitms(200);
 	// for(i = 0; i<159; i++){
 	// 	waitms(2);
@@ -1217,6 +1249,7 @@ void main (void)
 	servo_pick();
 	while(1)
 	{	
+		servo_base = 100;
 		// temp = Read_angle();
 		//printf("coinval = %d\n", weight);
 		// printf("Current angle = %d, Raw angle = %d\r\n", (int)curr_angle, (int)temp);
