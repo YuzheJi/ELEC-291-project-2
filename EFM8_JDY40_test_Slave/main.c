@@ -1209,7 +1209,6 @@ void main (void)
 			auto_mode = 0;
 		}
 		curr_angle = Read_angle();
-		printf("weight: %u\r\n",weight);
 		if(RXU1()) // Something has arrived
 		{
 			c=getchar1();
@@ -1218,7 +1217,6 @@ void main (void)
 				getstr1(buff, sizeof(buff)-1);
 				if(strlen(buff)==11)
 				{
-					printf("Master says: %s\r\n", buff);
 					sscanf(buff, "%03d,%03d,%c,%01d", &vx, &vy, &pick_char, &auto_mode);
 		        	printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, pick_char, auto_mode);
 					Joystick_Control(&vx, &vy);
@@ -1231,7 +1229,7 @@ void main (void)
 			{
 				sprintf(buff, "0,00,%04ld,%05d,%4.1f\n", freq100, weight, curr_angle);
 				printf("%s\r\n",buff);
-				waitms(5); // The radio seems to need this delay...
+				waitms(10); // The radio seems to need this delay...
 				sendstr1(buff);
 			}
 		}

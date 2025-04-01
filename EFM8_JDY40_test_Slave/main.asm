@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-; This file was generated Mon Mar 31 17:59:07 2025
+; This file was generated Mon Mar 31 18:03:53 2025
 ;--------------------------------------------------------
 $name main
 $optc51 --model-small
@@ -6583,41 +6583,24 @@ L041004?:
 	inc	dptr
 	mov	a,r5
 	movx	@dptr,a
-;	main.c:1212: printf("weight: %u\r\n",weight);
-	mov	dptr,#_weight
-	movx	a,@dptr
-	push	acc
-	inc	dptr
-	movx	a,@dptr
-	push	acc
-	mov	a,#__str_21
-	push	acc
-	mov	a,#(__str_21 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	mov	a,sp
-	add	a,#0xfb
-	mov	sp,a
-;	main.c:1213: if(RXU1()) // Something has arrived
+;	main.c:1212: if(RXU1()) // Something has arrived
 	lcall	_RXU1
 	jnc	L041016?
-;	main.c:1215: c=getchar1();
+;	main.c:1214: c=getchar1();
 	lcall	_getchar1
 	mov	r2,dpl
-;	main.c:1216: if(c=='!') // Master is sending message
+;	main.c:1215: if(c=='!') // Master is sending message
 	cjne	r2,#0x21,L041031?
 	sjmp	L041032?
 L041031?:
 	ljmp	L041011?
 L041032?:
-;	main.c:1218: getstr1(buff, sizeof(buff)-1);
+;	main.c:1217: getstr1(buff, sizeof(buff)-1);
 	mov	_getstr1_PARM_2,#0x13
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_getstr1
-;	main.c:1219: if(strlen(buff)==11)
+;	main.c:1218: if(strlen(buff)==11)
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_strlen
@@ -6629,24 +6612,7 @@ L041032?:
 L041033?:
 	ljmp	L041006?
 L041034?:
-;	main.c:1221: printf("Master says: %s\r\n", buff);
-	mov	a,#_buff
-	push	acc
-	mov	a,#(_buff >> 8)
-	push	acc
-	mov	a,#0x40
-	push	acc
-	mov	a,#__str_22
-	push	acc
-	mov	a,#(__str_22 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	mov	a,sp
-	add	a,#0xfa
-	mov	sp,a
-;	main.c:1222: sscanf(buff, "%03d,%03d,%c,%01d", &vx, &vy, &pick_char, &auto_mode);
+;	main.c:1220: sscanf(buff, "%03d,%03d,%c,%01d", &vx, &vy, &pick_char, &auto_mode);
 	mov	a,#_main_auto_mode_1_237
 	push	acc
 	mov	a,#(_main_auto_mode_1_237 >> 8)
@@ -6671,9 +6637,9 @@ L041034?:
 	push	acc
 	clr	a
 	push	acc
-	mov	a,#__str_23
+	mov	a,#__str_21
 	push	acc
-	mov	a,#(__str_23 >> 8)
+	mov	a,#(__str_21 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -6687,7 +6653,7 @@ L041034?:
 	mov	a,sp
 	add	a,#0xee
 	mov	sp,a
-;	main.c:1223: printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, pick_char, auto_mode);
+;	main.c:1221: printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, pick_char, auto_mode);
 	mov	a,_main_pick_char_1_237
 	mov	r3,a
 	rlc	a
@@ -6713,9 +6679,9 @@ L041034?:
 	inc	dptr
 	movx	a,@dptr
 	push	acc
-	mov	a,#__str_24
+	mov	a,#__str_22
 	push	acc
-	mov	a,#(__str_24 >> 8)
+	mov	a,#(__str_22 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -6723,7 +6689,7 @@ L041034?:
 	mov	a,sp
 	add	a,#0xf5
 	mov	sp,a
-;	main.c:1224: Joystick_Control(&vx, &vy);
+;	main.c:1222: Joystick_Control(&vx, &vy);
 	mov	_Joystick_Control_PARM_2,#_main_vy_1_237
 	mov	(_Joystick_Control_PARM_2 + 1),#(_main_vy_1_237 >> 8)
 	mov	(_Joystick_Control_PARM_2 + 2),#0x00
@@ -6732,16 +6698,16 @@ L041034?:
 	lcall	_Joystick_Control
 	ljmp	L041016?
 L041006?:
-;	main.c:1227: printf("*** BAD MESSAGE ***: %s\r\n", buff);
+;	main.c:1225: printf("*** BAD MESSAGE ***: %s\r\n", buff);
 	mov	a,#_buff
 	push	acc
 	mov	a,#(_buff >> 8)
 	push	acc
 	mov	a,#0x40
 	push	acc
-	mov	a,#__str_25
+	mov	a,#__str_23
 	push	acc
-	mov	a,#(__str_25 >> 8)
+	mov	a,#(__str_23 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -6751,13 +6717,13 @@ L041006?:
 	mov	sp,a
 	ljmp	L041016?
 L041011?:
-;	main.c:1230: else if(c=='@') // Master wants slave data
+;	main.c:1228: else if(c=='@') // Master wants slave data
 	cjne	r2,#0x40,L041035?
 	sjmp	L041036?
 L041035?:
 	ljmp	L041016?
 L041036?:
-;	main.c:1232: sprintf(buff, "0,00,%04ld,%05d,%4.1f\n", freq100, weight, curr_angle);
+;	main.c:1230: sprintf(buff, "0,00,%04ld,%05d,%4.1f\n", freq100, weight, curr_angle);
 	mov	dptr,#_curr_angle
 	movx	a,@dptr
 	push	acc
@@ -6788,9 +6754,9 @@ L041036?:
 	inc	dptr
 	movx	a,@dptr
 	push	acc
-	mov	a,#__str_26
+	mov	a,#__str_24
 	push	acc
-	mov	a,#(__str_26 >> 8)
+	mov	a,#(__str_24 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -6804,16 +6770,16 @@ L041036?:
 	mov	a,sp
 	add	a,#0xf0
 	mov	sp,a
-;	main.c:1233: printf("%s\r\n",buff);
+;	main.c:1231: printf("%s\r\n",buff);
 	mov	a,#_buff
 	push	acc
 	mov	a,#(_buff >> 8)
 	push	acc
 	mov	a,#0x40
 	push	acc
-	mov	a,#__str_27
+	mov	a,#__str_25
 	push	acc
-	mov	a,#(__str_27 >> 8)
+	mov	a,#(__str_25 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -6821,10 +6787,10 @@ L041036?:
 	mov	a,sp
 	add	a,#0xfa
 	mov	sp,a
-;	main.c:1234: waitms(5); // The radio seems to need this delay...
-	mov	dptr,#0x0005
+;	main.c:1232: waitms(10); // The radio seems to need this delay...
+	mov	dptr,#0x000A
 	lcall	_waitms
-;	main.c:1235: sendstr1(buff);
+;	main.c:1233: sendstr1(buff);
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_sendstr1
@@ -6974,33 +6940,23 @@ __str_20:
 	db 0x0A
 	db 0x00
 __str_21:
-	db 'weight: %u'
-	db 0x0D
-	db 0x0A
-	db 0x00
-__str_22:
-	db 'Master says: %s'
-	db 0x0D
-	db 0x0A
-	db 0x00
-__str_23:
 	db '%03d,%03d,%c,%01d'
 	db 0x00
-__str_24:
+__str_22:
 	db 'Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d'
 	db 0x0D
 	db 0x0A
 	db 0x00
-__str_25:
+__str_23:
 	db '*** BAD MESSAGE ***: %s'
 	db 0x0D
 	db 0x0A
 	db 0x00
-__str_26:
+__str_24:
 	db '0,00,%04ld,%05d,%4.1f'
 	db 0x0A
 	db 0x00
-__str_27:
+__str_25:
 	db '%s'
 	db 0x0D
 	db 0x0A

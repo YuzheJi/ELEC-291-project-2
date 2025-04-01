@@ -1,7 +1,7 @@
 0000              1   ;--------------------------------------------------------
 0000              2   ; File Created by C51
 0000              3   ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-0000              4   ; This file was generated Mon Mar 31 17:59:07 2025
+0000              4   ; This file was generated Mon Mar 31 18:03:53 2025
 0000              5   ;--------------------------------------------------------
                   5   $name main
                   6   $optc51 --model-small
@@ -6583,297 +6583,263 @@
 21F3 A3        6583            inc     dptr
 21F4 ED        6584            mov     a,r5
 21F5 F0        6585            movx    @dptr,a
-21F6           6586   ;        main.c:1212: printf("weight: %u\r\n",weight);
-21F6 904B70    6587            mov     dptr,#_weight
-21F9 E0        6588            movx    a,@dptr
-21FA C0E0      6589            push    acc
-21FC A3        6590            inc     dptr
-21FD E0        6591            movx    a,@dptr
-21FE C0E0      6592            push    acc
-2200 7410      6593            mov     a,#__str_21
-2202 C0E0      6594            push    acc
-2204 741C      6595            mov     a,#(__str_21 >> 8)
-2206 C0E0      6596            push    acc
-2208 7480      6597            mov     a,#0x80
-220A C0E0      6598            push    acc
-220C 120000    6599            lcall   _printf
-220F E581      6600            mov     a,sp
-2211 24FB      6601            add     a,#0xfb
-2213 F581      6602            mov     sp,a
-2215           6603   ;        main.c:1213: if(RXU1()) // Something has arrived
-2215 120000    6604            lcall   _RXU1
-2218 5000      6605            jnc     L041016?
-221A           6606   ;        main.c:1215: c=getchar1();
-221A 120000    6607            lcall   _getchar1
-221D AA82      6608            mov     r2,dpl
-221F           6609   ;        main.c:1216: if(c=='!') // Master is sending message
-221F BA2150    6610            cjne    r2,#0x21,L041031?
-2222 8000      6611            sjmp    L041032?
-2224           6612   L041031?:
-2224 020000    6613            ljmp    L041011?
-2227           6614   L041032?:
-2227           6615   ;        main.c:1218: getstr1(buff, sizeof(buff)-1);
-2227 755013    6616            mov     _getstr1_PARM_2,#0x13
-222A 9053C0    6617            mov     dptr,#_buff
-222D 75F040    6618            mov     b,#0x40
-2230 120000    6619            lcall   _getstr1
-2233           6620   ;        main.c:1219: if(strlen(buff)==11)
-2233 9053C0    6621            mov     dptr,#_buff
-2236 75F040    6622            mov     b,#0x40
-2239 120000    6623            lcall   _strlen
-223C AB82      6624            mov     r3,dpl
-223E AC83      6625            mov     r4,dph
-2240 BB0B10    6626            cjne    r3,#0x0B,L041033?
-2243 BC0010    6627            cjne    r4,#0x00,L041033?
-2246 8000      6628            sjmp    L041034?
-2248           6629   L041033?:
-2248 020000    6630            ljmp    L041006?
-224B           6631   L041034?:
-224B           6632   ;        main.c:1221: printf("Master says: %s\r\n", buff);
-224B 74C0      6633            mov     a,#_buff
-224D C0E0      6634            push    acc
-224F 7453      6635            mov     a,#(_buff >> 8)
-2251 C0E0      6636            push    acc
-2253 7440      6637            mov     a,#0x40
-2255 C0E0      6638            push    acc
-2257 74D0      6639            mov     a,#__str_22
-2259 C0E0      6640            push    acc
-225B 741D      6641            mov     a,#(__str_22 >> 8)
-225D C0E0      6642            push    acc
-225F 7480      6643            mov     a,#0x80
-2261 C0E0      6644            push    acc
-2263 120000    6645            lcall   _printf
-2266 E581      6646            mov     a,sp
-2268 24FA      6647            add     a,#0xfa
-226A F581      6648            mov     sp,a
-226C           6649   ;        main.c:1222: sscanf(buff, "%03d,%03d,%c,%01d", &vx, &vy, &pick_char, &auto_mode);
-226C 74B0      6650            mov     a,#_main_auto_mode_1_237
-226E C0E0      6651            push    acc
-2270 74D1      6652            mov     a,#(_main_auto_mode_1_237 >> 8)
-2272 C0E0      6653            push    acc
-2274 E4        6654            clr     a
-2275 C0E0      6655            push    acc
-2277 74B0      6656            mov     a,#_main_pick_char_1_237
-2279 C0E0      6657            push    acc
-227B 74C9      6658            mov     a,#(_main_pick_char_1_237 >> 8)
-227D C0E0      6659            push    acc
-227F 7440      6660            mov     a,#0x40
-2281 C0E0      6661            push    acc
-2283 7460      6662            mov     a,#_main_vy_1_237
-2285 C0E0      6663            push    acc
-2287 74D1      6664            mov     a,#(_main_vy_1_237 >> 8)
-2289 C0E0      6665            push    acc
-228B E4        6666            clr     a
-228C C0E0      6667            push    acc
-228E 7420      6668            mov     a,#_main_vx_1_237
-2290 C0E0      6669            push    acc
-2292 74D1      6670            mov     a,#(_main_vx_1_237 >> 8)
-2294 C0E0      6671            push    acc
-2296 E4        6672            clr     a
-2297 C0E0      6673            push    acc
-2299 7410      6674            mov     a,#__str_23
-229B C0E0      6675            push    acc
-229D 741E      6676            mov     a,#(__str_23 >> 8)
-229F C0E0      6677            push    acc
-22A1 7480      6678            mov     a,#0x80
-22A3 C0E0      6679            push    acc
-22A5 74C0      6680            mov     a,#_buff
-22A7 C0E0      6681            push    acc
-22A9 7453      6682            mov     a,#(_buff >> 8)
-22AB C0E0      6683            push    acc
-22AD 7440      6684            mov     a,#0x40
-22AF C0E0      6685            push    acc
-22B1 120000    6686            lcall   _sscanf
-22B4 E581      6687            mov     a,sp
-22B6 24EE      6688            add     a,#0xee
-22B8 F581      6689            mov     sp,a
-22BA           6690   ;        main.c:1223: printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, pick_char, auto_mode);
-22BA E5B0      6691            mov     a,_main_pick_char_1_237
-22BC FB        6692            mov     r3,a
-22BD 33        6693            rlc     a
-22BE 95E0      6694            subb    a,acc
-22C0 FC        6695            mov     r4,a
-22C1 90D1B0    6696            mov     dptr,#_main_auto_mode_1_237
-22C4 E0        6697            movx    a,@dptr
-22C5 C0E0      6698            push    acc
-22C7 A3        6699            inc     dptr
-22C8 E0        6700            movx    a,@dptr
-22C9 C0E0      6701            push    acc
-22CB C003      6702            push    ar3
-22CD C004      6703            push    ar4
-22CF 90D160    6704            mov     dptr,#_main_vy_1_237
-22D2 E0        6705            movx    a,@dptr
-22D3 C0E0      6706            push    acc
-22D5 A3        6707            inc     dptr
-22D6 E0        6708            movx    a,@dptr
-22D7 C0E0      6709            push    acc
-22D9 90D120    6710            mov     dptr,#_main_vx_1_237
-22DC E0        6711            movx    a,@dptr
-22DD C0E0      6712            push    acc
-22DF A3        6713            inc     dptr
-22E0 E0        6714            movx    a,@dptr
-22E1 C0E0      6715            push    acc
-22E3 7450      6716            mov     a,#__str_24
-22E5 C0E0      6717            push    acc
-22E7 741E      6718            mov     a,#(__str_24 >> 8)
-22E9 C0E0      6719            push    acc
-22EB 7480      6720            mov     a,#0x80
-22ED C0E0      6721            push    acc
-22EF 120000    6722            lcall   _printf
-22F2 E581      6723            mov     a,sp
-22F4 24F5      6724            add     a,#0xf5
-22F6 F581      6725            mov     sp,a
-22F8           6726   ;        main.c:1224: Joystick_Control(&vx, &vy);
-22F8 751060    6727            mov     _Joystick_Control_PARM_2,#_main_vy_1_237
-22FB 7511D1    6728            mov     (_Joystick_Control_PARM_2 + 1),#(_main_vy_1_237 >> 8)
-22FE 751200    6729            mov     (_Joystick_Control_PARM_2 + 2),#0x00
-2301 90D120    6730            mov     dptr,#_main_vx_1_237
-2304 75F000    6731            mov     b,#0x00
-2307 120000    6732            lcall   _Joystick_Control
-230A 020000    6733            ljmp    L041016?
-230D           6734   L041006?:
-230D           6735   ;        main.c:1227: printf("*** BAD MESSAGE ***: %s\r\n", buff);
-230D 74C0      6736            mov     a,#_buff
-230F C0E0      6737            push    acc
-2311 7453      6738            mov     a,#(_buff >> 8)
-2313 C0E0      6739            push    acc
-2315 7440      6740            mov     a,#0x40
-2317 C0E0      6741            push    acc
-2319 7490      6742            mov     a,#__str_25
-231B C0E0      6743            push    acc
-231D 741E      6744            mov     a,#(__str_25 >> 8)
-231F C0E0      6745            push    acc
-2321 7480      6746            mov     a,#0x80
-2323 C0E0      6747            push    acc
-2325 120000    6748            lcall   _printf
-2328 E581      6749            mov     a,sp
-232A 24FA      6750            add     a,#0xfa
-232C F581      6751            mov     sp,a
-232E 020000    6752            ljmp    L041016?
-2331           6753   L041011?:
-2331           6754   ;        main.c:1230: else if(c=='@') // Master wants slave data
-2331 BA40D0    6755            cjne    r2,#0x40,L041035?
-2334 8000      6756            sjmp    L041036?
-2336           6757   L041035?:
-2336 020000    6758            ljmp    L041016?
-2339           6759   L041036?:
-2339           6760   ;        main.c:1232: sprintf(buff, "0,00,%04ld,%05d,%4.1f\n", freq100, weight, curr_angle);
-2339 904BF0    6761            mov     dptr,#_curr_angle
-233C E0        6762            movx    a,@dptr
-233D C0E0      6763            push    acc
-233F A3        6764            inc     dptr
-2340 E0        6765            movx    a,@dptr
-2341 C0E0      6766            push    acc
-2343 A3        6767            inc     dptr
-2344 E0        6768            movx    a,@dptr
-2345 C0E0      6769            push    acc
-2347 A3        6770            inc     dptr
-2348 E0        6771            movx    a,@dptr
-2349 C0E0      6772            push    acc
-234B 904B70    6773            mov     dptr,#_weight
-234E E0        6774            movx    a,@dptr
-234F C0E0      6775            push    acc
-2351 A3        6776            inc     dptr
-2352 E0        6777            movx    a,@dptr
-2353 C0E0      6778            push    acc
-2355 905380    6779            mov     dptr,#_freq100
-2358 E0        6780            movx    a,@dptr
-2359 C0E0      6781            push    acc
-235B A3        6782            inc     dptr
-235C E0        6783            movx    a,@dptr
-235D C0E0      6784            push    acc
-235F A3        6785            inc     dptr
-2360 E0        6786            movx    a,@dptr
-2361 C0E0      6787            push    acc
-2363 A3        6788            inc     dptr
-2364 E0        6789            movx    a,@dptr
-2365 C0E0      6790            push    acc
-2367 7450      6791            mov     a,#__str_26
-2369 C0E0      6792            push    acc
-236B 741F      6793            mov     a,#(__str_26 >> 8)
-236D C0E0      6794            push    acc
-236F 7480      6795            mov     a,#0x80
-2371 C0E0      6796            push    acc
-2373 74C0      6797            mov     a,#_buff
-2375 C0E0      6798            push    acc
-2377 7453      6799            mov     a,#(_buff >> 8)
-2379 C0E0      6800            push    acc
-237B 7440      6801            mov     a,#0x40
-237D C0E0      6802            push    acc
-237F 120000    6803            lcall   _sprintf
-2382 E581      6804            mov     a,sp
-2384 24F0      6805            add     a,#0xf0
-2386 F581      6806            mov     sp,a
-2388           6807   ;        main.c:1233: printf("%s\r\n",buff);
-2388 74C0      6808            mov     a,#_buff
-238A C0E0      6809            push    acc
-238C 7453      6810            mov     a,#(_buff >> 8)
-238E C0E0      6811            push    acc
-2390 7440      6812            mov     a,#0x40
-2392 C0E0      6813            push    acc
-2394 7490      6814            mov     a,#__str_27
-2396 C0E0      6815            push    acc
-2398 741F      6816            mov     a,#(__str_27 >> 8)
-239A C0E0      6817            push    acc
-239C 7480      6818            mov     a,#0x80
-239E C0E0      6819            push    acc
-23A0 120000    6820            lcall   _printf
-23A3 E581      6821            mov     a,sp
-23A5 24FA      6822            add     a,#0xfa
-23A7 F581      6823            mov     sp,a
-23A9           6824   ;        main.c:1234: waitms(5); // The radio seems to need this delay...
-23A9 900005    6825            mov     dptr,#0x0005
-23AC 120000    6826            lcall   _waitms
-23AF           6827   ;        main.c:1235: sendstr1(buff);
-23AF 9053C0    6828            mov     dptr,#_buff
-23B2 75F040    6829            mov     b,#0x40
-23B5 120000    6830            lcall   _sendstr1
-23B8 020000    6831            ljmp    L041016?
-23BB           6832            rseg R_CSEG
-23BB           6833   
-0000           6834            rseg R_XINIT
-0000           6835   __xinit__pwm_counter:
-0000 0000      6836            db 0x00,0x00    ; 0
-0002           6837   __xinit__servo_counter:
-0002 0000      6838            db 0x00,0x00    ; 0
-0004           6839   __xinit__pwm_left:
-0004 00        6840            db 0x00         ; 0
-0005           6841   __xinit__pwm_right:
-0005 00        6842            db 0x00         ; 0
-0006           6843   __xinit__L_motor_dir:
-0006 01        6844            db 0x01         ; 1
-0007           6845   __xinit__R_motor_dir:
-0007 01        6846            db 0x01         ; 1
-0008           6847   __xinit__servo_base:
-0008 01        6848            db 0x01         ; 1
-0009           6849   __xinit__servo_arm:
-0009 01        6850            db 0x01         ; 1
-000A           6851   __xinit__vx_thres:
-000A A100      6852            db 0xA1,0x00    ;  161
-000C           6853   __xinit__vy_thres:
-000C A600      6854            db 0xA6,0x00    ;  166
-000E           6855   __xinit__vx:
-000E 0000      6856            db 0x00,0x00    ;  0
-0010           6857   __xinit__vy:
-0010 0000      6858            db 0x00,0x00    ;  0
-0012           6859   __xinit__fre_mea_count:
-0012 0000      6860            db 0x00,0x00    ; 0
-0014           6861   __xinit__weight_mea_count:
-0014 0000      6862            db 0x00,0x00    ; 0
-0016           6863   __xinit__seed:
-0016 3930      6864            db 0x39,0x30    ; 12345
-0018           6865   __xinit__pwm_corr:
-0018 3333733F  6866            db 0x33,0x33,0x73,0x3F  ;  9.500000e-001
-001C           6867   __xinit__curr_angle:
-001C 00000000  6868            db 0x00,0x00,0x00,0x00  ;  0.000000e+000
-0020           6869   __xinit__mea_yes:
-0020 01        6870            db 0x01         ;  1
-0021           6871   __xinit__weight:
-0021 0000      6872            db 0x00,0x00    ; 0
-0023           6873   
-0000           6874            rseg R_CONST
-0000           6875   __str_0:
-0000 4572726F  6876            db 'Error: Could not find BMM150 sensor (Chip ID: 0x%02X)'
+21F6           6586   ;        main.c:1212: if(RXU1()) // Something has arrived
+21F6 120000    6587            lcall   _RXU1
+21F9 5000      6588            jnc     L041016?
+21FB           6589   ;        main.c:1214: c=getchar1();
+21FB 120000    6590            lcall   _getchar1
+21FE AA82      6591            mov     r2,dpl
+2200           6592   ;        main.c:1215: if(c=='!') // Master is sending message
+2200 BA2110    6593            cjne    r2,#0x21,L041031?
+2203 8000      6594            sjmp    L041032?
+2205           6595   L041031?:
+2205 020000    6596            ljmp    L041011?
+2208           6597   L041032?:
+2208           6598   ;        main.c:1217: getstr1(buff, sizeof(buff)-1);
+2208 755013    6599            mov     _getstr1_PARM_2,#0x13
+220B 9053C0    6600            mov     dptr,#_buff
+220E 75F040    6601            mov     b,#0x40
+2211 120000    6602            lcall   _getstr1
+2214           6603   ;        main.c:1218: if(strlen(buff)==11)
+2214 9053C0    6604            mov     dptr,#_buff
+2217 75F040    6605            mov     b,#0x40
+221A 120000    6606            lcall   _strlen
+221D AB82      6607            mov     r3,dpl
+221F AC83      6608            mov     r4,dph
+2221 BB0BD0    6609            cjne    r3,#0x0B,L041033?
+2224 BC00D0    6610            cjne    r4,#0x00,L041033?
+2227 8000      6611            sjmp    L041034?
+2229           6612   L041033?:
+2229 020000    6613            ljmp    L041006?
+222C           6614   L041034?:
+222C           6615   ;        main.c:1220: sscanf(buff, "%03d,%03d,%c,%01d", &vx, &vy, &pick_char, &auto_mode);
+222C 74B0      6616            mov     a,#_main_auto_mode_1_237
+222E C0E0      6617            push    acc
+2230 74D1      6618            mov     a,#(_main_auto_mode_1_237 >> 8)
+2232 C0E0      6619            push    acc
+2234 E4        6620            clr     a
+2235 C0E0      6621            push    acc
+2237 74B0      6622            mov     a,#_main_pick_char_1_237
+2239 C0E0      6623            push    acc
+223B 74C9      6624            mov     a,#(_main_pick_char_1_237 >> 8)
+223D C0E0      6625            push    acc
+223F 7440      6626            mov     a,#0x40
+2241 C0E0      6627            push    acc
+2243 7460      6628            mov     a,#_main_vy_1_237
+2245 C0E0      6629            push    acc
+2247 74D1      6630            mov     a,#(_main_vy_1_237 >> 8)
+2249 C0E0      6631            push    acc
+224B E4        6632            clr     a
+224C C0E0      6633            push    acc
+224E 7420      6634            mov     a,#_main_vx_1_237
+2250 C0E0      6635            push    acc
+2252 74D1      6636            mov     a,#(_main_vx_1_237 >> 8)
+2254 C0E0      6637            push    acc
+2256 E4        6638            clr     a
+2257 C0E0      6639            push    acc
+2259 7490      6640            mov     a,#__str_21
+225B C0E0      6641            push    acc
+225D 741D      6642            mov     a,#(__str_21 >> 8)
+225F C0E0      6643            push    acc
+2261 7480      6644            mov     a,#0x80
+2263 C0E0      6645            push    acc
+2265 74C0      6646            mov     a,#_buff
+2267 C0E0      6647            push    acc
+2269 7453      6648            mov     a,#(_buff >> 8)
+226B C0E0      6649            push    acc
+226D 7440      6650            mov     a,#0x40
+226F C0E0      6651            push    acc
+2271 120000    6652            lcall   _sscanf
+2274 E581      6653            mov     a,sp
+2276 24EE      6654            add     a,#0xee
+2278 F581      6655            mov     sp,a
+227A           6656   ;        main.c:1221: printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, pick_char, auto_mode);
+227A E5B0      6657            mov     a,_main_pick_char_1_237
+227C FB        6658            mov     r3,a
+227D 33        6659            rlc     a
+227E 95E0      6660            subb    a,acc
+2280 FC        6661            mov     r4,a
+2281 90D1B0    6662            mov     dptr,#_main_auto_mode_1_237
+2284 E0        6663            movx    a,@dptr
+2285 C0E0      6664            push    acc
+2287 A3        6665            inc     dptr
+2288 E0        6666            movx    a,@dptr
+2289 C0E0      6667            push    acc
+228B C003      6668            push    ar3
+228D C004      6669            push    ar4
+228F 90D160    6670            mov     dptr,#_main_vy_1_237
+2292 E0        6671            movx    a,@dptr
+2293 C0E0      6672            push    acc
+2295 A3        6673            inc     dptr
+2296 E0        6674            movx    a,@dptr
+2297 C0E0      6675            push    acc
+2299 90D120    6676            mov     dptr,#_main_vx_1_237
+229C E0        6677            movx    a,@dptr
+229D C0E0      6678            push    acc
+229F A3        6679            inc     dptr
+22A0 E0        6680            movx    a,@dptr
+22A1 C0E0      6681            push    acc
+22A3 74D0      6682            mov     a,#__str_22
+22A5 C0E0      6683            push    acc
+22A7 741D      6684            mov     a,#(__str_22 >> 8)
+22A9 C0E0      6685            push    acc
+22AB 7480      6686            mov     a,#0x80
+22AD C0E0      6687            push    acc
+22AF 120000    6688            lcall   _printf
+22B2 E581      6689            mov     a,sp
+22B4 24F5      6690            add     a,#0xf5
+22B6 F581      6691            mov     sp,a
+22B8           6692   ;        main.c:1222: Joystick_Control(&vx, &vy);
+22B8 751060    6693            mov     _Joystick_Control_PARM_2,#_main_vy_1_237
+22BB 7511D1    6694            mov     (_Joystick_Control_PARM_2 + 1),#(_main_vy_1_237 >> 8)
+22BE 751200    6695            mov     (_Joystick_Control_PARM_2 + 2),#0x00
+22C1 90D120    6696            mov     dptr,#_main_vx_1_237
+22C4 75F000    6697            mov     b,#0x00
+22C7 120000    6698            lcall   _Joystick_Control
+22CA 020000    6699            ljmp    L041016?
+22CD           6700   L041006?:
+22CD           6701   ;        main.c:1225: printf("*** BAD MESSAGE ***: %s\r\n", buff);
+22CD 74C0      6702            mov     a,#_buff
+22CF C0E0      6703            push    acc
+22D1 7453      6704            mov     a,#(_buff >> 8)
+22D3 C0E0      6705            push    acc
+22D5 7440      6706            mov     a,#0x40
+22D7 C0E0      6707            push    acc
+22D9 7410      6708            mov     a,#__str_23
+22DB C0E0      6709            push    acc
+22DD 741E      6710            mov     a,#(__str_23 >> 8)
+22DF C0E0      6711            push    acc
+22E1 7480      6712            mov     a,#0x80
+22E3 C0E0      6713            push    acc
+22E5 120000    6714            lcall   _printf
+22E8 E581      6715            mov     a,sp
+22EA 24FA      6716            add     a,#0xfa
+22EC F581      6717            mov     sp,a
+22EE 020000    6718            ljmp    L041016?
+22F1           6719   L041011?:
+22F1           6720   ;        main.c:1228: else if(c=='@') // Master wants slave data
+22F1 BA4050    6721            cjne    r2,#0x40,L041035?
+22F4 8000      6722            sjmp    L041036?
+22F6           6723   L041035?:
+22F6 020000    6724            ljmp    L041016?
+22F9           6725   L041036?:
+22F9           6726   ;        main.c:1230: sprintf(buff, "0,00,%04ld,%05d,%4.1f\n", freq100, weight, curr_angle);
+22F9 904BF0    6727            mov     dptr,#_curr_angle
+22FC E0        6728            movx    a,@dptr
+22FD C0E0      6729            push    acc
+22FF A3        6730            inc     dptr
+2300 E0        6731            movx    a,@dptr
+2301 C0E0      6732            push    acc
+2303 A3        6733            inc     dptr
+2304 E0        6734            movx    a,@dptr
+2305 C0E0      6735            push    acc
+2307 A3        6736            inc     dptr
+2308 E0        6737            movx    a,@dptr
+2309 C0E0      6738            push    acc
+230B 904B70    6739            mov     dptr,#_weight
+230E E0        6740            movx    a,@dptr
+230F C0E0      6741            push    acc
+2311 A3        6742            inc     dptr
+2312 E0        6743            movx    a,@dptr
+2313 C0E0      6744            push    acc
+2315 905380    6745            mov     dptr,#_freq100
+2318 E0        6746            movx    a,@dptr
+2319 C0E0      6747            push    acc
+231B A3        6748            inc     dptr
+231C E0        6749            movx    a,@dptr
+231D C0E0      6750            push    acc
+231F A3        6751            inc     dptr
+2320 E0        6752            movx    a,@dptr
+2321 C0E0      6753            push    acc
+2323 A3        6754            inc     dptr
+2324 E0        6755            movx    a,@dptr
+2325 C0E0      6756            push    acc
+2327 74D0      6757            mov     a,#__str_24
+2329 C0E0      6758            push    acc
+232B 741E      6759            mov     a,#(__str_24 >> 8)
+232D C0E0      6760            push    acc
+232F 7480      6761            mov     a,#0x80
+2331 C0E0      6762            push    acc
+2333 74C0      6763            mov     a,#_buff
+2335 C0E0      6764            push    acc
+2337 7453      6765            mov     a,#(_buff >> 8)
+2339 C0E0      6766            push    acc
+233B 7440      6767            mov     a,#0x40
+233D C0E0      6768            push    acc
+233F 120000    6769            lcall   _sprintf
+2342 E581      6770            mov     a,sp
+2344 24F0      6771            add     a,#0xf0
+2346 F581      6772            mov     sp,a
+2348           6773   ;        main.c:1231: printf("%s\r\n",buff);
+2348 74C0      6774            mov     a,#_buff
+234A C0E0      6775            push    acc
+234C 7453      6776            mov     a,#(_buff >> 8)
+234E C0E0      6777            push    acc
+2350 7440      6778            mov     a,#0x40
+2352 C0E0      6779            push    acc
+2354 7410      6780            mov     a,#__str_25
+2356 C0E0      6781            push    acc
+2358 741F      6782            mov     a,#(__str_25 >> 8)
+235A C0E0      6783            push    acc
+235C 7480      6784            mov     a,#0x80
+235E C0E0      6785            push    acc
+2360 120000    6786            lcall   _printf
+2363 E581      6787            mov     a,sp
+2365 24FA      6788            add     a,#0xfa
+2367 F581      6789            mov     sp,a
+2369           6790   ;        main.c:1232: waitms(10); // The radio seems to need this delay...
+2369 90000A    6791            mov     dptr,#0x000A
+236C 120000    6792            lcall   _waitms
+236F           6793   ;        main.c:1233: sendstr1(buff);
+236F 9053C0    6794            mov     dptr,#_buff
+2372 75F040    6795            mov     b,#0x40
+2375 120000    6796            lcall   _sendstr1
+2378 020000    6797            ljmp    L041016?
+237B           6798            rseg R_CSEG
+237B           6799   
+0000           6800            rseg R_XINIT
+0000           6801   __xinit__pwm_counter:
+0000 0000      6802            db 0x00,0x00    ; 0
+0002           6803   __xinit__servo_counter:
+0002 0000      6804            db 0x00,0x00    ; 0
+0004           6805   __xinit__pwm_left:
+0004 00        6806            db 0x00         ; 0
+0005           6807   __xinit__pwm_right:
+0005 00        6808            db 0x00         ; 0
+0006           6809   __xinit__L_motor_dir:
+0006 01        6810            db 0x01         ; 1
+0007           6811   __xinit__R_motor_dir:
+0007 01        6812            db 0x01         ; 1
+0008           6813   __xinit__servo_base:
+0008 01        6814            db 0x01         ; 1
+0009           6815   __xinit__servo_arm:
+0009 01        6816            db 0x01         ; 1
+000A           6817   __xinit__vx_thres:
+000A A100      6818            db 0xA1,0x00    ;  161
+000C           6819   __xinit__vy_thres:
+000C A600      6820            db 0xA6,0x00    ;  166
+000E           6821   __xinit__vx:
+000E 0000      6822            db 0x00,0x00    ;  0
+0010           6823   __xinit__vy:
+0010 0000      6824            db 0x00,0x00    ;  0
+0012           6825   __xinit__fre_mea_count:
+0012 0000      6826            db 0x00,0x00    ; 0
+0014           6827   __xinit__weight_mea_count:
+0014 0000      6828            db 0x00,0x00    ; 0
+0016           6829   __xinit__seed:
+0016 3930      6830            db 0x39,0x30    ; 12345
+0018           6831   __xinit__pwm_corr:
+0018 3333733F  6832            db 0x33,0x33,0x73,0x3F  ;  9.500000e-001
+001C           6833   __xinit__curr_angle:
+001C 00000000  6834            db 0x00,0x00,0x00,0x00  ;  0.000000e+000
+0020           6835   __xinit__mea_yes:
+0020 01        6836            db 0x01         ;  1
+0021           6837   __xinit__weight:
+0021 0000      6838            db 0x00,0x00    ; 0
+0023           6839   
+0000           6840            rseg R_CONST
+0000           6841   __str_0:
+0000 4572726F  6842            db 'Error: Could not find BMM150 sensor (Chip ID: 0x%02X)'
      723A2043
      6F756C64
      206E6F74
@@ -6887,11 +6853,11 @@
      3A203078
      25303258
      29
-0035 0D        6877            db 0x0D
-0036 0A        6878            db 0x0A
-0037 00        6879            db 0x00
-0038           6880   __str_1:
-0038 50726573  6881            db 'Press restart to check again!'
+0035 0D        6843            db 0x0D
+0036 0A        6844            db 0x0A
+0037 00        6845            db 0x00
+0038           6846   __str_1:
+0038 50726573  6847            db 'Press restart to check again!'
      73207265
      73746172
      7420746F
@@ -6899,20 +6865,20 @@
      636B2061
      6761696E
      21
-0055 0D        6882            db 0x0D
-0056 00        6883            db 0x00
-0057           6884   __str_2:
-0057 444F4E45  6885            db 'DONE! Chip ID = 0x%02X'
+0055 0D        6848            db 0x0D
+0056 00        6849            db 0x00
+0057           6850   __str_2:
+0057 444F4E45  6851            db 'DONE! Chip ID = 0x%02X'
      21204368
      69702049
      44203D20
      30782530
      3258
-006D 0D        6886            db 0x0D
-006E 0A        6887            db 0x0A
-006F 00        6888            db 0x00
-0070           6889   __str_3:
-0070 424D4D31  6890            db 'BMM150 initialized successfully! Chip ID: 0x%02X'
+006D 0D        6852            db 0x0D
+006E 0A        6853            db 0x0A
+006F 00        6854            db 0x00
+0070           6855   __str_3:
+0070 424D4D31  6856            db 'BMM150 initialized successfully! Chip ID: 0x%02X'
      35302069
      6E697469
      616C697A
@@ -6924,57 +6890,57 @@
      70204944
      3A203078
      25303258
-00A0 0D        6891            db 0x0D
-00A1 0A        6892            db 0x0A
-00A2 00        6893            db 0x00
-00A3           6894   __str_4:
-00A3 436F6D6D  6895            db 'Command: %s'
+00A0 0D        6857            db 0x0D
+00A1 0A        6858            db 0x0A
+00A2 00        6859            db 0x00
+00A3           6860   __str_4:
+00A3 436F6D6D  6861            db 'Command: %s'
      616E643A
      202573
-00AE 00        6896            db 0x00
-00AF           6897   __str_5:
-00AF 52657370  6898            db 'Response: %s'
+00AE 00        6862            db 0x00
+00AF           6863   __str_5:
+00AF 52657370  6864            db 'Response: %s'
      6F6E7365
      3A202573
-00BB 0D        6899            db 0x0D
-00BC 0A        6900            db 0x0A
-00BD 00        6901            db 0x00
-00BE           6902   __str_6:
-00BE 41542B44  6903            db 'AT+DVID0000'
+00BB 0D        6865            db 0x0D
+00BC 0A        6866            db 0x0A
+00BD 00        6867            db 0x00
+00BE           6868   __str_6:
+00BE 41542B44  6869            db 'AT+DVID0000'
      56494430
      303030
-00C9 0D        6904            db 0x0D
-00CA 0A        6905            db 0x0A
-00CB 00        6906            db 0x00
-00CC           6907   __str_7:
-00CC 6D617374  6908            db 'master_messgae_auto_mode: %s'
+00C9 0D        6870            db 0x0D
+00CA 0A        6871            db 0x0A
+00CB 00        6872            db 0x00
+00CC           6873   __str_7:
+00CC 6D617374  6874            db 'master_messgae_auto_mode: %s'
      65725F6D
      65737367
      61655F61
      75746F5F
      6D6F6465
      3A202573
-00E8 0D        6909            db 0x0D
-00E9 0A        6910            db 0x0A
-00EA 00        6911            db 0x00
-00EB           6912   __str_8:
-00EB 25303364  6913            db '%03d,%03d,%01d,%01d'
+00E8 0D        6875            db 0x0D
+00E9 0A        6876            db 0x0A
+00EA 00        6877            db 0x00
+00EB           6878   __str_8:
+00EB 25303364  6879            db '%03d,%03d,%01d,%01d'
      2C253033
      642C2530
      31642C25
      303164
-00FE 00        6914            db 0x00
-00FF           6915   __str_9:
-00FF 25303164  6916            db '%01d,%02d,%ld,%05d,%4.1f'
+00FE 00        6880            db 0x00
+00FF           6881   __str_9:
+00FF 25303164  6882            db '%01d,%02d,%ld,%05d,%4.1f'
      2C253032
      642C256C
      642C2530
      35642C25
      342E3166
-0117 0A        6917            db 0x0A
-0118 00        6918            db 0x00
-0119           6919   __str_10:
-0119 663A2530  6920            db 'f:%04ld, d1:%d, d2:%d, bound_dectect: %d'
+0117 0A        6883            db 0x0A
+0118 00        6884            db 0x00
+0119           6885   __str_10:
+0119 663A2530  6886            db 'f:%04ld, d1:%d, d2:%d, bound_dectect: %d'
      346C642C
      2064313A
      25642C20
@@ -6984,105 +6950,90 @@
      5F646563
      74656374
      3A202564
-0141 0D        6921            db 0x0D
-0142 0A        6922            db 0x0A
-0143 00        6923            db 0x00
-0144           6924   __str_11:
-0144 4175746F  6925            db 'Auto mode finished!'
+0141 0D        6887            db 0x0D
+0142 0A        6888            db 0x0A
+0143 00        6889            db 0x00
+0144           6890   __str_11:
+0144 4175746F  6891            db 'Auto mode finished!'
      206D6F64
      65206669
      6E697368
      656421
-0157 0D        6926            db 0x0D
-0158 0A        6927            db 0x0A
-0159 00        6928            db 0x00
-015A           6929   __str_12:
-015A 0D        6930            db 0x0D
-015B 0A        6931            db 0x0A
-015C 45464D38  6932            db 'EFM8LB12 JDY-40 Slave Test.'
+0157 0D        6892            db 0x0D
+0158 0A        6893            db 0x0A
+0159 00        6894            db 0x00
+015A           6895   __str_12:
+015A 0D        6896            db 0x0D
+015B 0A        6897            db 0x0A
+015C 45464D38  6898            db 'EFM8LB12 JDY-40 Slave Test.'
      4C423132
      204A4459
      2D343020
      536C6176
      65205465
      73742E
-0177 0D        6933            db 0x0D
-0178 0A        6934            db 0x0A
-0179 00        6935            db 0x00
-017A           6936   __str_13:
-017A 41542B56  6937            db 'AT+VER'
+0177 0D        6899            db 0x0D
+0178 0A        6900            db 0x0A
+0179 00        6901            db 0x00
+017A           6902   __str_13:
+017A 41542B56  6903            db 'AT+VER'
      4552
-0180 0D        6938            db 0x0D
-0181 0A        6939            db 0x0A
-0182 00        6940            db 0x00
-0183           6941   __str_14:
-0183 41542B42  6942            db 'AT+BAUD'
+0180 0D        6904            db 0x0D
+0181 0A        6905            db 0x0A
+0182 00        6906            db 0x00
+0183           6907   __str_14:
+0183 41542B42  6908            db 'AT+BAUD'
      415544
-018A 0D        6943            db 0x0D
-018B 0A        6944            db 0x0A
-018C 00        6945            db 0x00
-018D           6946   __str_15:
-018D 41542B52  6947            db 'AT+RFID'
+018A 0D        6909            db 0x0D
+018B 0A        6910            db 0x0A
+018C 00        6911            db 0x00
+018D           6912   __str_15:
+018D 41542B52  6913            db 'AT+RFID'
      464944
-0194 0D        6948            db 0x0D
-0195 0A        6949            db 0x0A
-0196 00        6950            db 0x00
-0197           6951   __str_16:
-0197 41542B44  6952            db 'AT+DVID'
+0194 0D        6914            db 0x0D
+0195 0A        6915            db 0x0A
+0196 00        6916            db 0x00
+0197           6917   __str_16:
+0197 41542B44  6918            db 'AT+DVID'
      564944
-019E 0D        6953            db 0x0D
-019F 0A        6954            db 0x0A
-01A0 00        6955            db 0x00
-01A1           6956   __str_17:
-01A1 41542B52  6957            db 'AT+RFC002'
+019E 0D        6919            db 0x0D
+019F 0A        6920            db 0x0A
+01A0 00        6921            db 0x00
+01A1           6922   __str_17:
+01A1 41542B52  6923            db 'AT+RFC002'
      46433030
      32
-01AA 0D        6958            db 0x0D
-01AB 0A        6959            db 0x0A
-01AC 00        6960            db 0x00
-01AD           6961   __str_18:
-01AD 41542B50  6962            db 'AT+POWE'
+01AA 0D        6924            db 0x0D
+01AB 0A        6925            db 0x0A
+01AC 00        6926            db 0x00
+01AD           6927   __str_18:
+01AD 41542B50  6928            db 'AT+POWE'
      4F5745
-01B4 0D        6963            db 0x0D
-01B5 0A        6964            db 0x0A
-01B6 00        6965            db 0x00
-01B7           6966   __str_19:
-01B7 41542B43  6967            db 'AT+CLSS'
+01B4 0D        6929            db 0x0D
+01B5 0A        6930            db 0x0A
+01B6 00        6931            db 0x00
+01B7           6932   __str_19:
+01B7 41542B43  6933            db 'AT+CLSS'
      4C5353
-01BE 0D        6968            db 0x0D
-01BF 0A        6969            db 0x0A
-01C0 00        6970            db 0x00
-01C1           6971   __str_20:
-01C1 41542B44  6972            db 'AT+DVIDEF11'
+01BE 0D        6934            db 0x0D
+01BF 0A        6935            db 0x0A
+01C0 00        6936            db 0x00
+01C1           6937   __str_20:
+01C1 41542B44  6938            db 'AT+DVIDEF11'
      56494445
      463131
-01CC 0D        6973            db 0x0D
-01CD 0A        6974            db 0x0A
-01CE 00        6975            db 0x00
-01CF           6976   __str_21:
-01CF 77656967  6977            db 'weight: %u'
-     68743A20
-     2575
-01D9 0D        6978            db 0x0D
-01DA 0A        6979            db 0x0A
-01DB 00        6980            db 0x00
-01DC           6981   __str_22:
-01DC 4D617374  6982            db 'Master says: %s'
-     65722073
-     6179733A
-     202573
-01EB 0D        6983            db 0x0D
-01EC 0A        6984            db 0x0A
-01ED 00        6985            db 0x00
-01EE           6986   __str_23:
-01EE 25303364  6987            db '%03d,%03d,%c,%01d'
+01CC 0D        6939            db 0x0D
+01CD 0A        6940            db 0x0A
+01CE 00        6941            db 0x00
+01CF           6942   __str_21:
+01CF 25303364  6943            db '%03d,%03d,%c,%01d'
      2C253033
      642C2563
      2C253031
      64
-01FF 00        6988            db 0x00
-0200           6989   __str_24:
-0200 4A6F7973  6990            db 'Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d'
+01E0 00        6944            db 0x00
+01E1           6945   __str_22:
+01E1 4A6F7973  6946            db 'Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d'
      7469636B
      20526563
      65697665
@@ -7097,34 +7048,34 @@
      20417574
      6F203D20
      2564
-023A 0D        6991            db 0x0D
-023B 0A        6992            db 0x0A
-023C 00        6993            db 0x00
-023D           6994   __str_25:
-023D 2A2A2A20  6995            db '*** BAD MESSAGE ***: %s'
+021B 0D        6947            db 0x0D
+021C 0A        6948            db 0x0A
+021D 00        6949            db 0x00
+021E           6950   __str_23:
+021E 2A2A2A20  6951            db '*** BAD MESSAGE ***: %s'
      42414420
      4D455353
      41474520
      2A2A2A3A
      202573
-0254 0D        6996            db 0x0D
-0255 0A        6997            db 0x0A
-0256 00        6998            db 0x00
-0257           6999   __str_26:
-0257 302C3030  7000            db '0,00,%04ld,%05d,%4.1f'
+0235 0D        6952            db 0x0D
+0236 0A        6953            db 0x0A
+0237 00        6954            db 0x00
+0238           6955   __str_24:
+0238 302C3030  6956            db '0,00,%04ld,%05d,%4.1f'
      2C253034
      6C642C25
      3035642C
      25342E31
      66
-026C 0A        7001            db 0x0A
-026D 00        7002            db 0x00
-026E           7003   __str_27:
-026E 2573      7004            db '%s'
-0270 0D        7005            db 0x0D
-0271 0A        7006            db 0x0A
-0272 00        7007            db 0x00
-0273           7008   
-0096           7009            CSEG
-0096           7010   
-0096           7011   end
+024D 0A        6957            db 0x0A
+024E 00        6958            db 0x00
+024F           6959   __str_25:
+024F 2573      6960            db '%s'
+0251 0D        6961            db 0x0D
+0252 0A        6962            db 0x0A
+0253 00        6963            db 0x00
+0254           6964   
+0096           6965            CSEG
+0096           6966   
+0096           6967   end
