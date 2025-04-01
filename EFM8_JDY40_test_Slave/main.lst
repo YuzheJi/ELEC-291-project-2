@@ -1,7 +1,7 @@
 0000              1   ;--------------------------------------------------------
 0000              2   ; File Created by C51
 0000              3   ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-0000              4   ; This file was generated Mon Mar 31 17:55:49 2025
+0000              4   ; This file was generated Mon Mar 31 17:59:07 2025
 0000              5   ;--------------------------------------------------------
                   5   $name main
                   6   $optc51 --model-small
@@ -4683,7 +4683,7 @@
 14CE           4683   L039009?:
 14CE           4684   ;        main.c:1027: else if(c=='@'){
 14CE BE40C0    4685            cjne    r6,#0x40,L039012?
-14D1           4686   ;        main.c:1028: sprintf(buff, "%01d,%02d,%ld,%04d,%4.1f\n", state_res, count,freq100, 0, curr_angle);
+14D1           4686   ;        main.c:1028: sprintf(buff, "%01d,%02d,%ld,%05d,%4.1f\n", state_res, count,freq100, 0, curr_angle);
 14D1 904BF0    4687            mov     dptr,#_curr_angle
 14D4 E0        4688            movx    a,@dptr
 14D5 C0E0      4689            push    acc
@@ -6757,7 +6757,7 @@
 2336           6757   L041035?:
 2336 020000    6758            ljmp    L041016?
 2339           6759   L041036?:
-2339           6760   ;        main.c:1232: sprintf(buff, "0,00,%04ld,%04d,%4.1f\n", freq100, weight, curr_angle);
+2339           6760   ;        main.c:1232: sprintf(buff, "0,00,%04ld,%05d,%4.1f\n", freq100, weight, curr_angle);
 2339 904BF0    6761            mov     dptr,#_curr_angle
 233C E0        6762            movx    a,@dptr
 233D C0E0      6763            push    acc
@@ -6965,11 +6965,11 @@
      303164
 00FE 00        6914            db 0x00
 00FF           6915   __str_9:
-00FF 25303164  6916            db '%01d,%02d,%ld,%04d,%4.1f'
+00FF 25303164  6916            db '%01d,%02d,%ld,%05d,%4.1f'
      2C253032
      642C256C
      642C2530
-     34642C25
+     35642C25
      342E3166
 0117 0A        6917            db 0x0A
 0118 00        6918            db 0x00
@@ -7111,10 +7111,10 @@
 0255 0A        6997            db 0x0A
 0256 00        6998            db 0x00
 0257           6999   __str_26:
-0257 302C3030  7000            db '0,00,%04ld,%04d,%4.1f'
+0257 302C3030  7000            db '0,00,%04ld,%05d,%4.1f'
      2C253034
      6C642C25
-     3034642C
+     3035642C
      25342E31
      66
 026C 0A        7001            db 0x0A

@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-; This file was generated Mon Mar 31 17:55:49 2025
+; This file was generated Mon Mar 31 17:59:07 2025
 ;--------------------------------------------------------
 $name main
 $optc51 --model-small
@@ -4683,7 +4683,7 @@ L039002?:
 L039009?:
 ;	main.c:1027: else if(c=='@'){
 	cjne	r6,#0x40,L039012?
-;	main.c:1028: sprintf(buff, "%01d,%02d,%ld,%04d,%4.1f\n", state_res, count,freq100, 0, curr_angle);
+;	main.c:1028: sprintf(buff, "%01d,%02d,%ld,%05d,%4.1f\n", state_res, count,freq100, 0, curr_angle);
 	mov	dptr,#_curr_angle
 	movx	a,@dptr
 	push	acc
@@ -6757,7 +6757,7 @@ L041011?:
 L041035?:
 	ljmp	L041016?
 L041036?:
-;	main.c:1232: sprintf(buff, "0,00,%04ld,%04d,%4.1f\n", freq100, weight, curr_angle);
+;	main.c:1232: sprintf(buff, "0,00,%04ld,%05d,%4.1f\n", freq100, weight, curr_angle);
 	mov	dptr,#_curr_angle
 	movx	a,@dptr
 	push	acc
@@ -6913,7 +6913,7 @@ __str_8:
 	db '%03d,%03d,%01d,%01d'
 	db 0x00
 __str_9:
-	db '%01d,%02d,%ld,%04d,%4.1f'
+	db '%01d,%02d,%ld,%05d,%4.1f'
 	db 0x0A
 	db 0x00
 __str_10:
@@ -6997,7 +6997,7 @@ __str_25:
 	db 0x0A
 	db 0x00
 __str_26:
-	db '0,00,%04ld,%04d,%4.1f'
+	db '0,00,%04ld,%05d,%4.1f'
 	db 0x0A
 	db 0x00
 __str_27:

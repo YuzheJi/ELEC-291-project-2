@@ -1025,7 +1025,7 @@ void Auto_mode_slave(){
 				// }				
 			}
 			else if(c=='@'){
-				sprintf(buff, "%01d,%02d,%ld,%04d,%4.1f\n", state_res, count,freq100, 0, curr_angle);
+				sprintf(buff, "%01d,%02d,%ld,%05d,%4.1f\n", state_res, count,freq100, 0, curr_angle);
 				waitms(5); 
 				sendstr1(buff);
 			}
