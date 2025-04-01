@@ -16,15 +16,15 @@
 
 //                                    ----------  
 // 	                    P0.0      1  |          |  32      P0.1     
-//                      GND       2  |          |  31      P0.2  	Coin detector
+//                      GND       2  |          |  31      P0.2  	
 //                      5V        3  |          |  30      P0.3  	SCK
 //                      5V        4  |          |  29      P0.4  	
 //                      RST       5  |          |  28      P0.5  	
 //                      P3.7      6  |          |  27      P0.6  	SDO (MISO)
-//                      P3.3      7  |          |  26      P0.7  	SDI (MOSI)
-//                      P3.2      8  |          |  25      P1.0  	CS
+// Load_Data            P3.3      7  |          |  26      P0.7  	SDI (MOSI)
+// Load_SCK             P3.2      8  |          |  25      P1.0  	CS
 //                      P3.1      9  |          |  24      P1.1  	RXD (MCU: TXD)
-//                      P3.0     10  |          |  23      P1.2  	TXD (MCU: RXD)
+// Coin detector        P3.0     10  |          |  23      P1.2  	TXD (MCU: RXD)
 //                      P2.6     11  |          |  22      P1.3     Boundary1
 //                      P2.5     12  |          |  21      P1.4  	Boundary2
 // R_bridge_2           P2.4     13  |          |  20      P1.5  	Magnet
@@ -102,10 +102,10 @@ xdata uint16_t  dig_z1, dig_z2, dig_z3, dig_z4;
 xdata uint8_t dig_xy1; 
 xdata int8_t dig_xy2; 
 xdata uint16_t dig_xyz1; 
-xdata float curr_angle=0.0; 
+xdata float curr_angle = 0.0, raw_angle = 0.0, last_raw_angle = 0.0, angle_diff = 0.0; 
 xdata char mea_yes = 1;
 xdata unsigned int weight = 0;
-// xdata int8_t correction_factor = 0; 
+xdata float temp; 
 
 
 char _c51_external_startup (void)
@@ -990,9 +990,9 @@ float Read_angle(void)
 		BMM150_Read_Data(&mag_x, &mag_y);
 		sum_x += (float)mag_x; 
 		sum_y += (float)mag_y; 
-		waitms(1);
+		Timer3us(1);
 	}
-	angle = atan2f(sum_y/25.0, sum_x/25.0) * 180.0 / M_PI;
+	angle = atan2f(sum_y, sum_x) * 180.0 / M_PI;
 	if (angle < 0.0) angle += 360.0; 
 	if (angle > 360.0) angle -= 360.0; 
 	return angle; 
@@ -1007,6 +1007,7 @@ void Auto_mode_slave(){
 	xdata int dummy;
 	xdata unsigned int angle;
 
+	curr_angle = Read_angle();
 
 	while(count < 20 && state_res){
 		
@@ -1025,7 +1026,7 @@ void Auto_mode_slave(){
 				// }				
 			}
 			else if(c=='@'){
-				sprintf(buff, "%01d,%02d,%ld,%05d,%4.1f\n", state_res, count,freq100, 0, curr_angle);
+				sprintf(buff, "%01d,%02d,%ld,%05d,%03d\n", state_res, count,freq100, 0, (int)curr_angle);
 				waitms(5); 
 				sendstr1(buff);
 			}
@@ -1053,23 +1054,25 @@ void Auto_mode_slave(){
 		if(bound == 1){
 			Move_back_ms(500);
 			waitms(100);
-			curr_angle = Read_angle();
 		 	angle = get_random_90_250();
 			Right_angle(angle*600/90);
-			curr_angle = fabsf(curr_angle - Read_angle());
+			curr_angle = Read_angle() * 1.2;
 		}
 	}
 
-	printf("Auto mode finished!\r\n");
+	// printf("Auto mode finished!\r\n");
 }
 
-void Joystick_Control(int *vx_ptr, int *vy_ptr)
+float Joystick_Control(int *vx_ptr, int *vy_ptr)
 {
 	xdata int vx, vy; 
 	xdata int vx_error, vy_error, vx_err, vy_err;
-    xdata int threshold = 161;
 	vx = *vx_ptr; 
 	vy = *vy_ptr; 
+
+	//constantly updating the live raw angle 
+	// raw_angle = Read_angle();
+
 	// Determine of Vx and Vy are within 5% error
 	vx_error = abs(vx-vx_thres)*100/vx_thres; 
 	vy_error = abs(vy-vy_thres)*100/vy_thres; 
@@ -1092,24 +1095,31 @@ void Joystick_Control(int *vx_ptr, int *vy_ptr)
 		}
 	}
 	if ((vx_error>5)&&(vy_error<5)){
+		angle_diff = fabsf(raw_angle - last_raw_angle); //calculate the angle difference 
 		pwm_left = vx_error; 
 		pwm_right = vx_error * pwm_corr; 
 		if (vx_err > 0){ //turn right
 			L_motor_dir = 1; 
-			R_motor_dir = 0; 
+			R_motor_dir = 0;
+			curr_angle += angle_diff * 1.45; // TUNE THIS
 		}
 		else{ //turn left 
 			L_motor_dir = 0; 
 			R_motor_dir = 1; 
+			curr_angle -= angle_diff * 1.4; // TUNE THIS
 		}
+		if (curr_angle > 360.0) curr_angle -= 360.0; 
+		if (curr_angle < 0.0) curr_angle += 360.0; 
 	}
 	if ((vx_error>5)&&(vy_error)>5){
 		// Region 1 & Region 2
+		angle_diff = fabsf(raw_angle - last_raw_angle);
 		if (vy_err>0){
 			L_motor_dir = 0; 
 			R_motor_dir = 0; 
 			// Region 1
 			if (vx_err>0){
+				// turn right
 				if (vy*100<=vy_thres*100/2){
 					pwm_left = vy_error; 
 					pwm_right = pwm_corr*vy_error*100/(vx_error+vy_error);
@@ -1118,6 +1128,7 @@ void Joystick_Control(int *vx_ptr, int *vy_ptr)
 					pwm_left = vx_error; 
 					pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
 				}
+				curr_angle += angle_diff * 1.5; // TUNE THIS 
 			}
 			// Region 2
 			else {
@@ -1129,6 +1140,7 @@ void Joystick_Control(int *vx_ptr, int *vy_ptr)
 					pwm_left = vx_error*100/(vx_error+vy_error);
 					pwm_right = vx_error*pwm_corr; 
 				}
+				curr_angle -= angle_diff * 1.5; // TUNE THIS 
 			}
 		}
 		// Region 3 & 4
@@ -1145,6 +1157,7 @@ void Joystick_Control(int *vx_ptr, int *vy_ptr)
 					pwm_left = vx_error; 
 					pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
 				}
+				curr_angle -= angle_diff * 1.4; // TUNE THIS 
 			}
 			// Region 3
 			else {
@@ -1156,10 +1169,13 @@ void Joystick_Control(int *vx_ptr, int *vy_ptr)
 					pwm_left = vx_error*100/(vx_error+vy_error);
 					pwm_right = pwm_corr*vx_error; 
 				}
+				curr_angle += angle_diff * 1.4; // TUNE THIS 
 			}
 		}
 	}
-	return; 
+	
+	last_raw_angle = raw_angle; 
+	return curr_angle; 
 }
 
 void main (void)
@@ -1168,6 +1184,7 @@ void main (void)
 	xdata int vx = 0, vy = 0; 
 	xdata int auto_mode = 0;
 	char pick_char = '0';
+	xdata angle_count = 0; 
 	
 	// printf("Initializing\r\n");
 	Init_all();
@@ -1194,9 +1211,13 @@ void main (void)
     R_bridge_1 = 0; 
     R_bridge_2 = 0; 
 	
+	//initialize current angle 
+	curr_angle = Read_angle();
 	while(1)
 	{	
+		temp = Read_angle();
 		//printf("coinval = %d\n", weight);
+		// printf("Current angle = %d, Raw angle = %d\r\n", (int)curr_angle, (int)temp);
 
 		if(pick_char=='1'){
 			servo_pick();
@@ -1208,8 +1229,7 @@ void main (void)
 			Auto_mode_slave();
 			auto_mode = 0;
 		}
-		curr_angle = Read_angle();
-		printf("weight: %u\r\n",weight);
+		// printf("weight: %u\r\n",weight);
 		if(RXU1()) // Something has arrived
 		{
 			c=getchar1();
@@ -1218,10 +1238,10 @@ void main (void)
 				getstr1(buff, sizeof(buff)-1);
 				if(strlen(buff)==11)
 				{
-					printf("Master says: %s\r\n", buff);
+					// printf("Master says: %s\r\n", buff);
 					sscanf(buff, "%03d,%03d,%c,%01d", &vx, &vy, &pick_char, &auto_mode);
 		        	printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, pick_char, auto_mode);
-					Joystick_Control(&vx, &vy);
+					curr_angle = Joystick_Control(&vx, &vy);
 				}
 				else{
 					printf("*** BAD MESSAGE ***: %s\r\n", buff);
@@ -1229,7 +1249,7 @@ void main (void)
 			}
 			else if(c=='@') // Master wants slave data
 			{
-				sprintf(buff, "0,00,%04ld,%05d,%4.1f\n", freq100, weight, curr_angle);
+				sprintf(buff, "0,00,%04ld,%05d,%03d\n", freq100, weight, (int)curr_angle);
 				printf("%s\r\n",buff);
 				waitms(5); // The radio seems to need this delay...
 				sendstr1(buff);
