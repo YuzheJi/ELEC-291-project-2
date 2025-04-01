@@ -244,6 +244,8 @@ void main(void)
 	int metal_freq = 0;
 	int state_res = 0;
 	int count_res = 0;
+	int weight = 0;
+	float angle = 0;
 		
 	uint8_t charge[8] = {
 		0b00000010, //       
@@ -367,16 +369,16 @@ void main(void)
 		
 		timeout_cnt=0;
 		while(1){
-			if(ReceivedBytes2()>15) break; // Something has arrived
+			if(ReceivedBytes2()>20) break; // Something has arrived
 			if(++timeout_cnt>250) break; // Wait up to 25ms for the repply
 			Delay_us(100); // 100us*250=25ms
 		}		
-		if(ReceivedBytes2()>15){
+		if(ReceivedBytes2()>20){
 			egets2(buff, sizeof(buff)-1);
-			if(strlen(buff)==16){
+			if(strlen(buff)==21){
 				if(auto_state) 	printf("Slave_auto says: %s\r", buff);
 				else 			printf("Slave_manual says: %s\r", buff);
-				sscanf(buff, "%01d,%02d,%04d",&state_res,&count_res,&metal_freq);
+				sscanf(buff, "%01d,%02d,%04d,%04d,%4.1f",&state_res,&count_res,&metal_freq,&weight,&angle);
 			}
 			else{
 				while (ReceivedBytes2()) egetc2(); 

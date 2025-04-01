@@ -42,6 +42,8 @@
 #define Servo_arm  P1_6
 #define Magnet 	   P1_5
 #define CS 		   P1_0
+#define DOUT 	   P2_6  // Data output (DOUT pin)
+#define PD_SCK 	   P2_5 // Pulse to initiate conversion (PD_SCK pin)
 
 // Constant Definitions
 #define M_PI 3.14159265358979323846
@@ -90,6 +92,7 @@ xdata int vx_thres = 161, vy_thres = 166;
 xdata int vx = 0, vy = 0; 
 xdata long freq100;
 xdata unsigned int fre_mea_count = 0;
+xdata unsigned int weight_mea_count = 0;
 xdata int d1, d2;
 xdata unsigned int seed = 12345;
 xdata float pwm_corr = 0.95;
@@ -99,8 +102,10 @@ xdata uint16_t  dig_z1, dig_z2, dig_z3, dig_z4;
 xdata uint8_t dig_xy1; 
 xdata int8_t dig_xy2; 
 xdata uint16_t dig_xyz1; 
-xdata float curr_angle=0; 
-xdata char mea_rest=0
+xdata float curr_angle=0.0; 
+xdata char mea_yes = 1;
+xdata unsigned int weight = 0;
+// xdata int8_t correction_factor = 0; 
 
 
 char _c51_external_startup (void)
@@ -757,6 +762,33 @@ unsigned int ADC_at_Pin(unsigned char pin)
 	return (ADC0);
 }
 
+int ReadHX711(void) {
+    xdata unsigned long dataa = 0;
+    xdata char i;
+	xdata unsigned int ans = 0;
+	xdata volatile char j;
+
+	PD_SCK = 0;
+
+    for (i = 0; i < 24; i++) {
+        PD_SCK = 1;
+        for (j = 0; j < 4; j++);
+        dataa = dataa << 1;
+        if (DOUT) {
+            dataa |= 0x01;
+        }
+        PD_SCK = 0;
+        for (j = 0; j < 4; j++);
+    }
+
+    PD_SCK = 1;
+    for (j = 0; j < 4; j++);
+    PD_SCK = 0;
+    for (j = 0; j < 4; j++);
+	ans = (dataa % 1000000)/10;
+    return ans;
+}
+
 void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 {
 	SFRPAGE=0x10;
@@ -766,7 +798,13 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 	fre_mea_count++;
 	if(fre_mea_count == 1000){
 		fre_mea_count = 0;
-		if(!mea_rest) freq100 = get_freq();
+		if(mea_yes) freq100 = get_freq();
+	}
+
+	weight_mea_count++;
+	if(weight_mea_count == 20000){
+		weight_mea_count = 0;
+		if(mea_yes) weight = ReadHX711();
 	}
 
     pwm_counter++; 
@@ -866,7 +904,10 @@ void Init_all(){
 	Set_Pin_Output(0x16);
 	Set_Pin_Output(0x15);
 	Set_Pin_Output(0x10); // CS
+
 	Set_Pin_Input(0x30);
+	Set_Pin_Output(0x25); // CLK for Load
+	Set_Pin_Input(0x26);
 	
 
 	InitPinADC(1,3);
@@ -880,6 +921,7 @@ void Init_all(){
 	Servo_arm=0;
 	Servo_base=0;
 	Magnet = 0;
+	PD_SCK = 0;
 	return;
 }
 
@@ -939,10 +981,10 @@ float Read_angle(void)
 	xdata uint8_t i; 
 	xdata int16_t mag_x, mag_y; 
 	xdata float sum_x, sum_y; 
-	xdata float alpha, angle, smoothed_angle; 
+	xdata float angle; 
 
-	sum_x = 0.0; sum_y = 0.0; alpha = 0.25; 
-	smoothed_angle = 0.0; angle = 0.0; 
+	sum_x = 0.0; sum_y = 0.0;
+	angle = 0.0; 
 
 	for (i = 0; i < 10; i++){
 		BMM150_Read_Data(&mag_x, &mag_y);
@@ -950,14 +992,9 @@ float Read_angle(void)
 		sum_y += (float)mag_y; 
 		waitms(1);
 	}
-	// printf("%f, %f\r\n", sum_x/25.0, sum_y/25.0);
 	angle = atan2f(sum_y/25.0, sum_x/25.0) * 180.0 / M_PI;
-	// BMM150_Read_Data(&mag_x, &mag_y);
-	// printf("%d, %d\r\n", mag_x, mag_y);
-	// angle = atan2f((float)mag_y, (float)mag_x) * 180.0 / M_PI; 
 	if (angle < 0.0) angle += 360.0; 
 	if (angle > 360.0) angle -= 360.0; 
-	// smoothed_angle = alpha * angle + (1-alpha) * smoothed_angle; 
 	return angle; 
 }
 
@@ -970,9 +1007,8 @@ void Auto_mode_slave(){
 	xdata int dummy;
 	xdata unsigned int angle;
 
-	while(count < 20 && state_res){
 
-		curr_angle = Read_angle();
+	while(count < 20 && state_res){
 		
 		if(RXU1()){
 			c=getchar1();	
@@ -989,7 +1025,7 @@ void Auto_mode_slave(){
 				// }				
 			}
 			else if(c=='@'){
-				sprintf(buff, "%01d,%02d,%ld,%4.1f\n", state_res, count,freq100, curr_angle);
+				sprintf(buff, "%01d,%02d,%ld,%04d,%4.1f\n", state_res, count,freq100, 0, curr_angle);
 				waitms(5); 
 				sendstr1(buff);
 			}
@@ -1004,27 +1040,28 @@ void Auto_mode_slave(){
 		printf("f:%04ld, d1:%d, d2:%d, bound_dectect: %d\r\n",freq100, d1,d2,bound);
 
 		if (freq100>=5340){
+			mea_yes = 0;
 			Move_back_ms(300);
 			waitms(100);
 			servo_pick();
 			count++;
 			waitms(100);
+			mea_yes = 1;
 			Move_forward();
-			freq100 = 1;
-			mea_rest = 1;
 		}
 
 		if(bound == 1){
 			Move_back_ms(500);
 			waitms(100);
+			curr_angle = Read_angle();
 		 	angle = get_random_90_250();
 			Right_angle(angle*600/90);
+			curr_angle = fabsf(curr_angle - Read_angle());
 		}
 	}
 
 	printf("Auto mode finished!\r\n");
 }
-
 
 void Joystick_Control(int *vx_ptr, int *vy_ptr)
 {
@@ -1159,7 +1196,8 @@ void main (void)
 	
 	while(1)
 	{	
-		
+		//printf("coinval = %d\n", weight);
+
 		if(pick_char=='1'){
 			servo_pick();
 			waitms(1000);
@@ -1171,7 +1209,7 @@ void main (void)
 			auto_mode = 0;
 		}
 		curr_angle = Read_angle();
-
+		printf("weight: %u\r\n",weight);
 		if(RXU1()) // Something has arrived
 		{
 			c=getchar1();
@@ -1191,7 +1229,8 @@ void main (void)
 			}
 			else if(c=='@') // Master wants slave data
 			{
-				sprintf(buff, "0,00,%04ld,%4.1f\n", freq100, curr_angle);
+				sprintf(buff, "0,00,%04ld,%05d,%4.1f\n", freq100, weight, curr_angle);
+				printf("%s\r\n",buff);
 				waitms(5); // The radio seems to need this delay...
 				sendstr1(buff);
 			}
