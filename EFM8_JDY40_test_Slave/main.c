@@ -21,12 +21,12 @@
 //                      5V        4  |          |  29      P0.4  	
 //                      RST       5  |          |  28      P0.5  	
 //                      P3.7      6  |          |  27      P0.6  	SDO (MISO)
-// Load_Data            P3.3      7  |          |  26      P0.7  	SDI (MOSI)
-// Load_SCK             P3.2      8  |          |  25      P1.0  	CS
+// ECHO                 P3.3      7  |          |  26      P0.7  	SDI (MOSI)
+// TRIGGER              P3.2      8  |          |  25      P1.0  	CS
 //                      P3.1      9  |          |  24      P1.1  	RXD (MCU: TXD)
 // Coin detector        P3.0     10  |          |  23      P1.2  	TXD (MCU: RXD)
-//                      P2.6     11  |          |  22      P1.3     Boundary1
-//                      P2.5     12  |          |  21      P1.4  	Boundary2
+// Load_Data            P2.6     11  |          |  22      P1.3     Boundary1
+// Load_SCK             P2.5     12  |          |  21      P1.4  	Boundary2
 // R_bridge_2           P2.4     13  |          |  20      P1.5  	Magnet
 // R_bridge_1           P2.3     14  |          |  19      P1.6  	Servo_arm
 // L_bridge_2           P2.2     15  |          |  18      P1.7  	Servo_base
@@ -34,16 +34,18 @@
 //                                    ----------  
 
 // Definitions
-#define R_bridge_1 P2_4
-#define R_bridge_2 P2_3
-#define L_bridge_2 P2_2
-#define L_bridge_1 P2_1
-#define Servo_base P1_7
-#define Servo_arm  P1_6
-#define Magnet 	   P1_5
-#define CS 		   P1_0
-#define DOUT 	   P2_6  // Data output (DOUT pin)
-#define PD_SCK 	   P2_5 // Pulse to initiate conversion (PD_SCK pin)
+#define R_bridge_1		P2_4
+#define R_bridge_2		P2_3
+#define L_bridge_2		P2_2
+#define L_bridge_1 		P2_1
+#define Servo_base 		P1_7
+#define Servo_arm  		P1_6
+#define Magnet 	   		P1_5
+#define CS 		   		P1_0
+#define DOUT 	   		P2_6  // Data output (DOUT pin)
+#define PD_SCK 	   		P2_5 // Pulse to initiate conversion (PD_SCK pin)
+#define ECHO_PIN   		P3_3
+#define TRIG_PIN		P3_2
 
 // Constant Definitions
 #define M_PI 3.14159265358979323846
@@ -80,14 +82,13 @@
 #define BMM150_POSITIVE_SATURATION_Z 		INT16_C(32767)
 #define BMM150_NEGATIVE_SATURATION_Z 		INT16_C(-32767)
 
-
 // Global variables 
 idata char buff[20];
 xdata unsigned int pwm_counter = 0; 
 xdata unsigned int servo_counter = 0; 
 xdata unsigned char pwm_left = 0, pwm_right = 0; 
 xdata unsigned char L_motor_dir = 1, R_motor_dir = 1; // 1 - Forward, 0 - Backward
-xdata unsigned char servo_base = 60, servo_arm = 2; 
+xdata unsigned char servo_base = 50, servo_arm = 50; 
 xdata int vx_thres = 161, vy_thres = 166; 
 xdata int vx = 0, vy = 0; 
 xdata long freq100;
@@ -106,6 +107,8 @@ xdata float curr_angle = 0.0, raw_angle = 0.0, last_raw_angle = 0.0, angle_diff 
 xdata char mea_yes = 1;
 xdata unsigned int weight = 0;
 xdata float temp; 
+xdata float duration=0.0, distance=0.0;
+xdata unsigned char overflow_count; 
 
 
 char _c51_external_startup (void)
@@ -325,12 +328,12 @@ void BMM150_Init(void)
     if (chip_id != BMM150_CHIP_ID_VALUE)
     {
         printf("Error: Could not find BMM150 sensor (Chip ID: 0x%02X)\r\n", chip_id);
-        while (1) {
-            printf("Press restart to check again!\r");
-        }; // Halt if sensor not found
+        // while (1) {
+        //     printf("Press restart to check again!\r");
+        // }; // Halt if sensor not found
     }
 	else {
-		printf("DONE! Chip ID = 0x%02X\r\n", chip_id);
+		// printf("DONE! Chip ID = 0x%02X\r\n", chip_id);
 	}
     
     // Set operation mode to normal and data rate to 10Hz
@@ -798,7 +801,11 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 	fre_mea_count++;
 	if(fre_mea_count == 1000){
 		fre_mea_count = 0;
-		if(mea_yes) freq100 = get_freq();
+		if(mea_yes)
+		{
+			freq100 = get_freq();
+			// distance = measure_distance();
+		}
 	}
 
 	weight_mea_count++;
@@ -806,6 +813,8 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 		weight_mea_count = 0;
 		if(mea_yes) weight = ReadHX711();
 	}
+
+
 
     pwm_counter++; 
     if (pwm_counter == 100){
@@ -868,38 +877,57 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 
 void servo_pick(){
 	xdata int i;
-	servo_arm = 2;
-	servo_base = 60;
-	waitms(400);
-	servo_base = 255;
-	waitms(400);
-	Magnet = 1;
-	servo_arm = 250;
-	waitms(400);
-	for(i = 0; i < 130; i++){
+	servo_arm = 50;
+	servo_base = 50;
+	waitms(100);
+	// servo_base = 250;
+	for (i=0; i < 250-50; i++)
+	{
+		servo_base++; 
+		waitms(1);
+	}
+	waitms(600);
+	for(i = 0; i < 250 - 50; i++)
+	{
+		servo_arm++; 
+		waitms(1);
+	}
+	// servo_arm = 250; 
+	Magnet = 1; 
+	waitms(100);
+	for(i = 0; i < 120; i++){
 		waitms(5);
 		servo_base--;
 	}
-	waitms(400);
-	for(i = 0; i < 130; i++){
+	waitms(100);
+	for(i = 0; i < 120; i++){
 		waitms(5);
 		servo_base++;
 	}
-	waitms(400);
-	for(i = 0; i<150; i++){
+	waitms(100);
+	for(i = 0; i<160; i++){
 		waitms(5);
 		servo_arm--;
 	}
-	waitms(200);
-	for(i = 0; i<115; i++){
+	waitms(100);
+	for(i = 0; i<135+30; i++){
 		waitms(5);
 		servo_base--;
 	}
-	waitms(500);
+	waitms(100);
 	Magnet = 0;
-	waitms(200);
-	servo_arm=2;
-	servo_base=60;
+	waitms(100);
+	// servo_arm=50;
+	// servo_base=50;
+	for (i=0; i < 90-50; i++){
+		servo_arm--; 
+		waitms(1);
+	}
+	waitms(100);
+	for (i=0; i < 115-30-50; i++){
+		servo_base--; 
+		waitms(1);
+	}
 	return;
 }
 
@@ -922,8 +950,10 @@ void Init_all(){
 	Set_Pin_Input(0x30);
 	Set_Pin_Output(0x25); // CLK for Load
 	Set_Pin_Input(0x26);
-	
 
+	Set_Pin_Input(0x33);   //ECHO pin
+	Set_Pin_Output(0x32);  // TRIGGER pin
+	
 	InitPinADC(1,3);
 	InitPinADC(1,4);
 	InitADC();
@@ -1021,7 +1051,7 @@ void Auto_mode_slave(){
 	xdata int dummy;
 	xdata unsigned int angle;
 
-	// curr_angle = Read_angle();
+	curr_angle = Read_angle();
 
 	while(count < 20 && state_res){
 		
@@ -1070,11 +1100,43 @@ void Auto_mode_slave(){
 			waitms(100);
 		 	angle = get_random_90_250();
 			Right_angle(angle*600/90);
-			// curr_angle = Read_angle() * 1.2;
+			curr_angle = Read_angle() * 1.2;
 		}
 	}
 
 	// printf("Auto mode finished!\r\n");
+}
+
+float measure_distance(void)
+{
+	TL0 = 0; 
+	TH0 = 0; 
+	TF0 = 0; 
+	overflow_count = 0;
+	duration = 0.0; 
+
+	TRIG_PIN = 1; 
+	Timer3us(10);
+	TRIG_PIN = 0; 
+
+	while (ECHO_PIN != 0);
+	while (ECHO_PIN != 1);
+	TR0 = 1; 
+	while (ECHO_PIN == 1)
+	{
+		if (TF0 == 1){
+			TF0 = 0; 
+			overflow_count++;
+		}
+	}
+
+	TR0 = 0; 
+	duration = (overflow_count*65536.0 + TH0*256.0 + TL0) * (12.0/SYSCLK);
+
+	distance = 340.0 * duration * 100.0 / 2.0; // distance in cm
+	
+	return distance; 
+
 }
 
 float Joystick_Control(int *vx_ptr, int *vy_ptr)
@@ -1085,7 +1147,7 @@ float Joystick_Control(int *vx_ptr, int *vy_ptr)
 	vy = *vy_ptr; 
 
 	//constantly updating the live raw angle 
-	//raw_angle = Read_angle();
+	raw_angle = Read_angle();
 
 	// Determine of Vx and Vy are within 5% error
 	vx_error = abs(vx-vx_thres)*100/vx_thres; 
@@ -1114,19 +1176,19 @@ float Joystick_Control(int *vx_ptr, int *vy_ptr)
 		if (vx_err > 0){ //turn right
 			L_motor_dir = 1; 
 			R_motor_dir = 0;
-			// curr_angle += angle_diff * 1.45; // TUNE THIS
+			curr_angle += angle_diff * 1.45; // TUNE THIS
 		}
 		else{ //turn left 
 			L_motor_dir = 0; 
 			R_motor_dir = 1; 
-			// curr_angle -= angle_diff * 1.4; // TUNE THIS
+			curr_angle -= angle_diff * 1.4; // TUNE THIS
 		}
-		// if (curr_angle > 360.0) curr_angle -= 360.0; 
-		// if (curr_angle < 0.0) curr_angle += 360.0; 
+		if (curr_angle > 360.0) curr_angle -= 360.0; 
+		if (curr_angle < 0.0) curr_angle += 360.0; 
 	}
 	if ((vx_error>5)&&(vy_error)>5){
 		// Region 1 & Region 2
-		// angle_diff = fabsf(raw_angle - last_raw_angle);
+		angle_diff = fabsf(raw_angle - last_raw_angle);
 		if (vy_err>0){
 			L_motor_dir = 0; 
 			R_motor_dir = 0; 
@@ -1141,7 +1203,7 @@ float Joystick_Control(int *vx_ptr, int *vy_ptr)
 					pwm_left = vx_error; 
 					pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
 				}
-				// curr_angle += angle_diff * 1.5; // TUNE THIS 
+				curr_angle += angle_diff * 1.5; // TUNE THIS 
 			}
 			// Region 2
 			else {
@@ -1153,7 +1215,7 @@ float Joystick_Control(int *vx_ptr, int *vy_ptr)
 					pwm_left = vx_error*100/(vx_error+vy_error);
 					pwm_right = vx_error*pwm_corr; 
 				}
-				// curr_angle -= angle_diff * 1.5; // TUNE THIS 
+				curr_angle -= angle_diff * 1.5; // TUNE THIS 
 			}
 		}
 		// Region 3 & 4
@@ -1170,7 +1232,7 @@ float Joystick_Control(int *vx_ptr, int *vy_ptr)
 					pwm_left = vx_error; 
 					pwm_right = pwm_corr*vx_error*100/(vx_error+vy_error);
 				}
-				// curr_angle -= angle_diff * 1.4; // TUNE THIS 
+				curr_angle -= angle_diff * 1.4; // TUNE THIS 
 			}
 			// Region 3
 			else {
@@ -1182,14 +1244,13 @@ float Joystick_Control(int *vx_ptr, int *vy_ptr)
 					pwm_left = vx_error*100/(vx_error+vy_error);
 					pwm_right = pwm_corr*vx_error; 
 				}
-				// curr_angle += angle_diff * 1.4; // TUNE THIS 
+				curr_angle += angle_diff * 1.4; // TUNE THIS 
 			}
 		}
 	}
 	
-	// last_raw_angle = raw_angle; 
-	// return curr_angle; 
-	return 0.0;
+	last_raw_angle = raw_angle; 
+	return curr_angle; 
 }
 
 void main (void)
@@ -1204,7 +1265,7 @@ void main (void)
 	Init_all();
 	BMM150_Init();
 	waitms(500);
-	printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
+	// printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
 	UART1_Init(9600);
 	
 	ReceptionOff();
@@ -1226,13 +1287,13 @@ void main (void)
     R_bridge_2 = 0; 
 	
 	//initialize current angle 
-	// curr_angle = Read_angle();
+	curr_angle = Read_angle();
 	waitms(1000);
 	while(1)
 	{	
 		temp = Read_angle();
 		// printf("coinval = %d\n", weight);
-		printf("Current angle = %d, Raw angle = %d\r\n", (int)curr_angle, (int)temp);
+		// printf("Current angle = %d, Raw angle = %d\r\n", (int)curr_angle, (int)temp);
 
 		if(pick_char=='1'){
 			servo_pick();
@@ -1255,7 +1316,7 @@ void main (void)
 				{
 					printf("Master says: %s\r\n", buff);
 					sscanf(buff, "%03d,%03d,%c,%01d", &vx, &vy, &pick_char, &auto_mode);
-		        	printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, pick_char, auto_mode);
+		        	// printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, pick_char, auto_mode);
 					curr_angle = Joystick_Control(&vx, &vy);
 				}
 				else{
@@ -1265,7 +1326,7 @@ void main (void)
 			else if(c=='@') // Master wants slave data
 			{
 				sprintf(buff, "0,00,%04ld,%05d,%03d\n", freq100, weight, (int)curr_angle);
-				printf("%s\r\n",buff);
+				// printf("%s\r\n",buff);
 				waitms(5); // The radio seems to need this delay...
 				sendstr1(buff);
 			}
