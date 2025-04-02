@@ -23,6 +23,7 @@ int pick_order = 0;
 int auto_state = 0;
 char lb[17];
 int i;
+int record = 0;
 char liangkuai = 0;
 char yikuai = 0;
 char wumao = 0;
@@ -234,9 +235,6 @@ void TIM22_Handler(void)
 	pick_counter++;
 	if(pick_counter == 10000 && pick_order){
 		pick_order = 0;
-		GPIOA->ODR &= ~BIT7;
-		waitms(100);
-		GPIOA->ODR |= BIT7;
 	} 
 	if(timer22_counter < 101) Buzzer(1);
 	else if (timer22_counter < buzzer_wait) Buzzer(0);
@@ -367,6 +365,19 @@ void main(void)
 					eputs2(buff); 		
 					waitms(50);
 				};
+			}
+			if (state_res == 0 && count_res == 5){
+				auto_state=0;
+				LCDprint("Automode:",1,1);
+				LCDprint("Exiting...",2,1);
+				waitms(3000);
+			}
+
+			if(record < count_res){
+				GPIOA->ODR &= ~BIT7;
+				waitms(100);
+				GPIOA->ODR |= BIT7;
+				record = count_res;
 			}
 		}
 

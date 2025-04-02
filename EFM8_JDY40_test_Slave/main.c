@@ -801,8 +801,7 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 	fre_mea_count++;
 	if(fre_mea_count == 1000){
 		fre_mea_count = 0;
-		if(mea_yes)
-		{
+		if(mea_yes){
 			freq100 = get_freq();
 			// distance = measure_distance();
 		}
@@ -813,8 +812,6 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 		weight_mea_count = 0;
 		if(mea_yes) weight = ReadHX711();
 	}
-
-
 
     pwm_counter++; 
     if (pwm_counter == 100){
@@ -879,60 +876,58 @@ void servo_pick(){
 	xdata int i;
 	servo_arm = 50;
 	servo_base = 50;
-	waitms(100);
+	waitms(500);
 	// servo_base = 250;
-	for (i=0; i < 250-50; i++)
+	for (i=50; i <= 210; i+=20)
 	{
-		servo_base++; 
-		waitms(1);
+		servo_base = i; 
+		waitms(25);
 	}
-	waitms(600);
-	for(i = 0; i < 250 - 50; i++)
+	waitms(500);
+	for(i = 50; i <= 250; i+=20)
 	{
-		servo_arm++; 
-		waitms(1);
+		servo_arm = i; 
+		waitms(25);
 	}
 	// servo_arm = 250; 
 	Magnet = 1; 
-	waitms(100);
-	for(i = 0; i < 120; i++){
-		waitms(5);
-		servo_base--;
+	waitms(500);
+	for(i = 200; i >= 90; i-=10){
+		waitms(25);
+		servo_base = i;
 	}
-	waitms(100);
-	for(i = 0; i < 120; i++){
-		waitms(5);
-		servo_base++;
+	waitms(500);
+	for(i = 90; i <= 200; i+=10){
+		waitms(25);
+		servo_base = i;
 	}
-	waitms(100);
-	for(i = 0; i<160; i++){
-		waitms(5);
-		servo_arm--;
+	waitms(500);
+	for(i = 240; i >= 100; i-= 5){
+		waitms(25);
+		servo_arm = i;
 	}
-	waitms(100);
-	for(i = 0; i<135+30; i++){
-		waitms(5);
-		servo_base--;
+	waitms(500);
+	for(i = 200; i >= 80; i-=5){
+		waitms(25);
+		servo_base = i;
 	}
-	waitms(100);
+	waitms(500);
 	Magnet = 0;
-	waitms(100);
-	// servo_arm=50;
-	// servo_base=50;
-	for (i=0; i < 90-50; i++){
-		servo_arm--; 
-		waitms(1);
+	waitms(500);
+	for (i = 100; i >=40 ; i-=10){
+		servo_arm = i; 
+		waitms(25);
 	}
-	waitms(100);
-	for (i=0; i < 115-30-50; i++){
-		servo_base--; 
-		waitms(1);
+	waitms(500);
+	for (i = 80; i >= 40; i-=10){
+		servo_base = i; 
+		waitms(25);
 	}
 	return;
 }
 
 int check_bound(int d1, int d2){
-	if(d1>12000||d2>12000)	return 1;
+	if(d1>10000||d2>10000)	return 1;
 	else return 0;
 }
 
@@ -1053,7 +1048,7 @@ void Auto_mode_slave(){
 
 	curr_angle = Read_angle();
 
-	while(count < 20 && state_res){
+	while(count < 5 && state_res){
 		
 		if(RXU1()){
 			c=getchar1();	
@@ -1064,17 +1059,13 @@ void Auto_mode_slave(){
 					sscanf(buff,"%03d,%03d,%01d,%01d",&dummy, &dummy,&dummy,&command);
 					if(command) state_res = 1;
 					else state_res = 0;
-				}
-				// else{
-				// 	printf("bad_message_auto_mode: %s\r\n", buff);
-				// }				
+				}			
 			}
 			else if(c=='@'){
 				sprintf(buff, "%01d,%02d,%ld,%05d,%03d\n", state_res, count,freq100, 0, (int)curr_angle);
 				waitms(5); 
 				sendstr1(buff);
 			}
-			//printf("%d, %d\r\n",command, state_res);
 		}
 
 		Move_forward();
@@ -1084,7 +1075,7 @@ void Auto_mode_slave(){
 		bound = check_bound(d1,d2);
 		printf("f:%04ld, d1:%d, d2:%d, bound_dectect: %d\r\n",freq100, d1,d2,bound);
 
-		if (freq100>=5340){
+		if (freq100>=5360){
 			mea_yes = 0;
 			Move_back_ms(300);
 			waitms(100);
@@ -1103,11 +1094,23 @@ void Auto_mode_slave(){
 			curr_angle = Read_angle() * 1.2;
 		}
 	}
-
-	// printf("Auto mode finished!\r\n");
+	dummy = 0;
+	while(1){
+		if(RXU1()) {
+			c=getchar1();
+			if(c=='@') // Master wants slave data
+			{
+				sprintf(buff, "0,00,%04ld,%05d,%03d\n", freq100, weight, (int)curr_angle);
+				dummy++;
+				waitms(5); 
+				sendstr1(buff);
+				if(dummy = 30) break;
+			}
+		}
+	}
 }
 
-float measure_distance(void)
+int measure_distance(void)
 {
 	TL0 = 0; 
 	TH0 = 0; 
@@ -1135,7 +1138,7 @@ float measure_distance(void)
 
 	distance = 340.0 * duration * 100.0 / 2.0; // distance in cm
 	
-	return distance; 
+	return (int)(10*distance); 
 
 }
 
@@ -1305,7 +1308,6 @@ void main (void)
 			Auto_mode_slave();
 			auto_mode = 0;
 		}
-		// printf("weight: %u\r\n",weight);
 		if(RXU1()) // Something has arrived
 		{
 			c=getchar1();
@@ -1326,7 +1328,6 @@ void main (void)
 			else if(c=='@') // Master wants slave data
 			{
 				sprintf(buff, "0,00,%04ld,%05d,%03d\n", freq100, weight, (int)curr_angle);
-				// printf("%s\r\n",buff);
 				waitms(5); // The radio seems to need this delay...
 				sendstr1(buff);
 			}
