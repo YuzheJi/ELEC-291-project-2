@@ -107,6 +107,7 @@ void Configure_Pins (void)
 	Set_Pin_Output(0,3,0);
 	Set_Pin_Output(0,4,0);
 	Set_Pin_Output(0,5,0);
+	Set_Pin_Output(0,7,0);
 	Set_Pin_Output(1,7,0);
 	Set_Pin_Input(8,1);
 	Set_Pin_Input(11,1);
@@ -231,7 +232,12 @@ void TIM22_Handler(void)
 	timer22_counter++; 
 	button_counter++;
 	pick_counter++;
-	if(pick_counter == 200 && pick_order) pick_order = 0;
+	if(pick_counter == 10000 && pick_order){
+		pick_order = 0;
+		GPIOA->ODR &= ~BIT7;
+		waitms(100);
+		GPIOA->ODR |= BIT7;
+	} 
 	if(timer22_counter < 101) Buzzer(1);
 	else if (timer22_counter < buzzer_wait) Buzzer(0);
 	else{
@@ -441,14 +447,12 @@ void main(void)
 				if(auto_state) 	printf("Slave_auto says: %s\r", buff);
 				else 			printf("Slave_manual says: %s\r", buff);
 				sscanf(buff, "%01d,%02d,%04d,%05d,%4.1f",&state_res,&count_res,&metal_freq,&weight,&angle);
-				weights[index % 25] = weight; // 存入数组
+				weights[index % 25] = weight; 
         		index++;
 				if (1){
 					float std = calculate_std(weights, 25);
-					printf("标准差: %.3f\r\n", std);
 					if (std < 3000) {
 						old_weight = new_weight;
-						printf("重量稳定: %d\r\n", calculate_mean(weights,25));
 						new_weight = calculate_mean(weights,25);
 						Coin_chk(new_weight-old_weight);
 						printf("Coins: value: %d\r\n", new_weight-old_weight);
