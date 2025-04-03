@@ -113,7 +113,7 @@ xdata int distance;
 xdata unsigned char overflow_count; 
 
 xdata int i_loo;
-
+xdata unsigned int i; 
 
 char _c51_external_startup (void)
 {
@@ -267,7 +267,7 @@ void SPI_write(unsigned char reg_addr, unsigned char reg_value)
 
 void BMM150_Read_Trim_Registers(void)
 {
-	xdata uint8_t i; 
+	// xdata uint8_t i; 
 	xdata uint16_t temp_msb; 
 	xdata uint8_t trim_x1y1[2] = {0};
 	xdata uint8_t trim_xyz_data[4] = {0};
@@ -667,8 +667,8 @@ void ReceptionOff (void)
 
 int measure_distance(void)
 {
-	xdata int answer;
-	xdata unsigned int i = 0;
+	// xdata int answer;
+	// xdata unsigned int i = 0;
 	TL0 = 0; 
 	TH0 = 0; 
 	TF0 = 0; 
@@ -682,7 +682,7 @@ int measure_distance(void)
 	while (ECHO_PIN != 0){
 		i++;
 		if (i > 3000){
-			printf("Time out\r\n");
+			// printf("Time out\r\n");
 			return -1;
 		}
 	};
@@ -699,9 +699,9 @@ int measure_distance(void)
 	TR0 = 0; 
 	duration = (overflow_count*65536.0 + TH0*256.0 + TL0) * (12.0/SYSCLK);
 
-	answer = 100 * (340.0 * duration * 100.0 / 2.0); // distance in cm
+	distance = 100 * (340.0 * duration * 100.0 / 2.0); // distance in cm
 	
-	return answer; 
+	return distance; 
 }
 
 void Set_Pin_Output (unsigned char pin)
@@ -810,7 +810,7 @@ unsigned int ADC_at_Pin(unsigned char pin)
 
 int ReadHX711(void) {
     xdata unsigned long dataa = 0;
-    xdata char i;
+    // xdata char i;
 	xdata unsigned int ans = 0;
 	xdata volatile char j;
 
@@ -846,14 +846,13 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 		fre_mea_count = 0;
 		if(mea_yes){
 			freq100 = get_freq();
-			
 		}
 	}
 
 	weight_mea_count++;
 	if(weight_mea_count == 20000){
 		weight_mea_count = 0;
-		distance = measure_distance();
+		if(mea_yes) distance = measure_distance();
 		if(mea_yes) weight = ReadHX711();
 	}
 
@@ -1130,13 +1129,13 @@ unsigned int get_random_90_250() {
 
 float Read_angle(void)
 {
-	xdata uint8_t i; 
+	// xdata uint8_t i; 
 	xdata int16_t mag_x, mag_y; 
 	xdata float sum_x, sum_y; 
 	xdata float angle; 
 
 	sum_x = 0.0; sum_y = 0.0;
-	angle = 0.0; 
+	angle = 0.0;
 
 	for (i = 0; i < 10; i++){
 		BMM150_Read_Data(&mag_x, &mag_y);
@@ -1168,14 +1167,14 @@ void Auto_mode_slave(){
 			if(c=='!'){
 				getstr1(buff, sizeof(buff)-1);
 				if(strlen(buff)==11){
-					printf("master_messgae_auto_mode: %s\r\n", buff);
+					// printf("master_messgae_auto_mode: %s\r\n", buff);
 					sscanf(buff,"%03d,%03d,%01d,%01d",&dummy, &dummy,&dummy,&command);
 					if(command) state_res = 1;
 					else state_res = 0;
 				}			
 			}
 			else if(c=='@'){
-				sprintf(buff, "%01d,%02d,%ld,%05d,%03d,%02d,%02d\n", state_res, count,freq100, 0, (int)curr_angle, pwm_left, pwm_right);
+				sprintf(buff, "%01d,%02d,%ld,%05d,%03d\n", state_res, count,freq100, 0, (int)curr_angle);
 				waitms(5); 
 				sendstr1(buff);
 			}
@@ -1186,7 +1185,7 @@ void Auto_mode_slave(){
 		d1 = ADC_at_Pin(QFP32_MUX_P1_3);
 		d2 = ADC_at_Pin(QFP32_MUX_P1_4);
 		bound = check_bound(d1,d2);
-		printf("f:%04ld, d1:%d, d2:%d, bound_dectect: %d\r\n",freq100, d1,d2,bound);
+		// printf("f:%04ld, d1:%d, d2:%d, bound_dectect: %d\r\n",freq100, d1,d2,bound);
 
 		if (freq100>=5360){
 			mea_yes = 0;
@@ -1198,6 +1197,8 @@ void Auto_mode_slave(){
 			mea_yes = 1;
 			Move_forward();
 		}
+
+		if (distance < 500) servo_moveaway();
 
 		if(bound == 1){
 			Move_back_ms(500);
@@ -1213,7 +1214,7 @@ void Auto_mode_slave(){
 			c=getchar1();
 			if(c=='@') // Master wants slave data
 			{
-				sprintf(buff, "0,00,%04ld,%05d,%03d\n", freq100, weight, (int)curr_angle);
+				sprintf(buff, "0,00,%04ld,%05d,%03d,%03d,%03d\n", freq100, weight, (int)curr_angle);
 				dummy++;
 				waitms(5); 
 				sendstr1(buff);
@@ -1225,7 +1226,7 @@ void Auto_mode_slave(){
 
 float Joystick_Control(int *vx_ptr, int *vy_ptr)
 {
-	xdata int vx, vy; 
+	// xdata int vx, vy; 
 	xdata int vx_error, vy_error, vx_err, vy_err;
 	vx = *vx_ptr; 
 	vy = *vy_ptr; 
@@ -1340,7 +1341,6 @@ float Joystick_Control(int *vx_ptr, int *vy_ptr)
 void main (void)
 {
     xdata char c;
-	xdata int vx = 0, vy = 0; 
 	xdata int auto_mode = 0;
 	xdata char pick_char = '0';
 	xdata angle_count = 0; 
@@ -1367,15 +1367,18 @@ void main (void)
     L_bridge_2 = 0; 
     R_bridge_1 = 0; 
     R_bridge_2 = 0; 
+	vx = 0; 
+	vy = 0; 
 	
 	//initialize current angle 
 	curr_angle = Read_angle();
+	// servo_moveaway();
+	
 	waitms(1000);
 	while(1){	
 		
 		temp = Read_angle();
-		// printf("distance: %d\r\n", distance);
-		if (distance < 500) 
+		printf("distance: %d\r\n", distance);
 		
 		if(pick_char=='1'){
 			servo_pick();
@@ -1387,6 +1390,7 @@ void main (void)
 			Auto_mode_slave();
 			auto_mode = 0;
 		}
+
 		if(RXU1()) // Something has arrived
 		{
 			c=getchar1();
@@ -1406,7 +1410,7 @@ void main (void)
 			}
 			else if(c=='@') // Master wants slave data
 			{
-				sprintf(buff, "0,00,%04ld,%05d,%03d,%02d,%02d,%03d,%03d\n", freq100, weight, (int)curr_angle, pwm_left, pwm_right);
+				sprintf(buff, "0,00,%04ld,%05d,%03d\n", freq100, weight, (int)curr_angle);
 				waitms(5); // The radio seems to need this delay...
 				sendstr1(buff);
 			}

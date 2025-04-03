@@ -37,7 +37,7 @@ void uart1_init(void) {
     GPIOB_AFRL &= ~((0xF << (6 * 4)) | (0xF << (7 * 4)));  // AF0 is 0b0000
 
     // 4. Set baud rate: 9600 with 16 MHz clock => BRR = 16000000 / 9600 = ~1667
-    USART1_BRR = 3334;
+    USART1_BRR = 32000000/9600;
 
     // 5. Enable USART1, TX and RX
     USART1_CR1 = (1 << 0)   // UE: USART enable
