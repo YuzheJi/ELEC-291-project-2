@@ -18,8 +18,8 @@
 // 	                    P0.0      1  |          |  32      P0.1     
 //                      GND       2  |          |  31      P0.2  	
 //                      5V        3  |          |  30      P0.3  	SCK
-//                      5V        4  |          |  29      P0.4  	
-//                      RST       5  |          |  28      P0.5  	
+//                      5V        4  |          |  29      P0.4  	xxxxx
+//                      RST       5  |          |  28      P0.5  	xxxxx
 //                      P3.7      6  |          |  27      P0.6  	SDO (MISO)
 // ECHO                 P3.3      7  |          |  26      P0.7  	SDI (MOSI)
 // TRIGGER              P3.2      8  |          |  25      P1.0  	CS
@@ -44,8 +44,8 @@
 #define CS 		   		P1_0
 #define DOUT 	   		P2_6  // Data output (DOUT pin)
 #define PD_SCK 	   		P2_5 // Pulse to initiate conversion (PD_SCK pin)
-#define ECHO_PIN   		P3_3
-#define TRIG_PIN		P3_2
+#define ECHO_PIN   		P3_1
+#define TRIG_PIN		P0_0
 
 // Constant Definitions
 #define M_PI 3.14159265358979323846
@@ -105,10 +105,14 @@ xdata int8_t dig_xy2;
 xdata uint16_t dig_xyz1; 
 xdata float curr_angle = 0.0, raw_angle = 0.0, last_raw_angle = 0.0, angle_diff = 0.0; 
 xdata char mea_yes = 1;
+
 xdata unsigned int weight = 0;
 xdata float temp; 
-xdata float duration=0.0, distance=0.0;
+xdata float duration=0.0;
+xdata int distance;
 xdata unsigned char overflow_count; 
+
+xdata int i_loo;
 
 
 char _c51_external_startup (void)
@@ -661,6 +665,44 @@ void ReceptionOff (void)
 	P2_0=1; // 'set' pin to 1 is normal operation mode.
 }
 
+int measure_distance(void)
+{
+	xdata int answer;
+	TL0 = 0; 
+	TH0 = 0; 
+	TF0 = 0; 
+	overflow_count = 0;
+	duration = 0;
+
+	TRIG_PIN = 1; 
+	for(i_loo =0; i_loo <40; i_loo ++);
+	TRIG_PIN = 0; 
+
+	while (ECHO_PIN != 0){
+		i_loo++;
+		if (i_loo > 3000){
+			printf("Time out\r\n");
+			return -1;
+		}
+	};
+	while (ECHO_PIN != 1);
+	TR0 = 1; 
+	while (ECHO_PIN == 1)
+	{
+		if (TF0 == 1){
+			TF0 = 0; 
+			overflow_count++;
+		}
+	}
+
+	TR0 = 0; 
+	duration = (overflow_count*65536.0 + TH0*256.0 + TL0) * (12.0/SYSCLK);
+
+	answer = 100 * (340.0 * duration * 100.0 / 2.0); // distance in cm
+	
+	return answer; 
+}
+
 void Set_Pin_Output (unsigned char pin)
 {
 	unsigned char mask;
@@ -803,13 +845,14 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 		fre_mea_count = 0;
 		if(mea_yes){
 			freq100 = get_freq();
-			// distance = measure_distance();
+			
 		}
 	}
 
 	weight_mea_count++;
 	if(weight_mea_count == 20000){
 		weight_mea_count = 0;
+		distance = measure_distance();
 		if(mea_yes) weight = ReadHX711();
 	}
 
@@ -873,54 +916,53 @@ void Timer5_ISR (void) interrupt INTERRUPT_TIMER5
 }
 
 void servo_pick(){
-	xdata int i;
 	servo_arm = 50;
 	servo_base = 50;
 	waitms(500);
 	// servo_base = 250;
-	for (i=50; i <= 210; i+=20)
+	for (i_loo=50; i_loo <= 210; i_loo+=20)
 	{
-		servo_base = i; 
+		servo_base = i_loo; 
 		waitms(25);
 	}
 	waitms(500);
-	for(i = 50; i <= 250; i+=20)
+	for(i_loo = 50; i_loo <= 250; i_loo+=20)
 	{
-		servo_arm = i; 
+		servo_arm = i_loo; 
 		waitms(25);
 	}
 	// servo_arm = 250; 
 	Magnet = 1; 
 	waitms(500);
-	for(i = 200; i >= 90; i-=10){
+	for(i_loo = 200; i_loo >= 90; i_loo-=10){
 		waitms(25);
-		servo_base = i;
+		servo_base = i_loo;
 	}
 	waitms(500);
-	for(i = 90; i <= 200; i+=10){
+	for(i_loo = 90; i_loo <= 200; i_loo+=10){
 		waitms(25);
-		servo_base = i;
+		servo_base = i_loo;
 	}
 	waitms(500);
-	for(i = 240; i >= 100; i-= 5){
+	for(i_loo = 240; i_loo >= 100; i_loo-= 5){
 		waitms(25);
-		servo_arm = i;
+		servo_arm = i_loo;
 	}
 	waitms(500);
-	for(i = 200; i >= 80; i-=5){
+	for(i_loo = 200; i_loo >= 80; i_loo-=5){
 		waitms(25);
-		servo_base = i;
+		servo_base = i_loo;
 	}
 	waitms(500);
 	Magnet = 0;
 	waitms(500);
-	for (i = 100; i >=40 ; i-=10){
-		servo_arm = i; 
+	for (i_loo = 100; i_loo >=40 ; i_loo-=10){
+		servo_arm = i_loo; 
 		waitms(25);
 	}
 	waitms(500);
-	for (i = 80; i >= 40; i-=10){
-		servo_base = i; 
+	for (i_loo = 80; i_loo >= 40; i_loo-=10){
+		servo_base = i_loo; 
 		waitms(25);
 	}
 	return;
@@ -946,8 +988,8 @@ void Init_all(){
 	Set_Pin_Output(0x25); // CLK for Load
 	Set_Pin_Input(0x26);
 
-	Set_Pin_Input(0x33);   //ECHO pin
-	Set_Pin_Output(0x32);  // TRIGGER pin
+	Set_Pin_Input(0x31);   //ECHO pin
+	Set_Pin_Output(0x00);  // TRIGGER pin
 	
 	InitPinADC(1,3);
 	InitPinADC(1,4);
@@ -1012,7 +1054,7 @@ unsigned int simple_rand() {
 }
 
 unsigned int get_random_90_250() {
-    return (simple_rand() % (250 - 85 + 1)) + 85;
+    return (simple_rand() % (250 - 85 + 1)) + 90;
 }
 
 float Read_angle(void)
@@ -1108,38 +1150,6 @@ void Auto_mode_slave(){
 			}
 		}
 	}
-}
-
-int measure_distance(void)
-{
-	TL0 = 0; 
-	TH0 = 0; 
-	TF0 = 0; 
-	overflow_count = 0;
-	duration = 0.0; 
-
-	TRIG_PIN = 1; 
-	Timer3us(10);
-	TRIG_PIN = 0; 
-
-	while (ECHO_PIN != 0);
-	while (ECHO_PIN != 1);
-	TR0 = 1; 
-	while (ECHO_PIN == 1)
-	{
-		if (TF0 == 1){
-			TF0 = 0; 
-			overflow_count++;
-		}
-	}
-
-	TR0 = 0; 
-	duration = (overflow_count*65536.0 + TH0*256.0 + TL0) * (12.0/SYSCLK);
-
-	distance = 340.0 * duration * 100.0 / 2.0; // distance in cm
-	
-	return (int)(10*distance); 
-
 }
 
 float Joystick_Control(int *vx_ptr, int *vy_ptr)
@@ -1261,14 +1271,12 @@ void main (void)
     xdata char c;
 	xdata int vx = 0, vy = 0; 
 	xdata int auto_mode = 0;
-	char pick_char = '0';
+	xdata char pick_char = '0';
 	xdata angle_count = 0; 
 	
-	// printf("Initializing\r\n");
 	Init_all();
 	BMM150_Init();
 	waitms(500);
-	// printf("\r\nEFM8LB12 JDY-40 Slave Test.\r\n");
 	UART1_Init(9600);
 	
 	ReceptionOff();
@@ -1292,12 +1300,11 @@ void main (void)
 	//initialize current angle 
 	curr_angle = Read_angle();
 	waitms(1000);
-	while(1)
-	{	
+	while(1){	
+		
 		temp = Read_angle();
-		// printf("coinval = %d\n", weight);
-		// printf("Current angle = %d, Raw angle = %d\r\n", (int)curr_angle, (int)temp);
-
+		printf("distance: %d\r\n", distance);
+		
 		if(pick_char=='1'){
 			servo_pick();
 			waitms(1000);

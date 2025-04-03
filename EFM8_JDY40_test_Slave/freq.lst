@@ -1,7 +1,7 @@
 0000              1   ;--------------------------------------------------------
 0000              2   ; File Created by C51
 0000              3   ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-0000              4   ; This file was generated Wed Apr 02 14:51:58 2025
+0000              4   ; This file was generated Wed Apr 02 19:34:47 2025
 0000              5   ;--------------------------------------------------------
                   5   $name freq
                   6   $optc51 --model-small
@@ -472,356 +472,673 @@
 0000            472   ; internal ram data
 0000            473   ;--------------------------------------------------------
 0000            474            rseg R_DSEG
-0000            475   _get_freq_freq100_1_23:
+0000            475   _get_freq_freq100_1_1_23:
 0000            476            ds 4
-0004            477   _get_freq_overflow_count_1_23:
-0004            478            ds 1
-0005            479   _get_freq_i_1_23:
-0005            480            ds 2
-0007            481   _get_freq_sloc0_1_0:
-0007            482            ds 4
-000B            483   ;--------------------------------------------------------
-000B            484   ; overlayable items in internal ram 
-000B            485   ;--------------------------------------------------------
-0000            486            rseg R_OSEG
-0000            487   ;--------------------------------------------------------
-0000            488   ; indirectly addressable internal ram data
+0004            477   _get_freq_freq100_2_1_23:
+0004            478            ds 4
+0008            479   _get_freq_overflow_count_1_23:
+0008            480            ds 1
+0009            481   _get_freq_i_1_23:
+0009            482            ds 2
+000B            483   _get_freq_sloc0_1_0:
+000B            484            ds 4
+000F            485   ;--------------------------------------------------------
+000F            486   ; overlayable items in internal ram 
+000F            487   ;--------------------------------------------------------
+0000            488            rseg R_OSEG
 0000            489   ;--------------------------------------------------------
-0000            490            rseg R_ISEG
+0000            490   ; indirectly addressable internal ram data
 0000            491   ;--------------------------------------------------------
-0000            492   ; absolute internal ram data
+0000            492            rseg R_ISEG
 0000            493   ;--------------------------------------------------------
-0000            494            DSEG
+0000            494   ; absolute internal ram data
 0000            495   ;--------------------------------------------------------
-0000            496   ; bit data
+0000            496            DSEG
 0000            497   ;--------------------------------------------------------
-0000            498            rseg R_BSEG
+0000            498   ; bit data
 0000            499   ;--------------------------------------------------------
-0000            500   ; paged external ram data
+0000            500            rseg R_BSEG
 0000            501   ;--------------------------------------------------------
-0000            502            rseg R_PSEG
+0000            502   ; paged external ram data
 0000            503   ;--------------------------------------------------------
-0000            504   ; external ram data
+0000            504            rseg R_PSEG
 0000            505   ;--------------------------------------------------------
-0000            506            rseg R_XSEG
+0000            506   ; external ram data
 0000            507   ;--------------------------------------------------------
-0000            508   ; absolute external ram data
+0000            508            rseg R_XSEG
 0000            509   ;--------------------------------------------------------
-0000            510            XSEG
+0000            510   ; absolute external ram data
 0000            511   ;--------------------------------------------------------
-0000            512   ; external initialized ram data
+0000            512            XSEG
 0000            513   ;--------------------------------------------------------
-0000            514            rseg R_IXSEG
-0000            515            rseg R_HOME
-0000            516            rseg R_GSINIT
-0000            517            rseg R_CSEG
-0000            518   ;--------------------------------------------------------
-0000            519   ; Interrupt vectors
+0000            514   ; external initialized ram data
+0000            515   ;--------------------------------------------------------
+0000            516            rseg R_IXSEG
+0000            517            rseg R_HOME
+0000            518            rseg R_GSINIT
+0000            519            rseg R_CSEG
 0000            520   ;--------------------------------------------------------
-0000            521   ;--------------------------------------------------------
-0000            522   ; global & static initialisations
+0000            521   ; Interrupt vectors
+0000            522   ;--------------------------------------------------------
 0000            523   ;--------------------------------------------------------
-0000            524            rseg R_HOME
-0000            525            rseg R_GSINIT
-0000            526            rseg R_GSINIT
-0000            527   ;--------------------------------------------------------
-0000            528   ; data variables initialization
+0000            524   ; global & static initialisations
+0000            525   ;--------------------------------------------------------
+0000            526            rseg R_HOME
+0000            527            rseg R_GSINIT
+0000            528            rseg R_GSINIT
 0000            529   ;--------------------------------------------------------
-0000            530            rseg R_DINIT
-0000            531            ; The linker places a 'ret' at the end of segment R_DINIT.
-0000            532   ;--------------------------------------------------------
-0000            533   ; code
+0000            530   ; data variables initialization
+0000            531   ;--------------------------------------------------------
+0000            532            rseg R_DINIT
+0000            533            ; The linker places a 'ret' at the end of segment R_DINIT.
 0000            534   ;--------------------------------------------------------
-0000            535            rseg R_CSEG
-0000            536   ;------------------------------------------------------------
-0000            537   ;Allocation info for local variables in function 'get_freq'
+0000            535   ; code
+0000            536   ;--------------------------------------------------------
+0000            537            rseg R_CSEG
 0000            538   ;------------------------------------------------------------
-0000            539   ;freq100                   Allocated with name '_get_freq_freq100_1_23'
-0000            540   ;period                    Allocated to registers r2 r3 r4 r5 
-0000            541   ;overflow_count            Allocated with name '_get_freq_overflow_count_1_23'
-0000            542   ;i                         Allocated with name '_get_freq_i_1_23'
-0000            543   ;sloc0                     Allocated with name '_get_freq_sloc0_1_0'
-0000            544   ;------------------------------------------------------------
-0000            545   ;        freq.c:5: int get_freq(){
-0000            546   ;        -----------------------------------------
-0000            547   ;         function get_freq
-0000            548   ;        -----------------------------------------
-0000            549   _get_freq:
-0000            550            using   0
-0000            551   ;        freq.c:6: long freq100 = 0;
-0000            552   ;        freq.c:8: unsigned char overflow_count=0;
-0000            553   ;        freq.c:11: for(i=0; i<5; i++){
-0000 E4         554            clr     a
-0001 F5B8       555            mov     _get_freq_freq100_1_23,a
-0003 F5B9       556            mov     (_get_freq_freq100_1_23 + 1),a
-0005 F5BA       557            mov     (_get_freq_freq100_1_23 + 2),a
-0007 F5BB       558            mov     (_get_freq_freq100_1_23 + 3),a
-0009 F508       559            mov     _get_freq_overflow_count_1_23,a
-000B F558       560            mov     _get_freq_i_1_23,a
-000D F559       561            mov     (_get_freq_i_1_23 + 1),a
-000F            562   L002017?:
-000F C3         563            clr     c
-0010 E558       564            mov     a,_get_freq_i_1_23
-0012 9405       565            subb    a,#0x05
-0014 E559       566            mov     a,(_get_freq_i_1_23 + 1)
-0016 6480       567            xrl     a,#0x80
-0018 9480       568            subb    a,#0x80
-001A 4000       569            jc      L002037?
-001C 020000     570            ljmp    L002020?
-001F            571   L002037?:
-001F            572   ;        freq.c:12: TL0=0; 
-001F 758A00     573            mov     _TL0,#0x00
-0022            574   ;        freq.c:13: TH0=0;
-0022 758C00     575            mov     _TH0,#0x00
-0025            576   ;        freq.c:14: TF0=0;
-0025 C28D       577            clr     _TF0
-0027            578   ;        freq.c:16: while(metal_detect!=0); // Wait for the signal to be zero
-0027            579   L002001?:
-0027 20B0A8     580            jb      _P3_0,L002001?
-002A            581   ;        freq.c:17: while(metal_detect!=1); // Wait for the signal to be one
-002A            582   L002004?:
-002A 30B0E8     583            jnb     _P3_0,L002004?
-002D            584   ;        freq.c:18: TR0=1; // Start the timer
-002D D28C       585            setb    _TR0
-002F            586   ;        freq.c:19: while(metal_detect!=0) // Wait for the signal to be zero
-002F A908       587            mov     r1,_get_freq_overflow_count_1_23
-0031            588   L002009?:
-0031 30B068     589            jnb     _P3_0,L002031?
-0034            590   ;        freq.c:21: if(TF0==1) // Did the 16-bit timer overflow?
-0034            591   ;        freq.c:23: TF0=0;
-0034 108DA8     592            jbc     _TF0,L002041?
-0037 8000       593            sjmp    L002009?
-0039            594   L002041?:
-0039            595   ;        freq.c:24: overflow_count++;
-0039 09         596            inc     r1
-003A            597   ;        freq.c:27: while(metal_detect!=1) // Wait for the signal to be one
-003A 8000       598            sjmp    L002009?
-003C            599   L002031?:
-003C            600   L002014?:
-003C 20B028     601            jb      _P3_0,L002016?
-003F            602   ;        freq.c:29: if(TF0==1) // Did the 16-bit timer overflow?
-003F            603   ;        freq.c:31: TF0=0;
-003F 108D68     604            jbc     _TF0,L002043?
-0042 8000       605            sjmp    L002014?
-0044            606   L002043?:
-0044            607   ;        freq.c:32: overflow_count++;
-0044 09         608            inc     r1
-0045 8000       609            sjmp    L002014?
-0047            610   L002016?:
-0047            611   ;        freq.c:35: TR0=0; // Stop timer 0, the 24-bit number [overflow_count-TH0-TL0] has the period!
-0047 C28C       612            clr     _TR0
-0049            613   ;        freq.c:36: period=(overflow_count*65536.0+TH0*256.0+TL0)*(12.0/SYSCLK);
-0049 8982       614            mov     dpl,r1
-004B 120000     615            lcall   ___uchar2fs
-004E A982       616            mov     r1,dpl
-0050 AA83       617            mov     r2,dph
-0052 ABF0       618            mov     r3,b
-0054 FC         619            mov     r4,a
-0055 C001       620            push    ar1
-0057 C002       621            push    ar2
-0059 C003       622            push    ar3
-005B C004       623            push    ar4
-005D 900000     624            mov     dptr,#0x0000
-0060 75F080     625            mov     b,#0x80
-0063 7447       626            mov     a,#0x47
-0065 120000     627            lcall   ___fsmul
-0068 8582A8     628            mov     _get_freq_sloc0_1_0,dpl
-006B 8583A9     629            mov     (_get_freq_sloc0_1_0 + 1),dph
-006E 85F0AA     630            mov     (_get_freq_sloc0_1_0 + 2),b
-0071 F5AB       631            mov     (_get_freq_sloc0_1_0 + 3),a
-0073 E581       632            mov     a,sp
-0075 24FC       633            add     a,#0xfc
-0077 F581       634            mov     sp,a
-0079 858C82     635            mov     dpl,_TH0
-007C 120000     636            lcall   ___uchar2fs
-007F A982       637            mov     r1,dpl
-0081 AF83       638            mov     r7,dph
-0083 A8F0       639            mov     r0,b
-0085 FA         640            mov     r2,a
-0086 C001       641            push    ar1
-0088 C007       642            push    ar7
-008A C000       643            push    ar0
-008C C002       644            push    ar2
-008E 900000     645            mov     dptr,#0x0000
-0091 75F080     646            mov     b,#0x80
-0094 7443       647            mov     a,#0x43
-0096 120000     648            lcall   ___fsmul
-0099 AA82       649            mov     r2,dpl
-009B AB83       650            mov     r3,dph
-009D ACF0       651            mov     r4,b
-009F FD         652            mov     r5,a
-00A0 E581       653            mov     a,sp
-00A2 24FC       654            add     a,#0xfc
-00A4 F581       655            mov     sp,a
-00A6 C002       656            push    ar2
-00A8 C003       657            push    ar3
-00AA C004       658            push    ar4
-00AC C005       659            push    ar5
-00AE 85A882     660            mov     dpl,_get_freq_sloc0_1_0
-00B1 85A983     661            mov     dph,(_get_freq_sloc0_1_0 + 1)
-00B4 85AAF0     662            mov     b,(_get_freq_sloc0_1_0 + 2)
-00B7 E5AB       663            mov     a,(_get_freq_sloc0_1_0 + 3)
-00B9 120000     664            lcall   ___fsadd
-00BC 8582A8     665            mov     _get_freq_sloc0_1_0,dpl
-00BF 8583A9     666            mov     (_get_freq_sloc0_1_0 + 1),dph
-00C2 85F0AA     667            mov     (_get_freq_sloc0_1_0 + 2),b
-00C5 F5AB       668            mov     (_get_freq_sloc0_1_0 + 3),a
-00C7 E581       669            mov     a,sp
-00C9 24FC       670            add     a,#0xfc
-00CB F581       671            mov     sp,a
-00CD AF8A       672            mov     r7,_TL0
-00CF 7800       673            mov     r0,#0x00
-00D1 8F82       674            mov     dpl,r7
-00D3 8883       675            mov     dph,r0
-00D5 120000     676            lcall   ___sint2fs
-00D8 AF82       677            mov     r7,dpl
-00DA A883       678            mov     r0,dph
-00DC A9F0       679            mov     r1,b
-00DE FA         680            mov     r2,a
-00DF C007       681            push    ar7
-00E1 C000       682            push    ar0
-00E3 C001       683            push    ar1
-00E5 C002       684            push    ar2
-00E7 85A882     685            mov     dpl,_get_freq_sloc0_1_0
-00EA 85A983     686            mov     dph,(_get_freq_sloc0_1_0 + 1)
-00ED 85AAF0     687            mov     b,(_get_freq_sloc0_1_0 + 2)
-00F0 E5AB       688            mov     a,(_get_freq_sloc0_1_0 + 3)
-00F2 120000     689            lcall   ___fsadd
-00F5 AA82       690            mov     r2,dpl
-00F7 AB83       691            mov     r3,dph
-00F9 ACF0       692            mov     r4,b
-00FB FD         693            mov     r5,a
-00FC E581       694            mov     a,sp
-00FE 24FC       695            add     a,#0xfc
-0100 F581       696            mov     sp,a
-0102 C002       697            push    ar2
-0104 C003       698            push    ar3
-0106 C004       699            push    ar4
-0108 C005       700            push    ar5
-010A 90F4FC     701            mov     dptr,#0xF4FC
-010D 75F032     702            mov     b,#0x32
-0110 7434       703            mov     a,#0x34
-0112 120000     704            lcall   ___fsmul
-0115 AA82       705            mov     r2,dpl
-0117 AB83       706            mov     r3,dph
-0119 ACF0       707            mov     r4,b
-011B FD         708            mov     r5,a
-011C E581       709            mov     a,sp
-011E 24FC       710            add     a,#0xfc
-0120 F581       711            mov     sp,a
-0122            712   ;        freq.c:37: overflow_count = 0;
-0122 750800     713            mov     _get_freq_overflow_count_1_23,#0x00
-0125            714   ;        freq.c:38: freq100 += 1.0/(period*10);
-0125 C002       715            push    ar2
-0127 C003       716            push    ar3
-0129 C004       717            push    ar4
-012B C005       718            push    ar5
-012D 900000     719            mov     dptr,#0x0000
-0130 75F020     720            mov     b,#0x20
-0133 7441       721            mov     a,#0x41
-0135 120000     722            lcall   ___fsmul
-0138 AA82       723            mov     r2,dpl
-013A AB83       724            mov     r3,dph
-013C ACF0       725            mov     r4,b
-013E FD         726            mov     r5,a
-013F E581       727            mov     a,sp
-0141 24FC       728            add     a,#0xfc
-0143 F581       729            mov     sp,a
-0145 C002       730            push    ar2
-0147 C003       731            push    ar3
-0149 C004       732            push    ar4
-014B C005       733            push    ar5
-014D 900000     734            mov     dptr,#0x0000
-0150 75F080     735            mov     b,#0x80
-0153 743F       736            mov     a,#0x3F
-0155 120000     737            lcall   ___fsdiv
-0158 AA82       738            mov     r2,dpl
-015A AB83       739            mov     r3,dph
-015C ACF0       740            mov     r4,b
-015E FD         741            mov     r5,a
-015F E581       742            mov     a,sp
-0161 24FC       743            add     a,#0xfc
-0163 F581       744            mov     sp,a
-0165 85B882     745            mov     dpl,_get_freq_freq100_1_23
-0168 85B983     746            mov     dph,(_get_freq_freq100_1_23 + 1)
-016B 85BAF0     747            mov     b,(_get_freq_freq100_1_23 + 2)
-016E E5BB       748            mov     a,(_get_freq_freq100_1_23 + 3)
-0170 C002       749            push    ar2
-0172 C003       750            push    ar3
-0174 C004       751            push    ar4
-0176 C005       752            push    ar5
-0178 120000     753            lcall   ___slong2fs
-017B 120000     754            lcall   ___fsadd
-017E AA82       755            mov     r2,dpl
-0180 AB83       756            mov     r3,dph
-0182 ACF0       757            mov     r4,b
-0184 FD         758            mov     r5,a
-0185 E581       759            mov     a,sp
-0187 24FC       760            add     a,#0xfc
-0189 F581       761            mov     sp,a
-018B 8A82       762            mov     dpl,r2
-018D 8B83       763            mov     dph,r3
-018F 8CF0       764            mov     b,r4
-0191 ED         765            mov     a,r5
-0192 120000     766            lcall   ___fs2slong
-0195 8582B8     767            mov     _get_freq_freq100_1_23,dpl
-0198 8583B9     768            mov     (_get_freq_freq100_1_23 + 1),dph
-019B 85F0BA     769            mov     (_get_freq_freq100_1_23 + 2),b
-019E F5BB       770            mov     (_get_freq_freq100_1_23 + 3),a
-01A0            771   ;        freq.c:11: for(i=0; i<5; i++){
-01A0 0558       772            inc     _get_freq_i_1_23
-01A2 E4         773            clr     a
-01A3 B55868     774            cjne    a,_get_freq_i_1_23,L002044?
-01A6 0559       775            inc     (_get_freq_i_1_23 + 1)
-01A8            776   L002044?:
-01A8 020000     777            ljmp    L002017?
-01AB            778   L002020?:
-01AB            779   ;        freq.c:40: freq100 /= 5.0;
-01AB 85B882     780            mov     dpl,_get_freq_freq100_1_23
-01AE 85B983     781            mov     dph,(_get_freq_freq100_1_23 + 1)
-01B1 85BAF0     782            mov     b,(_get_freq_freq100_1_23 + 2)
-01B4 E5BB       783            mov     a,(_get_freq_freq100_1_23 + 3)
-01B6 120000     784            lcall   ___slong2fs
-01B9 AA82       785            mov     r2,dpl
-01BB AB83       786            mov     r3,dph
-01BD ACF0       787            mov     r4,b
-01BF FD         788            mov     r5,a
-01C0 E4         789            clr     a
-01C1 C0E0       790            push    acc
-01C3 C0E0       791            push    acc
-01C5 74A0       792            mov     a,#0xA0
-01C7 C0E0       793            push    acc
-01C9 7440       794            mov     a,#0x40
-01CB C0E0       795            push    acc
-01CD 8A82       796            mov     dpl,r2
-01CF 8B83       797            mov     dph,r3
-01D1 8CF0       798            mov     b,r4
-01D3 ED         799            mov     a,r5
-01D4 120000     800            lcall   ___fsdiv
-01D7 AA82       801            mov     r2,dpl
-01D9 AB83       802            mov     r3,dph
-01DB ACF0       803            mov     r4,b
-01DD FD         804            mov     r5,a
-01DE E581       805            mov     a,sp
-01E0 24FC       806            add     a,#0xfc
-01E2 F581       807            mov     sp,a
-01E4 8A82       808            mov     dpl,r2
-01E6 8B83       809            mov     dph,r3
-01E8 8CF0       810            mov     b,r4
-01EA ED         811            mov     a,r5
-01EB 120000     812            lcall   ___fs2slong
-01EE            813   ;        freq.c:41: return freq100;
-01EE 8582B8     814            mov     _get_freq_freq100_1_23,dpl
-01F1 8583B9     815            mov     (_get_freq_freq100_1_23 + 1),dph
-01F4 85F0BA     816            mov     (_get_freq_freq100_1_23 + 2),b
-01F7 F5BB       817            mov     (_get_freq_freq100_1_23 + 3),a
-01F9 22         818            ret
-01FA            819            rseg R_CSEG
-01FA            820   
-0000            821            rseg R_XINIT
-0000            822   
-0000            823            rseg R_CONST
-0000            824   
-0000            825            CSEG
-0000            826   
-0000            827   end
+0000            539   ;Allocation info for local variables in function 'get_freq'
+0000            540   ;------------------------------------------------------------
+0000            541   ;freq100_1                 Allocated with name '_get_freq_freq100_1_1_23'
+0000            542   ;freq100_2                 Allocated with name '_get_freq_freq100_2_1_23'
+0000            543   ;period                    Allocated to registers r2 r3 r4 r5 
+0000            544   ;overflow_count            Allocated with name '_get_freq_overflow_count_1_23'
+0000            545   ;i                         Allocated with name '_get_freq_i_1_23'
+0000            546   ;sloc0                     Allocated with name '_get_freq_sloc0_1_0'
+0000            547   ;------------------------------------------------------------
+0000            548   ;        freq.c:5: int get_freq(){
+0000            549   ;        -----------------------------------------
+0000            550   ;         function get_freq
+0000            551   ;        -----------------------------------------
+0000            552   _get_freq:
+0000            553            using   0
+0000            554   ;        freq.c:6: long freq100_1 = 0;
+0000            555   ;        freq.c:7: long freq100_2 = 0;
+0000 E4         556            clr     a
+0001 F560       557            mov     _get_freq_freq100_1_1_23,a
+0003 F561       558            mov     (_get_freq_freq100_1_1_23 + 1),a
+0005 F562       559            mov     (_get_freq_freq100_1_1_23 + 2),a
+0007 F563       560            mov     (_get_freq_freq100_1_1_23 + 3),a
+0009 F5B0       561            mov     _get_freq_freq100_2_1_23,a
+000B F5B1       562            mov     (_get_freq_freq100_2_1_23 + 1),a
+000D F5B2       563            mov     (_get_freq_freq100_2_1_23 + 2),a
+000F F5B3       564            mov     (_get_freq_freq100_2_1_23 + 3),a
+0011            565   ;        freq.c:9: unsigned char overflow_count=0;
+0011            566   ;        freq.c:12: for(i=0; i<5; i++){
+0011 E4         567            clr     a
+0012 F500       568            mov     _get_freq_overflow_count_1_23,a
+0014 F550       569            mov     _get_freq_i_1_23,a
+0016 F551       570            mov     (_get_freq_i_1_23 + 1),a
+0018            571   L002033?:
+0018 C3         572            clr     c
+0019 E550       573            mov     a,_get_freq_i_1_23
+001B 9405       574            subb    a,#0x05
+001D E551       575            mov     a,(_get_freq_i_1_23 + 1)
+001F 6480       576            xrl     a,#0x80
+0021 9480       577            subb    a,#0x80
+0023 4000       578            jc      L002071?
+0025 020000     579            ljmp    L002036?
+0028            580   L002071?:
+0028            581   ;        freq.c:13: TL0=0; 
+0028 758A00     582            mov     _TL0,#0x00
+002B            583   ;        freq.c:14: TH0=0;
+002B 758C00     584            mov     _TH0,#0x00
+002E            585   ;        freq.c:15: TF0=0;
+002E C28D       586            clr     _TF0
+0030            587   ;        freq.c:17: while(metal_detect!=0); // Wait for the signal to be zero
+0030            588   L002001?:
+0030 20B0A0     589            jb      _P3_0,L002001?
+0033            590   ;        freq.c:18: while(metal_detect!=1); // Wait for the signal to be one
+0033            591   L002004?:
+0033 30B0E8     592            jnb     _P3_0,L002004?
+0036            593   ;        freq.c:19: TR0=1; // Start the timer
+0036 D28C       594            setb    _TR0
+0038            595   ;        freq.c:20: while(metal_detect!=0) // Wait for the signal to be zero
+0038 A900       596            mov     r1,_get_freq_overflow_count_1_23
+003A            597   L002009?:
+003A 30B068     598            jnb     _P3_0,L002051?
+003D            599   ;        freq.c:22: if(TF0==1) // Did the 16-bit timer overflow?
+003D            600   ;        freq.c:24: TF0=0;
+003D 108DA8     601            jbc     _TF0,L002075?
+0040 8000       602            sjmp    L002009?
+0042            603   L002075?:
+0042            604   ;        freq.c:25: overflow_count++;
+0042 09         605            inc     r1
+0043            606   ;        freq.c:28: while(metal_detect!=1) // Wait for the signal to be one
+0043 8000       607            sjmp    L002009?
+0045            608   L002051?:
+0045            609   L002014?:
+0045 20B028     610            jb      _P3_0,L002016?
+0048            611   ;        freq.c:30: if(TF0==1) // Did the 16-bit timer overflow?
+0048            612   ;        freq.c:32: TF0=0;
+0048 108D68     613            jbc     _TF0,L002077?
+004B 8000       614            sjmp    L002014?
+004D            615   L002077?:
+004D            616   ;        freq.c:33: overflow_count++;
+004D 09         617            inc     r1
+004E 8000       618            sjmp    L002014?
+0050            619   L002016?:
+0050            620   ;        freq.c:36: TR0=0; // Stop timer 0, the 24-bit number [overflow_count-TH0-TL0] has the period!
+0050 C28C       621            clr     _TR0
+0052            622   ;        freq.c:37: period=(overflow_count*65536.0+TH0*256.0+TL0)*(12.0/SYSCLK);
+0052 8982       623            mov     dpl,r1
+0054 120000     624            lcall   ___uchar2fs
+0057 A982       625            mov     r1,dpl
+0059 AA83       626            mov     r2,dph
+005B ABF0       627            mov     r3,b
+005D FC         628            mov     r4,a
+005E C001       629            push    ar1
+0060 C002       630            push    ar2
+0062 C003       631            push    ar3
+0064 C004       632            push    ar4
+0066 900000     633            mov     dptr,#0x0000
+0069 75F080     634            mov     b,#0x80
+006C 7447       635            mov     a,#0x47
+006E 120000     636            lcall   ___fsmul
+0071 8582A0     637            mov     _get_freq_sloc0_1_0,dpl
+0074 8583A1     638            mov     (_get_freq_sloc0_1_0 + 1),dph
+0077 85F0A2     639            mov     (_get_freq_sloc0_1_0 + 2),b
+007A F5A3       640            mov     (_get_freq_sloc0_1_0 + 3),a
+007C E581       641            mov     a,sp
+007E 24FC       642            add     a,#0xfc
+0080 F581       643            mov     sp,a
+0082 858C82     644            mov     dpl,_TH0
+0085 120000     645            lcall   ___uchar2fs
+0088 A982       646            mov     r1,dpl
+008A AF83       647            mov     r7,dph
+008C A8F0       648            mov     r0,b
+008E FA         649            mov     r2,a
+008F C001       650            push    ar1
+0091 C007       651            push    ar7
+0093 C000       652            push    ar0
+0095 C002       653            push    ar2
+0097 900000     654            mov     dptr,#0x0000
+009A 75F080     655            mov     b,#0x80
+009D 7443       656            mov     a,#0x43
+009F 120000     657            lcall   ___fsmul
+00A2 AA82       658            mov     r2,dpl
+00A4 AB83       659            mov     r3,dph
+00A6 ACF0       660            mov     r4,b
+00A8 FD         661            mov     r5,a
+00A9 E581       662            mov     a,sp
+00AB 24FC       663            add     a,#0xfc
+00AD F581       664            mov     sp,a
+00AF C002       665            push    ar2
+00B1 C003       666            push    ar3
+00B3 C004       667            push    ar4
+00B5 C005       668            push    ar5
+00B7 85A082     669            mov     dpl,_get_freq_sloc0_1_0
+00BA 85A183     670            mov     dph,(_get_freq_sloc0_1_0 + 1)
+00BD 85A2F0     671            mov     b,(_get_freq_sloc0_1_0 + 2)
+00C0 E5A3       672            mov     a,(_get_freq_sloc0_1_0 + 3)
+00C2 120000     673            lcall   ___fsadd
+00C5 8582A0     674            mov     _get_freq_sloc0_1_0,dpl
+00C8 8583A1     675            mov     (_get_freq_sloc0_1_0 + 1),dph
+00CB 85F0A2     676            mov     (_get_freq_sloc0_1_0 + 2),b
+00CE F5A3       677            mov     (_get_freq_sloc0_1_0 + 3),a
+00D0 E581       678            mov     a,sp
+00D2 24FC       679            add     a,#0xfc
+00D4 F581       680            mov     sp,a
+00D6 AF8A       681            mov     r7,_TL0
+00D8 7800       682            mov     r0,#0x00
+00DA 8F82       683            mov     dpl,r7
+00DC 8883       684            mov     dph,r0
+00DE 120000     685            lcall   ___sint2fs
+00E1 AF82       686            mov     r7,dpl
+00E3 A883       687            mov     r0,dph
+00E5 A9F0       688            mov     r1,b
+00E7 FA         689            mov     r2,a
+00E8 C007       690            push    ar7
+00EA C000       691            push    ar0
+00EC C001       692            push    ar1
+00EE C002       693            push    ar2
+00F0 85A082     694            mov     dpl,_get_freq_sloc0_1_0
+00F3 85A183     695            mov     dph,(_get_freq_sloc0_1_0 + 1)
+00F6 85A2F0     696            mov     b,(_get_freq_sloc0_1_0 + 2)
+00F9 E5A3       697            mov     a,(_get_freq_sloc0_1_0 + 3)
+00FB 120000     698            lcall   ___fsadd
+00FE AA82       699            mov     r2,dpl
+0100 AB83       700            mov     r3,dph
+0102 ACF0       701            mov     r4,b
+0104 FD         702            mov     r5,a
+0105 E581       703            mov     a,sp
+0107 24FC       704            add     a,#0xfc
+0109 F581       705            mov     sp,a
+010B C002       706            push    ar2
+010D C003       707            push    ar3
+010F C004       708            push    ar4
+0111 C005       709            push    ar5
+0113 90F4FC     710            mov     dptr,#0xF4FC
+0116 75F032     711            mov     b,#0x32
+0119 7434       712            mov     a,#0x34
+011B 120000     713            lcall   ___fsmul
+011E AA82       714            mov     r2,dpl
+0120 AB83       715            mov     r3,dph
+0122 ACF0       716            mov     r4,b
+0124 FD         717            mov     r5,a
+0125 E581       718            mov     a,sp
+0127 24FC       719            add     a,#0xfc
+0129 F581       720            mov     sp,a
+012B            721   ;        freq.c:38: overflow_count = 0;
+012B 750000     722            mov     _get_freq_overflow_count_1_23,#0x00
+012E            723   ;        freq.c:39: freq100_1 += 1.0/(period*10);
+012E C002       724            push    ar2
+0130 C003       725            push    ar3
+0132 C004       726            push    ar4
+0134 C005       727            push    ar5
+0136 900000     728            mov     dptr,#0x0000
+0139 75F020     729            mov     b,#0x20
+013C 7441       730            mov     a,#0x41
+013E 120000     731            lcall   ___fsmul
+0141 AF82       732            mov     r7,dpl
+0143 A883       733            mov     r0,dph
+0145 A9F0       734            mov     r1,b
+0147 FE         735            mov     r6,a
+0148 E581       736            mov     a,sp
+014A 24FC       737            add     a,#0xfc
+014C F581       738            mov     sp,a
+014E C007       739            push    ar7
+0150 C000       740            push    ar0
+0152 C001       741            push    ar1
+0154 C006       742            push    ar6
+0156 900000     743            mov     dptr,#0x0000
+0159 75F080     744            mov     b,#0x80
+015C 743F       745            mov     a,#0x3F
+015E 120000     746            lcall   ___fsdiv
+0161 8582A0     747            mov     _get_freq_sloc0_1_0,dpl
+0164 8583A1     748            mov     (_get_freq_sloc0_1_0 + 1),dph
+0167 85F0A2     749            mov     (_get_freq_sloc0_1_0 + 2),b
+016A F5A3       750            mov     (_get_freq_sloc0_1_0 + 3),a
+016C E581       751            mov     a,sp
+016E 24FC       752            add     a,#0xfc
+0170 F581       753            mov     sp,a
+0172 856082     754            mov     dpl,_get_freq_freq100_1_1_23
+0175 856183     755            mov     dph,(_get_freq_freq100_1_1_23 + 1)
+0178 8562F0     756            mov     b,(_get_freq_freq100_1_1_23 + 2)
+017B E563       757            mov     a,(_get_freq_freq100_1_1_23 + 3)
+017D 120000     758            lcall   ___slong2fs
+0180 AE82       759            mov     r6,dpl
+0182 AF83       760            mov     r7,dph
+0184 A8F0       761            mov     r0,b
+0186 F9         762            mov     r1,a
+0187 C0A0       763            push    _get_freq_sloc0_1_0
+0189 C0A1       764            push    (_get_freq_sloc0_1_0 + 1)
+018B C0A2       765            push    (_get_freq_sloc0_1_0 + 2)
+018D C0A3       766            push    (_get_freq_sloc0_1_0 + 3)
+018F 8E82       767            mov     dpl,r6
+0191 8F83       768            mov     dph,r7
+0193 88F0       769            mov     b,r0
+0195 E9         770            mov     a,r1
+0196 120000     771            lcall   ___fsadd
+0199 AE82       772            mov     r6,dpl
+019B AF83       773            mov     r7,dph
+019D A8F0       774            mov     r0,b
+019F F9         775            mov     r1,a
+01A0 E581       776            mov     a,sp
+01A2 24FC       777            add     a,#0xfc
+01A4 F581       778            mov     sp,a
+01A6 8E82       779            mov     dpl,r6
+01A8 8F83       780            mov     dph,r7
+01AA 88F0       781            mov     b,r0
+01AC E9         782            mov     a,r1
+01AD 120000     783            lcall   ___fs2slong
+01B0 858260     784            mov     _get_freq_freq100_1_1_23,dpl
+01B3 858361     785            mov     (_get_freq_freq100_1_1_23 + 1),dph
+01B6 85F062     786            mov     (_get_freq_freq100_1_1_23 + 2),b
+01B9 F563       787            mov     (_get_freq_freq100_1_1_23 + 3),a
+01BB            788   ;        freq.c:12: for(i=0; i<5; i++){
+01BB 0550       789            inc     _get_freq_i_1_23
+01BD E4         790            clr     a
+01BE B55068     791            cjne    a,_get_freq_i_1_23,L002078?
+01C1 0551       792            inc     (_get_freq_i_1_23 + 1)
+01C3            793   L002078?:
+01C3 020000     794            ljmp    L002033?
+01C6            795   L002036?:
+01C6            796   ;        freq.c:41: freq100_1 /= 5.0;
+01C6 856082     797            mov     dpl,_get_freq_freq100_1_1_23
+01C9 856183     798            mov     dph,(_get_freq_freq100_1_1_23 + 1)
+01CC 8562F0     799            mov     b,(_get_freq_freq100_1_1_23 + 2)
+01CF E563       800            mov     a,(_get_freq_freq100_1_1_23 + 3)
+01D1 120000     801            lcall   ___slong2fs
+01D4 AE82       802            mov     r6,dpl
+01D6 AF83       803            mov     r7,dph
+01D8 A8F0       804            mov     r0,b
+01DA F9         805            mov     r1,a
+01DB E4         806            clr     a
+01DC C0E0       807            push    acc
+01DE C0E0       808            push    acc
+01E0 74A0       809            mov     a,#0xA0
+01E2 C0E0       810            push    acc
+01E4 7440       811            mov     a,#0x40
+01E6 C0E0       812            push    acc
+01E8 8E82       813            mov     dpl,r6
+01EA 8F83       814            mov     dph,r7
+01EC 88F0       815            mov     b,r0
+01EE E9         816            mov     a,r1
+01EF 120000     817            lcall   ___fsdiv
+01F2 AE82       818            mov     r6,dpl
+01F4 AF83       819            mov     r7,dph
+01F6 A8F0       820            mov     r0,b
+01F8 F9         821            mov     r1,a
+01F9 E581       822            mov     a,sp
+01FB 24FC       823            add     a,#0xfc
+01FD F581       824            mov     sp,a
+01FF 8E82       825            mov     dpl,r6
+0201 8F83       826            mov     dph,r7
+0203 88F0       827            mov     b,r0
+0205 E9         828            mov     a,r1
+0206 120000     829            lcall   ___fs2slong
+0209 858260     830            mov     _get_freq_freq100_1_1_23,dpl
+020C 858361     831            mov     (_get_freq_freq100_1_1_23 + 1),dph
+020F 85F062     832            mov     (_get_freq_freq100_1_1_23 + 2),b
+0212 F563       833            mov     (_get_freq_freq100_1_1_23 + 3),a
+0214            834   ;        freq.c:43: for(i=0; i<5; i++){
+0214 E4         835            clr     a
+0215 F550       836            mov     _get_freq_i_1_23,a
+0217 F551       837            mov     (_get_freq_i_1_23 + 1),a
+0219            838   L002037?:
+0219 C3         839            clr     c
+021A E550       840            mov     a,_get_freq_i_1_23
+021C 9405       841            subb    a,#0x05
+021E E551       842            mov     a,(_get_freq_i_1_23 + 1)
+0220 6480       843            xrl     a,#0x80
+0222 9480       844            subb    a,#0x80
+0224 4000       845            jc      L002079?
+0226 020000     846            ljmp    L002040?
+0229            847   L002079?:
+0229            848   ;        freq.c:44: TL0=0; 
+0229 758A00     849            mov     _TL0,#0x00
+022C            850   ;        freq.c:45: TH0=0;
+022C 758C00     851            mov     _TH0,#0x00
+022F            852   ;        freq.c:46: TF0=0;
+022F C28D       853            clr     _TF0
+0231            854   ;        freq.c:48: while(metal_detect!=0); // Wait for the signal to be zero
+0231            855   L002017?:
+0231 20B0A8     856            jb      _P3_0,L002017?
+0234            857   ;        freq.c:49: while(metal_detect!=1); // Wait for the signal to be one
+0234            858   L002020?:
+0234 30B0E8     859            jnb     _P3_0,L002020?
+0237            860   ;        freq.c:50: TR0=1; // Start the timer
+0237 D28C       861            setb    _TR0
+0239            862   ;        freq.c:51: while(metal_detect!=0) // Wait for the signal to be zero
+0239 A800       863            mov     r0,_get_freq_overflow_count_1_23
+023B            864   L002025?:
+023B 30B068     865            jnb     _P3_0,L002062?
+023E            866   ;        freq.c:53: if(TF0==1) // Did the 16-bit timer overflow?
+023E            867   ;        freq.c:55: TF0=0;
+023E 108DA8     868            jbc     _TF0,L002083?
+0241 8000       869            sjmp    L002025?
+0243            870   L002083?:
+0243            871   ;        freq.c:56: overflow_count++;
+0243 08         872            inc     r0
+0244            873   ;        freq.c:59: while(metal_detect!=1) // Wait for the signal to be one
+0244 8000       874            sjmp    L002025?
+0246            875   L002062?:
+0246            876   L002030?:
+0246 20B028     877            jb      _P3_0,L002032?
+0249            878   ;        freq.c:61: if(TF0==1) // Did the 16-bit timer overflow?
+0249            879   ;        freq.c:63: TF0=0;
+0249 108D68     880            jbc     _TF0,L002085?
+024C 8000       881            sjmp    L002030?
+024E            882   L002085?:
+024E            883   ;        freq.c:64: overflow_count++;
+024E 08         884            inc     r0
+024F 8000       885            sjmp    L002030?
+0251            886   L002032?:
+0251            887   ;        freq.c:67: TR0=0; // Stop timer 0, the 24-bit number [overflow_count-TH0-TL0] has the period!
+0251 C28C       888            clr     _TR0
+0253            889   ;        freq.c:68: period=(overflow_count*65536.0+TH0*256.0+TL0)*(12.0/SYSCLK);
+0253 8882       890            mov     dpl,r0
+0255 120000     891            lcall   ___uchar2fs
+0258 A882       892            mov     r0,dpl
+025A A983       893            mov     r1,dph
+025C AEF0       894            mov     r6,b
+025E FF         895            mov     r7,a
+025F C000       896            push    ar0
+0261 C001       897            push    ar1
+0263 C006       898            push    ar6
+0265 C007       899            push    ar7
+0267 900000     900            mov     dptr,#0x0000
+026A 75F080     901            mov     b,#0x80
+026D 7447       902            mov     a,#0x47
+026F 120000     903            lcall   ___fsmul
+0272 8582A0     904            mov     _get_freq_sloc0_1_0,dpl
+0275 8583A1     905            mov     (_get_freq_sloc0_1_0 + 1),dph
+0278 85F0A2     906            mov     (_get_freq_sloc0_1_0 + 2),b
+027B F5A3       907            mov     (_get_freq_sloc0_1_0 + 3),a
+027D E581       908            mov     a,sp
+027F 24FC       909            add     a,#0xfc
+0281 F581       910            mov     sp,a
+0283 858C82     911            mov     dpl,_TH0
+0286 120000     912            lcall   ___uchar2fs
+0289 AE82       913            mov     r6,dpl
+028B AF83       914            mov     r7,dph
+028D A8F0       915            mov     r0,b
+028F F9         916            mov     r1,a
+0290 C006       917            push    ar6
+0292 C007       918            push    ar7
+0294 C000       919            push    ar0
+0296 C001       920            push    ar1
+0298 900000     921            mov     dptr,#0x0000
+029B 75F080     922            mov     b,#0x80
+029E 7443       923            mov     a,#0x43
+02A0 120000     924            lcall   ___fsmul
+02A3 AE82       925            mov     r6,dpl
+02A5 AF83       926            mov     r7,dph
+02A7 A8F0       927            mov     r0,b
+02A9 F9         928            mov     r1,a
+02AA E581       929            mov     a,sp
+02AC 24FC       930            add     a,#0xfc
+02AE F581       931            mov     sp,a
+02B0 C006       932            push    ar6
+02B2 C007       933            push    ar7
+02B4 C000       934            push    ar0
+02B6 C001       935            push    ar1
+02B8 85A082     936            mov     dpl,_get_freq_sloc0_1_0
+02BB 85A183     937            mov     dph,(_get_freq_sloc0_1_0 + 1)
+02BE 85A2F0     938            mov     b,(_get_freq_sloc0_1_0 + 2)
+02C1 E5A3       939            mov     a,(_get_freq_sloc0_1_0 + 3)
+02C3 120000     940            lcall   ___fsadd
+02C6 8582A0     941            mov     _get_freq_sloc0_1_0,dpl
+02C9 8583A1     942            mov     (_get_freq_sloc0_1_0 + 1),dph
+02CC 85F0A2     943            mov     (_get_freq_sloc0_1_0 + 2),b
+02CF F5A3       944            mov     (_get_freq_sloc0_1_0 + 3),a
+02D1 E581       945            mov     a,sp
+02D3 24FC       946            add     a,#0xfc
+02D5 F581       947            mov     sp,a
+02D7 AE8A       948            mov     r6,_TL0
+02D9 7F00       949            mov     r7,#0x00
+02DB 8E82       950            mov     dpl,r6
+02DD 8F83       951            mov     dph,r7
+02DF 120000     952            lcall   ___sint2fs
+02E2 AE82       953            mov     r6,dpl
+02E4 AF83       954            mov     r7,dph
+02E6 A8F0       955            mov     r0,b
+02E8 F9         956            mov     r1,a
+02E9 C006       957            push    ar6
+02EB C007       958            push    ar7
+02ED C000       959            push    ar0
+02EF C001       960            push    ar1
+02F1 85A082     961            mov     dpl,_get_freq_sloc0_1_0
+02F4 85A183     962            mov     dph,(_get_freq_sloc0_1_0 + 1)
+02F7 85A2F0     963            mov     b,(_get_freq_sloc0_1_0 + 2)
+02FA E5A3       964            mov     a,(_get_freq_sloc0_1_0 + 3)
+02FC 120000     965            lcall   ___fsadd
+02FF AE82       966            mov     r6,dpl
+0301 AF83       967            mov     r7,dph
+0303 A8F0       968            mov     r0,b
+0305 F9         969            mov     r1,a
+0306 E581       970            mov     a,sp
+0308 24FC       971            add     a,#0xfc
+030A F581       972            mov     sp,a
+030C C006       973            push    ar6
+030E C007       974            push    ar7
+0310 C000       975            push    ar0
+0312 C001       976            push    ar1
+0314 90F4FC     977            mov     dptr,#0xF4FC
+0317 75F032     978            mov     b,#0x32
+031A 7434       979            mov     a,#0x34
+031C 120000     980            lcall   ___fsmul
+031F AA82       981            mov     r2,dpl
+0321 AB83       982            mov     r3,dph
+0323 ACF0       983            mov     r4,b
+0325 FD         984            mov     r5,a
+0326 E581       985            mov     a,sp
+0328 24FC       986            add     a,#0xfc
+032A F581       987            mov     sp,a
+032C            988   ;        freq.c:69: overflow_count = 0;
+032C 750000     989            mov     _get_freq_overflow_count_1_23,#0x00
+032F            990   ;        freq.c:70: freq100_2 += 1.0/(period*10);
+032F C002       991            push    ar2
+0331 C003       992            push    ar3
+0333 C004       993            push    ar4
+0335 C005       994            push    ar5
+0337 900000     995            mov     dptr,#0x0000
+033A 75F020     996            mov     b,#0x20
+033D 7441       997            mov     a,#0x41
+033F 120000     998            lcall   ___fsmul
+0342 AA82       999            mov     r2,dpl
+0344 AB83      1000            mov     r3,dph
+0346 ACF0      1001            mov     r4,b
+0348 FD        1002            mov     r5,a
+0349 E581      1003            mov     a,sp
+034B 24FC      1004            add     a,#0xfc
+034D F581      1005            mov     sp,a
+034F C002      1006            push    ar2
+0351 C003      1007            push    ar3
+0353 C004      1008            push    ar4
+0355 C005      1009            push    ar5
+0357 900000    1010            mov     dptr,#0x0000
+035A 75F080    1011            mov     b,#0x80
+035D 743F      1012            mov     a,#0x3F
+035F 120000    1013            lcall   ___fsdiv
+0362 AA82      1014            mov     r2,dpl
+0364 AB83      1015            mov     r3,dph
+0366 ACF0      1016            mov     r4,b
+0368 FD        1017            mov     r5,a
+0369 E581      1018            mov     a,sp
+036B 24FC      1019            add     a,#0xfc
+036D F581      1020            mov     sp,a
+036F 85B082    1021            mov     dpl,_get_freq_freq100_2_1_23
+0372 85B183    1022            mov     dph,(_get_freq_freq100_2_1_23 + 1)
+0375 85B2F0    1023            mov     b,(_get_freq_freq100_2_1_23 + 2)
+0378 E5B3      1024            mov     a,(_get_freq_freq100_2_1_23 + 3)
+037A C002      1025            push    ar2
+037C C003      1026            push    ar3
+037E C004      1027            push    ar4
+0380 C005      1028            push    ar5
+0382 120000    1029            lcall   ___slong2fs
+0385 120000    1030            lcall   ___fsadd
+0388 AA82      1031            mov     r2,dpl
+038A AB83      1032            mov     r3,dph
+038C ACF0      1033            mov     r4,b
+038E FD        1034            mov     r5,a
+038F E581      1035            mov     a,sp
+0391 24FC      1036            add     a,#0xfc
+0393 F581      1037            mov     sp,a
+0395 8A82      1038            mov     dpl,r2
+0397 8B83      1039            mov     dph,r3
+0399 8CF0      1040            mov     b,r4
+039B ED        1041            mov     a,r5
+039C 120000    1042            lcall   ___fs2slong
+039F 8582B0    1043            mov     _get_freq_freq100_2_1_23,dpl
+03A2 8583B1    1044            mov     (_get_freq_freq100_2_1_23 + 1),dph
+03A5 85F0B2    1045            mov     (_get_freq_freq100_2_1_23 + 2),b
+03A8 F5B3      1046            mov     (_get_freq_freq100_2_1_23 + 3),a
+03AA           1047   ;        freq.c:43: for(i=0; i<5; i++){
+03AA 0550      1048            inc     _get_freq_i_1_23
+03AC E4        1049            clr     a
+03AD B550A8    1050            cjne    a,_get_freq_i_1_23,L002086?
+03B0 0551      1051            inc     (_get_freq_i_1_23 + 1)
+03B2           1052   L002086?:
+03B2 020000    1053            ljmp    L002037?
+03B5           1054   L002040?:
+03B5           1055   ;        freq.c:72: freq100_2 /= 5.0;
+03B5 85B082    1056            mov     dpl,_get_freq_freq100_2_1_23
+03B8 85B183    1057            mov     dph,(_get_freq_freq100_2_1_23 + 1)
+03BB 85B2F0    1058            mov     b,(_get_freq_freq100_2_1_23 + 2)
+03BE E5B3      1059            mov     a,(_get_freq_freq100_2_1_23 + 3)
+03C0 120000    1060            lcall   ___slong2fs
+03C3 AA82      1061            mov     r2,dpl
+03C5 AB83      1062            mov     r3,dph
+03C7 ACF0      1063            mov     r4,b
+03C9 FD        1064            mov     r5,a
+03CA E4        1065            clr     a
+03CB C0E0      1066            push    acc
+03CD C0E0      1067            push    acc
+03CF 74A0      1068            mov     a,#0xA0
+03D1 C0E0      1069            push    acc
+03D3 7440      1070            mov     a,#0x40
+03D5 C0E0      1071            push    acc
+03D7 8A82      1072            mov     dpl,r2
+03D9 8B83      1073            mov     dph,r3
+03DB 8CF0      1074            mov     b,r4
+03DD ED        1075            mov     a,r5
+03DE 120000    1076            lcall   ___fsdiv
+03E1 AA82      1077            mov     r2,dpl
+03E3 AB83      1078            mov     r3,dph
+03E5 ACF0      1079            mov     r4,b
+03E7 FD        1080            mov     r5,a
+03E8 E581      1081            mov     a,sp
+03EA 24FC      1082            add     a,#0xfc
+03EC F581      1083            mov     sp,a
+03EE 8A82      1084            mov     dpl,r2
+03F0 8B83      1085            mov     dph,r3
+03F2 8CF0      1086            mov     b,r4
+03F4 ED        1087            mov     a,r5
+03F5 120000    1088            lcall   ___fs2slong
+03F8 8582B0    1089            mov     _get_freq_freq100_2_1_23,dpl
+03FB 8583B1    1090            mov     (_get_freq_freq100_2_1_23 + 1),dph
+03FE 85F0B2    1091            mov     (_get_freq_freq100_2_1_23 + 2),b
+0401 F5B3      1092            mov     (_get_freq_freq100_2_1_23 + 3),a
+0403           1093   ;        freq.c:73: return (freq100_1+freq100_2)/2.0;
+0403 E5B0      1094            mov     a,_get_freq_freq100_2_1_23
+0405 2560      1095            add     a,_get_freq_freq100_1_1_23
+0407 FA        1096            mov     r2,a
+0408 E5B1      1097            mov     a,(_get_freq_freq100_2_1_23 + 1)
+040A 3561      1098            addc    a,(_get_freq_freq100_1_1_23 + 1)
+040C FB        1099            mov     r3,a
+040D E5B2      1100            mov     a,(_get_freq_freq100_2_1_23 + 2)
+040F 3562      1101            addc    a,(_get_freq_freq100_1_1_23 + 2)
+0411 FC        1102            mov     r4,a
+0412 E5B3      1103            mov     a,(_get_freq_freq100_2_1_23 + 3)
+0414 3563      1104            addc    a,(_get_freq_freq100_1_1_23 + 3)
+0416 8A82      1105            mov     dpl,r2
+0418 8B83      1106            mov     dph,r3
+041A 8CF0      1107            mov     b,r4
+041C 120000    1108            lcall   ___slong2fs
+041F AA82      1109            mov     r2,dpl
+0421 AB83      1110            mov     r3,dph
+0423 ACF0      1111            mov     r4,b
+0425 FD        1112            mov     r5,a
+0426 E4        1113            clr     a
+0427 C0E0      1114            push    acc
+0429 C0E0      1115            push    acc
+042B C0E0      1116            push    acc
+042D 7440      1117            mov     a,#0x40
+042F C0E0      1118            push    acc
+0431 8A82      1119            mov     dpl,r2
+0433 8B83      1120            mov     dph,r3
+0435 8CF0      1121            mov     b,r4
+0437 ED        1122            mov     a,r5
+0438 120000    1123            lcall   ___fsdiv
+043B AA82      1124            mov     r2,dpl
+043D AB83      1125            mov     r3,dph
+043F ACF0      1126            mov     r4,b
+0441 FD        1127            mov     r5,a
+0442 E581      1128            mov     a,sp
+0444 24FC      1129            add     a,#0xfc
+0446 F581      1130            mov     sp,a
+0448 8A82      1131            mov     dpl,r2
+044A 8B83      1132            mov     dph,r3
+044C 8CF0      1133            mov     b,r4
+044E ED        1134            mov     a,r5
+044F 020000    1135            ljmp    ___fs2sint
+0452           1136            rseg R_CSEG
+0452           1137   
+0000           1138            rseg R_XINIT
+0000           1139   
+0000           1140            rseg R_CONST
+0000           1141   
+0000           1142            CSEG
+0000           1143   
+0000           1144   end

@@ -30,21 +30,29 @@ char wumao = 0;
 char liangmaowu = 0;
 char yimao = 0;
 char wufen = 0;
+char coins_count[6] = {0};
+
+// 0: 2.0
+// 1: 1.0
+// 2: 0.25
+// 3: 0.10
+// 4: 0.05
+
 // LQFP32 pinout
 //              ----------
 // 3.3v   VDD -|1       32|- VSS
 //       PC14 -|2       31|- BOOT0
-//       PC15 -|3       30|- PB7 buzzer
+//       PC15 -|3       30|- PB7 
 // RST   NRST -|4       29|- PB6
 // 3.3v  VDDA -|5       28|- PB5
-// LCD_RS PA0 -|6       27|- PB4
-// LCD_E  PA1 -|7       26|- PB3
+// LCD_RS PA0 -|6       27|- PB4  Sound2
+// LCD_E  PA1 -|7       26|- PB3  buzzer
 // LCD_D4 PA2 -|8       25|- PA15 TXD-radio
 // LCD_D5 PA3 -|9       24|- PA14 RXD-radio
 // LCD_D6 PA4 -|10      23|- PA13 SET-radio
 // LCD_D7 PA5 -|11      22|- PA12 pushbutton 1
 //        PA6 -|12      21|- PA11 pushbutton 2
-//        PA7 -|13      20|- PA10 (Reserved for RXD)
+// Sound  PA7 -|13      20|- PA10 (Reserved for RXD)
 // vy     PB0 -|14      19|- PA9  (Reserved for TXD)
 // vx     PB1 -|15      18|- PA8  joystick button
 // GND    VSS -|16      17|- VDD  3.3v
@@ -109,7 +117,12 @@ void Configure_Pins (void)
 	Set_Pin_Output(0,4,0);
 	Set_Pin_Output(0,5,0);
 	Set_Pin_Output(0,7,0);
-	Set_Pin_Output(1,7,0);
+	Set_Pin_Output(1,3,0);
+	Set_Pin_Output(1,4,0);
+
+	GPIOA->ODR |= BIT7;
+	GPIOB->ODR |= BIT4;
+
 	Set_Pin_Input(8,1);
 	Set_Pin_Input(11,1);
 	Set_Pin_Input(12,1);
@@ -153,14 +166,14 @@ void Buzzer(char mode){
 	switch (mode){
 	case 2:
 		TIM21->CR1 ^= BIT0;
-		GPIOB->ODR &= ~BIT7;
+		GPIOB->ODR &= ~BIT3;
 		break;
 	case 1:
 		TIM21->CR1 |= BIT0;
 		break;
 	case 0:
 		TIM21->CR1 &= ~BIT0;
-		GPIOB->ODR &= ~BIT7;
+		GPIOB->ODR &= ~BIT3;
 		break;
 	}
 	return;
@@ -215,15 +228,15 @@ void LCD_Custom_Char(unsigned char loc, unsigned char *charmap)
 }
 void Auto_enter(){
 	LCDprint("Automode:",1,1);
-	waitms(500);
-	LCDprint("  Activatived!",2,1);
-	waitms(1000);
+	waitms(300);
+	LCDprint("Activatived!",2,1);
+	waitms(600);
 } 
 // timer21 ISR
 void TIM21_Handler(void) 
 {
 	TIM21->SR &= ~BIT0; // clear update interrupt flag
-	GPIOB->ODR ^= BIT7; // toggle output pin
+	GPIOB->ODR ^= BIT3; // toggle output pin
 }
 
 // timer22 ISR
@@ -245,28 +258,73 @@ void TIM22_Handler(void)
 
 void Coin_chk(int weight_diff){
 
-	if( weight_diff > 570 && weight_diff < 750){
-		liangkuai++;
+	// 2 dollars
+	if( weight_diff > 550 && weight_diff < 750){
+		coins_count[0]++;
 	}
 
-	else if( weight_diff > 370 && weight_diff <= 570){
-		yikuai++;
+	// 1 dollar
+	else if( weight_diff > 370 && weight_diff <= 550){
+		coins_count[1]++;
 	}
 
+	// 0.25 dollars
 	else if( weight_diff > 345 && weight_diff <= 370){
-		liangmaowu++;
+		coins_count[2]++;
 	}
 
+	// 0.05 dollars
 	else if( weight_diff > 299 && weight_diff <= 344){
-		wufen++;
+		coins_count[4]++;
 	}
 
+	// 0.1 dollars
 	else if( weight_diff > 105 && weight_diff <= 299){
-		yimao++;
+		coins_count[3]++;
 	}
-
 	return;
 
+}
+
+void Coin_view(){
+	char exit = 0;
+	char page = 0;
+	while (!exit){
+		if(!PB1){
+			while (!PB1);
+			exit = 1;
+		}
+		if(!PB2){
+			while (!PB2);
+			page++;
+			page = page % 3;
+		}
+		switch (page){
+		case 0:
+			sprintf(lb,"->2.00: %d",coins_count[0]);
+			LCDprint(lb,1,1);
+			sprintf(lb,"->1.00: %d",coins_count[1]);
+			LCDprint(lb,2,1);
+			break;
+
+		case 1:
+			sprintf(lb,"->0.25: %d",coins_count[2]);
+			LCDprint(lb,1,1);
+			sprintf(lb,"->0.10: %d",coins_count[3]);
+			LCDprint(lb,2,1);
+			break;
+
+		case 2:
+			sprintf(lb,"->0.05: %d",coins_count[4]);
+			LCDprint(lb,1,1);
+			LCDprint(" ",2,1);
+			break;
+		
+		default:
+			break;
+		}
+	}
+	return;
 }
 
 float calculate_std(int data[], int size) {
@@ -366,11 +424,16 @@ void main(void)
 					waitms(50);
 				};
 			}
+			
 			if (state_res == 0 && count_res == 5){
 				auto_state=0;
+				GPIOB->ODR &= ~BIT4;
+				waitms(100);
+				GPIOB->ODR |= BIT4;
 				LCDprint("Automode:",1,1);
 				LCDprint("Exiting...",2,1);
-				waitms(3000);
+				record = 0;
+				waitms(6000);
 			}
 
 			if(record < count_res){
@@ -422,13 +485,16 @@ void main(void)
 					pick_counter = 0;
 				} 
 				else {
+					Auto_enter();
 					auto_state = 1;
+					record = 0;
 				}
 			}
 	
 			if(!PB1){
 				while(!PB1);
 				printf("1 pressed!\r\n");
+				Coin_view();
 			}
 	
 			if(!PB2){
@@ -481,10 +547,10 @@ void main(void)
 			pick_order = 0;
 		}
 
-		printf("Coins: liangkuai: %d, yikuai: %d, wumao: %d, liangmaowu: %d, yimao: %d, wufen: %d\r\n", liangkuai,yikuai,wumao,liangmaowu,yimao,wufen);
+		printf("Coins: liangkuai: %d, yikuai: %d, liangmaowu: %d, yimao: %d, wufen: %d\r\n", coins_count[0],coins_count[1],coins_count[2],coins_count[3],coins_count[4]);
 
 		buzzer_ctrl(metal_freq);
-		waitms(50);  // Set the information interchange pace: communicate about every 50ms
+		waitms(30);  // Set the information interchange pace: communicate about every 50ms
 	}
 	
 }
