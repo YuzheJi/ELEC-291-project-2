@@ -668,6 +668,7 @@ void ReceptionOff (void)
 int measure_distance(void)
 {
 	xdata int answer;
+	xdata unsigned int i = 0;
 	TL0 = 0; 
 	TH0 = 0; 
 	TF0 = 0; 
@@ -675,12 +676,12 @@ int measure_distance(void)
 	duration = 0;
 
 	TRIG_PIN = 1; 
-	for(i_loo =0; i_loo <40; i_loo ++);
+	for(i = 0; i < 40; i++);
 	TRIG_PIN = 0; 
 
 	while (ECHO_PIN != 0){
-		i_loo++;
-		if (i_loo > 3000){
+		i++;
+		if (i > 3000){
 			printf("Time out\r\n");
 			return -1;
 		}
@@ -919,7 +920,6 @@ void servo_pick(){
 	servo_arm = 50;
 	servo_base = 50;
 	waitms(500);
-	// servo_base = 250;
 	for (i_loo=50; i_loo <= 210; i_loo+=20)
 	{
 		servo_base = i_loo; 
@@ -968,6 +968,76 @@ void servo_pick(){
 	return;
 }
 
+void servo_push(void)
+{
+	servo_arm = 50;
+	servo_base = 50;
+	waitms(500);
+	for (i_loo=50; i_loo <= 150; i_loo+=10)
+	{
+		servo_base = i_loo; 
+		waitms(25);
+	}
+	waitms(200);
+	for (i_loo=50; i_loo <= 150; i_loo+=10)
+	{
+		servo_arm = i_loo; 
+		waitms(25);
+	}
+	waitms(200);
+	for (i_loo=150; i_loo <= 250; i_loo+=10)
+	{
+		servo_base = i_loo; 
+		waitms(25);
+	}
+	waitms(200);
+	for (i_loo=250; i_loo >= 150; i_loo-=10)
+	{
+		servo_base = i_loo; 
+		waitms(25);
+	}
+	waitms(200);
+	for (i_loo=150; i_loo >= 50; i_loo-=10)
+	{
+		servo_arm = i_loo; 
+		waitms(25);
+	}
+	waitms(200);
+	for (i_loo=150; i_loo >= 50; i_loo-=10)
+	{
+		servo_base = i_loo; 
+		waitms(25);
+	}
+	waitms(200);
+	return; 
+}
+
+void Move_forward_ms(int ms){
+
+	L_motor_dir = 0;
+	R_motor_dir = 0;
+
+	pwm_left = 50;
+	pwm_right = 50;
+
+	waitms(ms);
+
+	L_motor_dir = 0;
+	R_motor_dir = 0;
+	pwm_left = 0;
+	pwm_right = 0;
+	return;
+}
+
+void servo_moveaway(void)
+{
+	servo_push();
+	waitms(100);
+	Move_forward_ms(500);
+	servo_push();
+	return; 
+}
+
 int check_bound(int d1, int d2){
 	if(d1>10000||d2>10000)	return 1;
 	else return 0;
@@ -1011,8 +1081,8 @@ void Move_back_ms(int ms){
 	L_motor_dir = 1;
 	R_motor_dir = 1;
 
-	pwm_left = 50;
-	pwm_right = 50;
+	pwm_left = 80;
+	pwm_right = 80*pwm_corr;
 
 	waitms(ms);
 
@@ -1022,6 +1092,7 @@ void Move_back_ms(int ms){
 	pwm_right = 0;
 	return;
 }
+
 
 void Right_angle(int angle){
 
@@ -1104,7 +1175,7 @@ void Auto_mode_slave(){
 				}			
 			}
 			else if(c=='@'){
-				sprintf(buff, "%01d,%02d,%ld,%05d,%03d\n", state_res, count,freq100, 0, (int)curr_angle);
+				sprintf(buff, "%01d,%02d,%ld,%05d,%03d,%02d,%02d\n", state_res, count,freq100, 0, (int)curr_angle, pwm_left, pwm_right);
 				waitms(5); 
 				sendstr1(buff);
 			}
@@ -1303,7 +1374,8 @@ void main (void)
 	while(1){	
 		
 		temp = Read_angle();
-		printf("distance: %d\r\n", distance);
+		// printf("distance: %d\r\n", distance);
+		if (distance < 500) 
 		
 		if(pick_char=='1'){
 			servo_pick();
@@ -1334,7 +1406,7 @@ void main (void)
 			}
 			else if(c=='@') // Master wants slave data
 			{
-				sprintf(buff, "0,00,%04ld,%05d,%03d\n", freq100, weight, (int)curr_angle);
+				sprintf(buff, "0,00,%04ld,%05d,%03d,%02d,%02d\n", freq100, weight, (int)curr_angle, pwm_left, pwm_right);
 				waitms(5); // The radio seems to need this delay...
 				sendstr1(buff);
 			}
