@@ -32,6 +32,8 @@ char liangmaowu = 0;
 char yimao = 0;
 char wufen = 0;
 char coins_count[6] = {0};
+int pwm_left=0;
+int pwm_right=0; 
 
 // 0: 2.0
 // 1: 1.0
@@ -521,18 +523,8 @@ void main(void)
 		}		
 		if(ReceivedBytes2()>19){
 			egets2(buff, sizeof(buff)-1);
-			if(strlen(buff)==20){
-				if(auto_state)
-				{
-					//printf("Slave_auto says: %s\r", buff);
-				} 
-				else
-				{
-					//printf("Slave_manual says: %s\r", buff);
-					sscanf(buff, "%01d,%02d,%04d,%05d,%4.1f",&state_res,&count_res,&metal_freq,&weight,&angle);
-
-				} 			
-				// sscanf(buff, "%01d,%02d,%04d,%05d,%4.1f",&state_res,&count_res,&metal_freq,&weight,&angle);
+			if(strlen(buff)==20){			
+				sscanf(buff, "%01d,%02d,%04d,%05d,%4.1f,%02d,%02d",&state_res,&count_res,&metal_freq,&weight,&angle,&pwm_left,&pwm_right);
 				weights[index % 25] = weight; 
         		index++;
 				if (1){
@@ -557,9 +549,8 @@ void main(void)
 		}
 
 		// printf("Coins: liangkuai: %d, yikuai: %d, liangmaowu: %d, yimao: %d, wufen: %d\r\n", coins_count[0],coins_count[1],coins_count[2],coins_count[3],coins_count[4]);
-		sprintf(buff, "%04d,%4.1f,%d,%d,%d,%d,%d\n", metal_freq, angle, coins_count[0], coins_count[1], coins_count[2], coins_count[3], coins_count[4]);
+		sprintf(buff, "%04d,%4.1f,%d,%d,%d,%d,%d,%d,%d\n", metal_freq, angle, coins_count[0], coins_count[1], coins_count[2], coins_count[3], coins_count[4],pwm_left,pwm_right);
 		uart1_send_str(buff);
-		// printf("%s\r\n", buff);
 		buzzer_ctrl(metal_freq);
 		waitms(30);  // Set the information interchange pace: communicate about every 50ms
 	}

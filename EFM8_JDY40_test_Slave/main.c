@@ -1176,7 +1176,7 @@ void Auto_mode_slave(){
 
 	curr_angle = Read_angle();
 
-	while(count < 5 && state_res){
+	while(count < 20 && state_res){
 		
 		if(RXU1()){
 			c=getchar1();	
@@ -1190,7 +1190,7 @@ void Auto_mode_slave(){
 				}			
 			}
 			else if(c=='@'){
-				sprintf(buff, "%01d,%02d,%ld,%05d,%03d\n", state_res, count,freq100, 0, (int)curr_angle);
+				sprintf(buff, "%01d,%02d,%ld,%05d,%03d\n", state_res, count, freq100, 0, (int)curr_angle);
 				waitms(5); 
 				sendstr1(buff);
 			}
@@ -1201,9 +1201,9 @@ void Auto_mode_slave(){
 		d1 = ADC_at_Pin(QFP32_MUX_P1_3);
 		d2 = ADC_at_Pin(QFP32_MUX_P1_4);
 		bound = check_bound(d1,d2);
-		// printf("f:%04ld, d1:%d, d2:%d, bound_dectect: %d, distance: %d\r\n",freq100, d1,d2,bound,distance);
-
-		if (freq100>=5360){
+		printf("f:%04ld, d1:%d, d2:%d, bound_dectect: %d, distance: %d\r\n",freq100, d1,d2,bound,distance);
+		printf("%d \r\n", count);
+		if (freq100>=5355){
 			mea_yes = 0;
 			Move_back_ms(100);
 			waitms(100);
@@ -1228,17 +1228,12 @@ void Auto_mode_slave(){
 	}
 	dummy = 0;
 	while(1){
-		if(RXU1()) {
-			c=getchar1();
-			if(c=='@') // Master wants slave data
-			{
-				sprintf(buff, "0,00,%04ld,%05d,%03d,%03d,%03d\n", freq100, weight, (int)curr_angle);
-				dummy++;
-				waitms(5); 
-				sendstr1(buff);
-				if(dummy = 30) break;
-			}
-		}
+		sprintf(buff, "0,20,%04ld,%05d,%03d,%03d,%03d\n", freq100, weight, (int)curr_angle);
+		dummy++;
+		waitms(5); 
+		sendstr1(buff);
+		printf("%s\r\n",buff);
+		if(dummy = 100) break;
 	}
 }
 
@@ -1395,7 +1390,7 @@ void main (void)
 	waitms(1000);
 	while(1){	
 		
-		// printf("distance: %d\r\n", distance);
+		printf("angle: %d, raw_angle: %d\r\n", (int)curr_angle, (int)Read_angle());
 		
 		if(pick=='1'){
 			servo_pick();
@@ -1429,7 +1424,7 @@ void main (void)
 			}
 			else if(c=='@') // Master wants slave data
 			{
-				sprintf(buff, "0,00,%04ld,%05d,%03d\n", freq100, weight, (int)curr_angle);
+				sprintf(buff, "0,00,%04ld,%05d,%03d,%03d,%03d\n", freq100, weight, (int)curr_angle, pwm_left, pwm_right);
 				waitms(5); // The radio seems to need this delay...
 				sendstr1(buff);
 			}
