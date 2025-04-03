@@ -108,7 +108,7 @@ xdata char mea_yes = 1;
 
 xdata unsigned int weight = 0;
 xdata float duration=0.0;
-xdata int distance;
+xdata int distance = 10000;
 xdata unsigned char overflow_count; 
 
 xdata int i_loo;
@@ -674,32 +674,40 @@ int measure_distance(void)
 	TL0 = 0; 
 	TH0 = 0; 
 	TF0 = 0; 
-	overflow_count = 0;
 	duration = 0;
 
 	TRIG_PIN = 1; 
 	for(i = 0; i < 40; i++);
 	TRIG_PIN = 0; 
 
+	i=0;
 	while (ECHO_PIN != 0){
 		i++;
-		if (i > 3000){
+		if (i > 200){
 			// printf("Time out\r\n");
-			return -1;
 		}
 	};
-	while (ECHO_PIN != 1);
+	i=0;
+	while (ECHO_PIN != 1){
+		i++;
+		if (i > 300){
+			// printf("Time out\r\n");
+		}
+	}
 	TR0 = 1; 
 	while (ECHO_PIN == 1)
 	{
 		if (TF0 == 1){
 			TF0 = 0; 
-			overflow_count++;
 		}
+		if(TH0 > 200){
+			return -3;
+		}
+		
 	}
 
 	TR0 = 0; 
-	duration = (overflow_count*65536.0 + TH0*256.0 + TL0) * (12.0/SYSCLK);
+	duration = (TH0*256.0 + TL0) * (12.0/SYSCLK);
 
 	distance = 100 * (340.0 * duration * 100.0 / 2.0); // distance in cm
 	
@@ -934,37 +942,30 @@ void servo_pick(){
 	}
 	Magnet = 1; 
 	waitms(500);
-	for(i_loo = 200; i_loo >= 110; i_loo-=10){
+	for(i_loo = 200; i_loo >= 100; i_loo-=10){
 		waitms(25);
 		servo_base = i_loo;
 	}
 	Magnet = 1; 
 	waitms(500);
-	for(i_loo = 110; i_loo <= 200; i_loo+=10){
+	for(i_loo = 100; i_loo <= 200; i_loo+=10){
 		waitms(25);
 		servo_base = i_loo;
 	}
 	Magnet = 1; 
 	waitms(500);
-	for(i_loo = 240; i_loo >= 80; i_loo-=10){
+	for(i_loo = 240; i_loo >= 100; i_loo-=10){
 		waitms(25);
 		servo_arm = i_loo;
-		Magnet = 1; 
 	}
 	Magnet = 1; 
 	waitms(500);
-	for(i_loo = 200; i_loo >= 80; i_loo-=10){
+	for(i_loo = 200; i_loo >= 90; i_loo-=10){
 		waitms(25);
 		servo_base = i_loo;
 		Magnet = 1; 
 	}
 	Magnet = 1; 
-	waitms(500);
-	for(i_loo = 90; i_loo <= 100; i_loo+=10){
-		waitms(25);
-		servo_arm = i_loo;
-		Magnet = 1; 
-	}
 	waitms(500);
 	Magnet = 0;
 	waitms(500);
@@ -973,7 +974,7 @@ void servo_pick(){
 		waitms(25);
 	}
 	waitms(500);
-	for (i_loo = 80; i_loo >= 50; i_loo-=10){
+	for (i_loo = 90; i_loo >= 50; i_loo-=10){
 		servo_base = i_loo; 
 		waitms(25);
 	}
@@ -1044,8 +1045,6 @@ void Move_forward_ms(int ms){
 void servo_moveaway(void)
 {	pwm_left = 0;
 	pwm_right = 0;
-	waitms(200);
-	Move_forward_ms(200);
 	servo_push();
 	waitms(100);
 	Move_forward_ms(500);
@@ -1174,7 +1173,7 @@ void Auto_mode_slave(){
 	xdata int dummy;
 	xdata unsigned int angle;
 
-	curr_angle = Read_angle();
+	// raw_angle = Read_angle();
 
 	while(count < 20 && state_res){
 		
@@ -1190,19 +1189,19 @@ void Auto_mode_slave(){
 				}			
 			}
 			else if(c=='@'){
-				sprintf(buff, "%01d,%02d,%ld,%05d,%03d\n", state_res, count, freq100, 0, (int)curr_angle);
+				sprintf(buff, "%01d,%02d,%ld,%05d,%03d,%03d,%03d\n", state_res, count,freq100, weight, (int)curr_angle,pwm_left,pwm_right);
+				printf("%s\r\n",buff);
 				waitms(5); 
 				sendstr1(buff);
 			}
 		}
 
 		Move_forward();
-		// detect the coin
 		d1 = ADC_at_Pin(QFP32_MUX_P1_3);
 		d2 = ADC_at_Pin(QFP32_MUX_P1_4);
 		bound = check_bound(d1,d2);
 		printf("f:%04ld, d1:%d, d2:%d, bound_dectect: %d, distance: %d\r\n",freq100, d1,d2,bound,distance);
-		printf("%d \r\n", count);
+
 		if (freq100>=5355){
 			mea_yes = 0;
 			Move_back_ms(100);
@@ -1214,7 +1213,7 @@ void Auto_mode_slave(){
 			Move_forward();
 		}
 
-		if (distance < 600){
+		if (distance < 400 && distance > 0){
 			servo_moveaway();
 		}
 
@@ -1223,17 +1222,30 @@ void Auto_mode_slave(){
 			waitms(100);
 		 	angle = get_random_90_250();
 			Right_angle(angle*600/90);
-			curr_angle = Read_angle() * 1.2;
+			// angle_diff = fabsf(raw_angle - last_raw_angle);
+			curr_angle += angle; 
+			if (curr_angle > 360.0) curr_angle -= 360.0; 
+			else if (curr_angle < 0.0) curr_angle += 360.0; 
+			printf("current angle: %03d\r\n", (int)curr_angle);
+
 		}
+		// last_raw_angle = raw_angle; 
 	}
 	dummy = 0;
-	while(1){
-		sprintf(buff, "0,20,%04ld,%05d,%03d,%03d,%03d\n", freq100, weight, (int)curr_angle);
-		dummy++;
-		waitms(5); 
-		sendstr1(buff);
-		printf("%s\r\n",buff);
-		if(dummy = 100) break;
+	while(1){ 	
+		
+		if(RXU1()){
+			c=getchar1();	
+			if(c=='@'){
+				dummy++;
+				sprintf(buff, "%01d,20,%ld,%05d,%03d,%03d,%03d\n", state_res,freq100, weight, (int)curr_angle,pwm_left,pwm_right);
+				printf("%s\r\n",buff);
+				waitms(5); 
+				sendstr1(buff);
+			}
+		}
+		if(dummy==5)break;
+		
 	}
 }
 
@@ -1269,6 +1281,7 @@ float Joystick_Control(int *vx_ptr, int *vy_ptr)
 		}
 	}
 	if ((vx_error>5)&&(vy_error<5)){
+		// angle_diff = fabsf(raw_angle - last_raw_angle);
 		pwm_left = vx_error; 
 		pwm_right = vx_error * pwm_corr; 
 		if (vx_err > 0){ //turn right
@@ -1385,17 +1398,12 @@ void main (void)
 	
 	//initialize current angle 
 	curr_angle = Read_angle();
-	// servo_moveaway();
-	
-	waitms(1000);
 	while(1){	
-		
-		printf("angle: %d, raw_angle: %d\r\n", (int)curr_angle, (int)Read_angle());
-		
-		if(pick=='1'){
+
+		if(pick == '1'){
 			servo_pick();
 			waitms(1000);
-			pick = 0;
+			pick = '0';
 		}
 		
 		if(auto_mode){
@@ -1415,7 +1423,7 @@ void main (void)
 					//parse_values(buff);
 					sscanf(buff,"%03d,%03d,%01d,%01d",&vx, &vy,&pick,&auto_mode);
 					pick = buff[8];
-		        	// printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, pick, auto_mode);
+		        	printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, pick, auto_mode);
 					curr_angle = Joystick_Control(&vx, &vy);
 				}
 				else{
@@ -1424,7 +1432,8 @@ void main (void)
 			}
 			else if(c=='@') // Master wants slave data
 			{
-				sprintf(buff, "0,00,%04ld,%05d,%03d,%03d,%03d\n", freq100, weight, (int)curr_angle, pwm_left, pwm_right);
+				sprintf(buff, "0,00,%04ld,%05d,%03d,%03d,%03d\n", freq100, weight, (int)Read_angle(),pwm_left,pwm_right);
+				printf("%s\r\n",buff);
 				waitms(5); // The radio seems to need this delay...
 				sendstr1(buff);
 			}

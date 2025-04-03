@@ -428,7 +428,7 @@ void main(void)
 					waitms(50);
 				};
 			}
-			if (state_res == 0){
+			if (count_res == 20){
 				auto_state=0;
 				GPIOB->ODR &= ~BIT4;
 				waitms(100);
@@ -436,10 +436,10 @@ void main(void)
 				LCDprint("Automode:",1,1);
 				LCDprint("Exiting...",2,1);
 				record = 0;
-				waitms(6000);
+				waitms(200);
 			}
 
-			if(record < count_res){
+			else if(record < count_res){
 				GPIOA->ODR &= ~BIT7;
 				waitms(100);
 				GPIOA->ODR |= BIT7;
@@ -517,29 +517,22 @@ void main(void)
 		
 		timeout_cnt=0;
 		while(1){
-			if(ReceivedBytes2()>19) break; // Something has arrived
+			if(ReceivedBytes2()>27) break; // Something has arrived
 			if(++timeout_cnt>1000) break; // Wait up to 25ms for the repply
 			Delay_us(100); // 100us*250=25ms
 		}		
-		if(ReceivedBytes2()>19){
+		if(ReceivedBytes2()>27){
 			egets2(buff, sizeof(buff)-1);
-<<<<<<< HEAD
-			if(strlen(buff)==20){
+			if(strlen(buff)==28){
 				// if(auto_state)
 				// {
-				// 	//printf("Slave_auto says: %s\r", buff);
+				// 	printf("Slave_auto says: %s\r", buff);
 				// } 
 				// else
 				// {
-				// 	//printf("Slave_manual says: %s\r", buff);
-				// 	sscanf(buff, "%01d,%02d,%04d,%05d,%03d",&state_res,&count_res,&metal_freq,&weight,&angle);
-
+				// 	printf("Slave_manual says: %s\r", buff);
 				// } 			
-				sscanf(buff, "%01d,%02d,%04d,%05d,%4.1f",&state_res,&count_res,&metal_freq,&weight,&angle);
-=======
-			if(strlen(buff)==20){			
-				sscanf(buff, "%01d,%02d,%04d,%05d,%4.1f,%02d,%02d",&state_res,&count_res,&metal_freq,&weight,&angle,&pwm_left,&pwm_right);
->>>>>>> edaf847caac0ca9a6b5d5a3c1fe4252f662f1708
+				sscanf(buff, "%01d,%02d,%04d,%05d,%03d,%03d,%03d",&state_res,&count_res,&metal_freq,&weight,&angle,&pwm_left,&pwm_right);
 				weights[index % 25] = weight; 
         		index++;
 				if (1){
@@ -554,21 +547,17 @@ void main(void)
 			}
 			else{
 				while (ReceivedBytes2()) egetc2(); 
-				// printf("*** BAD MESSAGE ***: %s, length: %d\r", buff, (int)strlen(buff));
+				//printf("*** BAD MESSAGE ***: %s, length: %d\r", buff, (int)strlen(buff));
 			}
 		}
 		else{
 			while (ReceivedBytes2()) egetc2(); 
-			// printf("NO RESPONSE\r\n");
+			//printf("NO RESPONSE\r\n");
 			pick_order = 0;
 		}
 
 		// printf("Coins: liangkuai: %d, yikuai: %d, liangmaowu: %d, yimao: %d, wufen: %d\r\n", coins_count[0],coins_count[1],coins_count[2],coins_count[3],coins_count[4]);
-<<<<<<< HEAD
-		sprintf(buff, "%04d,%03d,%d,%d,%d,%d,%d\n", metal_freq, angle, coins_count[0], coins_count[1], coins_count[2], coins_count[3], coins_count[4]);
-=======
-		sprintf(buff, "%04d,%4.1f,%d,%d,%d,%d,%d,%d,%d\n", metal_freq, angle, coins_count[0], coins_count[1], coins_count[2], coins_count[3], coins_count[4],pwm_left,pwm_right);
->>>>>>> edaf847caac0ca9a6b5d5a3c1fe4252f662f1708
+		sprintf(buff, "%04d,%d,%d,%d,%d,%d,%d,%d\n", metal_freq, angle, coins_count[0], coins_count[1], coins_count[2], coins_count[3], coins_count[4], vctrl100);
 		uart1_send_str(buff);
 		buzzer_ctrl(metal_freq);
 		waitms(30);  // Set the information interchange pace: communicate about every 50ms
