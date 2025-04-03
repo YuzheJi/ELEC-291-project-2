@@ -1378,7 +1378,7 @@ void main (void)
 	while(1){	
 		
 		temp = Read_angle();
-		printf("distance: %d\r\n", distance);
+		// printf("distance: %d\r\n", distance);
 		
 		if(pick_char=='1'){
 			servo_pick();
@@ -1400,8 +1400,9 @@ void main (void)
 				if(strlen(buff)==11)
 				{
 					printf("Master says: %s\r\n", buff);
-					sscanf(buff, "%03d,%03d,%c,%01d", &vx, &vy, &pick_char, &auto_mode);
-		        	// printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, pick_char, auto_mode);
+					sscanf(buff, "%03d,%03d,%01d,%01d", &vx, &vy, &pick_char, &auto_mode);
+					pick_char = buff[8];
+		        	printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, buff[8], auto_mode);
 					curr_angle = Joystick_Control(&vx, &vy);
 				}
 				else{

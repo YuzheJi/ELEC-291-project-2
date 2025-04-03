@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-; This file was generated Wed Apr 02 23:02:59 2025
+; This file was generated Wed Apr 02 23:16:34 2025
 ;--------------------------------------------------------
 $name main
 $optc51 --model-small
@@ -8533,23 +8533,6 @@ L045016?:
 	inc	dptr
 	mov	a,r5
 	movx	@dptr,a
-;	main.c:1381: printf("distance: %d\r\n", distance);
-	mov	dptr,#_distance
-	movx	a,@dptr
-	push	acc
-	inc	dptr
-	movx	a,@dptr
-	push	acc
-	mov	a,#__str_16
-	push	acc
-	mov	a,#(__str_16 >> 8)
-	push	acc
-	mov	a,#0x80
-	push	acc
-	lcall	_printf
-	mov	a,sp
-	add	a,#0xfb
-	mov	sp,a
 ;	main.c:1383: if(pick_char=='1'){
 	mov	dptr,#_main_pick_char_1_265
 	movx	a,@dptr
@@ -8619,9 +8602,9 @@ L045034?:
 	push	acc
 	mov	a,#0x40
 	push	acc
-	mov	a,#__str_17
+	mov	a,#__str_16
 	push	acc
-	mov	a,#(__str_17 >> 8)
+	mov	a,#(__str_16 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -8629,7 +8612,7 @@ L045034?:
 	mov	a,sp
 	add	a,#0xfa
 	mov	sp,a
-;	main.c:1403: sscanf(buff, "%03d,%03d,%c,%01d", &vx, &vy, &pick_char, &auto_mode);
+;	main.c:1403: sscanf(buff, "%03d,%03d,%01d,%01d", &vx, &vy, &pick_char, &auto_mode);
 	mov	a,#_main_auto_mode_1_265
 	push	acc
 	mov	a,#(_main_auto_mode_1_265 >> 8)
@@ -8654,9 +8637,9 @@ L045034?:
 	push	acc
 	clr	a
 	push	acc
-	mov	a,#__str_18
+	mov	a,#__str_5
 	push	acc
-	mov	a,#(__str_18 >> 8)
+	mov	a,#(__str_5 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -8670,7 +8653,48 @@ L045034?:
 	mov	a,sp
 	add	a,#0xee
 	mov	sp,a
-;	main.c:1405: curr_angle = Joystick_Control(&vx, &vy);
+;	main.c:1404: pick_char = buff[8];
+	mov	r0,#(_buff + 0x0008)
+	mov	ar3,@r0
+	mov	dptr,#_main_pick_char_1_265
+	mov	a,r3
+	movx	@dptr,a
+;	main.c:1405: printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, buff[8], auto_mode);
+	mov	a,r3
+	rlc	a
+	subb	a,acc
+	mov	r4,a
+	mov	dptr,#_main_auto_mode_1_265
+	movx	a,@dptr
+	push	acc
+	inc	dptr
+	movx	a,@dptr
+	push	acc
+	push	ar3
+	push	ar4
+	mov	dptr,#_vy
+	movx	a,@dptr
+	push	acc
+	inc	dptr
+	movx	a,@dptr
+	push	acc
+	mov	dptr,#_vx
+	movx	a,@dptr
+	push	acc
+	inc	dptr
+	movx	a,@dptr
+	push	acc
+	mov	a,#__str_17
+	push	acc
+	mov	a,#(__str_17 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	lcall	_printf
+	mov	a,sp
+	add	a,#0xf5
+	mov	sp,a
+;	main.c:1406: curr_angle = Joystick_Control(&vx, &vy);
 	mov	_Joystick_Control_PARM_2,#_vy
 	mov	(_Joystick_Control_PARM_2 + 1),#(_vy >> 8)
 	mov	(_Joystick_Control_PARM_2 + 2),#0x00
@@ -8695,16 +8719,16 @@ L045034?:
 	movx	@dptr,a
 	ljmp	L045016?
 L045006?:
-;	main.c:1408: printf("*** BAD MESSAGE ***: %s\r\n", buff);
+;	main.c:1409: printf("*** BAD MESSAGE ***: %s\r\n", buff);
 	mov	a,#_buff
 	push	acc
 	mov	a,#(_buff >> 8)
 	push	acc
 	mov	a,#0x40
 	push	acc
-	mov	a,#__str_19
+	mov	a,#__str_18
 	push	acc
-	mov	a,#(__str_19 >> 8)
+	mov	a,#(__str_18 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -8714,13 +8738,13 @@ L045006?:
 	mov	sp,a
 	ljmp	L045016?
 L045011?:
-;	main.c:1411: else if(c=='@') // Master wants slave data
+;	main.c:1412: else if(c=='@') // Master wants slave data
 	cjne	r2,#0x40,L045035?
 	sjmp	L045036?
 L045035?:
 	ljmp	L045016?
 L045036?:
-;	main.c:1413: sprintf(buff, "0,00,%04ld,%05d,%03d\n", freq100, weight, (int)curr_angle);
+;	main.c:1414: sprintf(buff, "0,00,%04ld,%05d,%03d\n", freq100, weight, (int)curr_angle);
 	mov	dptr,#_curr_angle
 	movx	a,@dptr
 	mov	r2,a
@@ -8758,9 +8782,9 @@ L045036?:
 	inc	dptr
 	movx	a,@dptr
 	push	acc
-	mov	a,#__str_20
+	mov	a,#__str_19
 	push	acc
-	mov	a,#(__str_20 >> 8)
+	mov	a,#(__str_19 >> 8)
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -8774,10 +8798,10 @@ L045036?:
 	mov	a,sp
 	add	a,#0xf2
 	mov	sp,a
-;	main.c:1414: waitms(5); // The radio seems to need this delay...
+;	main.c:1415: waitms(5); // The radio seems to need this delay...
 	mov	dptr,#0x0005
 	lcall	_waitms
-;	main.c:1415: sendstr1(buff);
+;	main.c:1416: sendstr1(buff);
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_sendstr1
@@ -8908,24 +8932,21 @@ __str_15:
 	db 0x0A
 	db 0x00
 __str_16:
-	db 'distance: %d'
-	db 0x0D
-	db 0x0A
-	db 0x00
-__str_17:
 	db 'Master says: %s'
 	db 0x0D
 	db 0x0A
 	db 0x00
-__str_18:
-	db '%03d,%03d,%c,%01d'
+__str_17:
+	db 'Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d'
+	db 0x0D
+	db 0x0A
 	db 0x00
-__str_19:
+__str_18:
 	db '*** BAD MESSAGE ***: %s'
 	db 0x0D
 	db 0x0A
 	db 0x00
-__str_20:
+__str_19:
 	db '0,00,%04ld,%05d,%03d'
 	db 0x0A
 	db 0x00
