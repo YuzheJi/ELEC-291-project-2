@@ -946,19 +946,25 @@ void servo_pick(){
 	}
 	Magnet = 1; 
 	waitms(500);
-	for(i_loo = 240; i_loo >= 100; i_loo-=10){
+	for(i_loo = 240; i_loo >= 80; i_loo-=10){
 		waitms(25);
 		servo_arm = i_loo;
 		Magnet = 1; 
 	}
 	Magnet = 1; 
 	waitms(500);
-	for(i_loo = 200; i_loo >= 90; i_loo-=10){
+	for(i_loo = 200; i_loo >= 80; i_loo-=10){
 		waitms(25);
 		servo_base = i_loo;
 		Magnet = 1; 
 	}
 	Magnet = 1; 
+	waitms(500);
+	for(i_loo = 90; i_loo <= 100; i_loo+=10){
+		waitms(25);
+		servo_arm = i_loo;
+		Magnet = 1; 
+	}
 	waitms(500);
 	Magnet = 0;
 	waitms(500);
@@ -967,7 +973,7 @@ void servo_pick(){
 		waitms(25);
 	}
 	waitms(500);
-	for (i_loo = 90; i_loo >= 50; i_loo-=10){
+	for (i_loo = 80; i_loo >= 50; i_loo-=10){
 		servo_base = i_loo; 
 		waitms(25);
 	}
@@ -1038,6 +1044,8 @@ void Move_forward_ms(int ms){
 void servo_moveaway(void)
 {	pwm_left = 0;
 	pwm_right = 0;
+	waitms(200);
+	Move_forward_ms(200);
 	servo_push();
 	waitms(100);
 	Move_forward_ms(500);
@@ -1206,7 +1214,7 @@ void Auto_mode_slave(){
 			Move_forward();
 		}
 
-		if (distance < 400){
+		if (distance < 600){
 			servo_moveaway();
 		}
 
@@ -1387,13 +1395,12 @@ void main (void)
 	waitms(1000);
 	while(1){	
 		
-		temp = Read_angle();
 		// printf("distance: %d\r\n", distance);
 		
-		if(pick_char=='1'){
+		if(pick=='1'){
 			servo_pick();
 			waitms(1000);
-			pick = '0';
+			pick = 0;
 		}
 		
 		if(auto_mode){
