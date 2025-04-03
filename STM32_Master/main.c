@@ -8,6 +8,7 @@
 #include "UART2.h"
 #include "lcd.h"
 #include "adc.h"
+#include "UART1.h"
 
 
 #define SYSCLK 32000000L
@@ -194,14 +195,14 @@ void buzzer_ctrl(int freq100){
 void SendATCommand (char * s)
 {
 	char buff[40];
-	printf("Command: %s", s);
+	// printf("Command: %s", s);
 	GPIOA->ODR &= ~(BIT13); // 'set' pin to 0 is 'AT' mode.
 	waitms(10);
 	eputs2(s);
 	egets2(buff, sizeof(buff)-1);
 	GPIOA->ODR |= BIT13; // 'set' pin to 1 is normal operation mode.
 	waitms(10);
-	printf("Response: %s", buff);
+	// printf("Response: %s", buff);
 }
 
 void ReceptionOff (void)
@@ -388,6 +389,7 @@ void main(void)
 	LCD_Custom_Char(0, charge);
 
 	initUART2(9600);
+	uart1_init();
 	LCDprint("ELEC-291:       ", 1, 1);
 	LCDprint("       Project2 ", 2, 1);
 
@@ -492,20 +494,20 @@ void main(void)
 	
 			if(!PB1){
 				while(!PB1);
-				printf("1 pressed!\r\n");
+				// printf("1 pressed!\r\n");
 				Coin_view();
 			}
 	
 			if(!PB2){
 				while(!PB2);
-				printf("2 pressed!\r\n");
+				// printf("2 pressed!\r\n");
 			}
 
 			sprintf(buff, "%03d,%03d,%01d,%01d\n", vx100, vy100, pick_order, auto_state); 
 
 		}
 		// Construct a test message
-		printf("%s\r\n",buff);
+		// printf("%s\r\n",buff);
 		eputc2('!'); 
 		waitms(10); 			// This may need adjustment depending on how busy is the slave
 		eputs2(buff); 			// Send the test message
@@ -520,9 +522,17 @@ void main(void)
 		if(ReceivedBytes2()>19){
 			egets2(buff, sizeof(buff)-1);
 			if(strlen(buff)==20){
-				if(auto_state) 	printf("Slave_auto says: %s\r", buff);
-				else 			printf("Slave_manual says: %s\r", buff);
-				sscanf(buff, "%01d,%02d,%04d,%05d,%4.1f",&state_res,&count_res,&metal_freq,&weight,&angle);
+				if(auto_state)
+				{
+					//printf("Slave_auto says: %s\r", buff);
+				} 
+				else
+				{
+					//printf("Slave_manual says: %s\r", buff);
+					sscanf(buff, "%01d,%02d,%04d,%05d,%4.1f",&state_res,&count_res,&metal_freq,&weight,&angle);
+
+				} 			
+				// sscanf(buff, "%01d,%02d,%04d,%05d,%4.1f",&state_res,&count_res,&metal_freq,&weight,&angle);
 				weights[index % 25] = weight; 
         		index++;
 				if (1){
@@ -531,23 +541,25 @@ void main(void)
 						old_weight = new_weight;
 						new_weight = calculate_mean(weights,25);
 						Coin_chk(new_weight-old_weight);
-						printf("Coins: value: %d\r\n", new_weight-old_weight);
+						// printf("Coins: value: %d\r\n", new_weight-old_weight);
 					}
 				}
 			}
 			else{
 				while (ReceivedBytes2()) egetc2(); 
-				printf("*** BAD MESSAGE ***: %s, length: %d\r", buff, (int)strlen(buff));
+				// printf("*** BAD MESSAGE ***: %s, length: %d\r", buff, (int)strlen(buff));
 			}
 		}
 		else{
 			while (ReceivedBytes2()) egetc2(); 
-			printf("NO RESPONSE\r\n");
+			// printf("NO RESPONSE\r\n");
 			pick_order = 0;
 		}
 
-		printf("Coins: liangkuai: %d, yikuai: %d, liangmaowu: %d, yimao: %d, wufen: %d\r\n", coins_count[0],coins_count[1],coins_count[2],coins_count[3],coins_count[4]);
-
+		// printf("Coins: liangkuai: %d, yikuai: %d, liangmaowu: %d, yimao: %d, wufen: %d\r\n", coins_count[0],coins_count[1],coins_count[2],coins_count[3],coins_count[4]);
+		sprintf(buff, "%04d,%4.1f,%d,%d,%d,%d,%d\n", metal_freq, angle, coins_count[0], coins_count[1], coins_count[2], coins_count[3], coins_count[4]);
+		uart1_send_str(buff);
+		// printf("%s\r\n", buff);
 		buzzer_ctrl(metal_freq);
 		waitms(30);  // Set the information interchange pace: communicate about every 50ms
 	}
