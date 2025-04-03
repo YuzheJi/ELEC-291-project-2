@@ -366,7 +366,7 @@ void main(void)
 	int count_res = 0;
 	int weight = 0;
 	int weights[25] = {0};
-	float angle = 0;
+	int angle = 0;
 	char index=0;
 	int old_weight = 0;
 	int new_weight = 0;
@@ -426,7 +426,7 @@ void main(void)
 					waitms(50);
 				};
 			}
-			if (state_res == 0 && count_res == 5){
+			if (state_res == 0){
 				auto_state=0;
 				GPIOB->ODR &= ~BIT4;
 				waitms(100);
@@ -522,17 +522,17 @@ void main(void)
 		if(ReceivedBytes2()>19){
 			egets2(buff, sizeof(buff)-1);
 			if(strlen(buff)==20){
-				if(auto_state)
-				{
-					//printf("Slave_auto says: %s\r", buff);
-				} 
-				else
-				{
-					//printf("Slave_manual says: %s\r", buff);
-					sscanf(buff, "%01d,%02d,%04d,%05d,%4.1f",&state_res,&count_res,&metal_freq,&weight,&angle);
+				// if(auto_state)
+				// {
+				// 	//printf("Slave_auto says: %s\r", buff);
+				// } 
+				// else
+				// {
+				// 	//printf("Slave_manual says: %s\r", buff);
+				// 	sscanf(buff, "%01d,%02d,%04d,%05d,%03d",&state_res,&count_res,&metal_freq,&weight,&angle);
 
-				} 			
-				// sscanf(buff, "%01d,%02d,%04d,%05d,%4.1f",&state_res,&count_res,&metal_freq,&weight,&angle);
+				// } 			
+				sscanf(buff, "%01d,%02d,%04d,%05d,%4.1f",&state_res,&count_res,&metal_freq,&weight,&angle);
 				weights[index % 25] = weight; 
         		index++;
 				if (1){
@@ -557,7 +557,7 @@ void main(void)
 		}
 
 		// printf("Coins: liangkuai: %d, yikuai: %d, liangmaowu: %d, yimao: %d, wufen: %d\r\n", coins_count[0],coins_count[1],coins_count[2],coins_count[3],coins_count[4]);
-		sprintf(buff, "%04d,%4.1f,%d,%d,%d,%d,%d\n", metal_freq, angle, coins_count[0], coins_count[1], coins_count[2], coins_count[3], coins_count[4]);
+		sprintf(buff, "%04d,%03d,%d,%d,%d,%d,%d\n", metal_freq, angle, coins_count[0], coins_count[1], coins_count[2], coins_count[3], coins_count[4]);
 		uart1_send_str(buff);
 		// printf("%s\r\n", buff);
 		buzzer_ctrl(metal_freq);
