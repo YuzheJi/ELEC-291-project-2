@@ -107,13 +107,15 @@ xdata float curr_angle = 0.0, raw_angle = 0.0, last_raw_angle = 0.0, angle_diff 
 xdata char mea_yes = 1;
 
 xdata unsigned int weight = 0;
-xdata float temp; 
 xdata float duration=0.0;
 xdata int distance;
 xdata unsigned char overflow_count; 
 
 xdata int i_loo;
 xdata unsigned int i; 
+
+xdata int auto_mode = 0;
+xdata char pick = 0;
 
 char _c51_external_startup (void)
 {
@@ -930,37 +932,42 @@ void servo_pick(){
 		servo_arm = i_loo; 
 		waitms(25);
 	}
-	// servo_arm = 250; 
+	Magnet = 1; 
+	waitms(500);
+	for(i_loo = 200; i_loo >= 110; i_loo-=10){
+		waitms(25);
+		servo_base = i_loo;
+	}
+	Magnet = 1; 
+	waitms(500);
+	for(i_loo = 110; i_loo <= 200; i_loo+=10){
+		waitms(25);
+		servo_base = i_loo;
+	}
+	Magnet = 1; 
+	waitms(500);
+	for(i_loo = 240; i_loo >= 100; i_loo-=10){
+		waitms(25);
+		servo_arm = i_loo;
+		Magnet = 1; 
+	}
 	Magnet = 1; 
 	waitms(500);
 	for(i_loo = 200; i_loo >= 90; i_loo-=10){
 		waitms(25);
 		servo_base = i_loo;
+		Magnet = 1; 
 	}
-	waitms(500);
-	for(i_loo = 90; i_loo <= 200; i_loo+=10){
-		waitms(25);
-		servo_base = i_loo;
-	}
-	waitms(500);
-	for(i_loo = 240; i_loo >= 100; i_loo-= 5){
-		waitms(25);
-		servo_arm = i_loo;
-	}
-	waitms(500);
-	for(i_loo = 200; i_loo >= 80; i_loo-=5){
-		waitms(25);
-		servo_base = i_loo;
-	}
+	Magnet = 1; 
 	waitms(500);
 	Magnet = 0;
 	waitms(500);
-	for (i_loo = 100; i_loo >=40 ; i_loo-=10){
+	for (i_loo = 100; i_loo >=50 ; i_loo-=10){
 		servo_arm = i_loo; 
 		waitms(25);
 	}
 	waitms(500);
-	for (i_loo = 80; i_loo >= 40; i_loo-=10){
+	for (i_loo = 90; i_loo >= 50; i_loo-=10){
 		servo_base = i_loo; 
 		waitms(25);
 	}
@@ -972,19 +979,19 @@ void servo_push(void)
 	servo_arm = 50;
 	servo_base = 50;
 	waitms(500);
-	for (i_loo=50; i_loo <= 150; i_loo+=10)
+	for (i_loo=50; i_loo <= 130; i_loo+=10)
 	{
 		servo_base = i_loo; 
 		waitms(25);
 	}
 	waitms(200);
-	for (i_loo=50; i_loo <= 150; i_loo+=10)
+	for (i_loo=50; i_loo <= 130; i_loo+=10)
 	{
 		servo_arm = i_loo; 
 		waitms(25);
 	}
 	waitms(200);
-	for (i_loo=150; i_loo <= 250; i_loo+=10)
+	for (i_loo=130; i_loo <= 250; i_loo+=10)
 	{
 		servo_base = i_loo; 
 		waitms(25);
@@ -996,7 +1003,7 @@ void servo_push(void)
 		waitms(25);
 	}
 	waitms(200);
-	for (i_loo=150; i_loo >= 50; i_loo-=10)
+	for (i_loo=130; i_loo >= 50; i_loo-=10)
 	{
 		servo_arm = i_loo; 
 		waitms(25);
@@ -1029,7 +1036,8 @@ void Move_forward_ms(int ms){
 }
 
 void servo_moveaway(void)
-{
+{	pwm_left = 0;
+	pwm_right = 0;
 	servo_push();
 	waitms(100);
 	Move_forward_ms(500);
@@ -1185,11 +1193,11 @@ void Auto_mode_slave(){
 		d1 = ADC_at_Pin(QFP32_MUX_P1_3);
 		d2 = ADC_at_Pin(QFP32_MUX_P1_4);
 		bound = check_bound(d1,d2);
-		// printf("f:%04ld, d1:%d, d2:%d, bound_dectect: %d\r\n",freq100, d1,d2,bound);
+		// printf("f:%04ld, d1:%d, d2:%d, bound_dectect: %d, distance: %d\r\n",freq100, d1,d2,bound,distance);
 
 		if (freq100>=5360){
 			mea_yes = 0;
-			Move_back_ms(300);
+			Move_back_ms(100);
 			waitms(100);
 			servo_pick();
 			count++;
@@ -1198,10 +1206,12 @@ void Auto_mode_slave(){
 			Move_forward();
 		}
 
-		if (distance < 500) servo_moveaway();
+		if (distance < 400){
+			servo_moveaway();
+		}
 
 		if(bound == 1){
-			Move_back_ms(500);
+			Move_back_ms(400);
 			waitms(100);
 		 	angle = get_random_90_250();
 			Right_angle(angle*600/90);
@@ -1338,11 +1348,11 @@ float Joystick_Control(int *vx_ptr, int *vy_ptr)
 	return curr_angle; 
 }
 
+
 void main (void)
 {
     xdata char c;
-	xdata int auto_mode = 0;
-	xdata char pick_char = '0';
+	
 	xdata angle_count = 0; 
 	
 	Init_all();
@@ -1376,14 +1386,13 @@ void main (void)
 	
 	waitms(1000);
 	while(1){	
-		
-		temp = Read_angle();
-		printf("distance: %d\r\n", distance);
-		
-		if(pick_char=='1'){
+		servo_base = 50; 
+		servo_arm = 50; 
+
+		if(pick == '1'){
 			servo_pick();
 			waitms(1000);
-			pick_char = '0';
+			pick = '0';
 		}
 		
 		if(auto_mode){
@@ -1399,9 +1408,11 @@ void main (void)
 				getstr1(buff, sizeof(buff)-1);
 				if(strlen(buff)==11)
 				{
-					printf("Master says: %s\r\n", buff);
-					sscanf(buff, "%03d,%03d,%c,%01d", &vx, &vy, &pick_char, &auto_mode);
-		        	// printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, pick_char, auto_mode);
+					// printf("Master says: %s\r\n", buff);
+					//parse_values(buff);
+					sscanf(buff,"%03d,%03d,%01d,%01d",&vx, &vy,&pick,&auto_mode);
+					pick = buff[8];
+		        	// printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, pick, auto_mode);
 					curr_angle = Joystick_Control(&vx, &vy);
 				}
 				else{

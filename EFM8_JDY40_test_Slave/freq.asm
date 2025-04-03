@@ -1,7 +1,7 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
-; This file was generated Wed Apr 02 23:02:59 2025
+; This file was generated Thu Apr 03 02:47:52 2025
 ;--------------------------------------------------------
 $name freq
 $optc51 --model-small
@@ -472,12 +472,6 @@ _TFRQ           BIT 0xdf
 ; internal ram data
 ;--------------------------------------------------------
 	rseg R_DSEG
-_get_freq_freq100_1_23:
-	ds 4
-_get_freq_overflow_count_1_23:
-	ds 1
-_get_freq_i_1_23:
-	ds 2
 _get_freq_sloc0_1_0:
 	ds 4
 ;--------------------------------------------------------
@@ -504,6 +498,10 @@ _get_freq_sloc0_1_0:
 ; external ram data
 ;--------------------------------------------------------
 	rseg R_XSEG
+_get_freq_freq100_1_23:
+	ds 4
+_get_freq_overflow_count_1_23:
+	ds 1
 ;--------------------------------------------------------
 ; absolute external ram data
 ;--------------------------------------------------------
@@ -536,11 +534,11 @@ _get_freq_sloc0_1_0:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'get_freq'
 ;------------------------------------------------------------
+;sloc0                     Allocated with name '_get_freq_sloc0_1_0'
 ;freq100                   Allocated with name '_get_freq_freq100_1_23'
-;period                    Allocated to registers r2 r3 r4 r5 
+;period                    Allocated with name '_get_freq_period_1_23'
 ;overflow_count            Allocated with name '_get_freq_overflow_count_1_23'
 ;i                         Allocated with name '_get_freq_i_1_23'
-;sloc0                     Allocated with name '_get_freq_sloc0_1_0'
 ;------------------------------------------------------------
 ;	freq.c:5: int get_freq(){
 ;	-----------------------------------------
@@ -548,27 +546,28 @@ _get_freq_sloc0_1_0:
 ;	-----------------------------------------
 _get_freq:
 	using	0
-;	freq.c:6: long freq100 = 0;
-;	freq.c:8: unsigned char overflow_count=0;
-;	freq.c:11: for(i=0; i<5; i++){
+;	freq.c:6: xdata long freq100 = 0;
+	mov	dptr,#_get_freq_freq100_1_23
 	clr	a
-	mov	_get_freq_freq100_1_23,a
-	mov	(_get_freq_freq100_1_23 + 1),a
-	mov	(_get_freq_freq100_1_23 + 2),a
-	mov	(_get_freq_freq100_1_23 + 3),a
-	mov	_get_freq_overflow_count_1_23,a
-	mov	_get_freq_i_1_23,a
-	mov	(_get_freq_i_1_23 + 1),a
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+	inc	dptr
+	movx	@dptr,a
+;	freq.c:8: xdata unsigned char overflow_count=0;
+	mov	dptr,#_get_freq_overflow_count_1_23
+	clr	a
+	movx	@dptr,a
+;	freq.c:11: for(i=0; i<5; i++){
+	mov	r2,#0x00
 L002017?:
-	clr	c
-	mov	a,_get_freq_i_1_23
-	subb	a,#0x05
-	mov	a,(_get_freq_i_1_23 + 1)
-	xrl	a,#0x80
-	subb	a,#0x80
-	jc	L002037?
-	ljmp	L002020?
+	cjne	r2,#0x05,L002037?
 L002037?:
+	jc	L002038?
+	ljmp	L002020?
+L002038?:
 ;	freq.c:12: TL0=0; 
 	mov	_TL0,#0x00
 ;	freq.c:13: TH0=0;
@@ -584,16 +583,18 @@ L002004?:
 ;	freq.c:18: TR0=1; // Start the timer
 	setb	_TR0
 ;	freq.c:19: while(metal_detect!=0) // Wait for the signal to be zero
-	mov	r1,_get_freq_overflow_count_1_23
+	mov	dptr,#_get_freq_overflow_count_1_23
+	movx	a,@dptr
+	mov	r3,a
 L002009?:
 	jnb	_P3_0,L002031?
 ;	freq.c:21: if(TF0==1) // Did the 16-bit timer overflow?
 ;	freq.c:23: TF0=0;
-	jbc	_TF0,L002041?
+	jbc	_TF0,L002042?
 	sjmp	L002009?
-L002041?:
+L002042?:
 ;	freq.c:24: overflow_count++;
-	inc	r1
+	inc	r3
 ;	freq.c:27: while(metal_detect!=1) // Wait for the signal to be one
 	sjmp	L002009?
 L002031?:
@@ -601,26 +602,27 @@ L002014?:
 	jb	_P3_0,L002016?
 ;	freq.c:29: if(TF0==1) // Did the 16-bit timer overflow?
 ;	freq.c:31: TF0=0;
-	jbc	_TF0,L002043?
+	jbc	_TF0,L002044?
 	sjmp	L002014?
-L002043?:
+L002044?:
 ;	freq.c:32: overflow_count++;
-	inc	r1
+	inc	r3
 	sjmp	L002014?
 L002016?:
 ;	freq.c:35: TR0=0; // Stop timer 0, the 24-bit number [overflow_count-TH0-TL0] has the period!
 	clr	_TR0
 ;	freq.c:36: period=(overflow_count*65536.0+TH0*256.0+TL0)*(12.0/SYSCLK);
-	mov	dpl,r1
-	lcall	___uchar2fs
-	mov	r1,dpl
-	mov	r2,dph
-	mov	r3,b
-	mov	r4,a
-	push	ar1
+	mov	dpl,r3
 	push	ar2
+	lcall	___uchar2fs
+	mov	r3,dpl
+	mov	r4,dph
+	mov	r5,b
+	mov	r6,a
 	push	ar3
 	push	ar4
+	push	ar5
+	push	ar6
 	mov	dptr,#0x0000
 	mov	b,#0x80
 	mov	a,#0x47
@@ -634,29 +636,29 @@ L002016?:
 	mov	sp,a
 	mov	dpl,_TH0
 	lcall	___uchar2fs
-	mov	r1,dpl
-	mov	r7,dph
-	mov	r0,b
-	mov	r2,a
-	push	ar1
+	mov	r7,dpl
+	mov	r0,dph
+	mov	r1,b
+	mov	r3,a
 	push	ar7
 	push	ar0
-	push	ar2
+	push	ar1
+	push	ar3
 	mov	dptr,#0x0000
 	mov	b,#0x80
 	mov	a,#0x43
 	lcall	___fsmul
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
+	mov	r3,dpl
+	mov	r4,dph
+	mov	r5,b
+	mov	r6,a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	push	ar2
 	push	ar3
 	push	ar4
 	push	ar5
+	push	ar6
 	mov	dpl,_get_freq_sloc0_1_0
 	mov	dph,(_get_freq_sloc0_1_0 + 1)
 	mov	b,(_get_freq_sloc0_1_0 + 2)
@@ -677,110 +679,149 @@ L002016?:
 	mov	r7,dpl
 	mov	r0,dph
 	mov	r1,b
-	mov	r2,a
+	mov	r3,a
 	push	ar7
 	push	ar0
 	push	ar1
-	push	ar2
+	push	ar3
 	mov	dpl,_get_freq_sloc0_1_0
 	mov	dph,(_get_freq_sloc0_1_0 + 1)
 	mov	b,(_get_freq_sloc0_1_0 + 2)
 	mov	a,(_get_freq_sloc0_1_0 + 3)
 	lcall	___fsadd
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
+	mov	r3,dpl
+	mov	r4,dph
+	mov	r5,b
+	mov	r6,a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	push	ar2
 	push	ar3
 	push	ar4
 	push	ar5
+	push	ar6
+;	freq.c:37: overflow_count = 0;
 	mov	dptr,#0xF4FC
 	mov	b,#0x32
 	mov	a,#0x34
 	lcall	___fsmul
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
+	mov	r3,dpl
+	mov	r4,dph
+	mov	r5,b
+	mov	r6,a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-;	freq.c:37: overflow_count = 0;
-	mov	_get_freq_overflow_count_1_23,#0x00
+	mov	dptr,#_get_freq_overflow_count_1_23
+	clr	a
+	movx	@dptr,a
 ;	freq.c:38: freq100 += 1.0/(period*10);
-	push	ar2
 	push	ar3
 	push	ar4
 	push	ar5
+	push	ar6
 	mov	dptr,#0x0000
 	mov	b,#0x20
 	mov	a,#0x41
 	lcall	___fsmul
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
+	mov	r3,dpl
+	mov	r4,dph
+	mov	r5,b
+	mov	r6,a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	push	ar2
 	push	ar3
 	push	ar4
 	push	ar5
+	push	ar6
 	mov	dptr,#0x0000
 	mov	b,#0x80
 	mov	a,#0x3F
 	lcall	___fsdiv
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
+	mov	_get_freq_sloc0_1_0,dpl
+	mov	(_get_freq_sloc0_1_0 + 1),dph
+	mov	(_get_freq_sloc0_1_0 + 2),b
+	mov	(_get_freq_sloc0_1_0 + 3),a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	mov	dpl,_get_freq_freq100_1_23
-	mov	dph,(_get_freq_freq100_1_23 + 1)
-	mov	b,(_get_freq_freq100_1_23 + 2)
-	mov	a,(_get_freq_freq100_1_23 + 3)
-	push	ar2
-	push	ar3
-	push	ar4
-	push	ar5
+	mov	dptr,#_get_freq_freq100_1_23
+	movx	a,@dptr
+	mov	r7,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r0,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r1,a
+	inc	dptr
+	movx	a,@dptr
+	mov	dpl,r7
+	mov	dph,r0
+	mov	b,r1
 	lcall	___slong2fs
+	mov	r3,dpl
+	mov	r4,dph
+	mov	r5,b
+	mov	r6,a
+	push	_get_freq_sloc0_1_0
+	push	(_get_freq_sloc0_1_0 + 1)
+	push	(_get_freq_sloc0_1_0 + 2)
+	push	(_get_freq_sloc0_1_0 + 3)
+	mov	dpl,r3
+	mov	dph,r4
+	mov	b,r5
+	mov	a,r6
 	lcall	___fsadd
-	mov	r2,dpl
-	mov	r3,dph
-	mov	r4,b
-	mov	r5,a
+	mov	r3,dpl
+	mov	r4,dph
+	mov	r5,b
+	mov	r6,a
 	mov	a,sp
 	add	a,#0xfc
 	mov	sp,a
-	mov	dpl,r2
-	mov	dph,r3
-	mov	b,r4
-	mov	a,r5
+	mov	dpl,r3
+	mov	dph,r4
+	mov	b,r5
+	mov	a,r6
 	lcall	___fs2slong
-	mov	_get_freq_freq100_1_23,dpl
-	mov	(_get_freq_freq100_1_23 + 1),dph
-	mov	(_get_freq_freq100_1_23 + 2),b
-	mov	(_get_freq_freq100_1_23 + 3),a
+	mov	r3,dpl
+	mov	r4,dph
+	mov	r5,b
+	mov	r6,a
+	pop	ar2
+	mov	dptr,#_get_freq_freq100_1_23
+	mov	a,r3
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r4
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r5
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r6
+	movx	@dptr,a
 ;	freq.c:11: for(i=0; i<5; i++){
-	inc	_get_freq_i_1_23
-	clr	a
-	cjne	a,_get_freq_i_1_23,L002044?
-	inc	(_get_freq_i_1_23 + 1)
-L002044?:
+	inc	r2
 	ljmp	L002017?
 L002020?:
 ;	freq.c:40: freq100 /= 5.0;
-	mov	dpl,_get_freq_freq100_1_23
-	mov	dph,(_get_freq_freq100_1_23 + 1)
-	mov	b,(_get_freq_freq100_1_23 + 2)
-	mov	a,(_get_freq_freq100_1_23 + 3)
+	mov	dptr,#_get_freq_freq100_1_23
+	movx	a,@dptr
+	mov	r2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r3,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r4,a
+	inc	dptr
+	movx	a,@dptr
+	mov	dpl,r2
+	mov	dph,r3
+	mov	b,r4
 	lcall	___slong2fs
 	mov	r2,dpl
 	mov	r3,dph
@@ -810,11 +851,35 @@ L002020?:
 	mov	b,r4
 	mov	a,r5
 	lcall	___fs2slong
+	mov	r2,dpl
+	mov	r3,dph
+	mov	r4,b
+	mov	r5,a
+	mov	dptr,#_get_freq_freq100_1_23
+	mov	a,r2
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r3
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r4
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r5
+	movx	@dptr,a
 ;	freq.c:41: return freq100;
-	mov	_get_freq_freq100_1_23,dpl
-	mov	(_get_freq_freq100_1_23 + 1),dph
-	mov	(_get_freq_freq100_1_23 + 2),b
-	mov	(_get_freq_freq100_1_23 + 3),a
+	mov	dptr,#_get_freq_freq100_1_23
+	movx	a,@dptr
+	mov	r2,a
+	inc	dptr
+	movx	a,@dptr
+	mov	r3,a
+	inc	dptr
+	movx	a,@dptr
+	inc	dptr
+	movx	a,@dptr
+	mov	dpl,r2
+	mov	dph,r3
 	ret
 	rseg R_CSEG
 

@@ -9,38 +9,37 @@ freq
 <SEGMENTS>
 R_GSINIT,code,0000,NO
 R_BSEG,bit,0000,NO
-R_XSEG,xdata,0000,NO
+R_XSEG,xdata,0005,NO
 BIT_BANK,data,0000,OV
 R_CONST,code,0000,NO
 rbank0,data,0000,OV
 R_PSEG,xdata,0000,NO
 R_DINIT,code,0000,NO
-R_DSEG,data,000B,NO
+R_DSEG,data,0004,NO
 R_OSEG,data,0000,OV
 R_IXSEG,xdata,0000,NO
 R_ISEG,idata,0000,NO
 R_HOME,code,0000,NO
 R_XINIT,code,0000,NO
-R_CSEG,code,01FA,NO
+R_CSEG,code,023D,NO
 </SEGMENTS>
 
 <LOCALS>
-L002004?,R_CSEG,002A,0000
-L002001?,R_CSEG,0027,0000
-_get_freq_freq100_1_23,R_DSEG,0000,0004
-_get_freq_overflow_count_1_23,R_DSEG,0004,0001
-L002017?,R_CSEG,000F,0000
-L002016?,R_CSEG,0047,0000
-L002014?,R_CSEG,003C,0000
-L002020?,R_CSEG,01AB,0000
-L002037?,R_CSEG,001F,0000
-L002031?,R_CSEG,003C,0000
-L002044?,R_CSEG,01A8,0000
-L002043?,R_CSEG,0044,0000
-L002041?,R_CSEG,0039,0000
-_get_freq_i_1_23,R_DSEG,0005,0002
-_get_freq_sloc0_1_0,R_DSEG,0007,0004
-L002009?,R_CSEG,0031,0000
+L002004?,R_CSEG,0025,0000
+L002001?,R_CSEG,0022,0000
+_get_freq_freq100_1_23,R_XSEG,0000,0004
+_get_freq_overflow_count_1_23,R_XSEG,0004,0001
+L002017?,R_CSEG,0012,0000
+L002016?,R_CSEG,0045,0000
+L002014?,R_CSEG,003A,0000
+L002020?,R_CSEG,01CC,0000
+L002038?,R_CSEG,001A,0000
+L002037?,R_CSEG,0015,0000
+L002031?,R_CSEG,003A,0000
+L002044?,R_CSEG,0042,0000
+L002042?,R_CSEG,0037,0000
+_get_freq_sloc0_1_0,R_DSEG,0000,0004
+L002009?,R_CSEG,002F,0000
 </LOCALS>
 
 <PUBLICS>
@@ -82,21 +81,21 @@ ___fsdiv,any,0000,0000
 </CODE>
 
 <CODE R_CSEG>
+90 data16(_get_freq_freq100_1_23;)  
 E4
-F5 data8(_get_freq_freq100_1_23;)
-F5 data8(_get_freq_freq100_1_23;0x0001;+;)
-F5 data8(_get_freq_freq100_1_23;0x0002;+;)
-F5 data8(_get_freq_freq100_1_23;0x0003;+;)
-F5 data8(_get_freq_overflow_count_1_23;)
-F5 data8(_get_freq_i_1_23;)
-F5 data8(_get_freq_i_1_23;0x0001;+;)
-C3
-E5 data8(_get_freq_i_1_23;)
-94 05
-E5 data8(_get_freq_i_1_23;0x0001;+;)
-64 80
-94 80
-40 rel2(L002037?;)
+F0
+A3
+F0
+A3
+F0
+A3
+F0
+90 data16(_get_freq_overflow_count_1_23;)  
+E4
+F0
+7A 00
+BA 05 rel3(L002037?;)
+40 rel2(L002038?;)
 02 addr16(L002020?;)  
 75 8A 00
 75 8C 00
@@ -104,28 +103,31 @@ C2 8D
 20 B0 rel3(L002001?;)
 30 B0 rel3(L002004?;)
 D2 8C
-A9 data8(_get_freq_overflow_count_1_23;)
+90 data16(_get_freq_overflow_count_1_23;)  
+E0
+FB
 30 B0 rel3(L002031?;)
-10 8D rel3(L002041?;)
+10 8D rel3(L002042?;)
 80 rel2(L002009?;)
-09
+0B
 80 rel2(L002009?;)
 20 B0 rel3(L002016?;)
-10 8D rel3(L002043?;)
+10 8D rel3(L002044?;)
 80 rel2(L002014?;)
-09
+0B
 80 rel2(L002014?;)
 C2 8C
-89 82
-12 addr16(___uchar2fs;)  
-A9 82
-AA 83
-AB F0
-FC
-C0 01
+8B 82
 C0 02
+12 addr16(___uchar2fs;)  
+AB 82
+AC 83
+AD F0
+FE
 C0 03
 C0 04
+C0 05
+C0 06
 90 00 00
 75 F0 80
 74 47
@@ -139,29 +141,29 @@ E5 81
 F5 81
 85 8C 82
 12 addr16(___uchar2fs;)  
-A9 82
-AF 83
-A8 F0
-FA
-C0 01
+AF 82
+A8 83
+A9 F0
+FB
 C0 07
 C0 00
-C0 02
+C0 01
+C0 03
 90 00 00
 75 F0 80
 74 43
 12 addr16(___fsmul;)  
-AA 82
-AB 83
-AC F0
-FD
+AB 82
+AC 83
+AD F0
+FE
 E5 81
 24 FC
 F5 81
-C0 02
 C0 03
 C0 04
 C0 05
+C0 06
 85 data8(_get_freq_sloc0_1_0;) 82
 85 data8(_get_freq_sloc0_1_0;0x0001;+;) 83
 85 data8(_get_freq_sloc0_1_0;0x0002;+;) F0
@@ -182,104 +184,144 @@ AF 8A
 AF 82
 A8 83
 A9 F0
-FA
+FB
 C0 07
 C0 00
 C0 01
-C0 02
+C0 03
 85 data8(_get_freq_sloc0_1_0;) 82
 85 data8(_get_freq_sloc0_1_0;0x0001;+;) 83
 85 data8(_get_freq_sloc0_1_0;0x0002;+;) F0
 E5 data8(_get_freq_sloc0_1_0;0x0003;+;)
 12 addr16(___fsadd;)  
-AA 82
-AB 83
-AC F0
-FD
+AB 82
+AC 83
+AD F0
+FE
 E5 81
 24 FC
 F5 81
-C0 02
 C0 03
 C0 04
 C0 05
+C0 06
 90 F4 FC
 75 F0 32
 74 34
 12 addr16(___fsmul;)  
-AA 82
-AB 83
-AC F0
-FD
+AB 82
+AC 83
+AD F0
+FE
 E5 81
 24 FC
 F5 81
-75 data8(_get_freq_overflow_count_1_23;) 00
-C0 02
+90 data16(_get_freq_overflow_count_1_23;)  
+E4
+F0
 C0 03
 C0 04
 C0 05
+C0 06
 90 00 00
 75 F0 20
 74 41
 12 addr16(___fsmul;)  
-AA 82
-AB 83
-AC F0
-FD
+AB 82
+AC 83
+AD F0
+FE
 E5 81
 24 FC
 F5 81
-C0 02
 C0 03
 C0 04
 C0 05
+C0 06
 90 00 00
 75 F0 80
 74 3F
 12 addr16(___fsdiv;)  
-AA 82
-AB 83
-AC F0
-FD
+85 82 data8(_get_freq_sloc0_1_0;)
+85 83 data8(_get_freq_sloc0_1_0;0x0001;+;)
+85 F0 data8(_get_freq_sloc0_1_0;0x0002;+;)
+F5 data8(_get_freq_sloc0_1_0;0x0003;+;)
 E5 81
 24 FC
 F5 81
-85 data8(_get_freq_freq100_1_23;) 82
-85 data8(_get_freq_freq100_1_23;0x0001;+;) 83
-85 data8(_get_freq_freq100_1_23;0x0002;+;) F0
-E5 data8(_get_freq_freq100_1_23;0x0003;+;)
-C0 02
-C0 03
-C0 04
-C0 05
+90 data16(_get_freq_freq100_1_23;)  
+E0
+FF
+A3
+E0
+F8
+A3
+E0
+F9
+A3
+E0
+8F 82
+88 83
+89 F0
 12 addr16(___slong2fs;)  
+AB 82
+AC 83
+AD F0
+FE
+C0 data8(_get_freq_sloc0_1_0;)
+C0 data8(_get_freq_sloc0_1_0;0x0001;+;)
+C0 data8(_get_freq_sloc0_1_0;0x0002;+;)
+C0 data8(_get_freq_sloc0_1_0;0x0003;+;)
+8B 82
+8C 83
+8D F0
+EE
 12 addr16(___fsadd;)  
-AA 82
-AB 83
-AC F0
-FD
+AB 82
+AC 83
+AD F0
+FE
 E5 81
 24 FC
 F5 81
+8B 82
+8C 83
+8D F0
+EE
+12 addr16(___fs2slong;)  
+AB 82
+AC 83
+AD F0
+FE
+D0 02
+90 data16(_get_freq_freq100_1_23;)  
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
+A3
+EE
+F0
+0A
+02 addr16(L002017?;)  
+90 data16(_get_freq_freq100_1_23;)  
+E0
+FA
+A3
+E0
+FB
+A3
+E0
+FC
+A3
+E0
 8A 82
 8B 83
 8C F0
-ED
-12 addr16(___fs2slong;)  
-85 82 data8(_get_freq_freq100_1_23;)
-85 83 data8(_get_freq_freq100_1_23;0x0001;+;)
-85 F0 data8(_get_freq_freq100_1_23;0x0002;+;)
-F5 data8(_get_freq_freq100_1_23;0x0003;+;)
-05 data8(_get_freq_i_1_23;)
-E4
-B5 data8(_get_freq_i_1_23;) rel3(L002044?;)
-05 data8(_get_freq_i_1_23;0x0001;+;)
-02 addr16(L002017?;)  
-85 data8(_get_freq_freq100_1_23;) 82
-85 data8(_get_freq_freq100_1_23;0x0001;+;) 83
-85 data8(_get_freq_freq100_1_23;0x0002;+;) F0
-E5 data8(_get_freq_freq100_1_23;0x0003;+;)
 12 addr16(___slong2fs;)  
 AA 82
 AB 83
@@ -309,10 +351,34 @@ F5 81
 8C F0
 ED
 12 addr16(___fs2slong;)  
-85 82 data8(_get_freq_freq100_1_23;)
-85 83 data8(_get_freq_freq100_1_23;0x0001;+;)
-85 F0 data8(_get_freq_freq100_1_23;0x0002;+;)
-F5 data8(_get_freq_freq100_1_23;0x0003;+;)
+AA 82
+AB 83
+AC F0
+FD
+90 data16(_get_freq_freq100_1_23;)  
+EA
+F0
+A3
+EB
+F0
+A3
+EC
+F0
+A3
+ED
+F0
+90 data16(_get_freq_freq100_1_23;)  
+E0
+FA
+A3
+E0
+FB
+A3
+E0
+A3
+E0
+8A 82
+8B 83
 22
 </CODE>
 

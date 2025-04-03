@@ -3,10 +3,10 @@
 #include "freq.h"
 
 int get_freq(){
-    long freq100 = 0;
-    float period;
-	unsigned char overflow_count=0;
-	int i;
+    xdata long freq100 = 0;
+    xdata float period;
+	xdata unsigned char overflow_count=0;
+	xdata unsigned char i;
 
 	for(i=0; i<5; i++){
 		TL0=0; 
