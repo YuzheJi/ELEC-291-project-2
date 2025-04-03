@@ -1406,7 +1406,7 @@ void main (void)
 			}
 			else if(c=='@') // Master wants slave data
 			{
-				sprintf(buff, "0,00,%04ld,%05d,%03d,%02d,%02d\n", freq100, weight, (int)curr_angle, pwm_left, pwm_right);
+				sprintf(buff, "0,00,%04ld,%05d,%03d,%02d,%02d,%03d,%03d\n", freq100, weight, (int)curr_angle, pwm_left, pwm_right);
 				waitms(5); // The radio seems to need this delay...
 				sendstr1(buff);
 			}

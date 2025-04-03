@@ -363,6 +363,8 @@ void main(void)
 	int metal_freq = 0;
 	int state_res = 0;
 	int count_res = 0;
+	unsigned char pwm_left_res= 0;
+	unsigned char pwm_right_res = 0;
 	int weight = 0;
 	int weights[25] = {0};
 	float angle = 0;
@@ -424,7 +426,7 @@ void main(void)
 					waitms(50);
 				};
 			}
-			
+
 			if (state_res == 0 && count_res == 5){
 				auto_state=0;
 				GPIOB->ODR &= ~BIT4;
@@ -514,16 +516,16 @@ void main(void)
 		
 		timeout_cnt=0;
 		while(1){
-			if(ReceivedBytes2()>19) break; // Something has arrived
+			if(ReceivedBytes2()>24) break; // Something has arrived
 			if(++timeout_cnt>1000) break; // Wait up to 25ms for the repply
 			Delay_us(100); // 100us*250=25ms
 		}		
-		if(ReceivedBytes2()>19){
+		if(ReceivedBytes2()>24){
 			egets2(buff, sizeof(buff)-1);
-			if(strlen(buff)==20){
+			if(strlen(buff)==25){
 				if(auto_state) 	printf("Slave_auto says: %s\r", buff);
 				else 			printf("Slave_manual says: %s\r", buff);
-				sscanf(buff, "%01d,%02d,%04d,%05d,%4.1f",&state_res,&count_res,&metal_freq,&weight,&angle);
+				sscanf(buff, "%01d,%02d,%04d,%05d,%4.1f",&state_res,&count_res,&metal_freq,&weight,&angle,&pwm_left_res, &pwm_right_res);
 				weights[index % 25] = weight; 
         		index++;
 				if (1){
@@ -550,6 +552,7 @@ void main(void)
 		printf("Coins: liangkuai: %d, yikuai: %d, liangmaowu: %d, yimao: %d, wufen: %d\r\n", coins_count[0],coins_count[1],coins_count[2],coins_count[3],coins_count[4]);
 
 		buzzer_ctrl(metal_freq);
+		
 		waitms(30);  // Set the information interchange pace: communicate about every 50ms
 	}
 	
