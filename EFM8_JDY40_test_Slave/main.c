@@ -15,15 +15,15 @@
 
 
 //                                    ----------  
-// 	                    P0.0      1  |          |  32      P0.1     
+// TRIG                 P0.0      1  |          |  32      P0.1     
 //                      GND       2  |          |  31      P0.2  	
 //                      5V        3  |          |  30      P0.3  	SCK
 //                      5V        4  |          |  29      P0.4  	xxxxx
 //                      RST       5  |          |  28      P0.5  	xxxxx
 //                      P3.7      6  |          |  27      P0.6  	SDO (MISO)
-// ECHO                 P3.3      7  |          |  26      P0.7  	SDI (MOSI)
-// TRIGGER              P3.2      8  |          |  25      P1.0  	CS
-//                      P3.1      9  |          |  24      P1.1  	RXD (MCU: TXD)
+//                      P3.3      7  |          |  26      P0.7  	SDI (MOSI)
+//                      P3.2      8  |          |  25      P1.0  	CS
+// ECHO                 P3.1      9  |          |  24      P1.1  	RXD (MCU: TXD)
 // Coin detector        P3.0     10  |          |  23      P1.2  	TXD (MCU: RXD)
 // Load_Data            P2.6     11  |          |  22      P1.3     Boundary1
 // Load_SCK             P2.5     12  |          |  21      P1.4  	Boundary2
