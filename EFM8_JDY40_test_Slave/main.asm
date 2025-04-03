@@ -1,7 +1,11 @@
 ;--------------------------------------------------------
 ; File Created by C51
 ; Version 1.0.0 #1170 (Feb 16 2022) (MSVC)
+<<<<<<< HEAD
 ; This file was generated Thu Apr 03 02:47:52 2025
+=======
+; This file was generated Wed Apr 02 23:16:34 2025
+>>>>>>> 30ee1ab559245f8b8a2e0cfb684759f50b835fe8
 ;--------------------------------------------------------
 $name main
 $optc51 --model-small
@@ -8530,8 +8534,19 @@ L045016?:
 	mov	dptr,#_servo_arm
 	mov	a,#0x32
 	movx	@dptr,a
+<<<<<<< HEAD
 ;	main.c:1392: if(pick == '1'){
 	mov	dptr,#_pick
+=======
+	inc	dptr
+	mov	a,r4
+	movx	@dptr,a
+	inc	dptr
+	mov	a,r5
+	movx	@dptr,a
+;	main.c:1383: if(pick_char=='1'){
+	mov	dptr,#_main_pick_char_1_265
+>>>>>>> 30ee1ab559245f8b8a2e0cfb684759f50b835fe8
 	movx	a,@dptr
 	mov	r2,a
 	cjne	r2,#0x31,L045002?
@@ -8595,7 +8610,28 @@ L045034?:
 ;	main.c:1413: sscanf(buff,"%03d,%03d,%01d,%01d",&vx, &vy,&pick,&auto_mode);
 	mov	a,#_auto_mode
 	push	acc
+<<<<<<< HEAD
 	mov	a,#(_auto_mode >> 8)
+=======
+	mov	a,#(_buff >> 8)
+	push	acc
+	mov	a,#0x40
+	push	acc
+	mov	a,#__str_16
+	push	acc
+	mov	a,#(__str_16 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	lcall	_printf
+	mov	a,sp
+	add	a,#0xfa
+	mov	sp,a
+;	main.c:1403: sscanf(buff, "%03d,%03d,%01d,%01d", &vx, &vy, &pick_char, &auto_mode);
+	mov	a,#_main_auto_mode_1_265
+	push	acc
+	mov	a,#(_main_auto_mode_1_265 >> 8)
+>>>>>>> 30ee1ab559245f8b8a2e0cfb684759f50b835fe8
 	push	acc
 	clr	a
 	push	acc
@@ -8633,12 +8669,57 @@ L045034?:
 	mov	a,sp
 	add	a,#0xee
 	mov	sp,a
+<<<<<<< HEAD
 ;	main.c:1414: pick = buff[8];
 	mov	dptr,#_pick
 	mov	r0,#(_buff + 0x0008)
 	mov	a,@r0
 	movx	@dptr,a
 ;	main.c:1416: curr_angle = Joystick_Control(&vx, &vy);
+=======
+;	main.c:1404: pick_char = buff[8];
+	mov	r0,#(_buff + 0x0008)
+	mov	ar3,@r0
+	mov	dptr,#_main_pick_char_1_265
+	mov	a,r3
+	movx	@dptr,a
+;	main.c:1405: printf("Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d\r\n", vx, vy, buff[8], auto_mode);
+	mov	a,r3
+	rlc	a
+	subb	a,acc
+	mov	r4,a
+	mov	dptr,#_main_auto_mode_1_265
+	movx	a,@dptr
+	push	acc
+	inc	dptr
+	movx	a,@dptr
+	push	acc
+	push	ar3
+	push	ar4
+	mov	dptr,#_vy
+	movx	a,@dptr
+	push	acc
+	inc	dptr
+	movx	a,@dptr
+	push	acc
+	mov	dptr,#_vx
+	movx	a,@dptr
+	push	acc
+	inc	dptr
+	movx	a,@dptr
+	push	acc
+	mov	a,#__str_17
+	push	acc
+	mov	a,#(__str_17 >> 8)
+	push	acc
+	mov	a,#0x80
+	push	acc
+	lcall	_printf
+	mov	a,sp
+	add	a,#0xf5
+	mov	sp,a
+;	main.c:1406: curr_angle = Joystick_Control(&vx, &vy);
+>>>>>>> 30ee1ab559245f8b8a2e0cfb684759f50b835fe8
 	mov	_Joystick_Control_PARM_2,#_vy
 	mov	(_Joystick_Control_PARM_2 + 1),#(_vy >> 8)
 	mov	(_Joystick_Control_PARM_2 + 2),#0x00
@@ -8663,16 +8744,26 @@ L045034?:
 	movx	@dptr,a
 	ljmp	L045016?
 L045006?:
+<<<<<<< HEAD
 ;	main.c:1419: printf("*** BAD MESSAGE ***: %s\r\n", buff);
+=======
+;	main.c:1409: printf("*** BAD MESSAGE ***: %s\r\n", buff);
+>>>>>>> 30ee1ab559245f8b8a2e0cfb684759f50b835fe8
 	mov	a,#_buff
 	push	acc
 	mov	a,#(_buff >> 8)
 	push	acc
 	mov	a,#0x40
 	push	acc
+<<<<<<< HEAD
 	mov	a,#__str_16
 	push	acc
 	mov	a,#(__str_16 >> 8)
+=======
+	mov	a,#__str_18
+	push	acc
+	mov	a,#(__str_18 >> 8)
+>>>>>>> 30ee1ab559245f8b8a2e0cfb684759f50b835fe8
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -8682,13 +8773,21 @@ L045006?:
 	mov	sp,a
 	ljmp	L045016?
 L045011?:
+<<<<<<< HEAD
 ;	main.c:1422: else if(c=='@') // Master wants slave data
+=======
+;	main.c:1412: else if(c=='@') // Master wants slave data
+>>>>>>> 30ee1ab559245f8b8a2e0cfb684759f50b835fe8
 	cjne	r2,#0x40,L045035?
 	sjmp	L045036?
 L045035?:
 	ljmp	L045016?
 L045036?:
+<<<<<<< HEAD
 ;	main.c:1424: sprintf(buff, "0,00,%04ld,%05d,%03d\n", freq100, weight, (int)curr_angle);
+=======
+;	main.c:1414: sprintf(buff, "0,00,%04ld,%05d,%03d\n", freq100, weight, (int)curr_angle);
+>>>>>>> 30ee1ab559245f8b8a2e0cfb684759f50b835fe8
 	mov	dptr,#_curr_angle
 	movx	a,@dptr
 	mov	r2,a
@@ -8726,9 +8825,15 @@ L045036?:
 	inc	dptr
 	movx	a,@dptr
 	push	acc
+<<<<<<< HEAD
 	mov	a,#__str_17
 	push	acc
 	mov	a,#(__str_17 >> 8)
+=======
+	mov	a,#__str_19
+	push	acc
+	mov	a,#(__str_19 >> 8)
+>>>>>>> 30ee1ab559245f8b8a2e0cfb684759f50b835fe8
 	push	acc
 	mov	a,#0x80
 	push	acc
@@ -8742,10 +8847,17 @@ L045036?:
 	mov	a,sp
 	add	a,#0xf2
 	mov	sp,a
+<<<<<<< HEAD
 ;	main.c:1425: waitms(5); // The radio seems to need this delay...
 	mov	dptr,#0x0005
 	lcall	_waitms
 ;	main.c:1426: sendstr1(buff);
+=======
+;	main.c:1415: waitms(5); // The radio seems to need this delay...
+	mov	dptr,#0x0005
+	lcall	_waitms
+;	main.c:1416: sendstr1(buff);
+>>>>>>> 30ee1ab559245f8b8a2e0cfb684759f50b835fe8
 	mov	dptr,#_buff
 	mov	b,#0x40
 	lcall	_sendstr1
@@ -8880,11 +8992,28 @@ __str_15:
 	db 0x0A
 	db 0x00
 __str_16:
-	db '*** BAD MESSAGE ***: %s'
+<<<<<<< HEAD
+=======
+	db 'Master says: %s'
 	db 0x0D
 	db 0x0A
 	db 0x00
 __str_17:
+	db 'Joystick Received: Vx = %d, Vy = %d, Order = %c, Auto = %d'
+	db 0x0D
+	db 0x0A
+	db 0x00
+__str_18:
+>>>>>>> 30ee1ab559245f8b8a2e0cfb684759f50b835fe8
+	db '*** BAD MESSAGE ***: %s'
+	db 0x0D
+	db 0x0A
+	db 0x00
+<<<<<<< HEAD
+__str_17:
+=======
+__str_19:
+>>>>>>> 30ee1ab559245f8b8a2e0cfb684759f50b835fe8
 	db '0,00,%04ld,%05d,%03d'
 	db 0x0A
 	db 0x00

@@ -1386,10 +1386,11 @@ void main (void)
 	
 	waitms(1000);
 	while(1){	
-		servo_base = 50; 
-		servo_arm = 50; 
-
-		if(pick == '1'){
+		
+		temp = Read_angle();
+		// printf("distance: %d\r\n", distance);
+		
+		if(pick_char=='1'){
 			servo_pick();
 			waitms(1000);
 			pick = '0';
